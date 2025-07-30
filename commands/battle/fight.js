@@ -2,7 +2,7 @@ const { EmbedBuilder } = require("discord.js");
 const database = require("../../utils/database.js");
 const colors = require("../../utils/colors.js");
 const config = require("../../config/config.js");
-const { addItemToInventory } = require("./item.js"); // <-- fixed path (same folder)
+const { addItemToInventory, calculateEquippedBonuses } = require("./item.js");
 
 module.exports = {
     name: "fight",
@@ -57,12 +57,15 @@ module.exports = {
         // Select random enemy based on user level
         const enemy = enemies[Math.floor(Math.random() * enemies.length)];
 
-        // Calculate player stats
+        // Get equipped item bonuses
+        const playerBonuses = calculateEquippedBonuses(message.author.id);
+
+        // Calculate player stats with equipped item bonuses
         const playerStats = {
-            attack: Math.floor(userData.level * 10 + userData.experience / 100),
-            defense: Math.floor(userData.level * 8 + userData.experience / 150),
-            health: Math.floor(userData.level * 15 + 100),
-            luck: Math.floor(userData.level * 2),
+            attack: Math.floor(userData.level * 10 + userData.experience / 100) + playerBonuses.attack,
+            defense: Math.floor(userData.level * 8 + userData.experience / 150) + playerBonuses.defense,
+            health: Math.floor(userData.level * 15 + 100) + playerBonuses.hp,
+            luck: Math.floor(userData.level * 2) + playerBonuses.luck,
         };
 
         // Calculate enemy stats

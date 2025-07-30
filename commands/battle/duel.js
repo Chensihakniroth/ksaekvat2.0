@@ -103,19 +103,24 @@ module.exports = {
             }
         }
 
-        // Calculate combat stats based on level and experience
+        // Get equipped item bonuses
+        const { calculateEquippedBonuses } = require('./item.js');
+        const challengerBonuses = calculateEquippedBonuses(message.author.id);
+        const targetBonuses = calculateEquippedBonuses(target.id);
+
+        // Calculate combat stats based on level and experience + equipped items
         const challengerStats = {
-            attack: Math.floor(challengerData.level * 10 + challengerData.experience / 100),
-            defense: Math.floor(challengerData.level * 8 + challengerData.experience / 150),
-            health: Math.floor(challengerData.level * 15 + 100),
-            luck: Math.floor(challengerData.level * 2)
+            attack: Math.floor(challengerData.level * 10 + challengerData.experience / 100) + challengerBonuses.attack,
+            defense: Math.floor(challengerData.level * 8 + challengerData.experience / 150) + challengerBonuses.defense,
+            health: Math.floor(challengerData.level * 15 + 100) + challengerBonuses.hp,
+            luck: Math.floor(challengerData.level * 2) + challengerBonuses.luck
         };
 
         const targetStats = {
-            attack: Math.floor(targetData.level * 10 + targetData.experience / 100),
-            defense: Math.floor(targetData.level * 8 + targetData.experience / 150),
-            health: Math.floor(targetData.level * 15 + 100),
-            luck: Math.floor(targetData.level * 2)
+            attack: Math.floor(targetData.level * 10 + targetData.experience / 100) + targetBonuses.attack,
+            defense: Math.floor(targetData.level * 8 + targetData.experience / 150) + targetBonuses.defense,
+            health: Math.floor(targetData.level * 15 + 100) + targetBonuses.hp,
+            luck: Math.floor(targetData.level * 2) + targetBonuses.luck
         };
 
         // Create duel invitation embed
