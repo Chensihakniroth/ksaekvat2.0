@@ -2688,3 +2688,63 @@ Stack: Error: Received one or more errors
 [2025-07-30T15:03:09.555Z] [INFO] gut_. used command: s in Kuromi's server
 [2025-07-30T15:03:24.316Z] [INFO] thisis_my_username used command: s in Kuromi's server
 [2025-07-30T15:03:42.663Z] [INFO] thisis_my_username used command: s in Kuromi's server
+[2025-07-30T15:03:59.252Z] [INFO] thisis_my_username used command: cf in Kuromi's server
+[2025-07-30T15:04:08.541Z] [INFO] thisis_my_username used command: s in Kuromi's server
+[2025-07-30T15:04:35.037Z] [INFO] Loaded command: ban
+[2025-07-30T15:04:35.038Z] [INFO] Loaded command: clear
+[2025-07-30T15:04:35.039Z] [INFO] Loaded command: giveitem
+[2025-07-30T15:04:35.040Z] [INFO] Loaded command: givepet
+[2025-07-30T15:04:35.040Z] [INFO] Loaded command: kick
+[2025-07-30T15:04:35.041Z] [INFO] Loaded command: reset
+[2025-07-30T15:04:35.042Z] [INFO] Loaded command: setbal
+[2025-07-30T15:04:35.043Z] [INFO] Loaded command: setlvl
+[2025-07-30T15:04:35.044Z] [INFO] Loaded command: hunt
+[2025-07-30T15:04:35.046Z] [INFO] Loaded command: sell
+[2025-07-30T15:04:35.047Z] [INFO] Loaded command: zoo
+[2025-07-30T15:04:35.048Z] [INFO] Loaded command: duel
+[2025-07-30T15:04:35.053Z] [INFO] Loaded command: fight
+[2025-07-30T15:04:35.053Z] [INFO] Loaded command: balance
+[2025-07-30T15:04:35.055Z] [INFO] Loaded command: daily
+[2025-07-30T15:04:35.055Z] [INFO] Loaded command: pay
+[2025-07-30T15:04:35.056Z] [INFO] Loaded command: weekly
+[2025-07-30T15:04:35.056Z] [INFO] Loaded command: work
+[2025-07-30T15:04:35.057Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T15:04:35.057Z] [INFO] Loaded command: bite
+[2025-07-30T15:04:35.058Z] [INFO] Loaded command: jail
+[2025-07-30T15:04:35.058Z] [INFO] Loaded command: kill
+[2025-07-30T15:04:35.058Z] [INFO] Loaded command: kiss
+[2025-07-30T15:04:35.059Z] [INFO] Loaded command: pat
+[2025-07-30T15:04:35.059Z] [INFO] Loaded command: punch
+[2025-07-30T15:04:35.060Z] [INFO] Loaded command: slap
+[2025-07-30T15:04:35.060Z] [INFO] Loaded command: spank
+[2025-07-30T15:04:35.061Z] [INFO] Loaded command: coinflip
+[2025-07-30T15:04:35.061Z] [INFO] Loaded command: dice
+[2025-07-30T15:04:35.062Z] [INFO] Loaded command: slots
+[2025-07-30T15:04:35.062Z] [INFO] Loaded command: avatar
+[2025-07-30T15:04:35.063Z] [INFO] Loaded command: help
+[2025-07-30T15:04:35.063Z] [INFO] Loaded command: info
+[2025-07-30T15:04:35.063Z] [INFO] Loaded command: ping
+[2025-07-30T15:04:35.064Z] [INFO] Loaded command: profile
+[2025-07-30T15:04:35.064Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T15:04:35.065Z] [INFO] Loaded event: messageCreate
+[2025-07-30T15:04:35.065Z] [INFO] Loaded event: ready
+[2025-07-30T15:04:35.065Z] [INFO] Successfully loaded 2 events
+[2025-07-30T15:04:35.139Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T15:04:35.140Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T15:04:35.141Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T15:04:36.293Z] [INFO] ✅ Bot login successful!
+[2025-07-30T15:04:36.982Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T15:04:36.982Z] [INFO] Serving 3 guilds
+[2025-07-30T15:04:36.982Z] [INFO] Watching 3 users
+[2025-07-30T15:04:39.868Z] [INFO] gut_. used command: s in Kuromi's server
+[2025-07-30T15:04:47.695Z] [ERROR] Unhandled Rejection:
+Error: Received one or more errors
+Stack: Error: Received one or more errors
+    at _UnionValidator.handle (/home/runner/workspace/node_modules/@sapphire/shapeshift/dist/cjs/index.cjs:1965:23)
+    at _UnionValidator.parse (/home/runner/workspace/node_modules/@sapphire/shapeshift/dist/cjs/index.cjs:972:90)
+    at EmbedBuilder.setColor (/home/runner/workspace/node_modules/@discordjs/builders/dist/index.js:310:20)
+    at EmbedBuilder.setColor (/home/runner/workspace/node_modules/discord.js/src/structures/EmbedBuilder.js:23:18)
+    at Object.execute (/home/runner/workspace/commands/gambling/slots.js:222:18)
+[2025-07-30T15:04:53.832Z] [INFO] thisis_my_username used command: cf in Kuromi's server
+[2025-07-30T15:05:01.928Z] [INFO] thisis_my_username used command: s in Kuromi's server
+[2025-07-30T15:05:22.764Z] [INFO] thisis_my_username used command: s in Kuromi's server
