@@ -57,14 +57,15 @@ process.on('SIGTERM', () => {
 // DISCORD BOT SETUP
 // =================================
 
-// Create Discord client with necessary intents
+// Create Discord client with necessary intents (FIXED - Added reaction intents)
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.DirectMessages
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildMessageReactions  // ← THIS WAS MISSING!
     ]
 });
 
@@ -107,7 +108,7 @@ cron.schedule('0 0 * * 0', () => {
 cron.schedule('0 * * * *', () => {
     const users = database.getAllUsers();
     let expiredCount = 0;
-    
+
     users.forEach(user => {
         if (user.boosters) {
             // Check money booster
@@ -123,7 +124,7 @@ cron.schedule('0 * * * *', () => {
             database.saveUser(user);
         }
     });
-    
+
     if (expiredCount > 0) {
         logger.info(`Expired ${expiredCount} boosters`);
     }
@@ -185,4 +186,13 @@ client.once('ready', () => {
     console.log('='.repeat(50));
     console.log('🎰 Bot is ready to receive commands!');
     console.log('='.repeat(50));
+});
+
+// Add reaction event debugging (you can remove this later)
+client.on('messageReactionAdd', (reaction, user) => {
+    console.log(`🔥 Reaction added: ${reaction.emoji.name} by ${user.username}`);
+});
+
+client.on('messageReactionRemove', (reaction, user) => {
+    console.log(`❌ Reaction removed: ${reaction.emoji.name} by ${user.username}`);
 });

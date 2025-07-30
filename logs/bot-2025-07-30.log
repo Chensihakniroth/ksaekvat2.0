@@ -2748,3 +2748,933 @@ Stack: Error: Received one or more errors
 [2025-07-30T15:04:53.832Z] [INFO] thisis_my_username used command: cf in Kuromi's server
 [2025-07-30T15:05:01.928Z] [INFO] thisis_my_username used command: s in Kuromi's server
 [2025-07-30T15:05:22.764Z] [INFO] thisis_my_username used command: s in Kuromi's server
+[2025-07-30T15:05:43.365Z] [INFO] thisis_my_username used command: s in Kuromi's server
+[2025-07-30T15:05:58.935Z] [INFO] Loaded command: ban
+[2025-07-30T15:05:58.936Z] [INFO] Loaded command: clear
+[2025-07-30T15:05:58.937Z] [INFO] Loaded command: giveitem
+[2025-07-30T15:05:58.937Z] [INFO] Loaded command: givepet
+[2025-07-30T15:05:58.938Z] [INFO] Loaded command: kick
+[2025-07-30T15:05:58.939Z] [INFO] Loaded command: reset
+[2025-07-30T15:05:58.939Z] [INFO] Loaded command: setbal
+[2025-07-30T15:05:58.940Z] [INFO] Loaded command: setlvl
+[2025-07-30T15:05:58.941Z] [INFO] Loaded command: hunt
+[2025-07-30T15:05:58.941Z] [INFO] Loaded command: sell
+[2025-07-30T15:05:58.942Z] [INFO] Loaded command: zoo
+[2025-07-30T15:05:58.943Z] [INFO] Loaded command: duel
+[2025-07-30T15:05:58.948Z] [INFO] Loaded command: fight
+[2025-07-30T15:05:58.948Z] [INFO] Loaded command: balance
+[2025-07-30T15:05:58.949Z] [INFO] Loaded command: daily
+[2025-07-30T15:05:58.950Z] [INFO] Loaded command: pay
+[2025-07-30T15:05:58.951Z] [INFO] Loaded command: weekly
+[2025-07-30T15:05:58.951Z] [INFO] Loaded command: work
+[2025-07-30T15:05:58.952Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T15:05:58.953Z] [INFO] Loaded command: bite
+[2025-07-30T15:05:58.953Z] [INFO] Loaded command: jail
+[2025-07-30T15:05:58.954Z] [INFO] Loaded command: kill
+[2025-07-30T15:05:58.954Z] [INFO] Loaded command: kiss
+[2025-07-30T15:05:58.955Z] [INFO] Loaded command: pat
+[2025-07-30T15:05:58.955Z] [INFO] Loaded command: punch
+[2025-07-30T15:05:58.955Z] [INFO] Loaded command: slap
+[2025-07-30T15:05:58.956Z] [INFO] Loaded command: spank
+[2025-07-30T15:05:58.956Z] [INFO] Loaded command: coinflip
+[2025-07-30T15:05:58.957Z] [INFO] Loaded command: dice
+[2025-07-30T15:05:58.957Z] [INFO] Loaded command: slots
+[2025-07-30T15:05:58.958Z] [INFO] Loaded command: avatar
+[2025-07-30T15:05:58.958Z] [INFO] Loaded command: help
+[2025-07-30T15:05:58.958Z] [INFO] Loaded command: info
+[2025-07-30T15:05:58.959Z] [INFO] Loaded command: ping
+[2025-07-30T15:05:58.959Z] [INFO] Loaded command: profile
+[2025-07-30T15:05:58.959Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T15:05:58.960Z] [INFO] Loaded event: messageCreate
+[2025-07-30T15:05:58.961Z] [INFO] Loaded event: ready
+[2025-07-30T15:05:58.961Z] [INFO] Successfully loaded 2 events
+[2025-07-30T15:05:58.993Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T15:05:58.993Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T15:05:58.993Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T15:06:00.344Z] [INFO] ✅ Bot login successful!
+[2025-07-30T15:06:00.767Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T15:06:00.767Z] [INFO] Serving 3 guilds
+[2025-07-30T15:06:00.767Z] [INFO] Watching 3 users
+[2025-07-30T15:06:05.856Z] [INFO] gut_. used command: s in Kuromi's server
+[2025-07-30T15:06:08.860Z] [INFO] thisis_my_username used command: cf in Kuromi's server
+[2025-07-30T15:06:22.707Z] [INFO] thisis_my_username used command: s in Kuromi's server
+[2025-07-30T15:06:34.713Z] [INFO] thisis_my_username used command: s in Kuromi's server
+[2025-07-30T15:06:46.470Z] [INFO] gut_. used command: work in Kuromi's server
+[2025-07-30T15:06:52.699Z] [INFO] gut_. used command: daily in Kuromi's server
+[2025-07-30T15:06:57.082Z] [INFO] gut_. used command: weekly in Kuromi's server
+[2025-07-30T15:06:59.420Z] [INFO] thisis_my_username used command: work in Kuromi's server
+[2025-07-30T15:07:05.211Z] [INFO] thisis_my_username used command: weekly in Kuromi's server
+[2025-07-30T15:07:12.745Z] [INFO] thisis_my_username used command: s in Kuromi's server
+[2025-07-30T15:07:36.026Z] [INFO] gut_. used command: dice in Kuromi's server
+[2025-07-30T15:07:57.831Z] [INFO] gut_. used command: dice in Kuromi's server
+[2025-07-30T15:08:08.328Z] [INFO] gut_. used command: dice in Kuromi's server
+[2025-07-30T15:08:19.770Z] [INFO] gut_. used command: dice in Kuromi's server
+[2025-07-30T15:08:38.437Z] [INFO] gut_. used command: profile in Kuromi's server
+[2025-07-30T15:08:44.875Z] [INFO] gut_. used command: zoo in Kuromi's server
+[2025-07-30T15:09:00.964Z] [INFO] gut_. used command: help in Kuromi's server
+[2025-07-30T15:09:25.629Z] [INFO] gut_. used command: duel in Kuromi's server
+[2025-07-30T15:09:56.700Z] [INFO] thisis_my_username used command: duel in Kuromi's server
+[2025-07-30T15:11:47.873Z] [INFO] Loaded command: ban
+[2025-07-30T15:11:47.874Z] [INFO] Loaded command: clear
+[2025-07-30T15:11:47.875Z] [INFO] Loaded command: giveitem
+[2025-07-30T15:11:47.875Z] [INFO] Loaded command: givepet
+[2025-07-30T15:11:47.876Z] [INFO] Loaded command: kick
+[2025-07-30T15:11:47.876Z] [INFO] Loaded command: reset
+[2025-07-30T15:11:47.877Z] [INFO] Loaded command: setbal
+[2025-07-30T15:11:47.877Z] [INFO] Loaded command: setlvl
+[2025-07-30T15:11:47.878Z] [INFO] Loaded command: hunt
+[2025-07-30T15:11:47.878Z] [INFO] Loaded command: sell
+[2025-07-30T15:11:47.879Z] [INFO] Loaded command: zoo
+[2025-07-30T15:11:47.879Z] [INFO] Loaded command: duel
+[2025-07-30T15:11:47.881Z] [INFO] Loaded command: fight
+[2025-07-30T15:11:47.882Z] [INFO] Loaded command: balance
+[2025-07-30T15:11:47.882Z] [INFO] Loaded command: daily
+[2025-07-30T15:11:47.882Z] [INFO] Loaded command: pay
+[2025-07-30T15:11:47.883Z] [INFO] Loaded command: weekly
+[2025-07-30T15:11:47.883Z] [INFO] Loaded command: work
+[2025-07-30T15:11:47.884Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T15:11:47.884Z] [INFO] Loaded command: bite
+[2025-07-30T15:11:47.884Z] [INFO] Loaded command: jail
+[2025-07-30T15:11:47.885Z] [INFO] Loaded command: kill
+[2025-07-30T15:11:47.885Z] [INFO] Loaded command: kiss
+[2025-07-30T15:11:47.885Z] [INFO] Loaded command: pat
+[2025-07-30T15:11:47.886Z] [INFO] Loaded command: punch
+[2025-07-30T15:11:47.886Z] [INFO] Loaded command: slap
+[2025-07-30T15:11:47.887Z] [INFO] Loaded command: spank
+[2025-07-30T15:11:47.887Z] [INFO] Loaded command: coinflip
+[2025-07-30T15:11:47.887Z] [INFO] Loaded command: dice
+[2025-07-30T15:11:47.922Z] [INFO] Loaded command: slots
+[2025-07-30T15:11:47.923Z] [INFO] Loaded command: avatar
+[2025-07-30T15:11:47.924Z] [INFO] Loaded command: help
+[2025-07-30T15:11:47.924Z] [INFO] Loaded command: info
+[2025-07-30T15:11:47.925Z] [INFO] Loaded command: ping
+[2025-07-30T15:11:47.925Z] [INFO] Loaded command: profile
+[2025-07-30T15:11:47.926Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T15:11:47.927Z] [INFO] Loaded event: messageCreate
+[2025-07-30T15:11:47.927Z] [INFO] Loaded event: ready
+[2025-07-30T15:11:47.927Z] [INFO] Successfully loaded 2 events
+[2025-07-30T15:11:47.961Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T15:11:47.961Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T15:11:47.961Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T15:11:49.153Z] [INFO] ✅ Bot login successful!
+[2025-07-30T15:11:50.131Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T15:11:50.132Z] [INFO] Serving 3 guilds
+[2025-07-30T15:11:50.133Z] [INFO] Watching 3 users
+[2025-07-30T15:11:59.530Z] [INFO] gut_. used command: duel in Kuromi's server
+[2025-07-30T15:15:30.880Z] [INFO] Loaded command: ban
+[2025-07-30T15:15:30.884Z] [INFO] Loaded command: clear
+[2025-07-30T15:15:30.884Z] [INFO] Loaded command: giveitem
+[2025-07-30T15:15:30.885Z] [INFO] Loaded command: givepet
+[2025-07-30T15:15:30.885Z] [INFO] Loaded command: kick
+[2025-07-30T15:15:30.886Z] [INFO] Loaded command: reset
+[2025-07-30T15:15:30.886Z] [INFO] Loaded command: setbal
+[2025-07-30T15:15:30.887Z] [INFO] Loaded command: setlvl
+[2025-07-30T15:15:30.888Z] [INFO] Loaded command: hunt
+[2025-07-30T15:15:30.888Z] [INFO] Loaded command: sell
+[2025-07-30T15:15:30.889Z] [INFO] Loaded command: zoo
+[2025-07-30T15:15:30.891Z] [INFO] Loaded command: duel
+[2025-07-30T15:15:30.892Z] [INFO] Loaded command: fight
+[2025-07-30T15:15:30.892Z] [INFO] Loaded command: balance
+[2025-07-30T15:15:30.893Z] [INFO] Loaded command: daily
+[2025-07-30T15:15:30.894Z] [INFO] Loaded command: pay
+[2025-07-30T15:15:30.894Z] [INFO] Loaded command: weekly
+[2025-07-30T15:15:30.894Z] [INFO] Loaded command: work
+[2025-07-30T15:15:30.895Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T15:15:30.895Z] [INFO] Loaded command: bite
+[2025-07-30T15:15:30.896Z] [INFO] Loaded command: jail
+[2025-07-30T15:15:30.896Z] [INFO] Loaded command: kill
+[2025-07-30T15:15:30.897Z] [INFO] Loaded command: kiss
+[2025-07-30T15:15:30.897Z] [INFO] Loaded command: pat
+[2025-07-30T15:15:30.897Z] [INFO] Loaded command: punch
+[2025-07-30T15:15:30.898Z] [INFO] Loaded command: slap
+[2025-07-30T15:15:30.925Z] [INFO] Loaded command: spank
+[2025-07-30T15:15:30.926Z] [INFO] Loaded command: coinflip
+[2025-07-30T15:15:30.927Z] [INFO] Loaded command: dice
+[2025-07-30T15:15:30.927Z] [INFO] Loaded command: slots
+[2025-07-30T15:15:30.928Z] [INFO] Loaded command: avatar
+[2025-07-30T15:15:30.929Z] [INFO] Loaded command: help
+[2025-07-30T15:15:30.929Z] [INFO] Loaded command: info
+[2025-07-30T15:15:30.930Z] [INFO] Loaded command: ping
+[2025-07-30T15:15:30.930Z] [INFO] Loaded command: profile
+[2025-07-30T15:15:30.931Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T15:15:30.932Z] [INFO] Loaded event: messageCreate
+[2025-07-30T15:15:30.932Z] [INFO] Loaded event: ready
+[2025-07-30T15:15:30.932Z] [INFO] Successfully loaded 2 events
+[2025-07-30T15:15:30.974Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T15:15:30.974Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T15:15:30.975Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T15:15:32.204Z] [INFO] ✅ Bot login successful!
+[2025-07-30T15:15:33.140Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T15:15:33.140Z] [INFO] Serving 3 guilds
+[2025-07-30T15:15:33.141Z] [INFO] Watching 3 users
+[2025-07-30T15:15:38.525Z] [INFO] gut_. used command: duel in Kuromi's server
+[2025-07-30T15:16:30.886Z] [INFO] Loaded command: ban
+[2025-07-30T15:16:30.887Z] [INFO] Loaded command: clear
+[2025-07-30T15:16:30.888Z] [INFO] Loaded command: giveitem
+[2025-07-30T15:16:30.888Z] [INFO] Loaded command: givepet
+[2025-07-30T15:16:30.889Z] [INFO] Loaded command: kick
+[2025-07-30T15:16:30.889Z] [INFO] Loaded command: reset
+[2025-07-30T15:16:30.890Z] [INFO] Loaded command: setbal
+[2025-07-30T15:16:30.890Z] [INFO] Loaded command: setlvl
+[2025-07-30T15:16:30.891Z] [INFO] Loaded command: hunt
+[2025-07-30T15:16:30.892Z] [INFO] Loaded command: sell
+[2025-07-30T15:16:30.892Z] [INFO] Loaded command: zoo
+[2025-07-30T15:16:30.925Z] [INFO] Loaded command: duel
+[2025-07-30T15:16:30.934Z] [INFO] Loaded command: fight
+[2025-07-30T15:16:30.935Z] [INFO] Loaded command: balance
+[2025-07-30T15:16:30.935Z] [INFO] Loaded command: daily
+[2025-07-30T15:16:30.936Z] [INFO] Loaded command: pay
+[2025-07-30T15:16:30.938Z] [INFO] Loaded command: weekly
+[2025-07-30T15:16:30.938Z] [INFO] Loaded command: work
+[2025-07-30T15:16:30.939Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T15:16:30.940Z] [INFO] Loaded command: bite
+[2025-07-30T15:16:30.941Z] [INFO] Loaded command: jail
+[2025-07-30T15:16:30.941Z] [INFO] Loaded command: kill
+[2025-07-30T15:16:30.942Z] [INFO] Loaded command: kiss
+[2025-07-30T15:16:30.942Z] [INFO] Loaded command: pat
+[2025-07-30T15:16:30.943Z] [INFO] Loaded command: punch
+[2025-07-30T15:16:30.943Z] [INFO] Loaded command: slap
+[2025-07-30T15:16:30.944Z] [INFO] Loaded command: spank
+[2025-07-30T15:16:30.945Z] [INFO] Loaded command: coinflip
+[2025-07-30T15:16:30.945Z] [INFO] Loaded command: dice
+[2025-07-30T15:16:30.946Z] [INFO] Loaded command: slots
+[2025-07-30T15:16:30.947Z] [INFO] Loaded command: avatar
+[2025-07-30T15:16:30.947Z] [INFO] Loaded command: help
+[2025-07-30T15:16:30.948Z] [INFO] Loaded command: info
+[2025-07-30T15:16:30.948Z] [INFO] Loaded command: ping
+[2025-07-30T15:16:30.949Z] [INFO] Loaded command: profile
+[2025-07-30T15:16:30.949Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T15:16:30.951Z] [INFO] Loaded event: messageCreate
+[2025-07-30T15:16:30.952Z] [INFO] Loaded event: ready
+[2025-07-30T15:16:30.952Z] [INFO] Successfully loaded 2 events
+[2025-07-30T15:16:30.992Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T15:16:30.992Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T15:16:30.992Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T15:16:32.213Z] [INFO] ✅ Bot login successful!
+[2025-07-30T15:16:32.563Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T15:16:32.563Z] [INFO] Serving 3 guilds
+[2025-07-30T15:16:32.563Z] [INFO] Watching 3 users
+[2025-07-30T15:16:40.038Z] [INFO] gut_. used command: duel in Kuromi's server
+[2025-07-30T15:17:43.279Z] [INFO] gut_. used command: pvp in Kuromi's server
+[2025-07-30T15:18:09.340Z] [INFO] Loaded command: ban
+[2025-07-30T15:18:09.341Z] [INFO] Loaded command: clear
+[2025-07-30T15:18:09.342Z] [INFO] Loaded command: giveitem
+[2025-07-30T15:18:09.342Z] [INFO] Loaded command: givepet
+[2025-07-30T15:18:09.343Z] [INFO] Loaded command: kick
+[2025-07-30T15:18:09.343Z] [INFO] Loaded command: reset
+[2025-07-30T15:18:09.344Z] [INFO] Loaded command: setbal
+[2025-07-30T15:18:09.345Z] [INFO] Loaded command: setlvl
+[2025-07-30T15:18:09.345Z] [INFO] Loaded command: hunt
+[2025-07-30T15:18:09.346Z] [INFO] Loaded command: sell
+[2025-07-30T15:18:09.347Z] [INFO] Loaded command: zoo
+[2025-07-30T15:18:09.350Z] [INFO] Loaded command: duel
+[2025-07-30T15:18:09.351Z] [INFO] Loaded command: fight
+[2025-07-30T15:18:09.352Z] [INFO] Loaded command: balance
+[2025-07-30T15:18:09.352Z] [INFO] Loaded command: daily
+[2025-07-30T15:18:09.353Z] [INFO] Loaded command: pay
+[2025-07-30T15:18:09.354Z] [INFO] Loaded command: weekly
+[2025-07-30T15:18:09.354Z] [INFO] Loaded command: work
+[2025-07-30T15:18:09.355Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T15:18:09.355Z] [INFO] Loaded command: bite
+[2025-07-30T15:18:09.356Z] [INFO] Loaded command: jail
+[2025-07-30T15:18:09.356Z] [INFO] Loaded command: kill
+[2025-07-30T15:18:09.361Z] [INFO] Loaded command: kiss
+[2025-07-30T15:18:09.362Z] [INFO] Loaded command: pat
+[2025-07-30T15:18:09.363Z] [INFO] Loaded command: punch
+[2025-07-30T15:18:09.363Z] [INFO] Loaded command: slap
+[2025-07-30T15:18:09.364Z] [INFO] Loaded command: spank
+[2025-07-30T15:18:09.365Z] [INFO] Loaded command: coinflip
+[2025-07-30T15:18:09.366Z] [INFO] Loaded command: dice
+[2025-07-30T15:18:09.366Z] [INFO] Loaded command: slots
+[2025-07-30T15:18:09.367Z] [INFO] Loaded command: avatar
+[2025-07-30T15:18:09.367Z] [INFO] Loaded command: help
+[2025-07-30T15:18:09.368Z] [INFO] Loaded command: info
+[2025-07-30T15:18:09.368Z] [INFO] Loaded command: ping
+[2025-07-30T15:18:09.368Z] [INFO] Loaded command: profile
+[2025-07-30T15:18:09.369Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T15:18:09.370Z] [INFO] Loaded event: messageCreate
+[2025-07-30T15:18:09.370Z] [INFO] Loaded event: ready
+[2025-07-30T15:18:09.370Z] [INFO] Successfully loaded 2 events
+[2025-07-30T15:18:09.441Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T15:18:09.441Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T15:18:09.442Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T15:18:11.811Z] [INFO] ✅ Bot login successful!
+[2025-07-30T15:18:12.588Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T15:18:12.588Z] [INFO] Serving 3 guilds
+[2025-07-30T15:18:12.588Z] [INFO] Watching 3 users
+[2025-07-30T15:18:19.395Z] [INFO] gut_. used command: pvp in Kuromi's server
+[2025-07-30T15:18:33.639Z] [INFO] gut_. used command: setbal in Kuromi's server
+[2025-07-30T15:18:47.024Z] [INFO] Loaded command: ban
+[2025-07-30T15:18:47.025Z] [INFO] Loaded command: clear
+[2025-07-30T15:18:47.026Z] [INFO] Loaded command: giveitem
+[2025-07-30T15:18:47.027Z] [INFO] Loaded command: givepet
+[2025-07-30T15:18:47.028Z] [INFO] Loaded command: kick
+[2025-07-30T15:18:47.028Z] [INFO] Loaded command: reset
+[2025-07-30T15:18:47.029Z] [INFO] Loaded command: setbal
+[2025-07-30T15:18:47.030Z] [INFO] Loaded command: setlvl
+[2025-07-30T15:18:47.031Z] [INFO] Loaded command: hunt
+[2025-07-30T15:18:47.033Z] [INFO] Loaded command: sell
+[2025-07-30T15:18:47.035Z] [INFO] Loaded command: zoo
+[2025-07-30T15:18:47.036Z] [INFO] Loaded command: duel
+[2025-07-30T15:18:47.040Z] [INFO] Loaded command: fight
+[2025-07-30T15:18:47.041Z] [INFO] Loaded command: balance
+[2025-07-30T15:18:47.042Z] [INFO] Loaded command: daily
+[2025-07-30T15:18:47.043Z] [INFO] Loaded command: pay
+[2025-07-30T15:18:47.043Z] [INFO] Loaded command: weekly
+[2025-07-30T15:18:47.044Z] [INFO] Loaded command: work
+[2025-07-30T15:18:47.045Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T15:18:47.046Z] [INFO] Loaded command: bite
+[2025-07-30T15:18:47.047Z] [INFO] Loaded command: jail
+[2025-07-30T15:18:47.048Z] [INFO] Loaded command: kill
+[2025-07-30T15:18:47.049Z] [INFO] Loaded command: kiss
+[2025-07-30T15:18:47.050Z] [INFO] Loaded command: pat
+[2025-07-30T15:18:47.050Z] [INFO] Loaded command: punch
+[2025-07-30T15:18:47.051Z] [INFO] Loaded command: slap
+[2025-07-30T15:18:47.051Z] [INFO] Loaded command: spank
+[2025-07-30T15:18:47.052Z] [INFO] Loaded command: coinflip
+[2025-07-30T15:18:47.053Z] [INFO] Loaded command: dice
+[2025-07-30T15:18:47.054Z] [INFO] Loaded command: slots
+[2025-07-30T15:18:47.054Z] [INFO] Loaded command: avatar
+[2025-07-30T15:18:47.055Z] [INFO] Loaded command: help
+[2025-07-30T15:18:47.055Z] [INFO] Loaded command: info
+[2025-07-30T15:18:47.056Z] [INFO] Loaded command: ping
+[2025-07-30T15:18:47.056Z] [INFO] Loaded command: profile
+[2025-07-30T15:18:47.056Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T15:18:47.058Z] [INFO] Loaded event: messageCreate
+[2025-07-30T15:18:47.058Z] [INFO] Loaded event: ready
+[2025-07-30T15:18:47.058Z] [INFO] Successfully loaded 2 events
+[2025-07-30T15:18:47.105Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T15:18:47.105Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T15:18:47.105Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T15:18:48.640Z] [INFO] ✅ Bot login successful!
+[2025-07-30T15:18:49.592Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T15:18:49.592Z] [INFO] Serving 3 guilds
+[2025-07-30T15:18:49.592Z] [INFO] Watching 3 users
+[2025-07-30T15:18:51.856Z] [INFO] gut_. used command: pvp in Kuromi's server
+[2025-07-30T15:23:23.744Z] [INFO] Loaded command: ban
+[2025-07-30T15:23:23.745Z] [INFO] Loaded command: clear
+[2025-07-30T15:23:23.745Z] [INFO] Loaded command: giveitem
+[2025-07-30T15:23:23.746Z] [INFO] Loaded command: givepet
+[2025-07-30T15:23:23.746Z] [INFO] Loaded command: kick
+[2025-07-30T15:23:23.747Z] [INFO] Loaded command: reset
+[2025-07-30T15:23:23.748Z] [INFO] Loaded command: setbal
+[2025-07-30T15:23:23.748Z] [INFO] Loaded command: setlvl
+[2025-07-30T15:23:23.749Z] [INFO] Loaded command: hunt
+[2025-07-30T15:23:23.750Z] [INFO] Loaded command: sell
+[2025-07-30T15:23:23.750Z] [INFO] Loaded command: zoo
+[2025-07-30T15:23:23.754Z] [ERROR] Error loading command at /home/runner/workspace/commands/battle/duel.js:
+Error: await is only valid in async functions and the top level bodies of modules
+Stack: /home/runner/workspace/commands/battle/duel.js:168
+        const sentMessage = await message.reply({ embeds: [inviteEmbed] });
+                            ^^^^^
+
+SyntaxError: await is only valid in async functions and the top level bodies of modules
+    at wrapSafe (node:internal/modules/cjs/loader:1472:18)
+    at Module._compile (node:internal/modules/cjs/loader:1501:20)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at require (node:internal/modules/helpers:182:18)
+    at loadCommands (/home/runner/workspace/handlers/commandHandler.js:20:37)
+    at loadCommands (/home/runner/workspace/handlers/commandHandler.js:17:17)
+    at module.exports (/home/runner/workspace/handlers/commandHandler.js:54:13)
+[2025-07-30T15:23:23.755Z] [INFO] Loaded command: fight
+[2025-07-30T15:23:23.756Z] [INFO] Loaded command: balance
+[2025-07-30T15:23:23.757Z] [INFO] Loaded command: daily
+[2025-07-30T15:23:23.758Z] [INFO] Loaded command: pay
+[2025-07-30T15:23:23.758Z] [INFO] Loaded command: weekly
+[2025-07-30T15:23:23.759Z] [INFO] Loaded command: work
+[2025-07-30T15:23:23.759Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T15:23:23.760Z] [INFO] Loaded command: bite
+[2025-07-30T15:23:23.761Z] [INFO] Loaded command: jail
+[2025-07-30T15:23:23.761Z] [INFO] Loaded command: kill
+[2025-07-30T15:23:23.762Z] [INFO] Loaded command: kiss
+[2025-07-30T15:23:23.762Z] [INFO] Loaded command: pat
+[2025-07-30T15:23:23.763Z] [INFO] Loaded command: punch
+[2025-07-30T15:23:23.763Z] [INFO] Loaded command: slap
+[2025-07-30T15:23:23.764Z] [INFO] Loaded command: spank
+[2025-07-30T15:23:23.765Z] [INFO] Loaded command: coinflip
+[2025-07-30T15:23:23.765Z] [INFO] Loaded command: dice
+[2025-07-30T15:23:23.766Z] [INFO] Loaded command: slots
+[2025-07-30T15:23:23.767Z] [INFO] Loaded command: avatar
+[2025-07-30T15:23:23.767Z] [INFO] Loaded command: help
+[2025-07-30T15:23:23.768Z] [INFO] Loaded command: info
+[2025-07-30T15:23:23.768Z] [INFO] Loaded command: ping
+[2025-07-30T15:23:23.769Z] [INFO] Loaded command: profile
+[2025-07-30T15:23:23.769Z] [INFO] Successfully loaded 89 commands
+[2025-07-30T15:23:23.770Z] [INFO] Loaded event: messageCreate
+[2025-07-30T15:23:23.771Z] [INFO] Loaded event: ready
+[2025-07-30T15:23:23.771Z] [INFO] Successfully loaded 2 events
+[2025-07-30T15:23:23.865Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T15:23:23.865Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T15:23:23.865Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T15:23:25.055Z] [INFO] ✅ Bot login successful!
+[2025-07-30T15:23:25.787Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T15:23:25.787Z] [INFO] Serving 3 guilds
+[2025-07-30T15:23:25.787Z] [INFO] Watching 3 users
+[2025-07-30T15:23:30.050Z] [INFO] Loaded command: ban
+[2025-07-30T15:23:30.051Z] [INFO] Loaded command: clear
+[2025-07-30T15:23:30.052Z] [INFO] Loaded command: giveitem
+[2025-07-30T15:23:30.052Z] [INFO] Loaded command: givepet
+[2025-07-30T15:23:30.053Z] [INFO] Loaded command: kick
+[2025-07-30T15:23:30.053Z] [INFO] Loaded command: reset
+[2025-07-30T15:23:30.054Z] [INFO] Loaded command: setbal
+[2025-07-30T15:23:30.055Z] [INFO] Loaded command: setlvl
+[2025-07-30T15:23:30.055Z] [INFO] Loaded command: hunt
+[2025-07-30T15:23:30.056Z] [INFO] Loaded command: sell
+[2025-07-30T15:23:30.056Z] [INFO] Loaded command: zoo
+[2025-07-30T15:23:30.070Z] [ERROR] Error loading command at /home/runner/workspace/commands/battle/duel.js:
+Error: await is only valid in async functions and the top level bodies of modules
+Stack: /home/runner/workspace/commands/battle/duel.js:168
+        const sentMessage = await message.reply({ embeds: [inviteEmbed] });
+                            ^^^^^
+
+SyntaxError: await is only valid in async functions and the top level bodies of modules
+    at wrapSafe (node:internal/modules/cjs/loader:1472:18)
+    at Module._compile (node:internal/modules/cjs/loader:1501:20)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at require (node:internal/modules/helpers:182:18)
+    at loadCommands (/home/runner/workspace/handlers/commandHandler.js:20:37)
+    at loadCommands (/home/runner/workspace/handlers/commandHandler.js:17:17)
+    at module.exports (/home/runner/workspace/handlers/commandHandler.js:54:13)
+[2025-07-30T15:23:30.071Z] [INFO] Loaded command: fight
+[2025-07-30T15:23:30.071Z] [INFO] Loaded command: balance
+[2025-07-30T15:23:30.072Z] [INFO] Loaded command: daily
+[2025-07-30T15:23:30.073Z] [INFO] Loaded command: pay
+[2025-07-30T15:23:30.073Z] [INFO] Loaded command: weekly
+[2025-07-30T15:23:30.074Z] [INFO] Loaded command: work
+[2025-07-30T15:23:30.074Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T15:23:30.075Z] [INFO] Loaded command: bite
+[2025-07-30T15:23:30.075Z] [INFO] Loaded command: jail
+[2025-07-30T15:23:30.076Z] [INFO] Loaded command: kill
+[2025-07-30T15:23:30.077Z] [INFO] Loaded command: kiss
+[2025-07-30T15:23:30.077Z] [INFO] Loaded command: pat
+[2025-07-30T15:23:30.078Z] [INFO] Loaded command: punch
+[2025-07-30T15:23:30.078Z] [INFO] Loaded command: slap
+[2025-07-30T15:23:30.079Z] [INFO] Loaded command: spank
+[2025-07-30T15:23:30.079Z] [INFO] Loaded command: coinflip
+[2025-07-30T15:23:30.080Z] [INFO] Loaded command: dice
+[2025-07-30T15:23:30.081Z] [INFO] Loaded command: slots
+[2025-07-30T15:23:30.081Z] [INFO] Loaded command: avatar
+[2025-07-30T15:23:30.082Z] [INFO] Loaded command: help
+[2025-07-30T15:23:30.082Z] [INFO] Loaded command: info
+[2025-07-30T15:23:30.083Z] [INFO] Loaded command: ping
+[2025-07-30T15:23:30.083Z] [INFO] Loaded command: profile
+[2025-07-30T15:23:30.084Z] [INFO] Successfully loaded 89 commands
+[2025-07-30T15:23:30.122Z] [INFO] Loaded event: messageCreate
+[2025-07-30T15:23:30.122Z] [INFO] Loaded event: ready
+[2025-07-30T15:23:30.123Z] [INFO] Successfully loaded 2 events
+[2025-07-30T15:23:30.172Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T15:23:30.172Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T15:23:30.173Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T15:23:31.418Z] [INFO] ✅ Bot login successful!
+[2025-07-30T15:23:31.786Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T15:23:31.786Z] [INFO] Serving 3 guilds
+[2025-07-30T15:23:31.786Z] [INFO] Watching 3 users
+[2025-07-30T15:24:07.382Z] [INFO] Loaded command: ban
+[2025-07-30T15:24:07.383Z] [INFO] Loaded command: clear
+[2025-07-30T15:24:07.384Z] [INFO] Loaded command: giveitem
+[2025-07-30T15:24:07.384Z] [INFO] Loaded command: givepet
+[2025-07-30T15:24:07.385Z] [INFO] Loaded command: kick
+[2025-07-30T15:24:07.385Z] [INFO] Loaded command: reset
+[2025-07-30T15:24:07.386Z] [INFO] Loaded command: setbal
+[2025-07-30T15:24:07.387Z] [INFO] Loaded command: setlvl
+[2025-07-30T15:24:07.387Z] [INFO] Loaded command: hunt
+[2025-07-30T15:24:07.427Z] [INFO] Loaded command: sell
+[2025-07-30T15:24:07.427Z] [INFO] Loaded command: zoo
+[2025-07-30T15:24:07.431Z] [INFO] Loaded command: duel
+[2025-07-30T15:24:07.432Z] [INFO] Loaded command: fight
+[2025-07-30T15:24:07.432Z] [INFO] Loaded command: balance
+[2025-07-30T15:24:07.433Z] [INFO] Loaded command: daily
+[2025-07-30T15:24:07.434Z] [INFO] Loaded command: pay
+[2025-07-30T15:24:07.434Z] [INFO] Loaded command: weekly
+[2025-07-30T15:24:07.435Z] [INFO] Loaded command: work
+[2025-07-30T15:24:07.435Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T15:24:07.436Z] [INFO] Loaded command: bite
+[2025-07-30T15:24:07.437Z] [INFO] Loaded command: jail
+[2025-07-30T15:24:07.437Z] [INFO] Loaded command: kill
+[2025-07-30T15:24:07.438Z] [INFO] Loaded command: kiss
+[2025-07-30T15:24:07.438Z] [INFO] Loaded command: pat
+[2025-07-30T15:24:07.439Z] [INFO] Loaded command: punch
+[2025-07-30T15:24:07.439Z] [INFO] Loaded command: slap
+[2025-07-30T15:24:07.440Z] [INFO] Loaded command: spank
+[2025-07-30T15:24:07.441Z] [INFO] Loaded command: coinflip
+[2025-07-30T15:24:07.441Z] [INFO] Loaded command: dice
+[2025-07-30T15:24:07.442Z] [INFO] Loaded command: slots
+[2025-07-30T15:24:07.443Z] [INFO] Loaded command: avatar
+[2025-07-30T15:24:07.443Z] [INFO] Loaded command: help
+[2025-07-30T15:24:07.444Z] [INFO] Loaded command: info
+[2025-07-30T15:24:07.444Z] [INFO] Loaded command: ping
+[2025-07-30T15:24:07.445Z] [INFO] Loaded command: profile
+[2025-07-30T15:24:07.445Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T15:24:07.446Z] [INFO] Loaded event: messageCreate
+[2025-07-30T15:24:07.452Z] [INFO] Loaded event: ready
+[2025-07-30T15:24:07.452Z] [INFO] Successfully loaded 2 events
+[2025-07-30T15:24:07.485Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T15:24:07.485Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T15:24:07.486Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T15:24:08.757Z] [INFO] ✅ Bot login successful!
+[2025-07-30T15:24:09.101Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T15:24:09.101Z] [INFO] Serving 3 guilds
+[2025-07-30T15:24:09.102Z] [INFO] Watching 3 users
+[2025-07-30T15:24:21.116Z] [INFO] gut_. used command: s in Kuromi's server
+[2025-07-30T15:24:38.529Z] [INFO] gut_. used command: s in Kuromi's server
+[2025-07-30T15:25:46.477Z] [INFO] gut_. used command: duel in Kuromi's server
+[2025-07-30T15:27:09.153Z] [INFO] gut_. used command: duel in Kuromi's server
+[2025-07-30T15:32:14.546Z] [INFO] Loaded command: ban
+[2025-07-30T15:32:14.547Z] [INFO] Loaded command: clear
+[2025-07-30T15:32:14.547Z] [INFO] Loaded command: giveitem
+[2025-07-30T15:32:14.548Z] [INFO] Loaded command: givepet
+[2025-07-30T15:32:14.548Z] [INFO] Loaded command: kick
+[2025-07-30T15:32:14.549Z] [INFO] Loaded command: reset
+[2025-07-30T15:32:14.550Z] [INFO] Loaded command: setbal
+[2025-07-30T15:32:14.551Z] [INFO] Loaded command: setlvl
+[2025-07-30T15:32:14.552Z] [INFO] Loaded command: hunt
+[2025-07-30T15:32:14.553Z] [INFO] Loaded command: sell
+[2025-07-30T15:32:14.554Z] [INFO] Loaded command: zoo
+[2025-07-30T15:32:14.558Z] [INFO] Loaded command: duel
+[2025-07-30T15:32:14.559Z] [INFO] Loaded command: fight
+[2025-07-30T15:32:14.559Z] [INFO] Loaded command: balance
+[2025-07-30T15:32:14.560Z] [INFO] Loaded command: daily
+[2025-07-30T15:32:14.560Z] [INFO] Loaded command: pay
+[2025-07-30T15:32:14.561Z] [INFO] Loaded command: weekly
+[2025-07-30T15:32:14.561Z] [INFO] Loaded command: work
+[2025-07-30T15:32:14.562Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T15:32:14.562Z] [INFO] Loaded command: bite
+[2025-07-30T15:32:14.563Z] [INFO] Loaded command: jail
+[2025-07-30T15:32:14.563Z] [INFO] Loaded command: kill
+[2025-07-30T15:32:14.564Z] [INFO] Loaded command: kiss
+[2025-07-30T15:32:14.564Z] [INFO] Loaded command: pat
+[2025-07-30T15:32:14.564Z] [INFO] Loaded command: punch
+[2025-07-30T15:32:14.565Z] [INFO] Loaded command: slap
+[2025-07-30T15:32:14.565Z] [INFO] Loaded command: spank
+[2025-07-30T15:32:14.566Z] [INFO] Loaded command: coinflip
+[2025-07-30T15:32:14.566Z] [INFO] Loaded command: dice
+[2025-07-30T15:32:14.567Z] [INFO] Loaded command: slots
+[2025-07-30T15:32:14.567Z] [INFO] Loaded command: avatar
+[2025-07-30T15:32:14.568Z] [INFO] Loaded command: help
+[2025-07-30T15:32:14.568Z] [INFO] Loaded command: info
+[2025-07-30T15:32:14.569Z] [INFO] Loaded command: ping
+[2025-07-30T15:32:14.569Z] [INFO] Loaded command: profile
+[2025-07-30T15:32:14.569Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T15:32:14.570Z] [INFO] Loaded event: messageCreate
+[2025-07-30T15:32:14.571Z] [INFO] Loaded event: ready
+[2025-07-30T15:32:14.571Z] [INFO] Successfully loaded 2 events
+[2025-07-30T15:32:14.659Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T15:32:14.659Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T15:32:14.660Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T15:32:15.860Z] [INFO] ✅ Bot login successful!
+[2025-07-30T15:32:16.201Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T15:32:16.202Z] [INFO] Serving 3 guilds
+[2025-07-30T15:32:16.202Z] [INFO] Watching 3 users
+[2025-07-30T15:32:44.686Z] [INFO] gut_. used command: duel in Kuromi's server
+[2025-07-30T15:35:52.214Z] [INFO] gut_. used command: duel in Kuromi's server
+[2025-07-30T15:36:30.847Z] [INFO] potatohuzz used command: fight in Kuromi's server
+[2025-07-30T15:36:55.159Z] [INFO] gut_. used command: duel in Kuromi's server
+[2025-07-30T15:36:58.257Z] [INFO] gut_. used command: fight in Kuromi's server
+[2025-07-30T15:37:38.924Z] [INFO] gut_. used command: fight in Kuromi's server
+[2025-07-30T15:39:43.655Z] [INFO] gut_. used command: fight in Kuromi's server
+[2025-07-30T15:40:05.717Z] [INFO] gut_. used command: fight in Kuromi's server
+[2025-07-30T18:45:47.698Z] [INFO] gut_. used command: help in dezz's server
+[2025-07-30T18:45:58.546Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T18:47:24.082Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T18:47:36.164Z] [INFO] gut_. used command: kiss in dezz's server
+[2025-07-30T18:47:43.915Z] [INFO] gut_. used command: atwerk in dezz's server
+[2025-07-30T18:48:02.845Z] [INFO] gut_. used command: hunt in dezz's server
+[2025-07-30T18:48:10.347Z] [INFO] gut_. used command: zoo in dezz's server
+[2025-07-30T18:48:17.713Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T18:49:29.281Z] [INFO] Loaded command: ban
+[2025-07-30T18:49:29.282Z] [INFO] Loaded command: clear
+[2025-07-30T18:49:29.282Z] [INFO] Loaded command: giveitem
+[2025-07-30T18:49:29.283Z] [INFO] Loaded command: givepet
+[2025-07-30T18:49:29.283Z] [INFO] Loaded command: kick
+[2025-07-30T18:49:29.284Z] [INFO] Loaded command: reset
+[2025-07-30T18:49:29.284Z] [INFO] Loaded command: setbal
+[2025-07-30T18:49:29.322Z] [INFO] Loaded command: setlvl
+[2025-07-30T18:49:29.323Z] [INFO] Loaded command: hunt
+[2025-07-30T18:49:29.324Z] [INFO] Loaded command: sell
+[2025-07-30T18:49:29.324Z] [INFO] Loaded command: zoo
+[2025-07-30T18:49:29.329Z] [INFO] Loaded command: duel
+[2025-07-30T18:49:29.329Z] [INFO] Loaded command: fight
+[2025-07-30T18:49:29.330Z] [WARN] Command at /home/runner/workspace/commands/battle/item.js is missing a name property
+[2025-07-30T18:49:29.330Z] [WARN] Command at /home/runner/workspace/commands/battle/player.js is missing a name property
+[2025-07-30T18:49:29.331Z] [INFO] Loaded command: balance
+[2025-07-30T18:49:29.331Z] [INFO] Loaded command: daily
+[2025-07-30T18:49:29.332Z] [INFO] Loaded command: pay
+[2025-07-30T18:49:29.332Z] [INFO] Loaded command: weekly
+[2025-07-30T18:49:29.333Z] [INFO] Loaded command: work
+[2025-07-30T18:49:29.333Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T18:49:29.334Z] [INFO] Loaded command: bite
+[2025-07-30T18:49:29.335Z] [INFO] Loaded command: jail
+[2025-07-30T18:49:29.335Z] [INFO] Loaded command: kill
+[2025-07-30T18:49:29.336Z] [INFO] Loaded command: kiss
+[2025-07-30T18:49:29.336Z] [INFO] Loaded command: pat
+[2025-07-30T18:49:29.337Z] [INFO] Loaded command: punch
+[2025-07-30T18:49:29.337Z] [INFO] Loaded command: slap
+[2025-07-30T18:49:29.338Z] [INFO] Loaded command: spank
+[2025-07-30T18:49:29.338Z] [INFO] Loaded command: coinflip
+[2025-07-30T18:49:29.339Z] [INFO] Loaded command: dice
+[2025-07-30T18:49:29.339Z] [INFO] Loaded command: slots
+[2025-07-30T18:49:29.340Z] [INFO] Loaded command: avatar
+[2025-07-30T18:49:29.341Z] [INFO] Loaded command: help
+[2025-07-30T18:49:29.341Z] [INFO] Loaded command: info
+[2025-07-30T18:49:29.342Z] [INFO] Loaded command: ping
+[2025-07-30T18:49:29.342Z] [INFO] Loaded command: profile
+[2025-07-30T18:49:29.342Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T18:49:29.344Z] [INFO] Loaded event: messageCreate
+[2025-07-30T18:49:29.344Z] [INFO] Loaded event: ready
+[2025-07-30T18:49:29.344Z] [INFO] Successfully loaded 2 events
+[2025-07-30T18:49:29.387Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T18:49:29.388Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T18:49:29.388Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T18:49:30.552Z] [INFO] ✅ Bot login successful!
+[2025-07-30T18:49:30.855Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T18:49:30.855Z] [INFO] Serving 3 guilds
+[2025-07-30T18:49:30.855Z] [INFO] Watching 1 users
+[2025-07-30T18:49:37.010Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T18:49:49.062Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T18:50:11.733Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T18:55:41.036Z] [INFO] Loaded command: ban
+[2025-07-30T18:55:41.037Z] [INFO] Loaded command: clear
+[2025-07-30T18:55:41.038Z] [INFO] Loaded command: giveitem
+[2025-07-30T18:55:41.039Z] [INFO] Loaded command: givepet
+[2025-07-30T18:55:41.039Z] [INFO] Loaded command: kick
+[2025-07-30T18:55:41.040Z] [INFO] Loaded command: reset
+[2025-07-30T18:55:41.041Z] [INFO] Loaded command: setbal
+[2025-07-30T18:55:41.041Z] [INFO] Loaded command: setlvl
+[2025-07-30T18:55:41.042Z] [INFO] Loaded command: hunt
+[2025-07-30T18:55:41.043Z] [INFO] Loaded command: sell
+[2025-07-30T18:55:41.044Z] [INFO] Loaded command: zoo
+[2025-07-30T18:55:41.047Z] [INFO] Loaded command: duel
+[2025-07-30T18:55:41.048Z] [INFO] Loaded command: fight
+[2025-07-30T18:55:41.048Z] [WARN] Command at /home/runner/workspace/commands/battle/item.js is missing a name property
+[2025-07-30T18:55:41.049Z] [WARN] Command at /home/runner/workspace/commands/battle/player.js is missing a name property
+[2025-07-30T18:55:41.050Z] [INFO] Loaded command: balance
+[2025-07-30T18:55:41.050Z] [INFO] Loaded command: daily
+[2025-07-30T18:55:41.051Z] [INFO] Loaded command: pay
+[2025-07-30T18:55:41.051Z] [INFO] Loaded command: weekly
+[2025-07-30T18:55:41.052Z] [INFO] Loaded command: work
+[2025-07-30T18:55:41.057Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T18:55:41.058Z] [INFO] Loaded command: bite
+[2025-07-30T18:55:41.059Z] [INFO] Loaded command: jail
+[2025-07-30T18:55:41.059Z] [INFO] Loaded command: kill
+[2025-07-30T18:55:41.060Z] [INFO] Loaded command: kiss
+[2025-07-30T18:55:41.061Z] [INFO] Loaded command: pat
+[2025-07-30T18:55:41.061Z] [INFO] Loaded command: punch
+[2025-07-30T18:55:41.062Z] [INFO] Loaded command: slap
+[2025-07-30T18:55:41.066Z] [INFO] Loaded command: spank
+[2025-07-30T18:55:41.067Z] [INFO] Loaded command: coinflip
+[2025-07-30T18:55:41.069Z] [INFO] Loaded command: dice
+[2025-07-30T18:55:41.069Z] [INFO] Loaded command: slots
+[2025-07-30T18:55:41.070Z] [INFO] Loaded command: avatar
+[2025-07-30T18:55:41.071Z] [INFO] Loaded command: help
+[2025-07-30T18:55:41.071Z] [INFO] Loaded command: info
+[2025-07-30T18:55:41.072Z] [INFO] Loaded command: ping
+[2025-07-30T18:55:41.073Z] [INFO] Loaded command: profile
+[2025-07-30T18:55:41.073Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T18:55:41.074Z] [INFO] Loaded event: messageCreate
+[2025-07-30T18:55:41.123Z] [INFO] Loaded event: ready
+[2025-07-30T18:55:41.123Z] [INFO] Successfully loaded 2 events
+[2025-07-30T18:55:41.172Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T18:55:41.173Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T18:55:41.173Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T18:55:42.407Z] [INFO] ✅ Bot login successful!
+[2025-07-30T18:55:43.051Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T18:55:43.051Z] [INFO] Serving 3 guilds
+[2025-07-30T18:55:43.051Z] [INFO] Watching 1 users
+[2025-07-30T18:55:50.256Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T18:56:19.635Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T18:56:30.446Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T18:56:43.080Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T19:00:46.985Z] [INFO] Loaded command: ban
+[2025-07-30T19:00:46.987Z] [INFO] Loaded command: clear
+[2025-07-30T19:00:46.988Z] [INFO] Loaded command: giveitem
+[2025-07-30T19:00:46.989Z] [INFO] Loaded command: givepet
+[2025-07-30T19:00:46.989Z] [INFO] Loaded command: kick
+[2025-07-30T19:00:47.022Z] [INFO] Loaded command: reset
+[2025-07-30T19:00:47.023Z] [INFO] Loaded command: setbal
+[2025-07-30T19:00:47.024Z] [INFO] Loaded command: setlvl
+[2025-07-30T19:00:47.024Z] [INFO] Loaded command: hunt
+[2025-07-30T19:00:47.025Z] [INFO] Loaded command: sell
+[2025-07-30T19:00:47.025Z] [INFO] Loaded command: zoo
+[2025-07-30T19:00:47.029Z] [INFO] Loaded command: duel
+[2025-07-30T19:00:47.029Z] [INFO] Loaded command: fight
+[2025-07-30T19:00:47.030Z] [WARN] Command at /home/runner/workspace/commands/battle/item.js is missing a name property
+[2025-07-30T19:00:47.030Z] [WARN] Command at /home/runner/workspace/commands/battle/player.js is missing a name property
+[2025-07-30T19:00:47.032Z] [INFO] Loaded command: balance
+[2025-07-30T19:00:47.033Z] [INFO] Loaded command: daily
+[2025-07-30T19:00:47.033Z] [INFO] Loaded command: pay
+[2025-07-30T19:00:47.034Z] [INFO] Loaded command: weekly
+[2025-07-30T19:00:47.034Z] [INFO] Loaded command: work
+[2025-07-30T19:00:47.035Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T19:00:47.035Z] [INFO] Loaded command: bite
+[2025-07-30T19:00:47.036Z] [INFO] Loaded command: jail
+[2025-07-30T19:00:47.036Z] [INFO] Loaded command: kill
+[2025-07-30T19:00:47.037Z] [INFO] Loaded command: kiss
+[2025-07-30T19:00:47.038Z] [INFO] Loaded command: pat
+[2025-07-30T19:00:47.038Z] [INFO] Loaded command: punch
+[2025-07-30T19:00:47.039Z] [INFO] Loaded command: slap
+[2025-07-30T19:00:47.039Z] [INFO] Loaded command: spank
+[2025-07-30T19:00:47.040Z] [INFO] Loaded command: coinflip
+[2025-07-30T19:00:47.041Z] [INFO] Loaded command: dice
+[2025-07-30T19:00:47.042Z] [INFO] Loaded command: slots
+[2025-07-30T19:00:47.043Z] [INFO] Loaded command: avatar
+[2025-07-30T19:00:47.043Z] [INFO] Loaded command: help
+[2025-07-30T19:00:47.044Z] [INFO] Loaded command: info
+[2025-07-30T19:00:47.044Z] [INFO] Loaded command: ping
+[2025-07-30T19:00:47.045Z] [INFO] Loaded command: profile
+[2025-07-30T19:00:47.045Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T19:00:47.046Z] [INFO] Loaded event: messageCreate
+[2025-07-30T19:00:47.046Z] [INFO] Loaded event: ready
+[2025-07-30T19:00:47.047Z] [INFO] Successfully loaded 2 events
+[2025-07-30T19:00:47.087Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T19:00:47.087Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T19:00:47.088Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T19:00:48.262Z] [INFO] ✅ Bot login successful!
+[2025-07-30T19:00:49.056Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T19:00:49.057Z] [INFO] Serving 3 guilds
+[2025-07-30T19:00:49.057Z] [INFO] Watching 1 users
+[2025-07-30T19:00:52.773Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T19:01:06.068Z] [INFO] gut_. used command: fight in dezz's server
+[2025-07-30T19:01:13.890Z] [ERROR] Unhandled Rejection:
+Error: Cannot access 'rewardAmount' before initialization
+Stack: ReferenceError: Cannot access 'rewardAmount' before initialization
+    at startPvEBattle (/home/runner/workspace/commands/battle/fight.js:309:49)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /home/runner/workspace/commands/battle/fight.js:161:13
+[2025-07-30T19:06:23.838Z] [INFO] Loaded command: ban
+[2025-07-30T19:06:23.838Z] [INFO] Loaded command: clear
+[2025-07-30T19:06:23.839Z] [INFO] Loaded command: giveitem
+[2025-07-30T19:06:23.840Z] [INFO] Loaded command: givepet
+[2025-07-30T19:06:23.840Z] [INFO] Loaded command: kick
+[2025-07-30T19:06:23.841Z] [INFO] Loaded command: reset
+[2025-07-30T19:06:23.841Z] [INFO] Loaded command: setbal
+[2025-07-30T19:06:23.842Z] [INFO] Loaded command: setlvl
+[2025-07-30T19:06:23.842Z] [INFO] Loaded command: hunt
+[2025-07-30T19:06:23.843Z] [INFO] Loaded command: sell
+[2025-07-30T19:06:23.844Z] [INFO] Loaded command: zoo
+[2025-07-30T19:06:23.844Z] [INFO] Loaded command: duel
+[2025-07-30T19:06:23.847Z] [ERROR] Error loading command at /home/runner/workspace/commands/battle/fight.js:
+Error: Cannot find module '../../path/to/item.js'
+Require stack:
+- /home/runner/workspace/commands/battle/fight.js
+- /home/runner/workspace/handlers/commandHandler.js
+- /home/runner/workspace/index.js
+Stack: Error: Cannot find module '../../path/to/item.js'
+Require stack:
+- /home/runner/workspace/commands/battle/fight.js
+- /home/runner/workspace/handlers/commandHandler.js
+- /home/runner/workspace/index.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1212:15)
+    at Module._load (node:internal/modules/cjs/loader:1043:27)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/home/runner/workspace/commands/battle/fight.js:5:32)
+    at Module._compile (node:internal/modules/cjs/loader:1529:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+[2025-07-30T19:06:23.848Z] [WARN] Command at /home/runner/workspace/commands/battle/item.js is missing a name property
+[2025-07-30T19:06:23.848Z] [WARN] Command at /home/runner/workspace/commands/battle/player.js is missing a name property
+[2025-07-30T19:06:23.849Z] [INFO] Loaded command: balance
+[2025-07-30T19:06:23.849Z] [INFO] Loaded command: daily
+[2025-07-30T19:06:23.850Z] [INFO] Loaded command: pay
+[2025-07-30T19:06:23.850Z] [INFO] Loaded command: weekly
+[2025-07-30T19:06:23.851Z] [INFO] Loaded command: work
+[2025-07-30T19:06:23.852Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T19:06:23.853Z] [INFO] Loaded command: bite
+[2025-07-30T19:06:23.853Z] [INFO] Loaded command: jail
+[2025-07-30T19:06:23.854Z] [INFO] Loaded command: kill
+[2025-07-30T19:06:23.854Z] [INFO] Loaded command: kiss
+[2025-07-30T19:06:23.855Z] [INFO] Loaded command: pat
+[2025-07-30T19:06:23.855Z] [INFO] Loaded command: punch
+[2025-07-30T19:06:23.856Z] [INFO] Loaded command: slap
+[2025-07-30T19:06:23.856Z] [INFO] Loaded command: spank
+[2025-07-30T19:06:23.857Z] [INFO] Loaded command: coinflip
+[2025-07-30T19:06:23.857Z] [INFO] Loaded command: dice
+[2025-07-30T19:06:23.859Z] [INFO] Loaded command: slots
+[2025-07-30T19:06:23.860Z] [INFO] Loaded command: avatar
+[2025-07-30T19:06:23.861Z] [INFO] Loaded command: help
+[2025-07-30T19:06:23.861Z] [INFO] Loaded command: info
+[2025-07-30T19:06:23.861Z] [INFO] Loaded command: ping
+[2025-07-30T19:06:23.862Z] [INFO] Loaded command: profile
+[2025-07-30T19:06:23.862Z] [INFO] Successfully loaded 89 commands
+[2025-07-30T19:06:23.864Z] [INFO] Loaded event: messageCreate
+[2025-07-30T19:06:23.864Z] [INFO] Loaded event: ready
+[2025-07-30T19:06:23.864Z] [INFO] Successfully loaded 2 events
+[2025-07-30T19:06:23.932Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T19:06:23.932Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T19:06:23.932Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T19:06:25.121Z] [INFO] ✅ Bot login successful!
+[2025-07-30T19:06:25.819Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T19:06:25.819Z] [INFO] Serving 3 guilds
+[2025-07-30T19:06:25.819Z] [INFO] Watching 1 users
+[2025-07-30T19:08:27.332Z] [INFO] Loaded command: ban
+[2025-07-30T19:08:27.333Z] [INFO] Loaded command: clear
+[2025-07-30T19:08:27.334Z] [INFO] Loaded command: giveitem
+[2025-07-30T19:08:27.335Z] [INFO] Loaded command: givepet
+[2025-07-30T19:08:27.335Z] [INFO] Loaded command: kick
+[2025-07-30T19:08:27.336Z] [INFO] Loaded command: reset
+[2025-07-30T19:08:27.336Z] [INFO] Loaded command: setbal
+[2025-07-30T19:08:27.337Z] [INFO] Loaded command: setlvl
+[2025-07-30T19:08:27.338Z] [INFO] Loaded command: hunt
+[2025-07-30T19:08:27.339Z] [INFO] Loaded command: sell
+[2025-07-30T19:08:27.339Z] [INFO] Loaded command: zoo
+[2025-07-30T19:08:27.340Z] [INFO] Loaded command: duel
+[2025-07-30T19:08:27.344Z] [ERROR] Error loading command at /home/runner/workspace/commands/battle/fight.js:
+Error: Cannot find module '../../battle/item.js'
+Require stack:
+- /home/runner/workspace/commands/battle/fight.js
+- /home/runner/workspace/handlers/commandHandler.js
+- /home/runner/workspace/index.js
+Stack: Error: Cannot find module '../../battle/item.js'
+Require stack:
+- /home/runner/workspace/commands/battle/fight.js
+- /home/runner/workspace/handlers/commandHandler.js
+- /home/runner/workspace/index.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1212:15)
+    at Module._load (node:internal/modules/cjs/loader:1043:27)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/home/runner/workspace/commands/battle/fight.js:5:32)
+    at Module._compile (node:internal/modules/cjs/loader:1529:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+[2025-07-30T19:08:27.344Z] [WARN] Command at /home/runner/workspace/commands/battle/item.js is missing a name property
+[2025-07-30T19:08:27.345Z] [WARN] Command at /home/runner/workspace/commands/battle/player.js is missing a name property
+[2025-07-30T19:08:27.345Z] [INFO] Loaded command: balance
+[2025-07-30T19:08:27.346Z] [INFO] Loaded command: daily
+[2025-07-30T19:08:27.346Z] [INFO] Loaded command: pay
+[2025-07-30T19:08:27.347Z] [INFO] Loaded command: weekly
+[2025-07-30T19:08:27.348Z] [INFO] Loaded command: work
+[2025-07-30T19:08:27.348Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T19:08:27.349Z] [INFO] Loaded command: bite
+[2025-07-30T19:08:27.350Z] [INFO] Loaded command: jail
+[2025-07-30T19:08:27.350Z] [INFO] Loaded command: kill
+[2025-07-30T19:08:27.351Z] [INFO] Loaded command: kiss
+[2025-07-30T19:08:27.351Z] [INFO] Loaded command: pat
+[2025-07-30T19:08:27.352Z] [INFO] Loaded command: punch
+[2025-07-30T19:08:27.353Z] [INFO] Loaded command: slap
+[2025-07-30T19:08:27.353Z] [INFO] Loaded command: spank
+[2025-07-30T19:08:27.354Z] [INFO] Loaded command: coinflip
+[2025-07-30T19:08:27.354Z] [INFO] Loaded command: dice
+[2025-07-30T19:08:27.355Z] [INFO] Loaded command: slots
+[2025-07-30T19:08:27.356Z] [INFO] Loaded command: avatar
+[2025-07-30T19:08:27.356Z] [INFO] Loaded command: help
+[2025-07-30T19:08:27.357Z] [INFO] Loaded command: info
+[2025-07-30T19:08:27.357Z] [INFO] Loaded command: ping
+[2025-07-30T19:08:27.358Z] [INFO] Loaded command: profile
+[2025-07-30T19:08:27.358Z] [INFO] Successfully loaded 89 commands
+[2025-07-30T19:08:27.359Z] [INFO] Loaded event: messageCreate
+[2025-07-30T19:08:27.360Z] [INFO] Loaded event: ready
+[2025-07-30T19:08:27.360Z] [INFO] Successfully loaded 2 events
+[2025-07-30T19:08:27.390Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T19:08:27.390Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T19:08:27.390Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T19:08:28.471Z] [INFO] ✅ Bot login successful!
+[2025-07-30T19:08:29.106Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T19:08:29.106Z] [INFO] Serving 3 guilds
+[2025-07-30T19:08:29.106Z] [INFO] Watching 1 users
+[2025-07-30T19:10:29.076Z] [INFO] Loaded command: ban
+[2025-07-30T19:10:29.077Z] [INFO] Loaded command: clear
+[2025-07-30T19:10:29.077Z] [INFO] Loaded command: giveitem
+[2025-07-30T19:10:29.078Z] [INFO] Loaded command: givepet
+[2025-07-30T19:10:29.078Z] [INFO] Loaded command: kick
+[2025-07-30T19:10:29.079Z] [INFO] Loaded command: reset
+[2025-07-30T19:10:29.079Z] [INFO] Loaded command: setbal
+[2025-07-30T19:10:29.080Z] [INFO] Loaded command: setlvl
+[2025-07-30T19:10:29.080Z] [INFO] Loaded command: hunt
+[2025-07-30T19:10:29.081Z] [INFO] Loaded command: sell
+[2025-07-30T19:10:29.081Z] [INFO] Loaded command: zoo
+[2025-07-30T19:10:29.084Z] [INFO] Loaded command: duel
+[2025-07-30T19:10:29.084Z] [INFO] Loaded command: fight
+[2025-07-30T19:10:29.085Z] [WARN] Command at /home/runner/workspace/commands/battle/item.js is missing a name property
+[2025-07-30T19:10:29.085Z] [WARN] Command at /home/runner/workspace/commands/battle/player.js is missing a name property
+[2025-07-30T19:10:29.085Z] [INFO] Loaded command: balance
+[2025-07-30T19:10:29.086Z] [INFO] Loaded command: daily
+[2025-07-30T19:10:29.086Z] [INFO] Loaded command: pay
+[2025-07-30T19:10:29.087Z] [INFO] Loaded command: weekly
+[2025-07-30T19:10:29.087Z] [INFO] Loaded command: work
+[2025-07-30T19:10:29.088Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T19:10:29.088Z] [INFO] Loaded command: bite
+[2025-07-30T19:10:29.089Z] [INFO] Loaded command: jail
+[2025-07-30T19:10:29.089Z] [INFO] Loaded command: kill
+[2025-07-30T19:10:29.089Z] [INFO] Loaded command: kiss
+[2025-07-30T19:10:29.090Z] [INFO] Loaded command: pat
+[2025-07-30T19:10:29.090Z] [INFO] Loaded command: punch
+[2025-07-30T19:10:29.091Z] [INFO] Loaded command: slap
+[2025-07-30T19:10:29.091Z] [INFO] Loaded command: spank
+[2025-07-30T19:10:29.092Z] [INFO] Loaded command: coinflip
+[2025-07-30T19:10:29.092Z] [INFO] Loaded command: dice
+[2025-07-30T19:10:29.092Z] [INFO] Loaded command: slots
+[2025-07-30T19:10:29.093Z] [INFO] Loaded command: avatar
+[2025-07-30T19:10:29.093Z] [INFO] Loaded command: help
+[2025-07-30T19:10:29.094Z] [INFO] Loaded command: info
+[2025-07-30T19:10:29.094Z] [INFO] Loaded command: ping
+[2025-07-30T19:10:29.095Z] [INFO] Loaded command: profile
+[2025-07-30T19:10:29.095Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T19:10:29.095Z] [INFO] Loaded event: messageCreate
+[2025-07-30T19:10:29.096Z] [INFO] Loaded event: ready
+[2025-07-30T19:10:29.096Z] [INFO] Successfully loaded 2 events
+[2025-07-30T19:10:29.147Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T19:10:29.148Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T19:10:29.148Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T19:10:30.271Z] [INFO] ✅ Bot login successful!
+[2025-07-30T19:10:31.024Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T19:10:31.024Z] [INFO] Serving 3 guilds
+[2025-07-30T19:10:31.025Z] [INFO] Watching 1 users
+[2025-07-30T19:10:45.841Z] [INFO] Loaded command: ban
+[2025-07-30T19:10:45.850Z] [INFO] Loaded command: clear
+[2025-07-30T19:10:45.851Z] [INFO] Loaded command: giveitem
+[2025-07-30T19:10:45.851Z] [INFO] Loaded command: givepet
+[2025-07-30T19:10:45.852Z] [INFO] Loaded command: kick
+[2025-07-30T19:10:45.853Z] [INFO] Loaded command: reset
+[2025-07-30T19:10:45.855Z] [INFO] Loaded command: setbal
+[2025-07-30T19:10:45.855Z] [INFO] Loaded command: setlvl
+[2025-07-30T19:10:45.856Z] [INFO] Loaded command: hunt
+[2025-07-30T19:10:45.857Z] [INFO] Loaded command: sell
+[2025-07-30T19:10:45.857Z] [INFO] Loaded command: zoo
+[2025-07-30T19:10:45.858Z] [INFO] Loaded command: duel
+[2025-07-30T19:10:45.859Z] [INFO] Loaded command: fight
+[2025-07-30T19:10:45.859Z] [WARN] Command at /home/runner/workspace/commands/battle/item.js is missing a name property
+[2025-07-30T19:10:45.860Z] [WARN] Command at /home/runner/workspace/commands/battle/player.js is missing a name property
+[2025-07-30T19:10:45.860Z] [INFO] Loaded command: balance
+[2025-07-30T19:10:45.861Z] [INFO] Loaded command: daily
+[2025-07-30T19:10:45.873Z] [INFO] Loaded command: pay
+[2025-07-30T19:10:45.873Z] [INFO] Loaded command: weekly
+[2025-07-30T19:10:45.874Z] [INFO] Loaded command: work
+[2025-07-30T19:10:45.874Z] [INFO] Loaded command: amongustwerk
+[2025-07-30T19:10:45.875Z] [INFO] Loaded command: bite
+[2025-07-30T19:10:45.875Z] [INFO] Loaded command: jail
+[2025-07-30T19:10:45.876Z] [INFO] Loaded command: kill
+[2025-07-30T19:10:45.876Z] [INFO] Loaded command: kiss
+[2025-07-30T19:10:45.877Z] [INFO] Loaded command: pat
+[2025-07-30T19:10:45.877Z] [INFO] Loaded command: punch
+[2025-07-30T19:10:45.878Z] [INFO] Loaded command: slap
+[2025-07-30T19:10:45.878Z] [INFO] Loaded command: spank
+[2025-07-30T19:10:45.879Z] [INFO] Loaded command: coinflip
+[2025-07-30T19:10:45.879Z] [INFO] Loaded command: dice
+[2025-07-30T19:10:45.880Z] [INFO] Loaded command: slots
+[2025-07-30T19:10:45.880Z] [INFO] Loaded command: avatar
+[2025-07-30T19:10:45.881Z] [INFO] Loaded command: help
+[2025-07-30T19:10:45.881Z] [INFO] Loaded command: info
+[2025-07-30T19:10:45.883Z] [INFO] Loaded command: ping
+[2025-07-30T19:10:45.884Z] [INFO] Loaded command: profile
+[2025-07-30T19:10:45.884Z] [INFO] Successfully loaded 92 commands
+[2025-07-30T19:10:45.885Z] [INFO] Loaded event: messageCreate
+[2025-07-30T19:10:45.885Z] [INFO] Loaded event: ready
+[2025-07-30T19:10:45.885Z] [INFO] Successfully loaded 2 events
+[2025-07-30T19:10:45.926Z] [INFO] 🔗 Attempting to connect to Discord...
+[2025-07-30T19:10:45.927Z] [INFO] 🔑 Token length: 72 characters
+[2025-07-30T19:10:45.927Z] [INFO] 🔑 Token starts with: MTM5OTQ1OTQ1NDg4OTc1NDgw...
+[2025-07-30T19:10:47.091Z] [INFO] ✅ Bot login successful!
+[2025-07-30T19:10:47.864Z] [INFO] Bot Ksae kvat#7019 is ready!
+[2025-07-30T19:10:47.864Z] [INFO] Serving 3 guilds
+[2025-07-30T19:10:47.867Z] [INFO] Watching 1 users

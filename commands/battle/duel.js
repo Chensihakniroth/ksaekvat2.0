@@ -9,7 +9,7 @@ module.exports = {
     description: 'Challenge another user to a duel',
     usage: 'duel <@user> [bet_amount]',
     cooldown: 30000, // 30 seconds
-    execute(message, args, client) {
+    async execute(message, args, client) {
         // Check if user provided a target
         if (args.length < 1) {
             return message.reply({
@@ -165,51 +165,107 @@ module.exports = {
             iconURL: message.author.displayAvatarURL()
         }).setTimestamp();
 
-        message.reply({ embeds: [inviteEmbed] }).then(async (sentMessage) => {
+        const sentMessage = await message.reply({ embeds: [inviteEmbed] });
+
+        try {
+            // Wait a moment before adding reactions
+            await new Promise(resolve => setTimeout(resolve, 500));
+
             // Add reaction options
             await sentMessage.react('⚔️');
             await sentMessage.react('❌');
 
-            // Create reaction collector
+            console.log(`Duel invitation sent. Waiting for ${target.username} (${target.id}) to respond...`);
+
+            // Create reaction collector with comprehensive debugging
             const filter = (reaction, user) => {
-                return ['⚔️', '❌'].includes(reaction.emoji.name) && user.id === target.id;
+                const isCorrectEmoji = ['⚔️', '❌'].includes(reaction.emoji.name);
+                const isTargetUser = user.id === target.id;
+                const isNotBot = !user.bot;
+
+                console.log(`Filter check - Emoji: ${reaction.emoji.name} (${isCorrectEmoji}), User: ${user.username} (${user.id}) (target: ${isTargetUser}), Not bot: ${isNotBot}`);
+
+                return isCorrectEmoji && isTargetUser && isNotBot;
             };
 
-            const collector = sentMessage.createReactionCollector({ filter, time: 60000, max: 1 });
+            const collector = sentMessage.createReactionCollector({ 
+                filter, 
+                time: 60000, 
+                max: 1
+            });
+
+            let processed = false; // Prevent double processing
 
             collector.on('collect', async (reaction, user) => {
-                if (reaction.emoji.name === '⚔️') {
-                    // Duel accepted - start combat
-                    await startDuel(sentMessage, message.author, target, challengerStats, targetStats, betAmount);
-                } else {
-                    // Duel declined
-                    const declineEmbed = new EmbedBuilder()
-                        .setColor(colors.error)
-                        .setTitle('❌ Duel Declined')
-                        .setDescription(`${target} declined the duel challenge.`)
-                        .setFooter({ text: 'Maybe next time!' })
-                        .setTimestamp();
+                if (processed) return;
+                processed = true;
 
-                    await sentMessage.edit({ embeds: [declineEmbed] });
-                    await sentMessage.reactions.removeAll();
+                try {
+                    console.log(`✅ Reaction collected: ${reaction.emoji.name} from ${user.username}`);
+
+                    if (reaction.emoji.name === '⚔️') {
+                        console.log('🔥 Duel accepted! Starting battle...');
+
+                        // Show acceptance message first
+                        const acceptEmbed = new EmbedBuilder()
+                            .setColor(colors.success)
+                            .setTitle('⚔️ Duel Accepted!')
+                            .setDescription(`${target} accepted the challenge! Preparing for battle...`)
+                            .setFooter({ text: 'Battle starting in 3 seconds...' })
+                            .setTimestamp();
+
+                        await sentMessage.edit({ embeds: [acceptEmbed] });
+                        await sentMessage.reactions.removeAll().catch(() => {});
+
+                        // Wait 3 seconds then start the duel
+                        await new Promise(resolve => setTimeout(resolve, 3000));
+                        await startDuel(sentMessage, message.author, target, challengerStats, targetStats, betAmount);
+
+                    } else if (reaction.emoji.name === '❌') {
+                        console.log('❌ Duel declined');
+
+                        const declineEmbed = new EmbedBuilder()
+                            .setColor(colors.error)
+                            .setTitle('❌ Duel Declined')
+                            .setDescription(`${target} declined the duel challenge.`)
+                            .setFooter({ text: 'Maybe next time!' })
+                            .setTimestamp();
+
+                        await sentMessage.edit({ embeds: [declineEmbed] });
+                        await sentMessage.reactions.removeAll().catch(() => {});
+                    }
+                } catch (error) {
+                    console.error('❌ Error processing reaction:', error);
+                    await message.channel.send('An error occurred while processing the duel response. Please try again.');
                 }
             });
 
-            collector.on('end', async (collected) => {
-                if (collected.size === 0) {
-                    // Timeout
-                    const timeoutEmbed = new EmbedBuilder()
-                        .setColor(colors.warning)
-                        .setTitle('⏰ Duel Timeout')
-                        .setDescription(`${target} didn't respond to the duel challenge in time.`)
-                        .setFooter({ text: 'Duel invitation expired' })
-                        .setTimestamp();
+            collector.on('end', async (collected, reason) => {
+                if (processed) return; // Already handled
 
-                    await sentMessage.edit({ embeds: [timeoutEmbed] });
-                    await sentMessage.reactions.removeAll();
+                try {
+                    console.log(`⏰ Collector ended - Reason: ${reason}, Collected: ${collected.size}`);
+
+                    if (collected.size === 0) {
+                        const timeoutEmbed = new EmbedBuilder()
+                            .setColor(colors.warning)
+                            .setTitle('⏰ Duel Timeout')
+                            .setDescription(`${target} didn't respond to the duel challenge in time.`)
+                            .setFooter({ text: 'Duel invitation expired' })
+                            .setTimestamp();
+
+                        await sentMessage.edit({ embeds: [timeoutEmbed] });
+                        await sentMessage.reactions.removeAll().catch(() => {});
+                    }
+                } catch (error) {
+                    console.error('❌ Error in collector end:', error);
                 }
             });
-        });
+
+        } catch (error) {
+            console.error('❌ Error setting up duel:', error);
+            await message.channel.send('Failed to set up the duel. Please try again.');
+        }
 
         // Update command usage statistics
         database.updateStats(message.author.id, 'command');
@@ -260,37 +316,36 @@ async function startDuel(message, challenger, defender, challengerStats, defende
         const challengerInitiative = challengerStats.luck + Math.random() * 20;
         const defenderInitiative = defenderStats.luck + Math.random() * 20;
 
-        let attacker, defender_in_round, attackerHP, defenderHP_in_round, attackerStats, defenderStats_in_round;
+        let currentAttacker, currentDefender, attackerStats, defenderStatsInRound;
 
         if (challengerInitiative >= defenderInitiative) {
-            attacker = challenger;
-            defender_in_round = defender;
-            attackerHP = challengerHP;
-            defenderHP_in_round = defenderHP;
+            currentAttacker = challenger;
+            currentDefender = defender;
             attackerStats = challengerStats;
-            defenderStats_in_round = defenderStats;
+            defenderStatsInRound = defenderStats;
         } else {
-            attacker = defender;
-            defender_in_round = challenger;
-            attackerHP = defenderHP;
-            defenderHP_in_round = challengerHP;
+            currentAttacker = defender;
+            currentDefender = challenger;
             attackerStats = defenderStats;
-            defenderStats_in_round = challengerStats;
+            defenderStatsInRound = challengerStats;
         }
 
         // Calculate damage
         const baseDamage = attackerStats.attack + Math.random() * 20;
-        const defense = defenderStats_in_round.defense + Math.random() * 10;
+        const defense = defenderStatsInRound.defense + Math.random() * 10;
         const damage = Math.max(1, Math.floor(baseDamage - defense));
 
-        // Apply damage
-        if (attacker.id === challenger.id) {
+        // Apply damage to the correct player
+        if (currentAttacker.id === challenger.id) {
             defenderHP -= damage;
-            battleLog.push(`⚔️ ${attacker.username} attacks for **${damage}** damage!`);
+            defenderHP = Math.max(0, defenderHP); // Ensure HP doesn't go below 0
         } else {
             challengerHP -= damage;
-            battleLog.push(`🛡️ ${attacker.username} attacks for **${damage}** damage!`);
+            challengerHP = Math.max(0, challengerHP); // Ensure HP doesn't go below 0
         }
+
+        // Add to battle log
+        battleLog.push(`⚔️ ${currentAttacker.username} attacks ${currentDefender.username} for **${damage}** damage!`);
 
         // Update battle display
         const roundEmbed = new EmbedBuilder()
@@ -300,21 +355,21 @@ async function startDuel(message, challenger, defender, challengerStats, defende
             .addFields(
                 {
                     name: `🥊 ${challenger.username}`,
-                    value: `❤️ **HP:** ${Math.max(0, challengerHP)}/${challengerStats.health}`,
+                    value: `❤️ **HP:** ${challengerHP}/${challengerStats.health}`,
                     inline: true
                 },
                 {
                     name: `🛡️ ${defender.username}`,
-                    value: `❤️ **HP:** ${Math.max(0, defenderHP)}/${defenderStats.health}`,
+                    value: `❤️ **HP:** ${defenderHP}/${defenderStats.health}`,
                     inline: true
                 },
                 {
                     name: '📜 Battle Log',
-                    value: battleLog.slice(-3).join('\n') || 'Battle begins...',
+                    value: battleLog.slice(-4).join('\n') || 'Battle begins...',
                     inline: false
                 }
             )
-            .setFooter({ text: `Round ${round}` })
+            .setFooter({ text: `Round ${round} complete` })
             .setTimestamp();
 
         await message.edit({ embeds: [roundEmbed] });
@@ -324,7 +379,16 @@ async function startDuel(message, challenger, defender, challengerStats, defende
 
     // Determine winner
     let winner, loser;
-    if (challengerHP <= 0) {
+    if (challengerHP <= 0 && defenderHP <= 0) {
+        // Both died - it's a draw, but we'll give it to whoever has higher original stats
+        if (challengerStats.health >= defenderStats.health) {
+            winner = challenger;
+            loser = defender;
+        } else {
+            winner = defender;
+            loser = challenger;
+        }
+    } else if (challengerHP <= 0) {
         winner = defender;
         loser = challenger;
     } else if (defenderHP <= 0) {
@@ -335,9 +399,13 @@ async function startDuel(message, challenger, defender, challengerStats, defende
         if (challengerHP > defenderHP) {
             winner = challenger;
             loser = defender;
-        } else {
+        } else if (defenderHP > challengerHP) {
             winner = defender;
             loser = challenger;
+        } else {
+            // Equal HP - random winner
+            winner = Math.random() < 0.5 ? challenger : defender;
+            loser = winner.id === challenger.id ? defender : challenger;
         }
     }
 
@@ -372,7 +440,11 @@ async function startDuel(message, challenger, defender, challengerStats, defende
             },
             {
                 name: '📊 Final Stats',
-                value: `**Rounds:** ${round - 1}\n**Duration:** ${(round - 1) * 2} seconds`,
+                value: [
+                    `**Rounds:** ${round - 1}`,
+                    `**Duration:** ${(round - 1) * 2} seconds`,
+                    `**Final HP:** ${challenger.username}: ${challengerHP}, ${defender.username}: ${defenderHP}`
+                ].join('\n'),
                 inline: false
             }
         )
