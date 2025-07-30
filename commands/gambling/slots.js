@@ -197,7 +197,7 @@ module.exports = {
             const expGain = database.addExperience(message.author.id, 25);
 
             slotEmbed
-                .setColor(colors.success)
+                .setColor(colors.success || 0x43B581)
                 .setTitle(`🎉 ${winType}`)
                 .setDescription(
                     `**${winType}**\n\n` +
@@ -207,7 +207,7 @@ module.exports = {
                     `**Multiplier:** x${multiplier}`
                 );
 
-            if (expGain.leveledUp) {
+            if (expGain && expGain.leveledUp) {
                 slotEmbed.addFields({
                     name: '🎉 Level Up!',
                     value: `Reached level **${expGain.newLevel}**!`,
@@ -219,7 +219,7 @@ module.exports = {
             const newBalance = database.addBalance(message.author.id, betAmount);
 
             slotEmbed
-                .setColor(colors.info)
+                .setColor(colors.secondary || 0x99AAB5)
                 .setTitle('💀 Draw!')
                 .setDescription(
                     `🎰 ┃ ${finalSymbols.first} ┃ ${finalSymbols.middle} ┃ ${finalSymbols.last} ┃\n\n` +
@@ -233,7 +233,7 @@ module.exports = {
             database.updateStats(message.author.id, 'lost', betAmount);
 
             slotEmbed
-                .setColor(colors.error)
+                .setColor(colors.error || 0xF04747)
                 .setTitle('💸 You Lost')
                 .setDescription(
                     `🎰 ┃ ${finalSymbols.first} ┃ ${finalSymbols.middle} ┃ ${finalSymbols.last} ┃\n\n` +
