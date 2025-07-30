@@ -1,0 +1,89 @@
+{
+  "1160984144290005012": {
+    "id": "1160984144290005012",
+    "balance": 0,
+    "level": 10,
+    "experience": 990,
+    "dailyClaimed": true,
+    "weeklyClaimed": true,
+    "lastDaily": "2025-07-30T07:42:53.498Z",
+    "lastWeekly": "2025-07-30T07:42:56.978Z",
+    "lastHunt": null,
+    "animals": {
+      "common": {
+        "chicken": 1
+      },
+      "legendary": {
+        "golden_dragon": 1
+      }
+    },
+    "boosters": {},
+    "totalAnimalsFound": 2,
+    "totalGambled": 1034490,
+    "totalWon": 4285,
+    "totalLost": 1031500,
+    "commandsUsed": 62,
+    "joinedAt": 1753861341576
+  },
+  "764691513242025995": {
+    "id": "764691513242025995",
+    "balance": 1000000,
+    "level": 1,
+    "experience": 0,
+    "dailyClaimed": false,
+    "weeklyClaimed": false,
+    "lastDaily": null,
+    "lastWeekly": null,
+    "lastHunt": null,
+    "animals": {},
+    "boosters": {},
+    "totalAnimalsFound": 0,
+    "totalGambled": 0,
+    "totalWon": 0,
+    "totalLost": 0,
+    "commandsUsed": 4,
+    "joinedAt": 1753862019188
+  },
+  "1248121586033365055": {
+    "id": "1248121586033365055",
+    "balance": 0,
+    "level": 1,
+    "experience": 0,
+    "dailyClaimed": false,
+    "weeklyClaimed": false,
+    "lastDaily": null,
+    "lastWeekly": null,
+    "lastHunt": null,
+    "animals": {},
+    "boosters": {},
+    "totalAnimalsFound": 0,
+    "totalGambled": 1000,
+    "totalWon": 0,
+    "totalLost": 1000,
+    "commandsUsed": 2,
+    "joinedAt": 1753876549156
+  },
+  "387812028913418240": {
+    "id": "387812028913418240",
+    "balance": 9003793,
+    "level": 3,
+    "experience": 275,
+    "dailyClaimed": true,
+    "weeklyClaimed": true,
+    "lastDaily": "2025-07-30T12:25:15.453Z",
+    "lastWeekly": "2025-07-30T12:25:18.698Z",
+    "lastHunt": null,
+    "animals": {
+      "uncommon": {
+        "bear": 1
+      }
+    },
+    "boosters": {},
+    "totalAnimalsFound": 1,
+    "totalGambled": 2026265,
+    "totalWon": 504002,
+    "totalLost": 1522260,
+    "commandsUsed": 19,
+    "joinedAt": 1753878267883
+  }
+}
