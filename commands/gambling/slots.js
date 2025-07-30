@@ -102,41 +102,60 @@ module.exports = {
 
         const sentMessage = await message.reply({ embeds: [slotEmbed] });
 
-        // Animation sequence with merged result
+        // Animation sequence with optimized performance
         async function updateSlotDisplay(stage) {
             let displaySymbols = { ...finalSymbols };
+            let statusText = '';
 
-            // Determine which reels should still be spinning
-            if (stage < 3) { // First 3 spins - all reels spinning
+            // Determine which reels should still be spinning with better visual feedback
+            if (stage < 2) { // First 2 spins - all reels spinning fast
                 displaySymbols.first = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
                 displaySymbols.middle = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
                 displaySymbols.last = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
+                statusText = '**Spinning fast...**';
             } 
-            else if (stage < 5) { // Next 2 spins - first reel locked
+            else if (stage < 4) { // Next 2 spins - all reels spinning
+                displaySymbols.first = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
                 displaySymbols.middle = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
                 displaySymbols.last = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
-            } 
-            else if (stage < 7) { // Next 2 spins - first and last locked
+                statusText = '**Spinning...**';
+            }
+            else if (stage < 6) { // Next 2 spins - first reel locked
                 displaySymbols.middle = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
+                displaySymbols.last = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
+                statusText = '**Slowing down...**';
+            } 
+            else if (stage < 7) { // Next spin - first and last locked
+                displaySymbols.middle = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
+                statusText = '**Final spin...**';
+            }
+            else {
+                statusText = '**Result!**';
             }
 
-            // Update embed description
+            // Update embed with smoother description
             slotEmbed.setDescription(
                 `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n` +
                 `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n` +
-                (stage < 7 ? '**Spinning...**' : '**Result!**')
+                statusText
             );
 
-            await sentMessage.edit({ embeds: [slotEmbed] });
+            try {
+                await sentMessage.edit({ embeds: [slotEmbed] });
+            } catch (error) {
+                // Handle potential edit errors gracefully
+                console.error('Failed to update slot animation:', error);
+            }
         }
 
-        // Run the animation sequence
+        // Run the animation sequence with smoother timing
         for (let stage = 0; stage <= 7; stage++) {
             await updateSlotDisplay(stage);
             await new Promise(resolve => setTimeout(resolve, 
-                stage < 3 ? 300 :  // First 3 spins: 300ms
-                stage < 5 ? 300 :  // Next 2 spins: 300ms
-                200                // Last 2 spins: 200ms
+                stage < 2 ? 200 :  // First 2 spins: 200ms (faster start)
+                stage < 4 ? 250 :  // Next 2 spins: 250ms
+                stage < 6 ? 300 :  // Next 2 spins: 300ms (building suspense)
+                400                // Last 2 spins: 400ms (dramatic pause)
             ));
         }
 
