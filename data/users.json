@@ -1,7 +1,7 @@
 {
   "1160984144290005012": {
     "id": "1160984144290005012",
-    "balance": 0,
+    "balance": 499000,
     "level": 10,
     "experience": 990,
     "dailyClaimed": true,
@@ -19,10 +19,10 @@
     },
     "boosters": {},
     "totalAnimalsFound": 2,
-    "totalGambled": 1034490,
+    "totalGambled": 1785490,
     "totalWon": 4285,
-    "totalLost": 1031500,
-    "commandsUsed": 62,
+    "totalLost": 1532500,
+    "commandsUsed": 69,
     "joinedAt": 1753861341576
   },
   "764691513242025995": {
@@ -46,9 +46,9 @@
   },
   "1248121586033365055": {
     "id": "1248121586033365055",
-    "balance": 0,
+    "balance": 250000,
     "level": 1,
-    "experience": 0,
+    "experience": 20,
     "dailyClaimed": false,
     "weeklyClaimed": false,
     "lastDaily": null,
@@ -57,10 +57,10 @@
     "animals": {},
     "boosters": {},
     "totalAnimalsFound": 0,
-    "totalGambled": 1000,
-    "totalWon": 0,
-    "totalLost": 1000,
-    "commandsUsed": 2,
+    "totalGambled": 1251000,
+    "totalWon": 250000,
+    "totalLost": 1001000,
+    "commandsUsed": 4,
     "joinedAt": 1753876549156
   },
   "387812028913418240": {
