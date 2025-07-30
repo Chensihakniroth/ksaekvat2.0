@@ -110,10 +110,6 @@ module.exports = {
                 }
             )
             .setThumbnail(target.displayAvatarURL())
-            .setFooter({ 
-                text: `Admin command executed by ${message.author.tag}`,
-                iconURL: message.author.displayAvatarURL()
-            })
             .setTimestamp();
 
         message.reply({ embeds: [embed] });
@@ -132,7 +128,6 @@ module.exports = {
                     value: `${amount.toLocaleString()} ${config.economy.currency}`,
                     inline: true
                 })
-                .setFooter({ text: 'KsaekVat Bot Admin System' })
                 .setTimestamp();
 
             target.send({ embeds: [dmEmbed] }).catch(() => {

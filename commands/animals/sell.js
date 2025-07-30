@@ -169,10 +169,6 @@ module.exports = {
                     value: `${userData.balance.toLocaleString()} ${config.economy.currency}`,
                     inline: true
                 })
-                .setFooter({ 
-                    text: `Animal sold by ${message.author.username}`,
-                    iconURL: message.author.displayAvatarURL()
-                })
                 .setTimestamp();
 
             return message.reply({ embeds: [embed] });

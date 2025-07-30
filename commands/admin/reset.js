@@ -220,7 +220,6 @@ module.exports = {
                         .setColor(colors.secondary)
                         .setTitle('❌ Reset Cancelled')
                         .setDescription(`Reset operation for **${target.username}** has been cancelled.\n\nNo data was modified.`)
-                        .setFooter({ text: 'User data is safe' })
                         .setTimestamp();
 
                     await sentMessage.edit({ embeds: [cancelEmbed] });
@@ -235,7 +234,6 @@ module.exports = {
                         .setColor(colors.warning)
                         .setTitle('⏰ Reset Timeout')
                         .setDescription(`Reset confirmation timed out for **${target.username}**.\n\nNo action was taken.`)
-                        .setFooter({ text: 'Reset cancelled due to timeout' })
                         .setTimestamp();
 
                     await sentMessage.edit({ embeds: [timeoutEmbed] });
