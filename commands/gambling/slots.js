@@ -53,7 +53,7 @@ module.exports = {
             betAmount = maxBet;
         }
 
-        // Check if user has enough balance (FIXED THIS LINE)
+        // Check if user has enough balance
         if (!database.hasBalance(message.author.id, betAmount)) {
             const userData = database.getUser(message.author.id);
             return message.reply({
@@ -70,28 +70,52 @@ module.exports = {
         database.removeBalance(message.author.id, betAmount);
         database.updateStats(message.author.id, 'gambled', betAmount);
 
-        // Get symbols from config
-        const symbols = config.gambling.slots.symbols;
-        const symbolKeys = Object.keys(symbols);
+        // NEW: Define the outcome system with weighted probabilities
+        const outcomes = [
+            // Diamond (5%) - Rare Jackpot
+            { type: 'diamond', weight: 5, emoji: '🔷', multiplier: 10, name: 'DIAMOND JACKPOT!' },
+            // Rocket (15%) - Big Win  
+            { type: 'rocket', weight: 15, emoji: '🚀', multiplier: 5, name: 'ROCKET BONUS!' },
+            // Coin (25%) - Small Win
+            { type: 'coin', weight: 25, emoji: '🪙', multiplier: 2, name: 'COIN WIN!' },
+            // Draw (30%) - Break Even
+            { type: 'draw', weight: 30, emoji: '🤝', multiplier: 1, name: 'DRAW!' },
+            // Lose (25%) - No reward
+            { type: 'lose', weight: 25, emoji: '💀', multiplier: 0, name: 'LOSS' }
+        ];
 
-        // Create weighted symbol pool
-        let symbolPool = [];
-        for (const [key, data] of Object.entries(symbols)) {
-            for (let i = 0; i < data.weight; i++) {
-                symbolPool.push(key);
+        // Create weighted outcome pool
+        let outcomePool = [];
+        for (const outcome of outcomes) {
+            for (let i = 0; i < outcome.weight; i++) {
+                outcomePool.push(outcome);
             }
         }
 
-        // Generate final results first
-        const result1 = symbolPool[Math.floor(Math.random() * symbolPool.length)];
-        const result2 = symbolPool[Math.floor(Math.random() * symbolPool.length)];
-        const result3 = symbolPool[Math.floor(Math.random() * symbolPool.length)];
+        // Generate the outcome
+        const selectedOutcome = outcomePool[Math.floor(Math.random() * outcomePool.length)];
 
-        const finalSymbols = {
-            first: symbols[result1].emoji,
-            middle: symbols[result2].emoji,
-            last: symbols[result3].emoji
-        };
+        // Generate visual symbols for the slot machine
+        // For wins/draws, show 3 matching symbols
+        // For losses, show mixed symbols
+        let displaySymbols;
+        if (selectedOutcome.type === 'lose') {
+            // Generate 3 different symbols for loss
+            const allEmojis = outcomes.map(o => o.emoji);
+            const shuffled = [...allEmojis].sort(() => Math.random() - 0.5);
+            displaySymbols = {
+                first: shuffled[0],
+                middle: shuffled[1],
+                last: shuffled[2]
+            };
+        } else {
+            // Show 3 matching symbols for wins and draws
+            displaySymbols = {
+                first: selectedOutcome.emoji,
+                middle: selectedOutcome.emoji,
+                last: selectedOutcome.emoji
+            };
+        }
 
         // Create initial embed
         const slotEmbed = new EmbedBuilder()
@@ -104,29 +128,33 @@ module.exports = {
 
         // Animation sequence with optimized performance
         async function updateSlotDisplay(stage) {
-            let displaySymbols = { ...finalSymbols };
+            let animationSymbols = { ...displaySymbols };
             let statusText = '';
 
             // Determine which reels should still be spinning with better visual feedback
             if (stage < 2) { // First 2 spins - all reels spinning fast
-                displaySymbols.first = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
-                displaySymbols.middle = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
-                displaySymbols.last = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
+                const randomEmojis = outcomes.map(o => o.emoji);
+                animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
+                animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
+                animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 statusText = '**Spinning fast...**';
             } 
             else if (stage < 4) { // Next 2 spins - all reels spinning
-                displaySymbols.first = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
-                displaySymbols.middle = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
-                displaySymbols.last = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
+                const randomEmojis = outcomes.map(o => o.emoji);
+                animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
+                animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
+                animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 statusText = '**Spinning...**';
             }
             else if (stage < 6) { // Next 2 spins - first reel locked
-                displaySymbols.middle = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
-                displaySymbols.last = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
+                const randomEmojis = outcomes.map(o => o.emoji);
+                animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
+                animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 statusText = '**Slowing down...**';
             } 
             else if (stage < 7) { // Next spin - first and last locked
-                displaySymbols.middle = symbols[symbolKeys[Math.floor(Math.random() * symbolKeys.length)]].emoji;
+                const randomEmojis = outcomes.map(o => o.emoji);
+                animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 statusText = '**Final spin...**';
             }
             else {
@@ -136,7 +164,7 @@ module.exports = {
             // Update embed with smoother description
             slotEmbed.setDescription(
                 `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n` +
-                `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n` +
+                `🎰 ┃ ${animationSymbols.first} ┃ ${animationSymbols.middle} ┃ ${animationSymbols.last} ┃\n` +
                 statusText
             );
 
@@ -159,52 +187,23 @@ module.exports = {
             ));
         }
 
-        // Check win conditions
-        let multiplier = 0;
-        let winType = '';
-        let resultStatus = '';
-
-        if (result1 === 'diamond' && result2 === 'diamond' && result3 === 'diamond') {
-            multiplier = 15;
-            winType = 'DIAMOND JACKPOT!';
-            resultStatus = 'win';
-        } 
-        else if (result1 === 'rocket' && result2 === 'rocket' && result3 === 'rocket') {
-            multiplier = 10;
-            winType = 'ROCKET BONUS!';
-            resultStatus = 'win';
-        }
-        else if (result1 === 'coin' && result2 === 'coin' && result3 === 'coin') {
-            multiplier = 2;
-            winType = 'COIN WIN!';
-            resultStatus = 'win';
-        }
-        else if (result1 === 'skull' && result2 === 'skull' && result3 === 'skull') {
-            resultStatus = 'draw';
-        }
-        else if (result1 !== result2 && result1 !== result3 && result2 !== result3) {
-            resultStatus = 'lose';
-        }
-        else {
-            resultStatus = 'lose';
-        }
-
-        // Update the same embed with results
-        if (resultStatus === 'win') {
-            const winAmount = betAmount * multiplier;
+        // Process the outcome and update the embed
+        if (selectedOutcome.type === 'diamond' || selectedOutcome.type === 'rocket' || selectedOutcome.type === 'coin') {
+            // Win outcomes
+            const winAmount = betAmount * selectedOutcome.multiplier;
             const newBalance = database.addBalance(message.author.id, winAmount);
             database.updateStats(message.author.id, 'won', winAmount - betAmount);
             const expGain = database.addExperience(message.author.id, 25);
 
             slotEmbed
                 .setColor(colors.success || 0x43B581)
-                .setTitle(`🎉 ${winType}`)
+                .setTitle(`🎉 ${selectedOutcome.name}`)
                 .setDescription(
-                    `**${winType}**\n\n` +
-                    `🎰 ┃ ${finalSymbols.first} ┃ ${finalSymbols.middle} ┃ ${finalSymbols.last} ┃\n\n` +
+                    `**${selectedOutcome.name}**\n\n` +
+                    `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
                     `**Winnings:** +${winAmount.toLocaleString()} ${config.economy.currency}\n` +
                     `**Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}\n` +
-                    `**Multiplier:** x${multiplier}`
+                    `**Multiplier:** x${selectedOutcome.multiplier}`
                 );
 
             if (expGain && expGain.leveledUp) {
@@ -215,28 +214,30 @@ module.exports = {
                 });
             }
         } 
-        else if (resultStatus === 'draw') {
+        else if (selectedOutcome.type === 'draw') {
+            // Draw outcome - return bet
             const newBalance = database.addBalance(message.author.id, betAmount);
 
             slotEmbed
                 .setColor(colors.secondary || 0x99AAB5)
-                .setTitle('💀 Draw!')
+                .setTitle('🤝 Draw!')
                 .setDescription(
-                    `🎰 ┃ ${finalSymbols.first} ┃ ${finalSymbols.middle} ┃ ${finalSymbols.last} ┃\n\n` +
+                    `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
                     `**Bet returned!**\n\n` +
                     `**Amount returned:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
                     `**Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}`
                 );
         }
         else {
+            // Loss outcome
             const userData = database.getUser(message.author.id);
             database.updateStats(message.author.id, 'lost', betAmount);
 
             slotEmbed
                 .setColor(colors.error || 0xF04747)
-                .setTitle('💸 You Lost')
+                .setTitle('💀 You Lost')
                 .setDescription(
-                    `🎰 ┃ ${finalSymbols.first} ┃ ${finalSymbols.middle} ┃ ${finalSymbols.last} ┃\n\n` +
+                    `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
                     `**Amount lost:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
                     `**Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
                 );

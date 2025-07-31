@@ -2,7 +2,6 @@ const { EmbedBuilder } = require("discord.js");
 const database = require("../../utils/database.js");
 const colors = require("../../utils/colors.js");
 const config = require("../../config/config.js");
-const { addItemToInventory, calculateEquippedBonuses } = require("./item.js");
 
 module.exports = {
     name: "fight",
@@ -57,15 +56,12 @@ module.exports = {
         // Select random enemy based on user level
         const enemy = enemies[Math.floor(Math.random() * enemies.length)];
 
-        // Get equipped item bonuses
-        const playerBonuses = calculateEquippedBonuses(message.author.id);
-
-        // Calculate player stats with equipped item bonuses
+        // Calculate player stats
         const playerStats = {
-            attack: Math.floor(userData.level * 10 + userData.experience / 100) + playerBonuses.attack,
-            defense: Math.floor(userData.level * 8 + userData.experience / 150) + playerBonuses.defense,
-            health: Math.floor(userData.level * 15 + 100) + playerBonuses.hp,
-            luck: Math.floor(userData.level * 2) + playerBonuses.luck,
+            attack: Math.floor(userData.level * 10 + userData.experience / 100),
+            defense: Math.floor(userData.level * 8 + userData.experience / 150),
+            health: Math.floor(userData.level * 15 + 100),
+            luck: Math.floor(userData.level * 2),
         };
 
         // Calculate enemy stats
@@ -127,6 +123,28 @@ module.exports = {
         database.updateStats(message.author.id, "command");
     },
 };
+
+// Direct implementation of addItemToInventory to avoid import issues
+function addItemToInventory(userId, item) {
+    const userData = database.getUser(userId);
+
+    if (!userData.inventory) {
+        userData.inventory = [];
+    }
+
+    // Generate unique ID for the item
+    const itemId = Date.now() + Math.random().toString(36).substr(2, 5);
+    const newItem = {
+        id: itemId,
+        ...item,
+        obtainedAt: new Date().toISOString()
+    };
+
+    userData.inventory.push(newItem);
+    database.saveUser(userData);
+
+    return itemId;
+}
 
 async function startPvEBattle(message, player, enemy, playerStats, enemyStats, betAmount) {
     let playerHP = playerStats.health;
@@ -208,32 +226,35 @@ async function startPvEBattle(message, player, enemy, playerStats, enemyStats, b
 
     // Total reward initialization
     let totalReward = rewardAmount;
-    if (betAmount > 0) {
-        totalReward += betAmount * 2; // Return bet + winnings
+    if (betAmount > 0 && playerWon) {
+        totalReward += betAmount * 2; // Return bet + winnings only if won
     }
 
     // Experience gain
     let expGain;
+    let resultEmbed;
 
     if (playerWon) {
-        // Add rewards and XP
+        // Player won - add rewards and XP
         database.updateStats(player.id, "won", betAmount);
         const newBalance = database.addBalance(player.id, totalReward);
         expGain = database.addExperience(player.id, expReward);
 
-        // Item drop chance
-        const droppedItem = getRandomItemDrop();
+        // Check for item drop (40% chance on win)
+        const droppedItem = getRandomItemDrop(true, enemy.level);
         let itemDropField = null;
+
         if (droppedItem) {
-            addItemToInventory(player.id, droppedItem); // Store item in inventory
+            // Add item to inventory using our direct function
+            const itemId = addItemToInventory(player.id, droppedItem);
 
             const bonusText = Object.entries(droppedItem.bonus)
                 .map(([stat, val]) => `+${val} ${stat}`)
                 .join(", ");
 
             itemDropField = {
-                name: `🎁 Item Dropped: ${droppedItem.name} (${droppedItem.type})`,
-                value: `🔹 **Bonuses:** ${bonusText}`,
+                name: `🎁 Item Dropped!`,
+                value: `**${droppedItem.name}** (${droppedItem.type})\n🆔 **ID:** \`${itemId}\`\n🔹 **Bonuses:** ${bonusText}\n\n*Use \`Kinv equip ${itemId}\` to equip this item!*`,
                 inline: false,
             };
         }
@@ -271,13 +292,13 @@ async function startPvEBattle(message, player, enemy, playerStats, enemyStats, b
                         `**Enemy Defeated:** ${enemy.name} (Lv.${enemy.level})`,
                     ].join("\n"),
                     inline: false,
-                },
-                ...(itemDropField ? [itemDropField] : [])
+                }
             );
 
-        // TODO: You can add player inventory display here if you want:
-        // e.g. const inventory = database.getInventory(player.id);
-        // Add inventory info as additional embed fields
+        // Add item drop field if item was dropped
+        if (itemDropField) {
+            resultEmbed.addFields(itemDropField);
+        }
     } else {
         // Player lost
         if (betAmount > 0) {
@@ -285,6 +306,25 @@ async function startPvEBattle(message, player, enemy, playerStats, enemyStats, b
         }
 
         expGain = database.addExperience(player.id, 10);
+
+        // Lower chance for item drop on loss (15%)
+        const droppedItem = getRandomItemDrop(false, enemy.level);
+        let itemDropField = null;
+
+        if (droppedItem) {
+            // Add item to inventory using our direct function
+            const itemId = addItemToInventory(player.id, droppedItem);
+
+            const bonusText = Object.entries(droppedItem.bonus)
+                .map(([stat, val]) => `+${val} ${stat}`)
+                .join(", ");
+
+            itemDropField = {
+                name: `🎁 Consolation Item!`,
+                value: `**${droppedItem.name}** (${droppedItem.type})\n🆔 **ID:** \`${itemId}\`\n🔹 **Bonuses:** ${bonusText}\n\n*Use \`Kinv equip ${itemId}\` to equip this item!*`,
+                inline: false,
+            };
+        }
 
         resultEmbed = new EmbedBuilder()
             .setColor(colors.error)
@@ -318,6 +358,11 @@ async function startPvEBattle(message, player, enemy, playerStats, enemyStats, b
                     inline: false,
                 }
             );
+
+        // Add item drop field if item was dropped
+        if (itemDropField) {
+            resultEmbed.addFields(itemDropField);
+        }
     }
 
     resultEmbed
@@ -333,30 +378,46 @@ async function startPvEBattle(message, player, enemy, playerStats, enemyStats, b
     await message.edit({ embeds: [resultEmbed] });
 }
 
-// Moved outside to avoid redeclaration
-function getRandomItemDrop() {
-    const dropChance = 0.4; // 40% drop rate
+// Updated item drop function with win/loss logic and level scaling
+function getRandomItemDrop(playerWon, enemyLevel) {
+    // Different drop rates for win vs loss
+    const dropChance = playerWon ? 0.40 : 0.15; // 40% on win, 15% on loss
     if (Math.random() > dropChance) return null;
 
     const itemTypes = ["Weapon", "Armor", "Shoe", "Accessory"];
     const type = itemTypes[Math.floor(Math.random() * itemTypes.length)];
 
+    // Scale item bonuses based on enemy level
+    const levelMultiplier = Math.max(1, Math.floor(enemyLevel / 3));
+
     const itemPool = {
         Weapon: [
-            { name: "Iron Sword", bonus: { attack: 5 } },
-            { name: "Flaming Blade", bonus: { attack: 10, critRate: 2 } },
+            { name: "Iron Sword", bonus: { attack: 5 * levelMultiplier } },
+            { name: "Steel Blade", bonus: { attack: 7 * levelMultiplier } },
+            { name: "Flaming Blade", bonus: { attack: 10 * levelMultiplier, critRate: 2 } },
+            { name: "Shadow Dagger", bonus: { attack: 6 * levelMultiplier, speed: 3 } },
+            { name: "War Hammer", bonus: { attack: 12 * levelMultiplier, defense: 2 } },
         ],
         Armor: [
-            { name: "Chainmail", bonus: { defense: 7 } },
-            { name: "Obsidian Plate", bonus: { defense: 15, hp: 20 } },
+            { name: "Leather Armor", bonus: { defense: 6 * levelMultiplier } },
+            { name: "Chainmail", bonus: { defense: 8 * levelMultiplier } },
+            { name: "Obsidian Plate", bonus: { defense: 15 * levelMultiplier, hp: 20 } },
+            { name: "Dragon Scale", bonus: { defense: 12 * levelMultiplier, attack: 3 } },
+            { name: "Mage Robe", bonus: { defense: 5 * levelMultiplier, luck: 4 } },
         ],
         Shoe: [
-            { name: "Swift Boots", bonus: { speed: 4 } },
-            { name: "Windwalkers", bonus: { speed: 7, evasion: 3 } },
+            { name: "Leather Boots", bonus: { speed: 3 * levelMultiplier } },
+            { name: "Swift Boots", bonus: { speed: 5 * levelMultiplier } },
+            { name: "Windwalkers", bonus: { speed: 7 * levelMultiplier, evasion: 3 } },
+            { name: "Iron Boots", bonus: { speed: 2 * levelMultiplier, defense: 4 } },
+            { name: "Shadow Steps", bonus: { speed: 6 * levelMultiplier, luck: 2 } },
         ],
         Accessory: [
-            { name: "Lucky Charm", bonus: { luck: 3 } },
-            { name: "Ring of Power", bonus: { attack: 4, defense: 4 } },
+            { name: "Lucky Charm", bonus: { luck: 4 * levelMultiplier } },
+            { name: "Ring of Power", bonus: { attack: 4 * levelMultiplier, defense: 4 * levelMultiplier } },
+            { name: "Health Amulet", bonus: { hp: 25, defense: 3 * levelMultiplier } },
+            { name: "Speed Ring", bonus: { speed: 5 * levelMultiplier, evasion: 2 } },
+            { name: "Warrior's Badge", bonus: { attack: 6 * levelMultiplier, hp: 15 } },
         ],
     };
 

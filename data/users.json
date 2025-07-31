@@ -1,9 +1,9 @@
 {
   "1160984144290005012": {
     "id": "1160984144290005012",
-    "balance": 1250424,
-    "level": 47,
-    "experience": 4655,
+    "balance": 3262881,
+    "level": 130,
+    "experience": 12990,
     "dailyClaimed": true,
     "weeklyClaimed": true,
     "lastDaily": "2025-07-30T07:42:53.498Z",
@@ -18,15 +18,30 @@
       },
       "rare": {
         "rhino": 1
+      },
+      "epic": {
+        "dragon": 1
       }
     },
     "boosters": {},
-    "totalAnimalsFound": 3,
-    "totalGambled": 2556501,
-    "totalWon": 1010310,
-    "totalLost": 1797500,
-    "commandsUsed": 105,
-    "joinedAt": 1753861341576
+    "totalAnimalsFound": 4,
+    "totalGambled": 7666740,
+    "totalWon": 5310310,
+    "totalLost": 4107739,
+    "commandsUsed": 155,
+    "joinedAt": 1753861341576,
+    "inventory": [],
+    "equipped": {
+      "weapon": {
+        "id": "1753935703238h34wf",
+        "type": "Weapon",
+        "name": "Iron Sword",
+        "bonus": {
+          "attack": 150
+        },
+        "obtainedAt": "2025-07-31T04:21:43.238Z"
+      }
+    }
   },
   "764691513242025995": {
     "id": "764691513242025995",
@@ -63,14 +78,14 @@
     "totalGambled": 3521939,
     "totalWon": 1250000,
     "totalLost": 2271939,
-    "commandsUsed": 10,
+    "commandsUsed": 13,
     "joinedAt": 1753876549156
   },
   "387812028913418240": {
     "id": "387812028913418240",
-    "balance": 9004087,
-    "level": 4,
-    "experience": 370,
+    "balance": 8754381,
+    "level": 5,
+    "experience": 490,
     "dailyClaimed": true,
     "weeklyClaimed": true,
     "lastDaily": "2025-07-30T12:25:15.453Z",
@@ -83,10 +98,10 @@
     },
     "boosters": {},
     "totalAnimalsFound": 1,
-    "totalGambled": 2026265,
+    "totalGambled": 2276265,
     "totalWon": 504002,
-    "totalLost": 1522260,
-    "commandsUsed": 20,
+    "totalLost": 1772260,
+    "commandsUsed": 24,
     "joinedAt": 1753878267883
   }
 }
