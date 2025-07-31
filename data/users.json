@@ -1,9 +1,9 @@
 {
   "1160984144290005012": {
     "id": "1160984144290005012",
-    "balance": 1248319,
-    "level": 39,
-    "experience": 3835,
+    "balance": 1250424,
+    "level": 47,
+    "experience": 4655,
     "dailyClaimed": true,
     "weeklyClaimed": true,
     "lastDaily": "2025-07-30T07:42:53.498Z",
@@ -25,7 +25,7 @@
     "totalGambled": 2556501,
     "totalWon": 1010310,
     "totalLost": 1797500,
-    "commandsUsed": 102,
+    "commandsUsed": 105,
     "joinedAt": 1753861341576
   },
   "764691513242025995": {
