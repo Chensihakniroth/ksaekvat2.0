@@ -1,3 +1,4 @@
+
 const { EmbedBuilder } = require('discord.js');
 const config = require('../../config/config.js');
 const colors = require('../../utils/colors.js');
@@ -58,7 +59,9 @@ module.exports = {
                         name: '⚔️ Battle',
                         value: [
                             '`Kduel` - Challenge another user to a duel',
-                            '`Kfight` - Fight against a random opponent'
+                            '`Kfight` - Fight against a random opponent',
+                            '`Kinv` - View your item inventory',
+                            '`Kplayer` - View detailed player stats'
                         ].join('\n'),
                         inline: true
                     },
@@ -96,9 +99,16 @@ module.exports = {
                             '`Kbite` - Bite someone'
                         ].join('\n'),
                         inline: true
+                    },
+                    {
+                        name: '🎭 Special Expressions',
+                        value: [
+                            '`Kamongtwerk` - Among Us twerk expression',
+                            '`Kksaekvat` - Special KsaekVat expression'
+                        ].join('\n'),
+                        inline: true
                     }
                 )
-                
                 .setTimestamp();
 
             return message.reply({ embeds: [embed] });
