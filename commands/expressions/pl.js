@@ -2,7 +2,7 @@ const axios = require("axios");
 const { EmbedBuilder } = require("discord.js");
 
 const cooldown = new Set();
-const COOLDOWN_TIME = 2 * 1000;
+const COOLDOWN_TIME = 2000; // 2 seconds
 
 module.exports = {
     name: "pussylick",
@@ -11,15 +11,11 @@ module.exports = {
     usage: "pussylick @user",
     async execute(message, args) {
         if (!message.channel.nsfw) {
-            return message.reply(
-                "🚫 This command can only be used in NSFW-marked channels.",
-            );
+            return message.reply("🚫 This command can only be used in NSFW channels.");
         }
 
         if (cooldown.has(message.author.id)) {
-            return message.reply(
-                "⏳ Please wait before using this command again.",
-            );
+            return message.reply("⏳ Please wait before using this command again.");
         }
 
         const user = message.mentions.users.first();
@@ -28,27 +24,23 @@ module.exports = {
         }
 
         try {
-            // Use waifu.pics NSFW as fallback
-            const res = await axios.get(
-                "https://api.purrbot.site/v2/img/nsfw/pussylick/gif",
-            );
+            // Try using nekidev API
+            const res = await axios.get("https://api.fluxpoint.dev/nsfw/gif/kuni");
             const imageUrl = res.data.url;
 
             const embed = new EmbedBuilder()
                 .setTitle("🔞 NSFW Action: Pussy Lick")
-                .setDescription(
-                    `${message.author} is licking ${user}'s pussy 😳💦`,
-                )
+                .setDescription(`${message.author} is licking ${user}'s pussy 😳💦`)
                 .setImage(imageUrl)
-                .setColor("HotPink");
+                .setColor("DarkVividPink");
 
             message.channel.send({ embeds: [embed] });
 
             cooldown.add(message.author.id);
             setTimeout(() => cooldown.delete(message.author.id), COOLDOWN_TIME);
         } catch (err) {
-            console.error("❌ API Error:", err.message);
-            message.reply("❌ Couldn't get the GIF from the fallback source.");
+            console.error("API Error:", err.message);
+            message.reply("❌ Couldn't fetch the image from Nekidev API.");
         }
     },
 };

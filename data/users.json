@@ -1,9 +1,9 @@
 {
   "1160984144290005012": {
     "id": "1160984144290005012",
-    "balance": 3262881,
-    "level": 130,
-    "experience": 12990,
+    "balance": 6032309,
+    "level": 190,
+    "experience": 18945,
     "dailyClaimed": true,
     "weeklyClaimed": true,
     "lastDaily": "2025-07-30T07:42:53.498Z",
@@ -11,7 +11,8 @@
     "lastHunt": null,
     "animals": {
       "common": {
-        "chicken": 1
+        "chicken": 1,
+        "hamster": 1
       },
       "legendary": {
         "golden_dragon": 1
@@ -24,13 +25,23 @@
       }
     },
     "boosters": {},
-    "totalAnimalsFound": 4,
-    "totalGambled": 7666740,
-    "totalWon": 5310310,
-    "totalLost": 4107739,
-    "commandsUsed": 155,
+    "totalAnimalsFound": 5,
+    "totalGambled": 9421740,
+    "totalWon": 8315310,
+    "totalLost": 4357739,
+    "commandsUsed": 173,
     "joinedAt": 1753861341576,
-    "inventory": [],
+    "inventory": [
+      {
+        "id": "1753961329129fxi3z",
+        "type": "Weapon",
+        "name": "Iron Sword",
+        "bonus": {
+          "attack": 260
+        },
+        "obtainedAt": "2025-07-31T11:28:49.129Z"
+      }
+    ],
     "equipped": {
       "weapon": {
         "id": "1753935703238h34wf",
@@ -40,6 +51,16 @@
           "attack": 150
         },
         "obtainedAt": "2025-07-31T04:21:43.238Z"
+      },
+      "armor": {
+        "id": "17539469183025wasq",
+        "type": "Armor",
+        "name": "Obsidian Plate",
+        "bonus": {
+          "defense": 630,
+          "hp": 20
+        },
+        "obtainedAt": "2025-07-31T07:28:38.302Z"
       }
     }
   },
@@ -83,9 +104,9 @@
   },
   "387812028913418240": {
     "id": "387812028913418240",
-    "balance": 8754381,
-    "level": 5,
-    "experience": 490,
+    "balance": 8755365,
+    "level": 420,
+    "experience": 41940,
     "dailyClaimed": true,
     "weeklyClaimed": true,
     "lastDaily": "2025-07-30T12:25:15.453Z",
@@ -98,10 +119,10 @@
     },
     "boosters": {},
     "totalAnimalsFound": 1,
-    "totalGambled": 2276265,
-    "totalWon": 504002,
-    "totalLost": 1772260,
-    "commandsUsed": 24,
+    "totalGambled": 3026265,
+    "totalWon": 754002,
+    "totalLost": 2022260,
+    "commandsUsed": 33,
     "joinedAt": 1753878267883
   }
 }

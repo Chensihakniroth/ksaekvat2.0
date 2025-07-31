@@ -58,8 +58,8 @@ module.exports = {
                     {
                         name: '⚔️ Battle',
                         value: [
-                            '`Kduel` - Challenge another user to a duel',
-                            '`Kfight` - Fight against a random opponent',
+                            '`Kduel` - pboul ke vai kean 1 smer',
+                            '`Kfight` - vai knea mouy sat',
                             '`Kinv` - View your item inventory',
                             '`Kplayer` - View detailed player stats'
                         ].join('\n'),
@@ -101,10 +101,19 @@ module.exports = {
                         inline: true
                     },
                     {
+                        name: '🔞NSFW',
+                        value: [
+                            '`Kfuck` - freaky with shawty',
+                            '`Kbj` - nham jek',
+                            '`Kbpl` - nham oyster'
+                        ].join('\n'),
+                        inline: true
+                    },
+                    {
                         name: '🎭 Special Expressions',
                         value: [
-                            '`Kamongtwerk` - Among Us twerk expression',
-                            '`Kksaekvat` - Special KsaekVat expression'
+                            '`Kamongtwerk` - Among Us nheak kdit ',
+                            '`Kksaekvat` - ah na chlery ksaekvat lerng klun '
                         ].join('\n'),
                         inline: true
                     }

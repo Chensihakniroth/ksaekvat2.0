@@ -71,7 +71,22 @@ const client = new Client({
 
 // Initialize collections for commands and cooldowns
 client.commands = new Collection();
-client.cooldowns = new Collection();
+client.slashCommands = new Collection();
+client.cooldowns = new Collection
+
+// Now load slash commands (only /devbadge for now)
+const slashPath = path.join(__dirname, 'commands/slash');
+if (fs.existsSync(slashPath)) {
+    const slashFiles = fs.readdirSync(slashPath).filter(file => file.endsWith('.js'));
+    for (const file of slashFiles) {
+        const command = require(`./commands/slash/${file}`);
+        if (command.data && command.execute) {
+            client.slashCommands.set(command.data.name, command);
+        } else {
+            console.warn(`[WARN] Slash command at ${file} is missing data or execute property.`);
+        }
+    }
+}
 
 // Load command and event handlers
 console.log('🔧 Loading commandHandler...');
@@ -195,4 +210,22 @@ client.on('messageReactionAdd', (reaction, user) => {
 
 client.on('messageReactionRemove', (reaction, user) => {
     console.log(`❌ Reaction removed: ${reaction.emoji.name} by ${user.username}`);
+});
+
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isChatInputCommand()) return;
+
+    const command = client.slashCommands.get(interaction.commandName);
+    if (!command) return;
+
+    try {
+        await command.execute(interaction);
+    } catch (error) {
+        console.error(error);
+        if (interaction.replied || interaction.deferred) {
+            await interaction.followUp({ content: '❌ There was an error executing the command.', ephemeral: true });
+        } else {
+            await interaction.reply({ content: '❌ There was an error executing the command.', ephemeral: true });
+        }
+    }
 });

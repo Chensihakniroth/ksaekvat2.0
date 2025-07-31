@@ -5,10 +5,10 @@ const cooldown = new Set();
 const COOLDOWN_TIME = 2 * 1000;
 
 module.exports = {
-    name: "pussylick",
-    aliases: ["lickpussy", "pl"],
-    description: "NSFW: Lick someone's pussy (18+)",
-    usage: "pussylick @user",
+    name: "blowjob",
+    aliases: ["bj"],
+    description: "NSFW: Give a blowjob to another user (18+)",
+    usage: "blowjob @user",
     async execute(message, args) {
         if (!message.channel.nsfw) {
             return message.reply(
@@ -18,37 +18,36 @@ module.exports = {
 
         if (cooldown.has(message.author.id)) {
             return message.reply(
-                "⏳ Please wait before using this command again.",
+                "⏳ Wait a moment before using this command again.",
             );
         }
 
         const user = message.mentions.users.first();
         if (!user) {
-            return message.reply("👉 Mention someone to lick.");
+            return message.reply("👉 Mention someone to give a blowjob.");
         }
 
         try {
-            // Use waifu.pics NSFW as fallback
             const res = await axios.get(
-                "https://api.purrbot.site/v2/img/nsfw/pussylick/gif",
+                "https://api.purrbot.site/v2/img/nsfw/blowjob/gif",
             );
-            const imageUrl = res.data.url;
+            const imageUrl = res.data.link;
 
             const embed = new EmbedBuilder()
-                .setTitle("🔞 NSFW Action: Pussy Lick")
+                .setTitle("🔞 NSFW Action: Blowjob")
                 .setDescription(
-                    `${message.author} is licking ${user}'s pussy 😳💦`,
+                    `${message.author} is giving ${user} a blowjob 😳`,
                 )
                 .setImage(imageUrl)
-                .setColor("HotPink");
+                .setColor("Purple");
 
             message.channel.send({ embeds: [embed] });
 
             cooldown.add(message.author.id);
             setTimeout(() => cooldown.delete(message.author.id), COOLDOWN_TIME);
         } catch (err) {
-            console.error("❌ API Error:", err.message);
-            message.reply("❌ Couldn't get the GIF from the fallback source.");
+            console.error(err);
+            message.reply("❌ Couldn't get the GIF.");
         }
     },
 };

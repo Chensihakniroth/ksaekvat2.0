@@ -2,6 +2,9 @@ module.exports = {
     // Bot Configuration
     token: process.env.DISCORD_TOKEN || 'YOUR_ACTUAL_BOT_TOKEN_HERE',
     prefix: ['k', 'K'],
+    clientId: process.env.CLIENT_ID || '1399459454889754805',
+    guildId: process.env.GUILD_ID || '1240627007340150785',
+
     
     // Short prefixes for specific commands
     shortPrefixes: {
@@ -17,9 +20,9 @@ module.exports = {
     },
     
     // Admin user IDs (replace with actual admin Discord IDs)
-    adminIds: process.env.ADMIN_IDS ? process.env.ADMIN_IDS.split(',') : ['1160984144290005012'],
-    adminIds: process.env.ADMIN_IDS ? process.env.ADMIN_IDS.split(',') : ['387812028913418240'],
-    
+    adminIds: process.env.ADMIN_IDS ? process.env.ADMIN_IDS.split(',') : ['387812028913418240', '1160984144290005012'],
+
+                                                                          
     // API Keys
     giphyApiKey: process.env.GIPHY_API_KEY || 'default_giphy_key',
     googleApiKey: process.env.GOOGLE_API_KEY || 'default_google_key',
