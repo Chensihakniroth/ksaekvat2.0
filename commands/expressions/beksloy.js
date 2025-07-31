@@ -1,24 +1,15 @@
-
-const axios = require("axios");
 const { EmbedBuilder } = require("discord.js");
 const colors = require("../../utils/colors.js");
 const config = require("../../config/config.js");
 const database = require("../../utils/database.js");
 
-const cooldown = new Set();
-const COOLDOWN_TIME = 3000; // 3 seconds
-
 module.exports = {
     name: "ksaekvat",
     aliases: ["kk"],
     description: "Send beksloy vibes with an action GIF",
-    usage: "ksaekvat <@user> [message]",
+    usage: "kkk <@user> [message]",
     cooldown: 3000,
-    async execute(message, args, client) {
-        if (cooldown.has(message.author.id)) {
-            return message.reply("⏳ Wait a moment before using this command again.");
-        }
-
+    execute(message, args, client) {
         if (args.length < 1 || message.mentions.users.size === 0) {
             return message.reply({
                 embeds: [
@@ -62,92 +53,43 @@ module.exports = {
             });
         }
 
-        try {
-            // Use Purrbot API for hug/cuddle as beksloy action
-            const res = await axios.get("https://purrbot.site/api/img/sfw/hug/gif");
-            const imageUrl = res.data.link;
+        const loadingEmbed = new EmbedBuilder()
+            .setColor(colors.primary)
+            .setTitle("ksae kvat lerng knorng !")
+            .setDescription("ANH KAB ALL! 😎");
 
-            const beksloyMessages = [
-                `🔥 **${message.author.username}** ksae kvat lerng klun lv aii ${target}!`,
-                `😎 **${message.author.username}** sends beksloy vibes to ${target}!`,
-                `✨ **${message.author.username}** recognizes ${target}'s beksloy energy!`,
-            ];
+        message.reply({ embeds: [loadingEmbed] }).then(async (sentMessage) => {
+            try {
+                const beksloyGifs = [
+                    "https://c.tenor.com/0jxMoG6W1KcAAAAd/tenor.gif",
+                ];
 
-            const randomMessage = beksloyMessages[Math.floor(Math.random() * beksloyMessages.length)];
+                const gifUrl =
+                    beksloyGifs[Math.floor(Math.random() * beksloyGifs.length)];
 
-            const beksloyEmbed = new EmbedBuilder()
-                .setColor(colors.warning)
-                .setTitle("🔥 BEKSLOY ACTIVATED!")
-                .setDescription(
-                    randomMessage +
-                        (customMessage
-                            ? `\n\n💬 *"${customMessage}"*`
-                            : "")
-                )
-                .setImage(imageUrl)
-                .setFooter({ text: "STEAV INCOMING 🐉 🔪 • Powered by Purrbot" })
-                .setTimestamp();
+                const beksloyMessages = [
+                    `🔥 **${message.author.username}** ksae kvat lerng klun lv aii ${target}!`,
+                ];
 
-            message.reply({ embeds: [beksloyEmbed] });
+                const beksloyEmbed = new EmbedBuilder()
+                    .setColor(colors.warning)
+                    .setDescription(
+                        randomMessage +
+                            (customMessage
+                                ? `\n\n💬 *"${customMessage}"*`
+                                : ""),
+                    )
+                    .setImage(gifUrl)
+                    .setFooter({ text: "STEAV INCOMING 🐉 🔪" })
+                    
 
-            cooldown.add(message.author.id);
-            setTimeout(() => cooldown.delete(message.author.id), COOLDOWN_TIME);
-        } catch (error) {
-            console.error("Error fetching beksloy GIF:", error);
+                await sentMessage.edit({ embeds: [beksloyEmbed] });
+            } catch (error) {
+                console.error("Error fetching beksloy GIF:", error);
 
-            const fallbackMessages = [
-                `🔥 **${message.author.username}** sends pure beksloy energy to ${target}! ✨`,
-                `😎 **${message.author.username}** recognizes ${target}'s beksloy vibes! 🚀`,
-                `🌟 **${message.author.username}** shares the beksloy spirit with ${target}! 💫`,
-            ];
-
-            const randomFallback = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
-            const vibes = [
-                "Ultra Cool! 😎",
-                "Maximum Fire! 🔥",
-                "Pure Energy! ⚡",
-                "Epic Vibes! 🌟",
-                "Legendary! 👑",
-                "Absolutely Lit! 🚀",
-            ];
-            const randomVibe = vibes[Math.floor(Math.random() * vibes.length)];
-
-            const fallbackEmbed = new EmbedBuilder()
-                .setColor(colors.warning)
-                .setTitle("🔥 BEKSLOY ACTIVATED!")
-                .setDescription(
-                    randomFallback +
-                        (customMessage
-                            ? `\n\n💬 *"${customMessage}"*`
-                            : "")
-                )
-                .addFields(
-                    {
-                        name: "🔥 Beksloy Emojis",
-                        value: "🔥 😎 ✨ 🚀 💫 🌟 👑 ⚡",
-                        inline: false,
-                    },
-                    {
-                        name: "✨ Vibe Report",
-                        value: `${target.username}'s beksloy level: ${randomVibe}`,
-                        inline: true,
-                    },
-                    {
-                        name: "🎯 Beksloy Facts",
-                        value: [
-                            "• Beksloy is a state of mind",
-                            "• Everyone has inner beksloy",
-                            "• Beksloy vibes are contagious",
-                            "• Stay beksloy, stay awesome!",
-                        ].join("\n"),
-                        inline: false,
-                    }
-                )
-                .setFooter({ text: "STEAV INCOMING 🐉 🔪 • API Error" })
-                .setTimestamp();
-
-            message.reply({ embeds: [fallbackEmbed] });
-        }
+                await sentMessage.edit({ embeds: [fallbackEmbed] });
+            }
+        });
 
         database.updateStats(message.author.id, "command");
     },

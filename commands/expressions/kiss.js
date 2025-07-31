@@ -52,14 +52,6 @@ module.exports = {
         // Create initial embed
         const loadingEmbed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('💋 Fetching Kiss GIF...')
-            .setDescription('Finding the perfect kiss GIF for you! 💕')
-            .setFooter({ 
-                text: 'Powered by Tenor API',
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setTimestamp();
-
         message.reply({ embeds: [loadingEmbed] }).then(async (sentMessage) => {
             try {
                 // Fetch GIF from Tenor API
