@@ -1,167 +1,106 @@
 const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/colors.js');
-const config = require('../../config/config.js');
 const database = require('../../utils/database.js');
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 module.exports = {
     name: 'spank',
-    aliases: ['spanking'],
-    description: 'Playfully spank someone with an action GIF',
+    description: 'Playfully spank someone (anime style).',
     usage: 'spank <@user> [message]',
-    cooldown: 3000, // 3 seconds
-    execute(message, args, client) {
-        // Check if user mentioned someone
-        if (args.length < 1 || message.mentions.users.size === 0) {
-            return message.reply({
-                embeds: [{
-                    color: colors.error,
-                    title: '🍑 Spank Command',
-                    description: 'Please mention someone to playfully spank!\n**Usage:** `Kspank @user [message]`\n**Example:** `Kspank @friend That\'s for being naughty!`\n\n*Note: This is just playful fun!*',
-                    timestamp: new Date()
-                }]
-            });
-        }
-
+    cooldown: 3000,
+    async execute(message, args) {
         const target = message.mentions.users.first();
         const customMessage = args.slice(1).join(' ');
 
-        // Can't spank yourself
-        if (target.id === message.author.id) {
+        if (!target || target.id === message.author.id || target.bot) {
             return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '🍑 Self Spank',
-                    description: 'You can\'t spank yourself! That\'s just awkward! Find someone else to playfully spank! 😅',
-                    timestamp: new Date()
-                }]
+                embeds: [new EmbedBuilder()
+                    .setColor(colors.danger || 0xFF4444)
+                    .setTitle('✋ Spank Fail')
+                    .setDescription('You must mention someone else to spank.')
+                ]
             });
         }
 
-        // Can't spank bots
-        if (target.bot) {
-            return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '🤖 Bot Spank',
-                    description: 'Bots don\'t have the necessary... anatomy for this! Try spanking a real person instead! 🤖',
-                    timestamp: new Date()
-                }]
-            });
-        }
-
-        // Create initial embed
-        const loadingEmbed = new EmbedBuilder()
-            .setColor(colors.primary)
-            .setTitle('🍑 Preparing Spanking...')
-            .setDescription('Getting ready for some playful discipline! 😈')
-            .setFooter({ 
-                text: 'Powered by Tenor API | Keep it playful!',
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setTimestamp();
-
-        message.reply({ embeds: [loadingEmbed] }).then(async (sentMessage) => {
-            try {
-                // Fetch GIF from Tenor API
-                const tenorApiKey = process.env.GOOGLE_API_KEY || config.googleApiKey || 'default_tenor_key';
-                const searchTerms = ['anime spank', 'playful spank', 'cartoon spank', 'funny spank', 'discipline'];
-                const randomTerm = searchTerms[Math.floor(Math.random() * searchTerms.length)];
-                
-                const tenorUrl = `https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(randomTerm)}&key=${tenorApiKey}&client_key=discord_bot&limit=50&contentfilter=medium`;
-                
-                const response = await fetch(tenorUrl);
-                const data = await response.json();
-                
-                if (data.results && data.results.length > 0) {
-                    // Select random GIF from results
-                    const randomGif = data.results[Math.floor(Math.random() * data.results.length)];
-                    const gifUrl = randomGif.media_formats.gif.url;
-                    
-                    // Create spank messages
-                    const spankMessages = [
-                        `🍑 **${message.author.username}** gives ${target} a playful spanking!`,
-                        `😈 **${message.author.username}** disciplines ${target} with a spank!`,
-                        `🍑 **${message.author.username}** shows ${target} who's boss with a spank!`,
-                        `💥 **${message.author.username}** delivers some playful punishment to ${target}!`,
-                        `😈 **${message.author.username}** gives ${target} what they deserve!`,
-                        `🍑 **${message.author.username}** teaches ${target} a lesson!`
-                    ];
-                    
-                    const randomMessage = spankMessages[Math.floor(Math.random() * spankMessages.length)];
-                    
-                    const spankEmbed = new EmbedBuilder()
-                        .setColor(colors.error)
-                        .setTitle('🍑 SPANK!')
-                        .setDescription(randomMessage + (customMessage ? `\n\n💬 *"${customMessage}"*` : ''))
-                        .setImage(gifUrl)
-                        .addFields(
-                            {
-                                name: '😈 Naughty Level',
-                                value: `${target.username}: ███████░░░ 70%`,
-                                inline: true
-                            },
-                            {
-                                name: '🍑 Discipline Power',
-                                value: '██████████ 100%',
-                                inline: true
-                            },
-                            {
-                                name: '📚 Lesson Learned',
-                                value: 'Don\'t be naughty! 😈',
-                                inline: true
-                            }
-                        )
-                        
-                        .setTimestamp();
-
-                    await sentMessage.edit({ embeds: [spankEmbed] });
-                } else {
-                    throw new Error('No GIFs found');
-                }
-            } catch (error) {
-                console.error('Error fetching spank GIF:', error);
-                
-                // Fallback with emojis and playful message
-                const fallbackMessages = [
-                    `🍑 **${message.author.username}** gives ${target} a playful spanking! 😈`,
-                    `💥 **${message.author.username}** disciplines ${target} with authority! 🍑`,
-                    `😈 **${message.author.username}** shows ${target} some playful punishment! 💥`
-                ];
-                
-                const randomFallback = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
-                
-                const fallbackEmbed = new EmbedBuilder()
-                    .setColor(colors.error)
-                    .setTitle('🍑 SPANK!')
-                    .setDescription(randomFallback + (customMessage ? `\n\n💬 *"${customMessage}"*` : ''))
-                    .addFields(
-                        {
-                            name: '😈 Spank Emojis',
-                            value: '🍑 😈 💥 🔥 ⚡ 💢 👋 🤚',
-                            inline: false
-                        },
-                        {
-                            name: '📚 Discipline Quote',
-                            value: '"Sometimes you need a little discipline to keep things fun!" 😈',
-                            inline: false
-                        },
-                        {
-                            name: '🎭 Keep It Playful',
-                            value: '*This is all just for fun and games! Keep it lighthearted! 😄',
-                            inline: false
-                        }
-                    )
-                    .setFooter({ 
-                        text: `GIF service unavailable, but the spanking was effective! | ${target.username} ← ${message.author.username}`,
-                        iconURL: target.displayAvatarURL()
-                    })
-                    .setTimestamp();
-
-                await sentMessage.edit({ embeds: [fallbackEmbed] });
-            }
+        const sent = await message.reply({
+            embeds: [new EmbedBuilder()
+                .setColor(colors.primary || 0x0099FF)
+                .setTitle('✋ Preparing...')
+                .setDescription('Loading playful punishment...')
+            ]
         });
 
-        // Update command usage statistics
+        try {
+            let gifUrl = null;
+
+            // Try waifu.pics with actual spank endpoint
+            try {
+                const res1 = await fetch('https://api.waifu.pics/sfw/spank');
+                const data1 = await res1.json();
+                console.log('Waifu.pics spank response:', data1);
+
+                if (data1 && data1.url) {
+                    gifUrl = data1.url;
+                }
+            } catch (e) {
+                console.log('Waifu.pics spank failed, trying alternatives...');
+            }
+
+            // If waifu.pics spank failed, try poke as backup
+            if (!gifUrl) {
+                try {
+                    const res2 = await fetch('https://api.waifu.pics/sfw/poke');
+                    const data2 = await res2.json();
+                    console.log('Waifu.pics poke response:', data2);
+
+                    if (data2 && data2.url) {
+                        gifUrl = data2.url;
+                    }
+                } catch (e) {
+                    console.log('Waifu.pics poke also failed');
+                }
+            }
+
+            // Final fallback to pat (gentle and cute)
+            if (!gifUrl) {
+                try {
+                    const res3 = await fetch('https://api.waifu.pics/sfw/pat');
+                    const data3 = await res3.json();
+                    console.log('Waifu.pics pat response:', data3);
+
+                    if (data3 && data3.url) {
+                        gifUrl = data3.url;
+                    }
+                } catch (e) {
+                    console.log('All spank APIs failed');
+                }
+            }
+
+            const embed = new EmbedBuilder()
+                .setColor(colors.warning || 0xFFAA00)
+                .setTitle('✋ Playful Punishment!')
+                .setDescription(`**${message.author.username}** playfully spanks ${target}!${customMessage ? `\n\n💬 "${customMessage}"` : ''}`);
+
+            if (gifUrl) {
+                console.log('Using spank GIF URL:', gifUrl);
+                embed.setImage(gifUrl);
+            } else {
+                console.log('No spank GIF found from any API');
+            }
+
+            await sent.edit({ embeds: [embed] });
+
+        } catch (error) {
+            console.error('Error in spank command:', error);
+            await sent.edit({
+                embeds: [new EmbedBuilder()
+                    .setColor(colors.warning || 0xFFAA00)
+                    .setTitle('✋ Playful Punishment!')
+                    .setDescription(`**${message.author.username}** playfully spanks ${target}! (No GIF available)`)
+                ]
+            });
+        }
+
         database.updateStats(message.author.id, 'command');
     }
 };

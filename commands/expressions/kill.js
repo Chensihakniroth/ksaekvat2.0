@@ -1,166 +1,94 @@
 const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/colors.js');
-const config = require('../../config/config.js');
 const database = require('../../utils/database.js');
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 module.exports = {
     name: 'kill',
-    aliases: ['murder', 'eliminate'],
-    description: 'Playfully kill someone with an action GIF',
+    description: 'Kill someone (virtually)!',
     usage: 'kill <@user> [message]',
-    cooldown: 3000, // 3 seconds
-    execute(message, args, client) {
-        // Check if user mentioned someone
-        if (args.length < 1 || message.mentions.users.size === 0) {
-            return message.reply({
-                embeds: [{
-                    color: colors.error,
-                    title: '💀 Kill Command',
-                    description: 'Please mention someone to playfully eliminate!\n**Usage:** `Kkill @user [message]`\n**Example:** `Kkill @friend You\'re done for!`\n\n*Note: This is just for fun and roleplay!*',
-                    timestamp: new Date()
-                }]
-            });
-        }
-
+    cooldown: 3000,
+    async execute(message, args) {
         const target = message.mentions.users.first();
         const customMessage = args.slice(1).join(' ');
 
-        // Can't kill yourself
-        if (target.id === message.author.id) {
+        if (!target || target.id === message.author.id || target.bot) {
             return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '💀 Self Elimination',
-                    description: 'You can\'t eliminate yourself! That\'s not how this works! Find someone else to playfully defeat! 😅',
-                    timestamp: new Date()
-                }]
+                embeds: [new EmbedBuilder()
+                    .setColor(colors.danger || 0xFF4444)
+                    .setTitle('☠️ Kill Fail')
+                    .setDescription('You must mention someone else to kill.')
+                ]
             });
         }
 
-        // Can't kill bots
-        if (target.bot) {
-            return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '🤖 Bot Elimination',
-                    description: 'Bots can\'t be eliminated, they just respawn! Try targeting a real person for this roleplay! 🤖',
-                    timestamp: new Date()
-                }]
-            });
-        }
-
-        // Create initial embed
-        const loadingEmbed = new EmbedBuilder()
-            .setColor(colors.primary)
-            .setTitle('💀 Preparing Elimination...')
-            .setDescription('Sharpening weapons and preparing for battle! ⚔️')
-            .setFooter({ 
-                text: 'Powered by Tenor API | Just for fun!',
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setTimestamp();
-
-        message.reply({ embeds: [loadingEmbed] }).then(async (sentMessage) => {
-            try {
-                // Fetch GIF from Tenor API
-                const tenorApiKey = process.env.GOOGLE_API_KEY || config.googleApiKey || 'default_tenor_key';
-                const searchTerms = ['anime fight death', 'cartoon kill', 'game over death', 'defeat animation', 'knocked out'];
-                const randomTerm = searchTerms[Math.floor(Math.random() * searchTerms.length)];
-
-                const tenorUrl = `https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(randomTerm)}&key=${tenorApiKey}&client_key=discord_bot&limit=50&contentfilter=medium`;
-
-                const response = await fetch(tenorUrl);
-                const data = await response.json();
-
-                if (data.results && data.results.length > 0) {
-                    // Select random GIF from results
-                    const randomGif = data.results[Math.floor(Math.random() * data.results.length)];
-                    const gifUrl = randomGif.media_formats.gif.url;
-
-                    // Create kill messages
-                    const killMessages = [
-                        `💀 **${message.author.username}** has eliminated ${target} from existence!`,
-                        `⚔️ **${message.author.username}** delivers the final blow to ${target}!`,
-                        `💥 **${message.author.username}** sends ${target} to the shadow realm!`,
-                        `🗡️ **${message.author.username}** defeats ${target} in epic combat!`,
-                        `💀 **${message.author.username}** shows no mercy to ${target}!`,
-                        `⚰️ **${message.author.username}** writes ${target}'s name in the death note!`
-                    ];
-
-                    const randomMessage = killMessages[Math.floor(Math.random() * killMessages.length)];
-
-                    const killEmbed = new EmbedBuilder()
-                        .setColor(colors.error)
-                        .setTitle('💀 ELIMINATION!')
-                        .setDescription(randomMessage + (customMessage ? `\n\n💬 *"${customMessage}"*` : ''))
-                        .setImage(gifUrl)
-                        .addFields(
-                            {
-                                name: '💀 Status',
-                                value: `${target.username}: ❌ Eliminated`,
-                                inline: true
-                            },
-                            {
-                                name: '⚔️ Victory',
-                                value: `${message.author.username}: 🏆 Winner`,
-                                inline: true
-                            },
-                            {
-                                name: '🎮 Game Over',
-                                value: 'Press F to pay respects',
-                                inline: false
-                            }
-                        )
-                        .setTimestamp();
-
-                    await sentMessage.edit({ embeds: [killEmbed] });
-                } else {
-                    throw new Error('No GIFs found');
-                }
-            } catch (error) {
-                console.error('Error fetching kill GIF:', error);
-
-                // Fallback with emojis and dramatic message
-                const fallbackMessages = [
-                    `💀 **${message.author.username}** has dramatically defeated ${target}! ⚔️`,
-                    `🗡️ **${message.author.username}** eliminates ${target} in epic fashion! 💥`,
-                    `⚰️ **${message.author.username}** sends ${target} to game over screen! 🎮`
-                ];
-
-                const randomFallback = fallbackMessages[Math.floor(Math.random() * fallbackMessages.length)];
-
-                const fallbackEmbed = new EmbedBuilder()
-                    .setColor(colors.error)
-                    .setTitle('💀 ELIMINATION!')
-                    .setDescription(randomFallback + (customMessage ? `\n\n💬 *"${customMessage}"*` : ''))
-                    .addFields(
-                        {
-                            name: '⚔️ Battle Emojis',
-                            value: '💀 ⚔️ 🗡️ ⚰️ 💥 👻 🔥 ⚡',
-                            inline: false
-                        },
-                        {
-                            name: '🎮 Respawn Timer',
-                            value: '5... 4... 3... 2... 1... Welcome back to the game! 🎮',
-                            inline: false
-                        },
-                        {
-                            name: '📢 Disclaimer',
-                            value: '*This is just for fun and roleplay! No actual harm intended! 😄',
-                            inline: false
-                        }
-                    )
-                    .setFooter({ 
-                        text: `GIF service unavailable, but the elimination was epic! | ${target.username} ← ${message.author.username}`,
-                        iconURL: target.displayAvatarURL()
-                    })
-                    .setTimestamp();
-
-                await sentMessage.edit({ embeds: [fallbackEmbed] });
-            }
+        const sentMessage = await message.reply({
+            embeds: [new EmbedBuilder()
+                .setColor(colors.primary || 0x0099FF)
+                .setTitle('☠️ Loading weapon...')
+                .setDescription('Assassination in progress...')
+            ]
         });
 
-        // Update command usage statistics
+        try {
+            // Try multiple APIs in order of preference
+            let gifUrl = null;
+
+            // Try nekos.best first
+            try {
+                const res1 = await fetch('https://nekos.best/api/v2/kill');
+                const data1 = await res1.json();
+                console.log('Nekos.best response:', data1);
+
+                if (data1 && data1.results && data1.results.length > 0 && data1.results[0].url) {
+                    gifUrl = data1.results[0].url;
+                } else if (data1 && data1.url) {
+                    gifUrl = data1.url;
+                }
+            } catch (e) {
+                console.log('Nekos.best failed, trying alternative...');
+            }
+
+            // If nekos.best failed, try waifu.pics
+            if (!gifUrl) {
+                try {
+                    const res2 = await fetch('https://api.waifu.pics/sfw/kill');
+                    const data2 = await res2.json();
+                    console.log('Waifu.pics response:', data2);
+
+                    if (data2 && data2.url) {
+                        gifUrl = data2.url;
+                    }
+                } catch (e) {
+                    console.log('Waifu.pics also failed');
+                }
+            }
+
+            const killEmbed = new EmbedBuilder()
+                .setColor(colors.danger || 0xFF4444)
+                .setTitle('☠️ Fatality!')
+                .setDescription(`**${message.author.username}** kills ${target}!${customMessage ? `\n\n💬 "${customMessage}"` : ''}`);
+
+            if (gifUrl) {
+                console.log('Using GIF URL:', gifUrl);
+                killEmbed.setImage(gifUrl);
+            } else {
+                console.log('No GIF found from any API');
+            }
+
+            await sentMessage.edit({ embeds: [killEmbed] });
+
+        } catch (error) {
+            console.error('Error in kill command:', error);
+            await sentMessage.edit({
+                embeds: [new EmbedBuilder()
+                    .setColor(colors.danger || 0xFF4444)
+                    .setTitle('☠️ Fatality!')
+                    .setDescription(`**${message.author.username}** kills ${target}! (No GIF 😢)`)
+                ]
+            });
+        }
+
         database.updateStats(message.author.id, 'command');
     }
 };

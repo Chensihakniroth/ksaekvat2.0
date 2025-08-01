@@ -24,9 +24,9 @@ module.exports = {
         }
 
         try {
-            // Try using nekidev API
-            const res = await axios.get("https://api.fluxpoint.dev/nsfw/gif/kuni");
-            const imageUrl = res.data.url;
+            // Use Purrbot NSFW API
+            const res = await axios.get("https://api.purrbot.site/v2/img/nsfw/pussylick/gif");
+            const imageUrl = res.data.link; // Purrbot API returns the image URL in 'link' field
 
             const embed = new EmbedBuilder()
                 .setTitle("🔞 NSFW Action: Pussy Lick")
@@ -40,7 +40,7 @@ module.exports = {
             setTimeout(() => cooldown.delete(message.author.id), COOLDOWN_TIME);
         } catch (err) {
             console.error("API Error:", err.message);
-            message.reply("❌ Couldn't fetch the image from Nekidev API.");
+            message.reply("❌ Couldn't fetch the image from Purrbot API.");
         }
     },
 };

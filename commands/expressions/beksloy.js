@@ -71,6 +71,12 @@ module.exports = {
                     `🔥 **${message.author.username}** ksae kvat lerng klun lv aii ${target}!`,
                 ];
 
+const randomMessage =
+                    beksloyMessages[
+                        Math.floor(Math.random() * beksloyMessages.length)
+                    ];               
+
+
                 const beksloyEmbed = new EmbedBuilder()
                     .setColor(colors.warning)
                     .setDescription(
