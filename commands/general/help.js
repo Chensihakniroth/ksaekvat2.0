@@ -14,7 +14,7 @@ module.exports = {
             const embed = new EmbedBuilder()
                 .setColor(colors.primary)
                 .setTitle('🎮 KsaekVat Bot Commands')
-                .setDescription(`Here are all available commands. Use \`Khelp [command]\` for detailed info.\n\n**Main Prefix:** \`K\` or \`k\`\n**Short Prefixes:** \`hp\` (help), \`cf\` (coinflip), \`s\` (slots), \`d\` (daily), \`w\` (weekly), \`h\` (heads), \`t\` (tails)`)
+                .setDescription(`Here are all available commands. Use \`Khelp [command]\` for detailed info.\n\n**Main Prefix:** \`K\` or \`k\`\n**Short Prefixes:** \`hp\` (help), \`cf\` (coinflip), \`s\` (slots), \`d\` (daily), \`w\` (weekly), \`h\` (heads), \`t\` (tails), \`hunt\` (hunt), \`zoo\` (zoo), \`pl\` (pussylick)`)
                 .addFields(
                     {
                         name: '📁 General',
@@ -93,7 +93,7 @@ module.exports = {
                             '`Kpunch` - Punch someone',
                             '`Kkill` - Kill someone (playfully)',
                             '`Kslap` - Slap someone',
-                            '`Kspank` - Spank someone',
+                            '`Kpl` - Pussylick someone (NSFW)',
                             '`Kjail` - Send someone to jail',
                             '`Kpat` - Pat someone',
                             '`Kbite` - Bite someone'
