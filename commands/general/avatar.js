@@ -26,7 +26,6 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
             .setTitle(`🖼️ ${target.username}'s Avatar`)
-            .setDescription(`[Download Link](${target.displayAvatarURL({ size: 4096 })})`)
             .setImage(target.displayAvatarURL({ size: 1024, dynamic: true }))
             .addFields(
                 {

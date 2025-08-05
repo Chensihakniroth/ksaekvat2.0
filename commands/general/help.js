@@ -1,4 +1,3 @@
-
 const { EmbedBuilder } = require('discord.js');
 const config = require('../../config/config.js');
 const colors = require('../../utils/colors.js');
@@ -12,7 +11,7 @@ module.exports = {
         if (args.length === 0) {
             // Show all commands organized by category
             const embed = new EmbedBuilder()
-                .setColor(colors.primary)
+                .setColor(colors.primary || 0x0099FF)
                 .setTitle('🎮 KsaekVat Bot Commands')
                 .setDescription(`Here are all available commands. Use \`Khelp [command]\` for detailed info.\n\n**Main Prefix:** \`K\` or \`k\`\n**Short Prefixes:** \`hp\` (help), \`cf\` (coinflip), \`s\` (slots), \`d\` (daily), \`w\` (weekly), \`h\` (heads), \`t\` (tails), \`hunt\` (hunt), \`zoo\` (zoo), \`pl\` (pussylick)`)
                 .addFields(
@@ -93,10 +92,12 @@ module.exports = {
                             '`Kpunch` - Punch someone',
                             '`Kkill` - Kill someone (playfully)',
                             '`Kslap` - Slap someone',
-                            '`Kpl` - Pussylick someone (NSFW)',
                             '`Kjail` - Send someone to jail',
                             '`Kpat` - Pat someone',
-                            '`Kbite` - Bite someone'
+                            '`Kbite` - Bite someone',
+                            '`Ksad` - Express your sadness',
+                            '`Kangry` - Express your anger',
+                            '`Kpoke` - Poke someone (anime style)'
                         ].join('\n'),
                         inline: true
                     },
@@ -105,7 +106,7 @@ module.exports = {
                         value: [
                             '`Kfuck` - freaky with shawty',
                             '`Kbj` - nham jek',
-                            '`Kbpl` - nham oyster'
+                            '`Kpl` - nham oyster'
                         ].join('\n'),
                         inline: true
                     },
@@ -130,7 +131,7 @@ module.exports = {
         if (!command) {
             return message.reply({
                 embeds: [{
-                    color: colors.error,
+                    color: colors.error || 0xFF0000,
                     title: '❌ Command Not Found',
                     description: `Command \`${commandName}\` not found. Use \`Khelp\` to see all available commands.`,
                     timestamp: new Date()
@@ -139,7 +140,7 @@ module.exports = {
         }
 
         const embed = new EmbedBuilder()
-            .setColor(colors.primary)
+            .setColor(colors.primary || 0x0099FF)
             .setTitle(`📖 Command: ${command.name}`)
             .setDescription(command.description || 'No description available');
 

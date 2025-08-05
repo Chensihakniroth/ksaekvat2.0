@@ -5,28 +5,30 @@ const config = require('./config/config.js');
 const logger = require('./utils/logger.js');
 const database = require('./utils/database.js');
 const cron = require('node-cron');
+const express = require('express');
+require('dotenv').config();
 
-// =================================
-// MULTIPLE INSTANCE PREVENTION
-// =================================
+// HTTP server for Railway health checks
+const app = express();
+app.get('/', (req, res) => res.status(200).send('Bot is running'));
+app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
+  console.log(`Server on port ${process.env.PORT || 8080}`);
+});
+
+// Multiple instance prevention
 const pidFile = './bot.pid';
-
-// Check if bot is already running
 if (fs.existsSync(pidFile)) {
-    const pid = fs.readFileSync(pidFile, 'utf8').trim();
-
-    try {
-        // Check if process is actually running
-        process.kill(pid, 0); // This doesn't kill, just checks if process exists
-        console.log('❌ Bot is already running!');
-        console.log(`❌ PID: ${pid}`);
-        console.log('❌ Please stop the existing bot first or delete bot.pid file');
-        process.exit(1);
-    } catch (error) {
-        // Process doesn't exist, remove stale PID file
-        console.log('🧹 Removing stale PID file...');
-        fs.unlinkSync(pidFile);
-    }
+  const pid = fs.readFileSync(pidFile, 'utf8').trim();
+  try {
+    process.kill(pid, 0); // Check if process exists
+    console.log('❌ Bot is already running!');
+    console.log(`❌ PID: ${pid}`);
+    console.log('❌ Please stop the existing bot first or delete bot.pid file');
+    process.exit(1);
+  } catch (error) {
+    console.log('🧹 Removing stale PID file...');
+    fs.unlinkSync(pidFile);
+  }
 }
 
 // Write current process ID
@@ -35,197 +37,179 @@ console.log(`🤖 Bot starting with PID: ${process.pid}`);
 
 // Clean up PID file on exit
 const cleanup = () => {
-    if (fs.existsSync(pidFile)) {
-        console.log('🧹 Cleaning up PID file...');
-        fs.unlinkSync(pidFile);
-    }
+  if (fs.existsSync(pidFile)) {
+    console.log('🧹 Cleaning up PID file...');
+    fs.unlinkSync(pidFile);
+  }
 };
 
 process.on('exit', cleanup);
 process.on('SIGINT', () => {
-    console.log('\n🛑 Received SIGINT, shutting down gracefully...');
-    cleanup();
-    process.exit(0);
+  console.log('\n🛑 Received SIGINT, shutting down gracefully...');
+  cleanup();
+  process.exit(0);
 });
 process.on('SIGTERM', () => {
-    console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
-    cleanup();
-    process.exit(0);
+  console.log('\n🛑 Received SIGTERM, shutting down gracefully...');
+  cleanup();
+  process.exit(0);
 });
 
-// =================================
-// DISCORD BOT SETUP
-// =================================
-
-// Create Discord client with necessary intents (FIXED - Added reaction intents)
+// Discord bot setup
 const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildMembers,
-        GatewayIntentBits.DirectMessages,
-        GatewayIntentBits.GuildMessageReactions  // ← THIS WAS MISSING!
-    ]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildMessageReactions
+  ]
 });
 
-// Initialize collections for commands and cooldowns
+// Initialize collections
 client.commands = new Collection();
 client.slashCommands = new Collection();
-client.cooldowns = new Collection
+client.cooldowns = new Collection();
+client.listeningChannels = new Set();
+client.talkingChannels = new Set();
 
-// Now load slash commands (only /devbadge for now)
+// Load slash commands
 const slashPath = path.join(__dirname, 'commands/slash');
 if (fs.existsSync(slashPath)) {
-    const slashFiles = fs.readdirSync(slashPath).filter(file => file.endsWith('.js'));
-    for (const file of slashFiles) {
-        const command = require(`./commands/slash/${file}`);
-        if (command.data && command.execute) {
-            client.slashCommands.set(command.data.name, command);
-        } else {
-            console.warn(`[WARN] Slash command at ${file} is missing data or execute property.`);
-        }
+  const slashFiles = fs.readdirSync(slashPath).filter(file => file.endsWith('.js'));
+  for (const file of slashFiles) {
+    try {
+      const command = require(`./commands/slash/${file}`);
+      if (command.data && command.data.name && command.execute) {
+        client.slashCommands.set(command.data.name, command);
+        console.log(`✅ Loaded slash command: ${command.data.name}`);
+      } else {
+        console.warn(`[WARN] Skipped ${file}: Missing data, data.name, or execute property`);
+      }
+    } catch (error) {
+      console.warn(`[WARN] Failed to load ${file}: ${error.message}`);
     }
+  }
 }
 
-// Load command and event handlers
+// Load handlers
 console.log('🔧 Loading commandHandler...');
 require('./handlers/commandHandler.js')(client);
 console.log(`🔧 Commands loaded. Total commands: ${client.commands.size}`);
-
 console.log('🔧 Loading eventHandler...');
 require('./handlers/eventHandler.js')(client);
 console.log('🔧 Events loaded successfully');
 
-// Schedule daily reset for daily rewards
+// Cron jobs
 cron.schedule('0 0 * * *', () => {
-    logger.info('Resetting daily rewards for all users');
-    const users = database.getAllUsers();
-    users.forEach(user => {
-        user.dailyClaimed = false;
-        database.saveUser(user);
-    });
-    logger.info(`Reset daily rewards for ${users.length} users`);
+  logger.info('Resetting daily rewards for all users');
+  const users = database.getAllUsers();
+  users.forEach(user => {
+    user.dailyClaimed = false;
+    database.saveUser(user);
+  });
+  logger.info(`Reset daily rewards for ${users.length} users`);
 });
 
-// Schedule weekly reset for weekly rewards
 cron.schedule('0 0 * * 0', () => {
-    logger.info('Resetting weekly rewards for all users');
-    const users = database.getAllUsers();
-    users.forEach(user => {
-        user.weeklyClaimed = false;
-        database.saveUser(user);
-    });
-    logger.info(`Reset weekly rewards for ${users.length} users`);
+  logger.info('Resetting weekly rewards for all users');
+  const users = database.getAllUsers();
+  users.forEach(user => {
+    user.weeklyClaimed = false;
+    database.saveUser(user);
+  });
+  logger.info(`Reset weekly rewards for ${users.length} users`);
 });
 
-// Schedule booster expiration check every hour
 cron.schedule('0 * * * *', () => {
-    const users = database.getAllUsers();
-    let expiredCount = 0;
-
-    users.forEach(user => {
-        if (user.boosters) {
-            // Check money booster
-            if (user.boosters.money && user.boosters.money.expiresAt < Date.now()) {
-                delete user.boosters.money;
-                expiredCount++;
-            }
-            // Check exp booster
-            if (user.boosters.exp && user.boosters.exp.expiresAt < Date.now()) {
-                delete user.boosters.exp;
-                expiredCount++;
-            }
-            database.saveUser(user);
-        }
-    });
-
-    if (expiredCount > 0) {
-        logger.info(`Expired ${expiredCount} boosters`);
+  const users = database.getAllUsers();
+  let expiredCount = 0;
+  users.forEach(user => {
+    if (user.boosters) {
+      if (user.boosters.money && user.boosters.money.expiresAt < Date.now()) {
+        delete user.boosters.money;
+        expiredCount++;
+      }
+      if (user.boosters.exp && user.boosters.exp.expiresAt < Date.now()) {
+        delete user.boosters.exp;
+        expiredCount++;
+      }
+      database.saveUser(user);
     }
+  });
+  if (expiredCount > 0) {
+    logger.info(`Expired ${expiredCount} boosters`);
+  }
 });
 
-// Handle uncaught exceptions
+// Error handling
 process.on('uncaughtException', (error) => {
-    logger.error('Uncaught Exception:', error);
-    cleanup();
-    process.exit(1);
+  logger.error('Uncaught Exception:', error);
 });
-
 process.on('unhandledRejection', (error) => {
-    logger.error('Unhandled Rejection:', error);
+  logger.error('Unhandled Rejection:', error);
 });
 
-// Login to Discord
+// Message listener
+client.on('messageCreate', async (message) => {
+  if (client.listeningChannels.has(message.channel.id)) {
+    logger.info(`[${message.guild.name} - ${message.channel.name}] ${message.author.tag}: ${message.content}`);
+  }
+});
+
+// Slash command handler
+client.on('interactionCreate', async interaction => {
+  if (!interaction.isChatInputCommand()) return;
+  const command = client.slashCommands.get(interaction.commandName);
+  if (!command) return;
+  try {
+    await command.execute(interaction);
+  } catch (error) {
+    logger.error(`Error executing command ${interaction.commandName}:`, error);
+    if (interaction.replied || interaction.deferred) {
+      await interaction.followUp({ content: '❌ There was an error executing the command.', ephemeral: true });
+    } else {
+      await interaction.reply({ content: '❌ There was an error executing the command.', ephemeral: true });
+    }
+  }
+});
+
+// Login
 const token = process.env.DISCORD_TOKEN || config.token;
 if (!token || token === 'YOUR_BOT_TOKEN_HERE') {
-    logger.error('❌ No valid Discord token found! Please set DISCORD_TOKEN environment variable.');
-    cleanup();
-    process.exit(1);
+  logger.error('❌ No valid Discord token found! Please set DISCORD_TOKEN environment variable.');
+  cleanup();
+  process.exit(1);
 }
 
 logger.info('🔗 Attempting to connect to Discord...');
-logger.info(`🔑 Token length: ${token.length} characters`);
-logger.info(`🔑 Token starts with: ${token.substring(0, 24)}...`);
-
 client.login(token)
-    .then(() => {
-        logger.info('✅ Bot login successful!');
-        console.log(`🎉 Bot is ready! PID: ${process.pid}`);
-        console.log(`🎯 Loaded ${client.commands.size} commands`);
-    })
-    .catch(error => {
-        logger.error('❌ Failed to start bot:', error);
-        logger.error('❌ Error code:', error.code);
-        logger.error('❌ Error message:', error.message);
+  .then(() => {
+    logger.info('✅ Bot login successful!');
+    console.log(`🎉 Bot is ready! PID: ${process.pid}`);
+    console.log(`🎯 Loaded ${client.commands.size} commands`);
+  })
+  .catch(error => {
+    logger.error('❌ Failed to start bot:', error);
+    cleanup();
+    process.exit(1);
+  });
 
-        if (error.code === 'TokenInvalid') {
-            logger.error('❌ Invalid Discord token! Please check your DISCORD_TOKEN environment variable.');
-            logger.error('❌ Make sure the token:');
-            logger.error('   1. Is copied correctly from Discord Developer Portal');
-            logger.error('   2. Belongs to a bot (not a user token)');
-            logger.error('   3. Has proper permissions enabled');
-        } else if (error.code === 'DisallowedIntents') {
-            logger.error('❌ Bot is missing required intents. Please enable them in Discord Developer Portal.');
-        }
-
-        cleanup();
-        process.exit(1);
-    });
-
-// Add ready event for better logging
+// Ready event
 client.once('ready', () => {
-    console.log(`🚀 ${client.user.tag} is online!`);
-    console.log(`📊 Serving ${client.guilds.cache.size} servers`);
-    console.log(`👥 Watching ${client.users.cache.size} users`);
-    console.log('='.repeat(50));
-    console.log('🎰 Bot is ready to receive commands!');
-    console.log('='.repeat(50));
+  console.log(`🚀 ${client.user.tag} is online!`);
+  console.log(`📊 Serving ${client.guilds.cache.size} servers`);
+  console.log(`👥 Watching ${client.users.cache.size} users`);
+  console.log('='.repeat(50));
+  console.log('🎰 Bot is ready to receive commands!');
+  console.log('='.repeat(50));
 });
 
-// Add reaction event debugging (you can remove this later)
+// Reaction events
 client.on('messageReactionAdd', (reaction, user) => {
-    console.log(`🔥 Reaction added: ${reaction.emoji.name} by ${user.username}`);
+  console.log(`🔥 Reaction added: ${reaction.emoji.name} by ${user.username}`);
 });
-
 client.on('messageReactionRemove', (reaction, user) => {
-    console.log(`❌ Reaction removed: ${reaction.emoji.name} by ${user.username}`);
-});
-
-client.on('interactionCreate', async interaction => {
-    if (!interaction.isChatInputCommand()) return;
-
-    const command = client.slashCommands.get(interaction.commandName);
-    if (!command) return;
-
-    try {
-        await command.execute(interaction);
-    } catch (error) {
-        console.error(error);
-        if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({ content: '❌ There was an error executing the command.', ephemeral: true });
-        } else {
-            await interaction.reply({ content: '❌ There was an error executing the command.', ephemeral: true });
-        }
-    }
+  console.log(`❌ Reaction removed: ${reaction.emoji.name} by ${user.username}`);
 });

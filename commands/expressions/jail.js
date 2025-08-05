@@ -2,6 +2,11 @@ const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/colors.js');
 const database = require('../../utils/database.js');
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+const GIPHY_API_KEY = process.env.GIPHY_API_KEY; // Ensure your API key is stored in environment variables
+
+if (!GIPHY_API_KEY) {
+    console.error('GIPHY_API_KEY is not defined. Please check your environment variables.');
+}
 
 module.exports = {
     name: 'jail',
@@ -14,49 +19,55 @@ module.exports = {
 
         const sent = await message.reply({
             embeds: [new EmbedBuilder()
-                .setColor(colors.primary || 0x0099FF)
+                .setColor(colors.primary || 0x0099FF) // Use fallback color if undefined
                 .setTitle('🔒 Preparing jail...')
                 .setDescription('Loading jail animation...')
             ]
         });
 
+        if (!GIPHY_API_KEY) {
+            console.error('GIPHY_API_KEY is not defined. Please check your environment variables.');
+            return; // Exit if API key is not defined
+        }
+
         try {
-            let gifUrl = null;
+            const query = 'jail, handcuff, arrest, prison'; 
+            const url = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(query)}&limit=1`;
+            const response = await fetch(url);
 
-            // Try to get a GIF from APIs first
-            try {
-                const res = await fetch('https://api.waifu.pics/sfw/handhold');
-                const data = await res.json();
+            console.log('Response Status:', response.status);
+            console.log('Response Headers:', response.headers);
 
-                if (data && data.url) {
-                    gifUrl = data.url;
-                }
-            } catch (e) {
-                console.log('API failed, using static jail image');
+            const data = await response.json(); // Parse the response as JSON
+
+            // Check if results exist
+            if (data.data && Array.isArray(data.data) && data.data.length > 0) {
+                const gifUrl = data.data[0].images.original.url; // Get the GIF URL
+                const targetUser = mentionedUser || message.author;
+
+                const embed = new EmbedBuilder()
+                    .setColor(colors.danger || 0xFF4444) // Use fallback color if undefined
+                    .setTitle('🔒 JAIL TIME!')
+                    .setDescription(`**${targetUser.username}** has been sent to jail!${customMessage ? `\n\n💬 "${customMessage}"` : ''}`)
+                    .setImage(gifUrl); // Set the GIF URL
+
+                await sent.edit({ embeds: [embed] });
+            } else {
+                await sent.edit({
+                    embeds: [new EmbedBuilder()
+                        .setColor(colors.warning || 0xFFFF00)
+                        .setTitle('⚠️ No GIFs found!')
+                        .setDescription(`No GIFs found for the search term "jail".`)
+                    ]
+                });
             }
-
-            const targetUser = mentionedUser || message.author;
-            const embed = new EmbedBuilder()
-                .setColor(colors.danger || 0xFF4444)
-                .setTitle('🔒 JAIL TIME!')
-                .setDescription(`**${targetUser.username}** has been sent to jail!${customMessage ? `\n\n💬 "${customMessage}"` : ''}`)
-                .setThumbnail('https://i.imgur.com/YQakgwb.png'); // Generic jail bars emoji/image
-
-            // Add GIF if we got one, otherwise just use the thumbnail
-            if (gifUrl) {
-                embed.setImage(gifUrl);
-            }
-
-            await sent.edit({ embeds: [embed] });
-
         } catch (error) {
             console.error('Error in jail command:', error);
             await sent.edit({
                 embeds: [new EmbedBuilder()
-                    .setColor(colors.danger || 0xFF4444)
+                    .setColor(colors.danger || 0xFF4444) // Use fallback color if undefined
                     .setTitle('🔒 JAIL TIME!')
                     .setDescription(`**${mentionedUser?.username || message.author.username}** has been sent to jail! (No GIF available)`)
-                    .setThumbnail('https://i.imgur.com/YQakgwb.png')
                 ]
             });
         }

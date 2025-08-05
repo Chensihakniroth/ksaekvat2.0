@@ -19,8 +19,12 @@ module.exports = {
         t: 'coinflip tails'
     },
     
-    // Admin user IDs (replace with actual admin Discord IDs)
-    adminIds: process.env.ADMIN_IDS ? process.env.ADMIN_IDS.split(',') : ['387812028913418240', '1160984144290005012'],
+    adminIds: [
+        process.env.ADMIN_ID_1,
+        process.env.ADMIN_ID_2,
+        process.env.ADMIN_ID_3,
+        process.env.ADMIN_ID_4
+    ].filter(Boolean), // This will filter out any undefined values
 
                                                                           
     // API Keys
