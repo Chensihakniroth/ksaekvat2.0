@@ -1,12 +1,8 @@
 const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/colors.js');
 const database = require('../../utils/database.js');
+const config = require('../../config/config.js');
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
-const GIPHY_API_KEY = process.env.GIPHY_API_KEY; // Ensure your API key is stored in environment variables
-
-if (!GIPHY_API_KEY) {
-    console.error('GIPHY_API_KEY is not defined. Please check your environment variables.');
-}
 
 module.exports = {
     name: 'jail',
@@ -16,6 +12,7 @@ module.exports = {
     async execute(message, args) {
         const mentionedUser = message.mentions.users.first();
         const customMessage = args.slice(1).join(' ');
+        const tenorApiKey = config.googleApiKey; // Using googleApiKey for Tenor API
 
         const sent = await message.reply({
             embeds: [new EmbedBuilder()
@@ -25,14 +22,9 @@ module.exports = {
             ]
         });
 
-        if (!GIPHY_API_KEY) {
-            console.error('GIPHY_API_KEY is not defined. Please check your environment variables.');
-            return; // Exit if API key is not defined
-        }
-
         try {
-            const query = 'jail, handcuff, arrest, prison'; 
-            const url = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(query)}&limit=1`;
+            const query = 'jail, handcuff, arrest, prison';
+            const url = `https://tenor.googleapis.com/v2/search?q=${encodeURIComponent(query)}&key=${tenorApiKey}&limit=1&contentfilter=medium`;
             const response = await fetch(url);
 
             console.log('Response Status:', response.status);
@@ -41,8 +33,8 @@ module.exports = {
             const data = await response.json(); // Parse the response as JSON
 
             // Check if results exist
-            if (data.data && Array.isArray(data.data) && data.data.length > 0) {
-                const gifUrl = data.data[0].images.original.url; // Get the GIF URL
+            if (data.results && Array.isArray(data.results) && data.results.length > 0) {
+                const gifUrl = data.results[0].media_formats.gif.url; // Get the GIF URL
                 const targetUser = mentionedUser || message.author;
 
                 const embed = new EmbedBuilder()
