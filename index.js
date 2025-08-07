@@ -176,7 +176,7 @@ client.on('interactionCreate', async interaction => {
 });
 
 // Login
-const token = process.env.DISCORD_TOKEN || config.token;
+const token = process.env.DISCORD_TOKEN;
 if (!token || token === 'YOUR_BOT_TOKEN_HERE') {
   logger.error('❌ No valid Discord token found! Please set DISCORD_TOKEN environment variable.');
   cleanup();
