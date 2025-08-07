@@ -24,20 +24,25 @@ module.exports = {
 
             // Try Otaku GIF API first
             try {
-                const res1 = await axios.get('https://api.otakugifs.xyz/gif?reaction=angry&format=GIF');
-                console.log('Otaku GIF API response:', res1.data);
+                const res1 = await fetch('https://api.otakugifs.xyz/gif?reaction=angry&format=GIF');
                 
-                // Check if response has URL
-                if (res1.data && res1.data.url) {
-                    gifUrl = res1.data.url;
-                }
-                // If direct response is a URL string
-                else if (typeof res1.data === 'string' && res1.data.startsWith('http')) {
-                    gifUrl = res1.data;
-                }
-                // If the response itself is the image URL
-                else if (res1.status === 200 && res1.config.url) {
-                    gifUrl = res1.config.url;
+                if (res1.ok) {
+                    const contentType = res1.headers.get('content-type');
+                    
+                    // If it returns JSON
+                    if (contentType && contentType.includes('application/json')) {
+                        const data1 = await res1.json();
+                        console.log('Otaku GIF API JSON response:', data1);
+                        
+                        if (data1 && data1.url) {
+                            gifUrl = data1.url;
+                        }
+                    }
+                    // If it redirects to the actual GIF URL
+                    else {
+                        gifUrl = res1.url;
+                        console.log('Otaku GIF API direct response:', gifUrl);
+                    }
                 }
             } catch (e) {
                 console.log('Otaku GIF API failed, trying fallback...', e.message);
@@ -46,11 +51,12 @@ module.exports = {
             // Fallback to waifu.pics if Otaku API fails
             if (!gifUrl) {
                 try {
-                    const res2 = await axios.get('https://api.waifu.pics/sfw/angry');
-                    console.log('Waifu.pics angry response:', res2.data);
+                    const res2 = await fetch('https://api.waifu.pics/sfw/angry');
+                    const data2 = await res2.json();
+                    console.log('Waifu.pics angry response:', data2);
 
-                    if (res2.data && res2.data.url) {
-                        gifUrl = res2.data.url;
+                    if (data2 && data2.url) {
+                        gifUrl = data2.url;
                     }
                 } catch (e) {
                     console.log('Waifu.pics angry failed, trying nekos.best...');
@@ -60,13 +66,14 @@ module.exports = {
             // Second fallback to nekos.best with pout (similar to angry)
             if (!gifUrl) {
                 try {
-                    const res3 = await axios.get('https://nekos.best/api/v2/pout');
-                    console.log('Nekos.best pout response:', res3.data);
+                    const res3 = await fetch('https://nekos.best/api/v2/pout');
+                    const data3 = await res3.json();
+                    console.log('Nekos.best pout response:', data3);
 
-                    if (res3.data && res3.data.results && res3.data.results.length > 0 && res3.data.results[0].url) {
-                        gifUrl = res3.data.results[0].url;
-                    } else if (res3.data && res3.data.url) {
-                        gifUrl = res3.data.url;
+                    if (data3 && data3.results && data3.results.length > 0 && data3.results[0].url) {
+                        gifUrl = data3.results[0].url;
+                    } else if (data3 && data3.url) {
+                        gifUrl = data3.url;
                     }
                 } catch (e) {
                     console.log('Nekos.best pout also failed');
