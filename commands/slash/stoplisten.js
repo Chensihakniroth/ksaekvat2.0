@@ -1,9 +1,18 @@
+// commands/admin/stoplis.js
+const { SlashCommandBuilder } = require('discord.js');
+const listenCommand = require('./listen.js');
+
 module.exports = {
-  data: {
-    name: 'listen', // or 'stoplisten', 'stoptalk', 'talk'
-    description: 'Description of the command'
-  },
-  execute: async (interaction) => {
-    await interaction.reply('Command executed!');
-  }
+    data: new SlashCommandBuilder()
+        .setName('stoplisten')
+        .setDescription('Stop listening to messages from a user (Admin only)'),
+    async execute(interaction) {
+        const adminId = process.env.ADMIN_ID;
+        if (interaction.user.id !== adminId) {
+            return interaction.reply({ content: '❌ You are not authorized to use this command.', ephemeral: true });
+        }
+
+        listenCommand.stopListening();
+        return interaction.reply(`🛑 Stopped listening to messages.`);
+    }
 };
