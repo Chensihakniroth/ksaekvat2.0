@@ -1,7 +1,9 @@
 const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/colors.js');
 const database = require('../../utils/database.js');
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+// Use built-in fetch (Node.js 18+) or axios as fallback
+const fetch = global.fetch || require('axios').get;
+
 const TENOR_API_KEY = process.env.GOOGLE_API_KEY; // Use GOOGLE_API_KEY from environment variables
 
 if (!TENOR_API_KEY) {
@@ -39,12 +41,13 @@ module.exports = {
         try {
             const query = 'jail handcuff arrest prison';
             const url = `https://tenor.googleapis.com/v2/search?key=${TENOR_API_KEY}&q=${encodeURIComponent(query)}&limit=1&media_filter=gif`;
+            
+            // Handle fetch vs axios response
             const response = await fetch(url);
+            const data = global.fetch ? await response.json() : response.data;
 
-            console.log('Tenor Response Status:', response.status);
-            console.log('Tenor Response Headers:', response.headers);
-
-            const data = await response.json();
+            console.log('Tenor Response Status:', global.fetch ? response.status : response.status);
+            console.log('Tenor Response Headers:', global.fetch ? response.headers : response.headers);
 
             if (data.results && Array.isArray(data.results) && data.results.length > 0) {
                 const gifUrl = data.results[0].media_formats.gif.url;
