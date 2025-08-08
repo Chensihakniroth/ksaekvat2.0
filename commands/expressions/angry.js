@@ -22,45 +22,16 @@ module.exports = {
         try {
             let gifUrl = null;
 
-            // Try Otaku GIF API first
+            // First try to fetch from nekos.life
             try {
-                const res1 = await fetch('https://api.otakugifs.xyz/gif?reaction=angry&format=GIF');
-                
-                if (res1.ok) {
-                    const contentType = res1.headers.get('content-type');
-                    
-                    // If it returns JSON
-                    if (contentType && contentType.includes('application/json')) {
-                        const data1 = await res1.json();
-                        console.log('Otaku GIF API JSON response:', data1);
-                        
-                        if (data1 && data1.url) {
-                            gifUrl = data1.url;
-                        }
-                    }
-                    // If it redirects to the actual GIF URL
-                    else {
-                        gifUrl = res1.url;
-                        console.log('Otaku GIF API direct response:', gifUrl);
-                    }
+                const res1 = await fetch('https://nekos.best/api/v2/angry');
+                const data1 = await res1.json();
+                console.log('Nekos.life angry response:', data1);
+                if (data1 && data1.url) {
+                    gifUrl = data1.url;
                 }
             } catch (e) {
-                console.log('Otaku GIF API failed, trying fallback...', e.message);
-            }
-
-            // Fallback to waifu.pics if Otaku API fails
-            if (!gifUrl) {
-                try {
-                    const res2 = await fetch('https://api.waifu.pics/sfw/angry');
-                    const data2 = await res2.json();
-                    console.log('Waifu.pics angry response:', data2);
-
-                    if (data2 && data2.url) {
-                        gifUrl = data2.url;
-                    }
-                } catch (e) {
-                    console.log('Waifu.pics angry failed, trying nekos.best...');
-                }
+                console.log('Nekos.life angry API failed:', e);
             }
 
             // Second fallback to nekos.best with pout (similar to angry)
