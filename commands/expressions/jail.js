@@ -39,36 +39,55 @@ module.exports = {
         }
 
         try {
-            const query = 'jail handcuff arrest prison';
-            const url = `https://tenor.googleapis.com/v2/search?key=${TENOR_API_KEY}&q=${encodeURIComponent(query)}&limit=1&media_filter=gif`;
-            
-            // Handle fetch vs axios response
-            const response = await fetch(url);
-            const data = global.fetch ? await response.json() : response.data;
+            let gifUrl = null;
 
-            console.log('Tenor Response Status:', global.fetch ? response.status : response.status);
-            console.log('Tenor Response Headers:', global.fetch ? response.headers : response.headers);
+            // First try Tenor API with randomization
+            try {
+                const query = 'jail handcuff arrest prison';
+                const url = `https://tenor.googleapis.com/v2/search?key=${TENOR_API_KEY}&q=${encodeURIComponent(query)}&limit=10&random=true&media_filter=gif`;
+                const response = await fetch(url);
+                const data = global.fetch ? await response.json() : response.data;
 
-            if (data.results && Array.isArray(data.results) && data.results.length > 0) {
-                const gifUrl = data.results[0].media_formats.gif.url;
-                const targetUser = mentionedUser || message.author;
+                console.log('Tenor Response Status:', global.fetch ? response.status : response.status);
+                console.log('Tenor Response Headers:', global.fetch ? response.headers : response.headers);
 
-                const embed = new EmbedBuilder()
-                    .setColor(colors.danger || 0xFF4444)
-                    .setTitle('🔒 JAIL TIME!')
-                    .setDescription(`**${targetUser.username}** has been sent to jail!${customMessage ? `\n\n💬 "${customMessage}"` : ''}`)
-                    .setImage(gifUrl);
-
-                await sent.edit({ embeds: [embed] });
-            } else {
-                await sent.edit({
-                    embeds: [new EmbedBuilder()
-                        .setColor(colors.warning || 0xFFFF00)
-                        .setTitle('⚠️ No GIFs found!')
-                        .setDescription(`No GIFs found for the search term "jail".`)
-                    ]
-                });
+                if (data.results && Array.isArray(data.results) && data.results.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * data.results.length);
+                    gifUrl = data.results[randomIndex].media_formats.gif.url;
+                }
+            } catch (e) {
+                console.log('Tenor API failed:', e);
             }
+
+            // Fallback to waifu.pics
+            if (!gifUrl) {
+                try {
+                    const res2 = await fetch('https://api.waifu.pics/sfw/kill'); // Using kill as a close match
+                    const data2 = global.fetch ? await res2.json() : res2.data;
+                    console.log('Waifu.pics kill response:', data2);
+                    if (data2 && data2.url) {
+                        gifUrl = data2.url;
+                    }
+                } catch (e) {
+                    console.log('Waifu.pics kill API failed:', e);
+                }
+            }
+
+            const targetUser = mentionedUser || message.author;
+            const embed = new EmbedBuilder()
+                .setColor(colors.danger || 0xFF4444)
+                .setTitle('🔒 JAIL TIME!')
+                .setDescription(`**${targetUser.username}** has been sent to jail!${customMessage ? `\n\n💬 "${customMessage}"` : ''}`);
+
+            if (gifUrl) {
+                console.log('Using jail GIF URL:', gifUrl);
+                embed.setImage(gifUrl);
+            } else {
+                console.log('No jail GIF found from any API');
+            }
+
+            await sent.edit({ embeds: [embed] });
+
         } catch (error) {
             console.error('Error in jail command:', error);
             await sent.edit({
