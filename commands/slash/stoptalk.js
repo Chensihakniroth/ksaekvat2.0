@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
@@ -26,7 +26,8 @@ function saveTalkTargets(data) {
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('stopt')
-        .setDescription('Stop DM forwarding'),
+        .setDescription('Stop DM forwarding')
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
     async execute(interaction) {
         const adminIDs = process.env.ADMIN_IDS ? process.env.ADMIN_IDS.split(',').map(id => id.trim()) : [];
