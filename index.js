@@ -59,11 +59,6 @@ client.commands = new Collection();
 client.slashCommands = new Collection();
 client.cooldowns = new Collection();
 
-// Listen/talk state
-let listeningUserId = null;
-let talkGuildId = null;
-let talkChannelId = null;
-
 // Load slash commands
 const slashPath = path.join(__dirname, 'commands/slash');
 if (fs.existsSync(slashPath)) {
@@ -125,85 +120,13 @@ cron.schedule('0 * * * *', () => {
 process.on('uncaughtException', err => logger.error('Uncaught Exception:', err));
 process.on('unhandledRejection', err => logger.error('Unhandled Rejection:', err));
 
-// Message listener for /listen and /talk
-client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
-
-  // LISTEN MODE — track one user's messages everywhere
-  if (listeningUserId && message.author.id === listeningUserId) {
-    const serverName = message.guild ? message.guild.name : 'DM';
-    const serverId = message.guild ? message.guild.id : 'DM';
-    const channelName = message.channel?.name || 'DM';
-    const channelId = message.channel?.id || 'DM';
-
-    const logMsg =
-      `📥 Message from ${message.author.tag} (${message.author.id})\n` +
-      `Server: ${serverName} (${serverId})\n` +
-      `Channel: ${channelName} (${channelId})\n` +
-      `Content: ${message.content || '[No text]'}`;
-
-    logger.info(logMsg);
-    const admin = await client.users.fetch(process.env.ADMIN_ID).catch(() => null);
-    if (admin) admin.send(logMsg).catch(() => {});
-  }
-
-  // TALK MODE — admin sends DM to bot, bot posts to target
-  if (talkGuildId && talkChannelId && message.author.id === process.env.ADMIN_ID) {
-    if (message.channel.type === 1) { // DM
-      const guild = client.guilds.cache.get(talkGuildId);
-      if (!guild) return;
-      const channel = guild.channels.cache.get(talkChannelId);
-      if (!channel) return;
-      channel.send(message.content).catch(() => {});
-    }
-  }
-});
-
 // Slash command handler
 client.on('interactionCreate', async interaction => {
   if (!interaction.isChatInputCommand()) return;
 
-  // /listen — start listening to a user
-  if (interaction.commandName === 'listen') {
-    if (interaction.user.id !== process.env.ADMIN_ID) {
-      return interaction.reply({ content: '❌ Not authorized.', ephemeral: true });
-    }
-    listeningUserId = interaction.options.getString('userid');
-    return interaction.reply(`✅ Now listening to <@${listeningUserId}>`);
-  }
-
-  // /stoplis — stop listening
-  if (interaction.commandName === 'stoplis') {
-    if (interaction.user.id !== process.env.ADMIN_ID) {
-      return interaction.reply({ content: '❌ Not authorized.', ephemeral: true });
-    }
-    listeningUserId = null;
-    return interaction.reply(`🛑 Stopped listening.`);
-  }
-
-  // /talk — set talk target
-  if (interaction.commandName === 'talk') {
-    if (interaction.user.id !== process.env.ADMIN_ID) {
-      return interaction.reply({ content: '❌ Not authorized.', ephemeral: true });
-    }
-    talkGuildId = interaction.options.getString('serverid');
-    talkChannelId = interaction.options.getString('channelid');
-    return interaction.reply(`✅ Ready to talk in Guild ${talkGuildId}, Channel ${talkChannelId}`);
-  }
-
-  // /stopt — stop talking
-  if (interaction.commandName === 'stopt') {
-    if (interaction.user.id !== process.env.ADMIN_ID) {
-      return interaction.reply({ content: '❌ Not authorized.', ephemeral: true });
-    }
-    talkGuildId = null;
-    talkChannelId = null;
-    return interaction.reply(`🛑 Stopped talking.`);
-  }
-
-  // Other commands
   const command = client.slashCommands.get(interaction.commandName);
   if (!command) return;
+  
   try {
     await command.execute(interaction);
   } catch (error) {
