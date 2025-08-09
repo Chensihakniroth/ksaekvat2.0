@@ -25,7 +25,7 @@ function saveListeners(data) {
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('stoplis')
+        .setName('stoplisten')
         .setDescription('Stop listening to messages')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
@@ -57,4 +57,4 @@ module.exports = {
             });
         }
     }
-};  
+};

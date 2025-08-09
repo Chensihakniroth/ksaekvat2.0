@@ -25,7 +25,7 @@ function saveTalkTargets(data) {
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('stopt')
+        .setName('stoptalk')
         .setDescription('Stop DM forwarding')
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
