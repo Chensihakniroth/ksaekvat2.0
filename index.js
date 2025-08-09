@@ -8,6 +8,64 @@ const cron = require('node-cron');
 const express = require('express');
 require('dotenv').config();
 
+// Add this to the TOP of your index.js (right after the requires)
+
+// Auto-deploy slash commands
+async function deployCommands() {
+  const { REST, Routes } = require("discord.js");
+  const fs = require("fs");
+  const path = require("path");
+
+  try {
+    const commands = [];
+    const commandsPath = path.join(__dirname, "commands/slash");
+    
+    if (!fs.existsSync(commandsPath)) {
+      console.log('No slash commands directory found');
+      return;
+    }
+    
+    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+
+    for (const file of commandFiles) {
+      try {
+        const command = require(`./commands/slash/${file}`);
+        if (command.data && typeof command.data.toJSON === "function") {
+          const commandJSON = command.data.toJSON();
+          commands.push(commandJSON);
+          console.log(`✅ Loaded command: ${commandJSON.name}`);
+        } else {
+          console.warn(`[WARN] Skipped ${file}: Invalid command structure`);
+        }
+      } catch (error) {
+        console.warn(`[WARN] Failed to load ${file}: ${error.message}`);
+      }
+    }
+
+    if (commands.length === 0) {
+      console.log('No valid commands found to deploy');
+      return;
+    }
+
+    const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
+    const clientId = process.env.CLIENT_ID;
+
+    console.log(`🔄 Deploying ${commands.length} slash commands...`);
+
+    await rest.put(Routes.applicationCommands(clientId), {
+      body: commands,
+    });
+
+    console.log("✅ Slash commands deployed successfully!");
+
+  } catch (error) {
+    console.error("❌ Error deploying commands:", error);
+  }
+}
+
+// Deploy commands on startup
+deployCommands();
+
 // HTTP server for Railway health checks
 const app = express();
 app.get('/', (req, res) => res.status(200).send('Bot is running'));
