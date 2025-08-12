@@ -1,84 +1,78 @@
 const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/colors.js');
 const database = require('../../utils/database.js');
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+// Use built-in fetch (Node.js 18+) or axios as fallback
+const fetch = global.fetch || require('axios').get;
 
 module.exports = {
     name: 'bite',
-    aliases: ['nom'],
-    description: 'Playfully bite someone with an action GIF',
-    usage: 'bite <@user> [message]',
+    description: 'Bite someone or something!',
+    usage: 'bite [message]',
     cooldown: 3000,
-    async execute(message, args, client) {
-        if (args.length < 1 || message.mentions.users.size === 0) {
-            return message.reply({
-                embeds: [{
-                    color: colors.error,
-                    title: '🦷 Bite Command',
-                    description: 'Please mention someone to bite!\n**Usage:** `Kbite @user [message]`\n**Example:** `Kbite @friend Nom nom nom!`',
-                }]
-            });
-        }
-
-        const target = message.mentions.users.first();
-        const customMessage = args.slice(1).join(' ');
-
-        if (target.id === message.author.id) {
-            return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '🦷 Self Bite',
-                    description: 'You can\'t bite yourself! That would just hurt! 😅',
-                }]
-            });
-        }
-
-        if (target.bot) {
-            return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '🤖 Bot Bite',
-                    description: 'Bots taste like metal! Try biting a human. 🤖',
-                }]
-            });
-        }
-
-        const loadingEmbed = new EmbedBuilder()
-            .setColor(colors.primary)
-            .setTitle('🦷 Preparing to Bite...')
-            .setDescription('Sharpening teeth for a playful bite!');
-
-        const sentMessage = await message.reply({ embeds: [loadingEmbed] });
+    async execute(message, args) {
+        const customMessage = args.join(' ');
+        const sent = await message.reply({
+            embeds: [new EmbedBuilder()
+                .setColor(colors.primary || 0x0099FF)
+                .setTitle('😬 Biting...')
+                .setDescription('Loading bite...')
+            ]
+        });
 
         try {
-            const response = await fetch('https://nekos.best/api/v2/bite');
-            const data = await response.json();
-            const gifUrl = data.results[0].url;
+            let gifUrl = null;
 
-            const messages = [
-                `🦷 **${message.author.username}** playfully bites ${target}!`,
-                `😈 **${message.author.username}** noms on ${target}!`,
-                `😋 **${message.author.username}** gives ${target} a mischievous bite!`
-            ];
-            const finalMessage = messages[Math.floor(Math.random() * messages.length)];
+            // First try to fetch from nekos.best
+            try {
+                const res1 = await fetch('https://nekos.best/api/v2/bite');
+                const data1 = await res1.json();
+                console.log('Nekos.best bite response:', data1);
+                if (data1 && data1.results && data1.results.length > 0 && data1.results[0].url) {
+                    gifUrl = data1.results[0].url;
+                } else if (data1 && data1.url) {
+                    gifUrl = data1.url;
+                }
+            } catch (e) {
+                console.log('Nekos.best bite API failed:', e);
+            }
 
-            const biteEmbed = new EmbedBuilder()
-                .setColor(colors.warning)
-                .setTitle('🦷 NOM NOM!')
-                .setDescription(finalMessage + (customMessage ? `\n\n💬 *"${customMessage}"*` : ''))
-                .setImage(gifUrl);
+            // Fallback to waifu.pics
+            if (!gifUrl) {
+                try {
+                    const res2 = await fetch('https://api.waifu.pics/sfw/bite');
+                    const data2 = await res2.json();
+                    console.log('Waifu.pics bite response:', data2);
+                    if (data2 && data2.url) {
+                        gifUrl = data2.url;
+                    }
+                } catch (e) {
+                    console.log('Waifu.pics bite API failed:', e);
+                }
+            }
 
-            await sentMessage.edit({ embeds: [biteEmbed] });
+            const embed = new EmbedBuilder()
+                .setColor(colors.danger || 0xFF4444)
+                .setTitle('😬 Chomp!')
+                .setDescription(`**${message.author.username}** bites!${customMessage ? `\n\n💬 "${customMessage}"` : ''}`);
 
-        } catch (err) {
-            console.error('Failed to fetch bite GIF from nekos.best:', err);
+            if (gifUrl) {
+                console.log('Using bite GIF URL:', gifUrl);
+                embed.setImage(gifUrl);
+            } else {
+                console.log('No bite GIF found from any API');
+            }
 
-            const fallbackEmbed = new EmbedBuilder()
-                .setColor(colors.warning)
-                .setTitle('🦷 NOM NOM!')
-                .setDescription(`**${message.author.username}** bites ${target}! (No GIF this time 😢)`);
+            await sent.edit({ embeds: [embed] });
 
-            await sentMessage.edit({ embeds: [fallbackEmbed] });
+        } catch (error) {
+            console.error('Error in bite command:', error);
+            await sent.edit({
+                embeds: [new EmbedBuilder()
+                    .setColor(colors.danger || 0xFF4444)
+                    .setTitle('😬 Chomp!')
+                    .setDescription(`**${message.author.username}** bites! (No GIF 😢)`)
+                ]
+            });
         }
 
         database.updateStats(message.author.id, 'command');

@@ -56,7 +56,7 @@ module.exports = {
         }
 
         // Check maximum amount to prevent abuse
-        const maxAmount = 10000000; // 10 million
+        const maxAmount = 9999999999999999999999; // Set a reasonable maximum balance limit
         if (amount > maxAmount) {
             return message.reply({
                 embeds: [{
@@ -116,25 +116,5 @@ module.exports = {
 
         // Log the admin action
         console.log(`[ADMIN] ${message.author.tag} set ${target.tag}'s balance to ${amount} (was ${previousBalance})`);
-
-        // Try to DM the user about the balance change
-        try {
-            const dmEmbed = new EmbedBuilder()
-                .setColor(colors.primary)
-                .setTitle('💰 Balance Updated')
-                .setDescription(`An administrator has updated your balance.`)
-                .addFields({
-                    name: 'New Balance',
-                    value: `${amount.toLocaleString()} ${config.economy.currency}`,
-                    inline: true
-                })
-                .setTimestamp();
-
-            target.send({ embeds: [dmEmbed] }).catch(() => {
-                // User has DMs disabled, ignore
-            });
-        } catch (error) {
-            // Ignore DM errors
-        }
     }
 };
