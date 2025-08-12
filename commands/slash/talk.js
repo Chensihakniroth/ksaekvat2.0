@@ -45,7 +45,7 @@ module.exports = {
         const adminIDs = [
     process.env.ADMIN_ID_1,
     process.env.ADMIN_ID_2
-].filter(id => id); // This removes any undefined values
+                        ].filter(id => id); // This removes any undefined values
         
         if (!adminIDs.includes(interaction.user.id)) {
             return interaction.reply({
