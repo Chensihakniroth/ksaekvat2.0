@@ -8,54 +8,43 @@ const commandsPath = path.join(__dirname, "commands/slash");
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
 
 for (const file of commandFiles) {
-  try {
-    const command = require(`./commands/slash/${file}`);
-    if (command.data && typeof command.data.toJSON === "function") {
-      const commandJSON = command.data.toJSON();
-      commands.push(commandJSON);
-      console.log(`✅ Loaded command: ${commandJSON.name} from ${file}`);
-    } else if (command.data) {
-      // Check if it has name in the data object directly
-      console.log(`[DEBUG] Command data structure for ${file}:`, Object.keys(command.data));
-      console.warn(`[WARN] Skipped ${file}: Missing toJSON method`);
-    } else {
-      console.warn(`[WARN] Skipped ${file}: Missing data property`);
+    try {
+        const command = require(`./commands/slash/${file}`);
+        
+        // Skip commands not meant for DMs
+        if (!command.dmPermission) continue;
+        
+        const commandJSON = command.data.toJSON();
+        commandJSON.dm_permission = true; // Explicitly enable for DMs
+        commandJSON.default_member_permissions = '0'; // Admin-only
+        
+        // Add [Admin] prefix if not present
+        if (!commandJSON.description.includes('[Admin]')) {
+            commandJSON.description = `[Admin] ${commandJSON.description}`;
+        }
+        
+        commands.push(commandJSON);
+        console.log(`✅ Loaded DM command: ${commandJSON.name}`);
+    } catch (error) {
+        console.error(`❌ Failed to load ${file}:`, error.message);
     }
-  } catch (error) {
-    console.warn(`[WARN] Failed to load ${file}: ${error.message}`);
-  }
 }
 
 const rest = new REST({ version: "10" }).setToken(token);
 
 (async () => {
-  try {
-    console.log(`🔄 Registering ${commands.length} global (user) commands...`);
-
-    // Register commands globally (user commands, takes up to 1 hour to propagate)
-    await rest.put(Routes.applicationCommands(clientId), {
-      body: commands,
-    });
-    console.log("🌐 Global commands registered successfully (may take up to 1 hour to update).");
-
-  } catch (error) {
-    console.error("❌ Error registering commands:", error);
-  }
-})();
-
-const rest = new REST({ version: "10" }).setToken(token);
-
-(async () => {
-  try {
-    console.log(`🔄 Registering ${commands.length} global (user) commands...`);
-
-    // Register commands globally (user commands, takes up to 1 hour to propagate)
-    await rest.put(Routes.applicationCommands(clientId), {
-      body: commands,
-    });
-    console.log("🌐 Global commands registered successfully (may take up to 1 hour to update).");
-
-  } catch (error) {
-    console.error("❌ Error registering commands:", error);
-  }
+    try {
+        console.log(`🔒 Registering ${commands.length} admin-only DM commands...`);
+        
+        const data = await rest.put(
+            Routes.applicationCommands(clientId), 
+            { body: commands }
+        );
+        
+        console.log(`🤖 Success! Registered ${data.length} DM commands.`);
+        console.log('ℹ️ These commands will only work in DMs with the bot.');
+        
+    } catch (error) {
+        console.error("💥 Failed to register DM commands:", error);
+    }
 })();
