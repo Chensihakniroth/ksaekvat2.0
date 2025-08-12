@@ -37,8 +37,11 @@ module.exports = {
                 .setRequired(true))
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
 
-    async execute(interaction) {
-        const adminIDs = process.env.ADMIN_IDS ? process.env.ADMIN_IDS.split(',').map(id => id.trim()) : [];
+        async execute(interaction) {
+            const adminIDs = [
+        process.env.ADMIN_ID_1,
+        process.env.ADMIN_ID_2
+                            ].filter(id => id); // This removes any undefined values
         
         if (!adminIDs.includes(interaction.user.id)) {
             return interaction.reply({
