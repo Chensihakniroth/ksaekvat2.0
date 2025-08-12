@@ -1,78 +1,106 @@
-const { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const { isAdmin } = require('../../utils/adminCheck'); // Using centralized admin check
 
 const LISTENERS_FILE = path.join(__dirname, '../../data/listeners.json');
 
-// Ensure data directory exists
-const dataDir = path.dirname(LISTENERS_FILE);
-if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+// Initialize data directory and file
+function initDataFiles() {
+    const dataDir = path.dirname(LISTENERS_FILE);
+    if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+    }
+    if (!fs.existsSync(LISTENERS_FILE)) {
+        fs.writeFileSync(LISTENERS_FILE, '{}', 'utf8');
+    }
 }
 
-// Initialize file if it doesn't exist
-if (!fs.existsSync(LISTENERS_FILE)) {
-    fs.writeFileSync(LISTENERS_FILE, JSON.stringify({}), 'utf8');
-}
-
+// Data handling functions
 function loadListeners() {
     try {
-        return JSON.parse(fs.readFileSync(LISTENERS_FILE, 'utf8'));
+        const data = fs.readFileSync(LISTENERS_FILE, 'utf8');
+        return JSON.parse(data) || {};
     } catch (error) {
+        console.error('Error loading listeners:', error);
         return {};
     }
 }
 
 function saveListeners(data) {
-    fs.writeFileSync(LISTENERS_FILE, JSON.stringify(data, null, 2), 'utf8');
+    try {
+        fs.writeFileSync(LISTENERS_FILE, JSON.stringify(data, null, 2), 'utf8');
+    } catch (error) {
+        console.error('Error saving listeners:', error);
+    }
 }
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('listen')
-        .setDescription('Start listening to all messages from a specific user')
+        .setDescription('[Admin] Start listening to messages from a specific user')
         .addStringOption(option =>
             option.setName('target_user_id')
-                .setDescription('The user ID to listen to')
+                .setDescription('The user ID to monitor')
                 .setRequired(true))
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+        .setDefaultMemberPermissions('0'), // No default permissions
 
-        async execute(interaction) {
-            const adminIDs = [
-        process.env.ADMIN_ID_1,
-        process.env.ADMIN_ID_2
-                            ].filter(id => id); // This removes any undefined values
-        
-        if (!adminIDs.includes(interaction.user.id)) {
+    async execute(interaction) {
+        // Initialize data files first
+        initDataFiles();
+
+        // Admin check - reject non-admins immediately
+        if (!isAdmin(interaction.user.id)) {
             return interaction.reply({
-                content: 'You do not have permission to use this command.',
+                content: '⛔ This command is restricted to bot administrators.',
                 ephemeral: true
             });
         }
 
-        const targetUserId = interaction.options.getString('target_user_id');
+        const targetUserId = interaction.options.getString('target_user_id').trim();
         
-        try {
-            // Validate user exists
-            const targetUser = await interaction.client.users.fetch(targetUserId);
-            
-            // Load current listeners
-            const listeners = loadListeners();
-            
-            // Set this admin to listen to the target user
-            listeners[interaction.user.id] = targetUserId;
-            
-            // Save updated listeners
-            saveListeners(listeners);
-            
-            await interaction.reply({
-                content: `✅ Now listening to messages from **${targetUser.username}** (${targetUserId}). You will receive DMs when they send messages in any server where the bot is present.`,
+        // Validate user ID format
+        if (!/^\d{17,20}$/.test(targetUserId)) {
+            return interaction.reply({
+                content: '❌ Invalid user ID format. Please provide a valid Discord user ID.',
                 ephemeral: true
             });
+        }
+
+        try {
+            // Verify the user exists
+            const targetUser = await interaction.client.users.fetch(targetUserId);
+            
+            // Update listeners
+            const listeners = loadListeners();
+            listeners[interaction.user.id] = targetUserId;
+            saveListeners(listeners);
+
+            // Success response
+            const embed = new EmbedBuilder()
+                .setColor(0x00FF00)
+                .setTitle('✅ Listening Activated')
+                .setDescription(`Now monitoring messages from **${targetUser.tag}**`)
+                .addFields(
+                    { name: 'User ID', value: targetUserId, inline: true },
+                    { name: 'Notifications', value: 'You will receive DMs when this user sends messages', inline: true }
+                )
+                .setTimestamp();
+
+            await interaction.reply({ embeds: [embed], ephemeral: true });
             
         } catch (error) {
+            console.error('Listen command error:', error);
+            
+            let errorMessage;
+            if (error.code === 10013) { // Unknown User
+                errorMessage = `❌ User with ID ${targetUserId} not found.`;
+            } else {
+                errorMessage = '❌ An error occurred while setting up listener.';
+            }
+
             await interaction.reply({
-                content: `❌ Could not find user with ID: ${targetUserId}. Please make sure the user ID is correct.`,
+                content: errorMessage,
                 ephemeral: true
             });
         }
