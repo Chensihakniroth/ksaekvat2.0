@@ -1,50 +1,49 @@
-const { REST, Routes } = require("discord.js");
-const { token, clientId } = require("./config/config.js");
-const fs = require("fs");
-const path = require("path");
+// deploy-dm-only.js
+const { REST, Routes } = require('discord.js');
+const { token, clientId } = require('./config/config.js');
+const fs = require('fs');
+const path = require('path');
 
 const commands = [];
-const commandsPath = path.join(__dirname, "commands/slash");
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+const commandsPath = path.join(__dirname, 'commands/slash');
 
-for (const file of commandFiles) {
+// Load commands and convert to DM-only format
+fs.readdirSync(commandsPath)
+  .filter(file => file.endsWith('.js'))
+  .forEach(file => {
     try {
-        const command = require(`./commands/slash/${file}`);
-        
-        // Skip commands not meant for DMs
-        if (!command.dmPermission) continue;
-        
-        const commandJSON = command.data.toJSON();
-        commandJSON.dm_permission = true; // Explicitly enable for DMs
-        commandJSON.default_member_permissions = '0'; // Admin-only
-        
-        // Add [Admin] prefix if not present
-        if (!commandJSON.description.includes('[Admin]')) {
-            commandJSON.description = `[Admin] ${commandJSON.description}`;
-        }
-        
-        commands.push(commandJSON);
-        console.log(`✅ Loaded DM command: ${commandJSON.name}`);
+      const command = require(`${commandsPath}/${file}`);
+      const cmdData = command.data.toJSON();
+      
+      commands.push({
+        ...cmdData,
+        dm_permission: true,       // Only works in DMs
+        default_member_permissions: '0' // Admin-only
+      });
+      
+      console.log(`🔒 Prepared DM-only command: ${cmdData.name}`);
     } catch (error) {
-        console.error(`❌ Failed to load ${file}:`, error.message);
+      console.error(`⚠️ Error loading ${file}:`, error.message);
     }
-}
+  });
 
-const rest = new REST({ version: "10" }).setToken(token);
+const rest = new REST({ version: '10' }).setToken(token);
 
 (async () => {
-    try {
-        console.log(`🔒 Registering ${commands.length} admin-only DM commands...`);
-        
-        const data = await rest.put(
-            Routes.applicationCommands(clientId), 
-            { body: commands }
-        );
-        
-        console.log(`🤖 Success! Registered ${data.length} DM commands.`);
-        console.log('ℹ️ These commands will only work in DMs with the bot.');
-        
-    } catch (error) {
-        console.error("💥 Failed to register DM commands:", error);
-    }
+  try {
+    console.log('🚀 Deploying DM-only admin commands...');
+    
+    await rest.put(
+      Routes.applicationCommands(clientId),
+      { body: commands }
+    );
+    
+    console.log('✅ Success! Commands are now:');
+    console.log('   - Only available in DMs');
+    console.log('   - Completely hidden in servers');
+    console.log('   - Only usable by admins');
+    
+  } catch (error) {
+    console.error('❌ Deployment failed:', error);
+  }
 })();
