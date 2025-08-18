@@ -234,7 +234,7 @@ module.exports = {
                 message.channel.send({ embeds: [finalEmbed] });
             }
         }).catch(error => {
-            console.error('Error in coinflip animation:', error);
+            console.error('Error in coinflip animation:', error); 
         });
     }
 };
