@@ -5,8 +5,8 @@ module.exports = {
     aliases: ['atwerk', 'amongusdance', 'susdance', 'katwerk'],
     category: 'fun',
     description: 'Sends the Among Us twerking GIF',
-    usage: 'kamongustwerk [@user]',
-    cooldown: 5,
+    usage: 'amongustwerk [@user]',
+    cooldown: 5000,
 
     async execute(message, args) {
         // The specific GIF URL you provided

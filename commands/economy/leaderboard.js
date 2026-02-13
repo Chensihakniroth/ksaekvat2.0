@@ -7,6 +7,7 @@ module.exports = {
     name: 'leaderboard',
     aliases: ['ld', 'lb', 'top'],
     description: 'View the richest users in this server',
+    usage: 'leaderboard',
     async execute(message, args, client) {
         // Fetch all members to ensure they are in cache
         await message.guild.members.fetch();

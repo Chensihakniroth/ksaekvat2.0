@@ -4,6 +4,8 @@ module.exports = {
     name: 'kbd',
     aliases: ['bsd', 'beksloydance', 'kbsd'],
     description: 'Sends a random beksloy dance GIF from a curated list',
+    usage: 'kbd',
+    category: 'meme',
     
     async execute(message, args) {
         const gifLinks = [

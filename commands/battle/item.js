@@ -1,27 +1,7 @@
-
 const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-
-module.exports = {
-    name: 'inv',
-    aliases: ['inventory', 'item', 'items'],
-    description: 'View your inventory and equipped items',
-    usage: 'inv [page] or inv equip <item_id> or inv unequip <slot>',
-    cooldown: 3000, // 3 seconds
-    async execute(message, args, client) {
-        const subCommand = args[0]?.toLowerCase();
-        
-        if (subCommand === 'equip') {
-            return await handleEquip(message, args);
-        } else if (subCommand === 'unequip') {
-            return await handleUnequip(message, args);
-        } else {
-            return await showInventory(message, args);
-        }
-    }
-};
 
 // Add item to user's inventory
 function addItemToInventory(userId, item) {
@@ -324,7 +304,22 @@ async function handleUnequip(message, args) {
 }
 
 module.exports = {
-    ...module.exports,
+    name: 'inv',
+    aliases: ['inventory', 'item', 'items'],
+    description: 'View your inventory and equipped items',
+    usage: 'inv [page]',
+    cooldown: 3000, // 3 seconds
+    async execute(message, args, client) {
+        const subCommand = args[0]?.toLowerCase();
+        
+        if (subCommand === 'equip') {
+            return await handleEquip(message, args);
+        } else if (subCommand === 'unequip') {
+            return await handleUnequip(message, args);
+        } else {
+            return await showInventory(message, args);
+        }
+    },
     addItemToInventory,
     getInventory,
     getEquippedItems,

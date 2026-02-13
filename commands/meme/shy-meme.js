@@ -5,6 +5,8 @@ module.exports = {
     name: 'ksm',
     aliases: ['shy', 'shymeme'],
     description: 'Sends a random shy meme',
+    usage: 'ksm',
+    category: 'meme',
     
     async execute(message, args) {
         try {
