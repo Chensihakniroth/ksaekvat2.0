@@ -43,7 +43,7 @@ module.exports = {
                     embeds: [{
                         color: colors.error,
                         title: '❌ khos luy ai ah pov',
-                        description: 'hg dak luy oy trov mer! dak luy chea lekh mk ah pov.'
+                        description: 'hg dak luy oy trov mer! dak luy chea lek mk ah pov.'
                     }]
                 });
             }
@@ -111,7 +111,7 @@ module.exports = {
         const slotEmbed = new EmbedBuilder()
             .setColor(colors.primary)
             .setTitle('🎰 Slot Machine (Bek Edition)')
-            .setDescription(`**hg jak :** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n🎰 ┃ 🎯 ┃ 🎲 ┃\n**Jam tic anh quay oy mer...**`)
+            .setDescription(`**hg jak :** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n🎰 ┃ 🎯 ┃ 🎲 ┃\n**Spinning...**`)
             
 
         const sentMessage = await message.reply({ embeds: [slotEmbed] });
@@ -125,24 +125,24 @@ module.exports = {
                 animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**hg hov vosh...**';
+                statusText = '**Spinning fast...**';
             } else if (stage < 4) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**Quay hz ah pov...**';
+                statusText = '**Spinning...**';
             } else if (stage < 6) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**Srol hz ah pov...**';
+                statusText = '**Slowing down...**';
             } else if (stage < 7) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**Bek ksaekvat hz...**';
+                statusText = '**Final spin...**';
             } else {
-                statusText = '**Mok hz!**';
+                statusText = '**Result!**';
             }
 
             slotEmbed.setDescription(
