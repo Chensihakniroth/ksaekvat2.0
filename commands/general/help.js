@@ -8,159 +8,144 @@ module.exports = {
     description: 'Shows all available commands or detailed info about a specific command',
     usage: 'help [command]',
     execute(message, args, client) {
+        const prefix = (config.prefix && config.prefix[0]) || 'K';
+
         if (args.length === 0) {
-            // Show all commands organized by category
+            // Get all unique commands (filter out aliases)
+            const commands = [...new Set(client.commands.values())];
+            
+            // Category Mapping
+            const categoryNames = {
+                'admin': '🔨 Admin Only',
+                'animals': '🦊 Animals',
+                'battle': '⚔️ Battle',
+                'economy': '💰 Economy',
+                'expressions': '😄 Expressions',
+                'gambling': '🎰 Gambling',
+                'general': '📁 General',
+                'meme': '🎭 Meme',
+                'profile': '👤 Profile',
+                'slash': '⚡ Slash Commands'
+            };
+
+            // Organize commands by category
+            const categories = {};
+            
+            commands.forEach(cmd => {
+                let category = cmd.category || 'general';
+                
+                // Special case: NSFW commands in expressions
+                if (category === 'expressions' && cmd.description && cmd.description.toLowerCase().includes('nsfw')) {
+                    category = 'nsfw';
+                }
+                
+                // Special case: Special expressions
+                if (category === 'expressions' && (cmd.name === 'amongustwerk' || cmd.name === 'beksloy' || cmd.name === 'ksaekvat')) {
+                    category = 'special';
+                }
+
+                if (!categories[category]) {
+                    categories[category] = [];
+                }
+                categories[category].push(cmd);
+            });
+
+            // Add slash commands
+            if (client.slashCommands && client.slashCommands.size > 0) {
+                categories['slash'] = [...client.slashCommands.values()].map(cmd => ({
+                    name: cmd.data.name,
+                    description: cmd.data.description,
+                    isSlash: true
+                }));
+            }
+
+            const categoryOrder = ['general', 'economy', 'gambling', 'animals', 'battle', 'profile', 'expressions', 'special', 'nsfw', 'meme', 'admin', 'slash'];
+            const prettyCategoryNames = {
+                ...categoryNames,
+                'nsfw': '🔞 NSFW',
+                'special': '✨ Special Expressions'
+            };
+
             const embed = new EmbedBuilder()
-                .setColor(colors.primary || 0x0099FF)
-                .setTitle('🎮 KsaekVat Bot Commands')
-                .setDescription(`Here are all available commands. Use \`Khelp [command]\` for detailed info.\n\n**Main Prefix:** \`K\` or \`k\`\n**Short Prefixes:** \`hp\` (help), \`cf\` (coinflip), \`s\` (slots), \`d\` (daily), \`w\` (weekly), \`h\` (heads), \`t\` (tails), \`hunt\` (hunt), \`zoo\` (zoo), \`pl\` (pussylick)`)
-                .addFields(
-                    {
-                        name: '📁 General',
-                        value: [
-                            '`Khelp` - Shows all available commands',
-                            '`Kinfo` - Show bot information and statistics',
-                            '`Kping` - Shows bot latency and response time',
-                            '`Kavatar` - Show a user\'s avatar'
-                        ].join('\n'),
-                        inline: true
-                    },
-                    {
-                        name: '💰 Economy',
-                        value: [
-                            '`Kbalance` - Check your or another user\'s balance',
-                            '`Kdaily` - Claim your daily reward',
-                            '`Kweekly` - Claim your weekly reward',
-                            '`Kwork` - Work to earn some coins',
-                            '`Kpay` - Pay coins to another user'
-                        ].join('\n'),
-                        inline: true
-                    },
-                    {
-                        name: '🎰 Gambling',
-                        value: [
-                            '`Kcoinflip` - Flip a coin and gamble your coins',
-                            '`Kslots` - Play the slot machine',
-                            '`Kdice` - Roll dice and gamble your coins'
-                        ].join('\n'),
-                        inline: true
-                    },
-                    {
-                        name: '🦊 Animals',
-                        value: [
-                            '`Khunt` - Hunt for animals with cooldown',
-                            '`Kzoo` - View your animal collection',
-                            '`Ksell` - Sell animals from your collection'
-                        ].join('\n'),
-                        inline: true
-                    },
-                    {
-                        name: '⚔️ Battle',
-                        value: [
-                            '`Kduel` - pboul ke vai kean 1 smer',
-                            '`Kfight` - vai knea mouy sat',
-                            '`Kinv` - View your item inventory',
-                            '`Kplayer` - View detailed player stats'
-                        ].join('\n'),
-                        inline: true
-                    },
-                    {
-                        name: '👤 Profile',
-                        value: [
-                            '`Kprofile` - View your or another user\'s profile'
-                        ].join('\n'),
-                        inline: true
-                    },
-                    {
-                        name: '🔨 Admin Only',
-                        value: [
-                            '`Ksetbal` - Set a user\'s balance',
-                            '`Ksetlvl` - Set a user\'s level',
-                            '`Kreset` - Reset a user\'s data completely',
-                            '`Kgiveitem` - Give an item to a user',
-                            '`Kgivepet` - Give a pet to a user',
-                            '`Kban` - Ban a user from the server',
-                            '`Kkick` - Kick a user from the server',
-                            '`Kclear` - Clear messages from the channel'
-                        ].join('\n'),
-                        inline: true
-                    },
-                    {
-                        name: '😄 Expressions (GIF)',
-                        value: [
-                            '`Kkiss` - Kiss someone',
-                            '`Kpunch` - Punch someone',
-                            '`Kkill` - Kill someone (playfully)',
-                            '`Kslap` - Slap someone',
-                            '`Kjail` - Send someone to jail',
-                            '`Kpat` - Pat someone',
-                            '`Kbite` - Bite someone',
-                            '`Ksad` - Express your sadness',
-                            '`Kangry` - Express your anger',
-                            '`Kpoke` - Poke someone (anime style)'
-                        ].join('\n'),
-                        inline: true
-                    },
-                    {
-                        name: '🔞NSFW',
-                        value: [
-                            '`Kfuck` - freaky with shawty',
-                            '`Kbj` - nham jek',
-                            '`Kpl` - nham oyster'
-                        ].join('\n'),
-                        inline: true
-                    },
-                    {
-                        name: '🎭 Special Expressions',
-                        value: [
-                            '`Kamongtwerk` - Among Us nheak kdit ',
-                            '`Kksaekvat` - ah na chlery ksaekvat lerng klun '
-                        ].join('\n'),
-                        inline: true
-                    }
-                )
+                .setColor(colors.primary || 0x7289DA)
+                .setTitle(`🎮 ${config.botInfo.name} Commands`)
+                .setDescription(`Use \`${prefix}help [command]\` for detailed info on a specific command.\n\n**Main Prefix:** \`${prefix.toUpperCase()}\` or \`${prefix.toLowerCase()}\``)
+                .setThumbnail(client.user.displayAvatarURL())
                 .setTimestamp();
+
+            // Add fields for each category in order
+            categoryOrder.forEach(cat => {
+                if (categories[cat] && categories[cat].length > 0) {
+                    const commandList = categories[cat]
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map(cmd => `\`${cmd.name}\``)
+                        .join(', ');
+                    
+                    embed.addFields({
+                        name: prettyCategoryNames[cat] || `📦 ${cat.charAt(0).toUpperCase() + cat.slice(1)}`,
+                        value: commandList,
+                        inline: false
+                    });
+                }
+            });
+
+            // Add Short Prefixes field
+            if (config.shortPrefixes) {
+                const shortPrefixList = Object.entries(config.shortPrefixes)
+                    .map(([short, full]) => `\`${short}\` → \`${full}\``)
+                    .join(' | ');
+                
+                embed.addFields({
+                    name: '⌨️ Short Prefixes',
+                    value: shortPrefixList,
+                    inline: false
+                });
+            }
+
+            embed.setFooter({ 
+                text: `Total Commands: ${commands.length + (client.slashCommands ? client.slashCommands.size : 0)} | Requested by ${message.author.tag}`,
+                iconURL: message.author.displayAvatarURL()
+            });
 
             return message.reply({ embeds: [embed] });
         }
 
-        // Show detailed info about a specific command
-        const commandName = args[0].toLowerCase();
-        const command = client.commands.get(commandName);
+        // Detailed info for a specific command
+        const search = args[0].toLowerCase();
+        const command = client.commands.get(search);
 
         if (!command) {
             return message.reply({
-                embeds: [{
-                    color: colors.error || 0xFF0000,
-                    title: '❌ Command Not Found',
-                    description: `Command \`${commandName}\` not found. Use \`Khelp\` to see all available commands.`,
-                    timestamp: new Date()
-                }]
+                embeds: [new EmbedBuilder()
+                    .setColor(colors.error || 0xF04747)
+                    .setTitle('❌ Command Not Found')
+                    .setDescription(`Command \`${search}\` not found. Use \`${prefix}help\` to see all commands.`)
+                ]
             });
         }
 
         const embed = new EmbedBuilder()
-            .setColor(colors.primary || 0x0099FF)
+            .setColor(colors.primary || 0x7289DA)
             .setTitle(`📖 Command: ${command.name}`)
-            .setDescription(command.description || 'No description available');
+            .setDescription(command.description || 'No description available.')
+            .addFields(
+                { name: 'Usage', value: `\`${prefix}${command.usage || command.name}\``, inline: true }
+            );
 
         if (command.aliases && command.aliases.length > 0) {
-            embed.addFields({ name: 'Aliases', value: command.aliases.join(', '), inline: true });
-        }
-
-        if (command.usage) {
-            embed.addFields({ name: 'Usage', value: `\`K${command.usage}\``, inline: true });
+            embed.addFields({ name: 'Aliases', value: command.aliases.map(a => `\`${a}\``).join(', '), inline: true });
         }
 
         if (command.cooldown) {
-            embed.addFields({ name: 'Cooldown', value: `${command.cooldown / 1000} seconds`, inline: true });
+            embed.addFields({ name: 'Cooldown', value: `${command.cooldown / 1000}s`, inline: true });
         }
 
         if (command.adminOnly) {
-            embed.addFields({ name: 'Restrictions', value: 'Admin Only', inline: true });
+            embed.addFields({ name: 'Permissions', value: '🛡️ Admin Only', inline: true });
         }
 
-        embed.setTimestamp();
+        embed.setTimestamp()
+            .setFooter({ text: `Category: ${command.category || 'General'}` });
 
         message.reply({ embeds: [embed] });
     }

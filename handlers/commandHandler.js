@@ -13,6 +13,8 @@ module.exports = (client) => {
             const itemPath = path.join(dir, item.name);
             
             if (item.isDirectory()) {
+                // Skip slash commands directory as they are handled separately
+                if (item.name === 'slash') continue;
                 // Recursively load commands from subdirectories
                 loadCommands(itemPath);
             } else if (item.isFile() && item.name.endsWith('.js')) {
@@ -31,6 +33,9 @@ module.exports = (client) => {
                     }
                     
                     // Set the command in the collection
+                    if (!command.category) {
+                        command.category = path.basename(dir);
+                    }
                     client.commands.set(command.name, command);
                     
                     // Also set aliases if they exist
