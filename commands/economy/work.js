@@ -14,15 +14,15 @@ module.exports = {
         
         // Array of work scenarios
         const workScenarios = [
-            { job: 'Ah jek lork karem', action: 'dor lork karem tam phsar ban luy hz ah pov', emoji: '🍦' },
-            { job: 'Rort Tuk Tuk', action: 'dor lork knea len rort rork luy hz ah pov', emoji: '🛺' },
-            { job: 'Mher Net', action: 'ngoy dek mher net oy ke nov bak took hz', emoji: '🖥️' },
-            { job: 'Lork Prart Korg', action: 'lork prart korg chgnanh2 oy ke c hz', emoji: '🍢' },
-            { job: 'Rort Remorque', action: 'dor lork knea tov ksaekvat ban luy hz', emoji: '🚜' },
-            { job: 'Leang Jan', action: 'leang jan rorm ka ke hz dak khao hz', emoji: '🧼' },
-            { job: 'Lork Tbal Chher', action: 'dor lork lottery hz ah kbeun', emoji: '🎟️' },
-            { job: 'Lerk It', action: 'lerk it nov phsar hz ah pov', emoji: '📦' },
-            { job: 'Mher Hloung', action: 'mher hloung oy ke hz ah pov', emoji: '🛡️' }
+            { job: 'jinh chork', action: 'jinh chork ban somrach', emoji: '🍦' },
+            { job: 'Rut passapp', action: 'tren tren tren ban ma moy', emoji: '🛺' },
+            { job: 'luk jab houy', action: 'jouy tinh sin hei bong', emoji: '🖥️' },
+            { job: 'luk tnam', action: 'yor ah domlai marn ?', emoji: '🍢' },
+            { job: 'luk k\'cha', action: 'ah ng ma derm dg tahbek morng', emoji: '🚜' },
+            { job: 'Leang Jan', action: 'leang jan dory sa c bay ot oy luy ke', emoji: '🧼' },
+            { job: 'jinh b\'lorn', action: 'p\'lorn teas ouknha', emoji: '🎟️' },
+            { job: 'derk Grab', action: 'dak mhub oy pheav 1', emoji: '📦' },
+            { job: 'jing bong', action: ' thom thom os ai kur yul', emoji: '🛡️' }
         ];
 
         // Select random work scenario
@@ -108,14 +108,13 @@ module.exports = {
             });
         }
 
-        embed.setFooter({ 
-            text: `Cooldown: 30 seconds | ${scenario.job}`,
-            iconURL: message.author.displayAvatarURL()
-        }).setTimestamp();
-
         // Update command usage statistics
         database.updateStats(message.author.id, 'command');
 
         message.reply({ embeds: [embed] });
     }
 };
+
+
+
+

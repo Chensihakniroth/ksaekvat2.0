@@ -16,8 +16,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please mention a user to duel!\n**Usage:** `Kduel @user [bet_amount]`\n**Example:** `Kduel @friend 1000`',
-                    timestamp: new Date()
+                    description: 'Please mention a user to duel!\n**Usage:** `Kduel @user [bet_amount]`\n**Example:** `Kduel @friend 1000`'
                 }]
             });
         }
@@ -36,8 +35,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ User Not Found',
-                    description: 'Please mention a valid user to duel.',
-                    timestamp: new Date()
+                    description: 'Please mention a valid user to duel.'
                 }]
             });
         }
@@ -48,8 +46,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '🤺 Self Duel',
-                    description: 'You cannot duel yourself! Find someone else to challenge.',
-                    timestamp: new Date()
+                    description: 'You cannot duel yourself! Find someone else to challenge.'
                 }]
             });
         }
@@ -60,8 +57,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '🤖 Bot Duel',
-                    description: 'You cannot duel bots! Challenge a real person instead.',
-                    timestamp: new Date()
+                    description: 'You cannot duel bots! Challenge a real person instead.'
                 }]
             });
         }
@@ -85,8 +81,7 @@ module.exports = {
                     embeds: [{
                         color: colors.error,
                         title: '💸 Insufficient Funds',
-                        description: `You don't have enough ${config.economy.currency} to bet!\n**Your Balance:** ${challengerData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
-                        timestamp: new Date()
+                        description: `You don't have enough ${config.economy.currency} to bet!\n**Your Balance:** ${challengerData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`
                     }]
                 });
             }
@@ -96,8 +91,7 @@ module.exports = {
                     embeds: [{
                         color: colors.warning,
                         title: '💸 Target Insufficient Funds',
-                        description: `${target.username} doesn't have enough ${config.economy.currency} to accept this bet!\n**Their Balance:** ${targetData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
-                        timestamp: new Date()
+                        description: `${target.username} doesn't have enough ${config.economy.currency} to accept this bet!\n**Their Balance:** ${targetData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`
                     }]
                 });
             }
@@ -165,10 +159,7 @@ module.exports = {
             inline: false
         });
 
-        inviteEmbed.setFooter({ 
-            text: `Duel invitation expires in 60 seconds`,
-            iconURL: message.author.displayAvatarURL()
-        }).setTimestamp();
+        inviteEmbed
 
         const sentMessage = await message.reply({ embeds: [inviteEmbed] });
 
@@ -216,8 +207,8 @@ module.exports = {
                             .setColor(colors.success)
                             .setTitle('⚔️ Duel Accepted!')
                             .setDescription(`${target} accepted the challenge! Preparing for battle...`)
-                            .setFooter({ text: 'Battle starting in 3 seconds...' })
-                            .setTimestamp();
+                            
+                            
 
                         await sentMessage.edit({ embeds: [acceptEmbed] });
                         await sentMessage.reactions.removeAll().catch(() => {});
@@ -233,8 +224,8 @@ module.exports = {
                             .setColor(colors.error)
                             .setTitle('❌ Duel Declined')
                             .setDescription(`${target} declined the duel challenge.`)
-                            .setFooter({ text: 'Maybe next time!' })
-                            .setTimestamp();
+                            
+                            
 
                         await sentMessage.edit({ embeds: [declineEmbed] });
                         await sentMessage.reactions.removeAll().catch(() => {});
@@ -256,8 +247,8 @@ module.exports = {
                             .setColor(colors.warning)
                             .setTitle('⏰ Duel Timeout')
                             .setDescription(`${target} didn't respond to the duel challenge in time.`)
-                            .setFooter({ text: 'Duel invitation expired' })
-                            .setTimestamp();
+                            
+                            
 
                         await sentMessage.edit({ embeds: [timeoutEmbed] });
                         await sentMessage.reactions.removeAll().catch(() => {});
@@ -307,8 +298,8 @@ async function startDuel(message, challenger, defender, challengerStats, defende
                 inline: true
             }
         )
-        .setFooter({ text: 'Round 1 starting...' })
-        .setTimestamp();
+        
+        
 
     await message.edit({ embeds: [battleEmbed] });
     await message.reactions.removeAll();
@@ -374,8 +365,8 @@ async function startDuel(message, challenger, defender, challengerStats, defende
                     inline: false
                 }
             )
-            .setFooter({ text: `Round ${round} complete` })
-            .setTimestamp();
+            
+            
 
         await message.edit({ embeds: [roundEmbed] });
 
@@ -454,8 +445,11 @@ async function startDuel(message, challenger, defender, challengerStats, defende
             }
         )
         .setThumbnail(winner.displayAvatarURL())
-        .setFooter({ text: 'Good fight! Both players gained experience.' })
-        .setTimestamp();
+        
+        
 
     await message.edit({ embeds: [resultEmbed] });
 }
+
+
+

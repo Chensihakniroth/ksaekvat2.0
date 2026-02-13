@@ -104,8 +104,8 @@ module.exports = {
                     { name: 'Channel', value: channel.name || 'Unknown', inline: true },
                     { name: 'Channel ID', value: channelId, inline: false }
                 )
-                .setFooter({ text: `Configured by ${interaction.user.username}` })
-                .setTimestamp();
+                
+                
 
             await interaction.reply({ embeds: [embed], flags: [4096] });
             
@@ -123,3 +123,6 @@ module.exports = {
         }
     }
 };
+
+
+

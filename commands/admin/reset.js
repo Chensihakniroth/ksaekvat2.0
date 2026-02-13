@@ -16,8 +16,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please provide a user to reset.\n**Usage:** `Kreset @user`\n**Warning:** This will delete ALL user data!',
-                    timestamp: new Date()
+                    description: 'Please provide a user to reset.\n**Usage:** `Kreset @user`\n**Warning:** This will delete ALL user data!'
                 }]
             });
         }
@@ -36,8 +35,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.',
-                    timestamp: new Date()
+                    description: 'Please mention a valid user or provide their user ID.'
                 }]
             });
         }
@@ -48,8 +46,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '🛡️ Cannot Reset Admin',
-                    description: 'You cannot reset another admin\'s account for security reasons.',
-                    timestamp: new Date()
+                    description: 'You cannot reset another admin\'s account for security reasons.'
                 }]
             });
         }
@@ -114,7 +111,7 @@ module.exports = {
                 }
             )
             
-            .setTimestamp();
+            
 
         message.reply({ embeds: [confirmEmbed] }).then(async (sentMessage) => {
             // Add reaction options
@@ -181,11 +178,8 @@ module.exports = {
                             }
                         )
                         .setThumbnail(target.displayAvatarURL())
-                        .setFooter({ 
-                            text: `Admin action completed by ${message.author.tag}`,
-                            iconURL: message.author.displayAvatarURL()
-                        })
-                        .setTimestamp();
+                        
+                        
 
                     await sentMessage.edit({ embeds: [resetEmbed] });
                     await sentMessage.reactions.removeAll();
@@ -204,8 +198,8 @@ module.exports = {
                                 value: 'All your progress, animals, and statistics have been reset to default values.',
                                 inline: false
                             })
-                            .setFooter({ text: 'KsaekVat Bot Admin System' })
-                            .setTimestamp();
+                            
+                            
 
                         target.send({ embeds: [dmEmbed] }).catch(() => {
                             // User has DMs disabled, ignore
@@ -220,7 +214,7 @@ module.exports = {
                         .setColor(colors.secondary)
                         .setTitle('❌ Reset Cancelled')
                         .setDescription(`Reset operation for **${target.username}** has been cancelled.\n\nNo data was modified.`)
-                        .setTimestamp();
+                        
 
                     await sentMessage.edit({ embeds: [cancelEmbed] });
                     await sentMessage.reactions.removeAll();
@@ -234,7 +228,7 @@ module.exports = {
                         .setColor(colors.warning)
                         .setTitle('⏰ Reset Timeout')
                         .setDescription(`Reset confirmation timed out for **${target.username}**.\n\nNo action was taken.`)
-                        .setTimestamp();
+                        
 
                     await sentMessage.edit({ embeds: [timeoutEmbed] });
                     await sentMessage.reactions.removeAll();
@@ -243,3 +237,7 @@ module.exports = {
         });
     }
 };
+
+
+
+

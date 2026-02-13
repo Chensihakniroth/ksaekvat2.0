@@ -30,8 +30,7 @@ module.exports = {
                         '`Kgiveitem @user money 10000`',
                         '`Kgiveitem @user exp 500`',
                         '`Kgiveitem @user money_booster 120`'
-                    ].join('\n'),
-                    timestamp: new Date()
+                    ].join('\n')
                 }]
             });
         }
@@ -50,8 +49,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.',
-                    timestamp: new Date()
+                    description: 'Please mention a valid user or provide their user ID.'
                 }]
             });
         }
@@ -74,8 +72,7 @@ module.exports = {
                         embeds: [{
                             color: colors.error,
                             title: '❌ Invalid Amount',
-                            description: 'Please provide a valid positive amount for money.',
-                            timestamp: new Date()
+                            description: 'Please provide a valid positive amount for money.'
                         }]
                     });
                 }
@@ -108,8 +105,7 @@ module.exports = {
                         embeds: [{
                             color: colors.error,
                             title: '❌ Invalid Amount',
-                            description: 'Please provide a valid positive amount for experience.',
-                            timestamp: new Date()
+                            description: 'Please provide a valid positive amount for experience.'
                         }]
                     });
                 }
@@ -143,8 +139,7 @@ module.exports = {
                         embeds: [{
                             color: colors.error,
                             title: '❌ Invalid Duration',
-                            description: 'Duration must be between 1 and 1440 minutes (24 hours).',
-                            timestamp: new Date()
+                            description: 'Duration must be between 1 and 1440 minutes (24 hours).'
                         }]
                     });
                 }
@@ -179,8 +174,7 @@ module.exports = {
                         embeds: [{
                             color: colors.error,
                             title: '❌ Invalid Duration',
-                            description: 'Duration must be between 1 and 1440 minutes (24 hours).',
-                            timestamp: new Date()
+                            description: 'Duration must be between 1 and 1440 minutes (24 hours).'
                         }]
                     });
                 }
@@ -217,8 +211,7 @@ module.exports = {
                             '• `exp` - Give experience',
                             '• `money_booster` - Give money booster',
                             '• `exp_booster` - Give experience booster'
-                        ].join('\n'),
-                        timestamp: new Date()
+                        ].join('\n')
                     }]
                 });
         }
@@ -232,18 +225,14 @@ module.exports = {
                         `**Admin:** ${message.author.username}`,
                         `**Target:** ${target.username}`,
                         `**Item:** ${itemType}`,
-                        `**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`
-                    ].join('\n'),
+                        ].join('\n'),
                     inline: true
                 }
             );
 
             resultEmbed.setThumbnail(target.displayAvatarURL())
-                .setFooter({ 
-                    text: `Admin command executed by ${message.author.tag}`,
-                    iconURL: message.author.displayAvatarURL()
-                })
-                .setTimestamp();
+                
+                
 
             message.reply({ embeds: [resultEmbed] });
 
@@ -256,8 +245,8 @@ module.exports = {
                     .setColor(colors.primary)
                     .setTitle('🎁 You Received a Gift!')
                     .setDescription(`An administrator gave you a ${itemType}!`)
-                    .setFooter({ text: 'KsaekVat Bot Admin System' })
-                    .setTimestamp();
+                    
+                    
 
                 target.send({ embeds: [dmEmbed] }).catch(() => {
                     // User has DMs disabled, ignore
@@ -268,3 +257,7 @@ module.exports = {
         }
     }
 };
+
+
+
+

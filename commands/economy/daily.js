@@ -26,8 +26,7 @@ module.exports = {
                     color: colors.warning,
                     title: '⏰ Daily Already Claimed',
                     description: `You've already claimed your daily reward! Come back in **${hoursLeft}h ${minutesLeft}m**.`,
-                    thumbnail: { url: message.author.displayAvatarURL() },
-                    timestamp: new Date()
+                    thumbnail: { url: message.author.displayAvatarURL() }
                 }]
             });
         }
@@ -96,11 +95,8 @@ module.exports = {
         });
 
         embed.setDescription('💡 **Tip:** Come back tomorrow for another daily reward!')
-            .setFooter({ 
-                text: `Daily streak: Check back in 24 hours!`,
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setTimestamp();
+            
+            
 
         // Update command usage statistics
         database.updateStats(message.author.id, 'command');
@@ -108,3 +104,7 @@ module.exports = {
         message.reply({ embeds: [embed] });
     }
 };
+
+
+
+

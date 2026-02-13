@@ -32,8 +32,11 @@ module.exports = {
             .setColor(colors.primary)
             .setTitle(`🏆 Richest in ${message.guild.name}`)
             .setDescription(leaderboardLines.join('\n') || 'No users found on this server.')
-            .setTimestamp();
+            
 
         message.reply({ embeds: [embed] });
     }
 };
+
+
+

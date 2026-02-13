@@ -70,8 +70,7 @@ module.exports = {
                 .setColor(colors.primary || 0x7289DA)
                 .setTitle(`🎮 Ah pov ${config.botInfo.name} Commands (Bek Edition)`)
                 .setDescription(`hg hov vosh! use \`${prefix}help [command]\` mer detailed info.\n\n**Main Prefix:** \`${prefix.toUpperCase()}\` or \`${prefix.toLowerCase()}\``)
-                .setThumbnail(client.user.displayAvatarURL())
-                .setTimestamp();
+                .setThumbnail(client.user.displayAvatarURL());
 
             // Add fields for each category in order
             categoryOrder.forEach(cat => {
@@ -101,11 +100,6 @@ module.exports = {
                     inline: false
                 });
             }
-
-            embed.setFooter({ 
-                text: `Total Commands: ${commands.length + (client.slashCommands ? client.slashCommands.size : 0)} | Requested by ${message.author.tag}`,
-                iconURL: message.author.displayAvatarURL()
-            });
 
             return message.reply({ embeds: [embed] });
         }
@@ -144,9 +138,10 @@ module.exports = {
             embed.addFields({ name: 'Permissions', value: '🛡️ Admin Only', inline: true });
         }
 
-        embed.setTimestamp()
-            .setFooter({ text: `Category: ${command.category || 'General'}` });
-
         message.reply({ embeds: [embed] });
     }
 };
+
+
+
+

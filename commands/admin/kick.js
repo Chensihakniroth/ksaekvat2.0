@@ -14,8 +14,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Missing Permissions',
-                    description: 'I don\'t have permission to kick members in this server.',
-                    timestamp: new Date()
+                    description: 'I don\'t have permission to kick members in this server.'
                 }]
             });
         }
@@ -26,8 +25,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please provide a user to kick.\n**Usage:** `Kkick @user [reason]`\n**Example:** `Kkick @user Breaking rules`',
-                    timestamp: new Date()
+                    description: 'Please provide a user to kick.\n**Usage:** `Kkick @user [reason]`\n**Example:** `Kkick @user Breaking rules`'
                 }]
             });
         }
@@ -46,8 +44,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.',
-                    timestamp: new Date()
+                    description: 'Please mention a valid user or provide their user ID.'
                 }]
             });
         }
@@ -63,8 +60,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '⚠️ User Not in Server',
-                    description: 'This user is not a member of this server.',
-                    timestamp: new Date()
+                    description: 'This user is not a member of this server.'
                 }]
             });
         }
@@ -75,8 +71,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '🤔 Self Kick',
-                    description: 'You cannot kick yourself!',
-                    timestamp: new Date()
+                    description: 'You cannot kick yourself!'
                 }]
             });
         }
@@ -87,8 +82,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '🤖 Bot Protection',
-                    description: 'I cannot kick myself!',
-                    timestamp: new Date()
+                    description: 'I cannot kick myself!'
                 }]
             });
         }
@@ -99,8 +93,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Cannot Kick User',
-                    description: 'I cannot kick this user. They may have higher permissions than me.',
-                    timestamp: new Date()
+                    description: 'I cannot kick this user. They may have higher permissions than me.'
                 }]
             });
         }
@@ -111,8 +104,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Insufficient Role Hierarchy',
-                    description: 'I cannot kick this user as they have a role equal to or higher than mine.',
-                    timestamp: new Date()
+                    description: 'I cannot kick this user as they have a role equal to or higher than mine.'
                 }]
             });
         }
@@ -143,8 +135,8 @@ module.exports = {
                     inline: true
                 }
             )
-            .setFooter({ text: 'You can rejoin the server if you have an invite link.' })
-            .setTimestamp();
+            
+            
 
         // Attempt to send DM (but don't let it fail the kick)
         target.send({ embeds: [dmEmbed] }).catch(() => {
@@ -188,11 +180,8 @@ module.exports = {
             }
 
             successEmbed.setThumbnail(target.displayAvatarURL())
-                .setFooter({ 
-                    text: `Kick executed by ${message.author.tag}`,
-                    iconURL: message.author.displayAvatarURL()
-                })
-                .setTimestamp();
+                
+                
 
             message.reply({ embeds: [successEmbed] });
 
@@ -211,9 +200,13 @@ module.exports = {
                     value: error.message || 'Unknown error occurred',
                     inline: false
                 })
-                .setTimestamp();
+                
 
             message.reply({ embeds: [errorEmbed] });
         });
     }
 };
+
+
+
+

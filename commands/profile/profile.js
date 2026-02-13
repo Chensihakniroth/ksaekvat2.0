@@ -108,3 +108,6 @@ function getRarestAnimal(rarityCount) {
     }
     return 'None';
 }
+
+
+

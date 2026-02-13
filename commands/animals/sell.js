@@ -15,8 +15,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please specify what to sell!\n\n**Usage:**\n`Ksell <animal_name>` - Sell a specific animal\n`Ksell all` - Sell all animals',
-                    timestamp: new Date()
+                    description: 'Please specify what to sell!\n\n**Usage:**\n`Ksell <animal_name>` - Sell a specific animal\n`Ksell all` - Sell all animals'
                 }]
             });
         }
@@ -38,8 +37,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ No Animals',
-                    description: 'You don\'t have any animals to sell! Use `Khunt` to catch some animals first.',
-                    timestamp: new Date()
+                    description: 'You don\'t have any animals to sell! Use `Khunt` to catch some animals first.'
                 }]
             });
         }
@@ -71,8 +69,7 @@ module.exports = {
                     embeds: [{
                         color: colors.error,
                         title: '❌ No Animals to Sell',
-                        description: 'You don\'t have any valid animals to sell.',
-                        timestamp: new Date()
+                        description: 'You don\'t have any valid animals to sell.'
                     }]
                 });
             }
@@ -96,11 +93,8 @@ module.exports = {
                     value: `${userData.balance.toLocaleString()} ${config.economy.currency}`,
                     inline: true
                 })
-                .setFooter({ 
-                    text: `Animals sold by ${message.author.username}`,
-                    iconURL: message.author.displayAvatarURL()
-                })
-                .setTimestamp();
+                
+                
 
             return message.reply({ embeds: [embed] });
         } else {
@@ -133,8 +127,7 @@ module.exports = {
                     embeds: [{
                         color: colors.error,
                         title: '❌ Animal Not Found',
-                        description: `You don't have an animal named "${args.join(' ')}" in your collection.\n\nUse \`Kzoo\` to see your animals.`,
-                        timestamp: new Date()
+                        description: `You don't have an animal named "${args.join(' ')}" in your collection.\n\nUse \`Kzoo\` to see your animals.`
                     }]
                 });
             }
@@ -169,7 +162,7 @@ module.exports = {
                     value: `${userData.balance.toLocaleString()} ${config.economy.currency}`,
                     inline: true
                 })
-                .setTimestamp();
+                
 
             return message.reply({ embeds: [embed] });
         }
@@ -178,3 +171,7 @@ module.exports = {
         database.updateStats(message.author.id, 'command');
     }
 };
+
+
+
+

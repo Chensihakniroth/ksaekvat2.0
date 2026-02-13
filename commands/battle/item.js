@@ -190,10 +190,7 @@ async function showInventory(message, args) {
         inline: false
     });
     
-    embed.setFooter({
-        text: `Total Items: ${inventory.length} | Use item IDs to equip/unequip`,
-        iconURL: message.author.displayAvatarURL()
-    });
+    embed
     
     await message.reply({ embeds: [embed] });
 }
@@ -204,8 +201,7 @@ async function handleEquip(message, args) {
             embeds: [{
                 color: colors.error,
                 title: '❌ Invalid Usage',
-                description: 'Please provide an item ID to equip!\n**Usage:** `Kinv equip <item_id>`',
-                timestamp: new Date()
+                description: 'Please provide an item ID to equip!\n**Usage:** `Kinv equip <item_id>`'
             }]
         });
     }
@@ -218,8 +214,7 @@ async function handleEquip(message, args) {
             embeds: [{
                 color: colors.error,
                 title: '❌ Equip Failed',
-                description: result.message,
-                timestamp: new Date()
+                description: result.message
             }]
         });
     }
@@ -237,11 +232,8 @@ async function handleEquip(message, args) {
             value: bonusText,
             inline: false
         })
-        .setFooter({
-            text: 'Your stats have been updated!',
-            iconURL: message.author.displayAvatarURL()
-        })
-        .setTimestamp();
+        
+        
     
     await message.reply({ embeds: [embed] });
 }
@@ -252,8 +244,7 @@ async function handleUnequip(message, args) {
             embeds: [{
                 color: colors.error,
                 title: '❌ Invalid Usage',
-                description: 'Please provide a slot to unequip!\n**Usage:** `Kinv unequip <slot>`\n**Slots:** weapon, armor, shoe, accessory',
-                timestamp: new Date()
+                description: 'Please provide a slot to unequip!\n**Usage:** `Kinv unequip <slot>`\n**Slots:** weapon, armor, shoe, accessory'
             }]
         });
     }
@@ -266,8 +257,7 @@ async function handleUnequip(message, args) {
             embeds: [{
                 color: colors.error,
                 title: '❌ Invalid Slot',
-                description: `Please provide a valid slot!\n**Valid Slots:** ${validSlots.join(', ')}`,
-                timestamp: new Date()
+                description: `Please provide a valid slot!\n**Valid Slots:** ${validSlots.join(', ')}`
             }]
         });
     }
@@ -279,8 +269,7 @@ async function handleUnequip(message, args) {
             embeds: [{
                 color: colors.error,
                 title: '❌ Unequip Failed',
-                description: result.message,
-                timestamp: new Date()
+                description: result.message
             }]
         });
     }
@@ -294,11 +283,8 @@ async function handleUnequip(message, args) {
             value: `${result.item.name} has been returned to your inventory.`,
             inline: false
         })
-        .setFooter({
-            text: 'Your stats have been updated!',
-            iconURL: message.author.displayAvatarURL()
-        })
-        .setTimestamp();
+        
+        
     
     await message.reply({ embeds: [embed] });
 }
@@ -327,3 +313,7 @@ module.exports = {
     unequipItem,
     calculateEquippedBonuses
 };
+
+
+
+

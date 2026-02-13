@@ -28,8 +28,7 @@ module.exports = {
                         '`Kgivepet @user common cat 5`',
                         '`Kgivepet @user legendary golden_dragon 1`',
                         '`Kgivepet @user priceless ancient_guardian`'
-                    ].join('\n'),
-                    timestamp: new Date()
+                    ].join('\n')
                 }]
             });
         }
@@ -48,8 +47,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.',
-                    timestamp: new Date()
+                    description: 'Please mention a valid user or provide their user ID.'
                 }]
             });
         }
@@ -60,8 +58,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '🤖 Bot Target',
-                    description: 'You cannot give pets to bots!',
-                    timestamp: new Date()
+                    description: 'You cannot give pets to bots!'
                 }]
             });
         }
@@ -76,8 +73,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Amount',
-                    description: 'Amount must be a valid number between 1 and 100.',
-                    timestamp: new Date()
+                    description: 'Amount must be a valid number between 1 and 100.'
                 }]
             });
         }
@@ -95,8 +91,7 @@ module.exports = {
                         description: [
                             'Available rarities:',
                             Object.keys(animalsData).map(r => `• \`${r}\``).join('\n')
-                        ].join('\n'),
-                        timestamp: new Date()
+                        ].join('\n')
                     }]
                 });
             }
@@ -111,8 +106,7 @@ module.exports = {
                         description: [
                             `Available ${rarity} animals:`,
                             availableAnimals.map(animal => `• \`${animal}\``).join('\n')
-                        ].join('\n'),
-                        timestamp: new Date()
+                        ].join('\n')
                     }]
                 });
             }
@@ -169,17 +163,14 @@ module.exports = {
                         value: [
                             `**Admin:** ${message.author.username}`,
                             `**Action:** Give Pet`,
-                            `**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`
-                        ].join('\n'),
+                            ].join('\n'),
                         inline: false
                     }
                 )
                 .setThumbnail(target.displayAvatarURL({ dynamic: true }))
-                .setFooter({ 
-                    text: `Admin command executed by ${message.author.tag}`,
-                    iconURL: message.author.displayAvatarURL({ dynamic: true })
+                
                 })
-                .setTimestamp();
+                
 
             await message.reply({ embeds: [embed] });
 
@@ -202,8 +193,8 @@ module.exports = {
                         ].join('\n'),
                         inline: false
                     })
-                    .setFooter({ text: 'Check your zoo with "Kzoo"!' })
-                    .setTimestamp();
+                    
+                    
 
                 await target.send({ embeds: [dmEmbed] });
             } catch (dmError) {
@@ -218,10 +209,12 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Command Error',
-                    description: 'An error occurred while giving the pet. Please check the console for details.',
-                    timestamp: new Date()
+                    description: 'An error occurred while giving the pet. Please check the console for details.'
                 }]
             });
         }
     }
 };
+
+
+

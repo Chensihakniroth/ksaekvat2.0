@@ -16,8 +16,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please provide a bet amount!\n**Usage:** `Kdice <amount> [1-6]`\n**Example:** `Kdice 1000 6` (bet on rolling a 6)',
-                    timestamp: new Date()
+                    description: 'Please provide a bet amount!\n**Usage:** `Kdice <amount> [1-6]`\n**Example:** `Kdice 1000 6` (bet on rolling a 6)'
                 }]
             });
         }
@@ -29,8 +28,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Bet Amount',
-                    description: 'Please provide a valid positive number.',
-                    timestamp: new Date()
+                    description: 'Please provide a valid positive number.'
                 }]
             });
         }
@@ -42,8 +40,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '💸 Invalid Bet Range',
-                    description: `Bet amount must be between **${minBet.toLocaleString()}** and **${maxBet.toLocaleString()}** ${config.economy.currency}.`,
-                    timestamp: new Date()
+                    description: `Bet amount must be between **${minBet.toLocaleString()}** and **${maxBet.toLocaleString()}** ${config.economy.currency}.`
                 }]
             });
         }
@@ -55,8 +52,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '💸 Insufficient Funds',
-                    description: `You don't have enough ${config.economy.currency}!\n**Your Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
-                    timestamp: new Date()
+                    description: `You don't have enough ${config.economy.currency}!\n**Your Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`
                 }]
             });
         }
@@ -96,11 +92,8 @@ module.exports = {
                 ].join('\n'),
                 inline: true
             })
-            .setFooter({ 
-                text: `${message.author.username} is rolling dice`,
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setTimestamp();
+            
+            
 
         message.reply({ embeds: [embed] }).then(async (sentMessage) => {
             // Animate the rolling dice
@@ -122,11 +115,8 @@ module.exports = {
                         ].join('\n'),
                         inline: true
                     })
-                    .setFooter({ 
-                        text: `${message.author.username} is rolling dice`,
-                        iconURL: message.author.displayAvatarURL()
-                    })
-                    .setTimestamp();
+                    
+                    
 
                 try {
                     await sentMessage.edit({ embeds: [animationEmbed] });
@@ -237,10 +227,7 @@ module.exports = {
                 inline: false
             });
 
-            finalEmbed.setFooter({ 
-                text: `Game completed | Roll: ${diceResult}`,
-                iconURL: message.author.displayAvatarURL()
-            }).setTimestamp();
+            finalEmbed
 
             // Update command usage statistics
             database.updateStats(message.author.id, 'command');
@@ -255,3 +242,7 @@ module.exports = {
         });
     }
 };
+
+
+
+

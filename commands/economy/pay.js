@@ -16,8 +16,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please provide a user and amount to pay.\n**Usage:** `Kpay @user <amount>`',
-                    timestamp: new Date()
+                    description: 'Please provide a user and amount to pay.\n**Usage:** `Kpay @user <amount>`'
                 }]
             });
         }
@@ -37,8 +36,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.',
-                    timestamp: new Date()
+                    description: 'Please mention a valid user or provide their user ID.'
                 }]
             });
         }
@@ -49,8 +47,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '🤔 Self Payment',
-                    description: 'You cannot pay yourself! That would be silly.',
-                    timestamp: new Date()
+                    description: 'You cannot pay yourself! That would be silly.'
                 }]
             });
         }
@@ -61,8 +58,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '🤖 Bot Payment',
-                    description: 'You cannot pay bots. They don\'t need money!',
-                    timestamp: new Date()
+                    description: 'You cannot pay bots. They don\'t need money!'
                 }]
             });
         }
@@ -81,8 +77,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Amount',
-                    description: 'Please provide a valid positive number, or use "all" to pay your entire balance.',
-                    timestamp: new Date()
+                    description: 'Please provide a valid positive number, or use "all" to pay your entire balance.'
                 }]
             });
         }
@@ -93,8 +88,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '💸 Minimum Payment',
-                    description: `Minimum payment amount is 1 ${config.economy.currency}.`,
-                    timestamp: new Date()
+                    description: `Minimum payment amount is 1 ${config.economy.currency}.`
                 }]
             });
         }
@@ -108,8 +102,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '💸 Insufficient Funds',
-                    description: `You don't have enough ${config.economy.currency}!\n**Your Balance:** ${senderData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${amount.toLocaleString()} ${config.economy.currency}`,
-                    timestamp: new Date()
+                    description: `You don't have enough ${config.economy.currency}!\n**Your Balance:** ${senderData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${amount.toLocaleString()} ${config.economy.currency}`
                 }]
             });
         }
@@ -134,8 +127,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '💰 Payment Limit Exceeded',
-                    description: `You can only pay up to ${maxPayment.toLocaleString()} ${config.economy.currency} based on your level (${senderLevel}).\n\n**Level Limits:**\n• Levels 1-4: 250,000\n• Levels 5-9: 250,000\n• Levels 10-14: 750,000\n• Level 15+: 1,500,000`,
-                    timestamp: new Date()
+                    description: `You can only pay up to ${maxPayment.toLocaleString()} ${config.economy.currency} based on your level (${senderLevel}).\n\n**Level Limits:**\n• Levels 1-4: 250,000\n• Levels 5-9: 250,000\n• Levels 10-14: 750,000\n• Level 15+: 1,500,000`
                 }]
             });
         }
@@ -152,7 +144,6 @@ module.exports = {
                     from: message.author.id,
                     to: target.id,
                     amount: amount,
-                    timestamp: new Date(),
                     guild: message.guild.id
                 });
             }
@@ -174,10 +165,8 @@ module.exports = {
                         inline: true
                     }
                 )
-                .setTimestamp()
-                .setFooter({ 
-                    text: `Transaction ID: ${Date.now()}`,
-                    iconURL: message.author.displayAvatarURL({ dynamic: true })
+                
+                
                 });
 
             // Send confirmation message
@@ -195,7 +184,7 @@ module.exports = {
                             value: `${recipientNewBalance.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         })
-                        .setTimestamp()
+                        
                         .setThumbnail(message.author.displayAvatarURL({ dynamic: true }));
 
                     await target.send({ embeds: [dmEmbed] });
@@ -212,10 +201,12 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Payment Failed',
-                    description: 'An error occurred while processing the payment. Please try again later.',
-                    timestamp: new Date()
+                    description: 'An error occurred while processing the payment. Please try again later.'
                 }]
             });
         }
     }
 };
+
+
+

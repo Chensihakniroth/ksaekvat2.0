@@ -65,11 +65,12 @@ module.exports = {
                         '• Booster (Boosters)'
                     ].join('\n'),
                     inline: false
-                }
-            )
-            
-            .setTimestamp();
+                });
 
         message.reply({ embeds: [embed] });
     }
 };
+
+
+
+

@@ -14,8 +14,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Missing Permissions',
-                    description: 'I don\'t have permission to ban members in this server.',
-                    timestamp: new Date()
+                    description: 'I don\'t have permission to ban members in this server.'
                 }]
             });
         }
@@ -26,8 +25,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please provide a user to ban.\n**Usage:** `Kban @user [reason]`\n**Example:** `Kban @user Breaking rules`',
-                    timestamp: new Date()
+                    description: 'Please provide a user to ban.\n**Usage:** `Kban @user [reason]`\n**Example:** `Kban @user Breaking rules`'
                 }]
             });
         }
@@ -50,8 +48,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.',
-                    timestamp: new Date()
+                    description: 'Please mention a valid user or provide their user ID.'
                 }]
             });
         }
@@ -69,8 +66,7 @@ module.exports = {
                     embeds: [{
                         color: colors.warning,
                         title: '🤔 Self Ban',
-                        description: 'You cannot ban yourself!',
-                        timestamp: new Date()
+                        description: 'You cannot ban yourself!'
                     }]
                 });
             }
@@ -81,8 +77,7 @@ module.exports = {
                     embeds: [{
                         color: colors.warning,
                         title: '🤖 Bot Protection',
-                        description: 'I cannot ban myself!',
-                        timestamp: new Date()
+                        description: 'I cannot ban myself!'
                     }]
                 });
             }
@@ -93,8 +88,7 @@ module.exports = {
                     embeds: [{
                         color: colors.error,
                         title: '❌ Cannot Ban User',
-                        description: 'I cannot ban this user. They may have higher permissions than me.',
-                        timestamp: new Date()
+                        description: 'I cannot ban this user. They may have higher permissions than me.'
                     }]
                 });
             }
@@ -105,8 +99,7 @@ module.exports = {
                     embeds: [{
                         color: colors.error,
                         title: '❌ Insufficient Role Hierarchy',
-                        description: 'I cannot ban this user as they have a role equal to or higher than mine.',
-                        timestamp: new Date()
+                        description: 'I cannot ban this user as they have a role equal to or higher than mine.'
                     }]
                 });
             }
@@ -134,8 +127,8 @@ module.exports = {
                     inline: true
                 }
             )
-            .setFooter({ text: 'This ban is permanent unless appealed.' })
-            .setTimestamp();
+            
+            
 
         // Attempt to send DM
         await target.send({ embeds: [dmEmbed] }).catch(() => {
@@ -169,11 +162,8 @@ module.exports = {
                     }
                 )
                 .setThumbnail(target.displayAvatarURL())
-                .setFooter({ 
-                    text: `Ban executed by ${message.author.tag}`,
-                    iconURL: message.author.displayAvatarURL()
-                })
-                .setTimestamp();
+                
+                
 
             message.reply({ embeds: [successEmbed] });
 
@@ -192,9 +182,13 @@ module.exports = {
                     value: error.message || 'Unknown error occurred',
                     inline: false
                 })
-                .setTimestamp();
+                
 
             message.reply({ embeds: [errorEmbed] });
         });
     },
 };
+
+
+
+

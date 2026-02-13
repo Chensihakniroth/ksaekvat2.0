@@ -38,7 +38,7 @@ module.exports = {
                 .setTitle('😅 Hunting Distraction!')
                 .setDescription(`${distraction.emoji} **You ${distraction.text}!**\n\nNo animals were found this time. Try hunting again!`)
                 
-                .setTimestamp();
+                
 
             // Update command usage statistics
             database.updateStats(message.author.id, 'command');
@@ -166,11 +166,8 @@ module.exports = {
 
         embed.setDescription(`You found a **${selectedAnimal.name}**!\n${selectedAnimal.emoji} *${rarityData.name}* rarity\n\n${tip}`)
             .setThumbnail('https://cdn.discordapp.com/emojis/hunt.png') // Placeholder
-            .setFooter({ 
-                text: `Total animals found: ${userData.totalAnimalsFound + 1} | Cooldown: 10 seconds`,
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setTimestamp();
+            
+            
 
         // Update command usage statistics
         database.updateStats(message.author.id, 'command');
@@ -178,3 +175,7 @@ module.exports = {
         message.reply({ embeds: [embed] });
     }
 };
+
+
+
+

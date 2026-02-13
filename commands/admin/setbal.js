@@ -16,8 +16,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please provide a user and amount.\n**Usage:** `Ksetbal @user <amount>`\n**Example:** `Ksetbal @user 10000`',
-                    timestamp: new Date()
+                    description: 'Please provide a user and amount.\n**Usage:** `Ksetbal @user <amount>`\n**Example:** `Ksetbal @user 10000`'
                 }]
             });
         }
@@ -36,8 +35,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.',
-                    timestamp: new Date()
+                    description: 'Please mention a valid user or provide their user ID.'
                 }]
             });
         }
@@ -49,8 +47,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Amount',
-                    description: 'Please provide a valid positive number.',
-                    timestamp: new Date()
+                    description: 'Please provide a valid positive number.'
                 }]
             });
         }
@@ -62,8 +59,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '⚠️ Amount Too High',
-                    description: `Maximum allowed balance is ${maxAmount.toLocaleString()} ${config.economy.currency}.`,
-                    timestamp: new Date()
+                    description: `Maximum allowed balance is ${maxAmount.toLocaleString()} ${config.economy.currency}.`
                 }]
             });
         }
@@ -104,13 +100,12 @@ module.exports = {
                     value: [
                         `**Admin:** ${message.author.username}`,
                         `**Action:** Set Balance`,
-                        `**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`
-                    ].join('\n'),
+                        ].join('\n'),
                     inline: false
                 }
             )
             .setThumbnail(target.displayAvatarURL())
-            .setTimestamp();
+            
 
         message.reply({ embeds: [embed] });
 
@@ -118,3 +113,6 @@ module.exports = {
         console.log(`[ADMIN] ${message.author.tag} set ${target.tag}'s balance to ${amount} (was ${previousBalance})`);
     }
 };
+
+
+

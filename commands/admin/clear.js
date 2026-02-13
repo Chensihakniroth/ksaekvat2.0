@@ -14,8 +14,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Missing Permissions',
-                    description: 'I don\'t have permission to manage messages in this server.',
-                    timestamp: new Date()
+                    description: 'I don\'t have permission to manage messages in this server.'
                 }]
             });
         }
@@ -26,8 +25,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please provide the number of messages to clear.\n**Usage:** `Kclear <amount> [@user]`\n**Examples:**\n`Kclear 10` - Clear 10 messages\n`Kclear 5 @user` - Clear 5 messages from specific user',
-                    timestamp: new Date()
+                    description: 'Please provide the number of messages to clear.\n**Usage:** `Kclear <amount> [@user]`\n**Examples:**\n`Kclear 10` - Clear 10 messages\n`Kclear 5 @user` - Clear 5 messages from specific user'
                 }]
             });
         }
@@ -39,8 +37,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Amount',
-                    description: 'Please provide a number between 1 and 100.',
-                    timestamp: new Date()
+                    description: 'Please provide a number between 1 and 100.'
                 }]
             });
         }
@@ -73,8 +70,7 @@ module.exports = {
                             embeds: [{
                                 color: colors.warning,
                                 title: '⚠️ No Messages Found',
-                                description: `No messages from ${targetUser.username} found in the recent messages.`,
-                                timestamp: new Date()
+                                description: `No messages from ${targetUser.username} found in the recent messages.`
                             }]
                         }).then(msg => {
                             setTimeout(() => msg.delete().catch(() => {}), 5000);
@@ -95,8 +91,7 @@ module.exports = {
                         embeds: [{
                             color: colors.warning,
                             title: '⚠️ Messages Too Old',
-                            description: 'All targeted messages are older than 14 days and cannot be bulk deleted.',
-                            timestamp: new Date()
+                            description: 'All targeted messages are older than 14 days and cannot be bulk deleted.'
                         }]
                     }).then(msg => {
                         setTimeout(() => msg.delete().catch(() => {}), 5000);
@@ -138,13 +133,12 @@ module.exports = {
                                     value: [
                                         `**Admin:** ${message.author.username}`,
                                         `**Action:** Clear Messages`,
-                                        `**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`
-                                    ].join('\n'),
+                                        ].join('\n'),
                                     inline: true
                                 }
                             )
                             
-                            .setTimestamp();
+                            
 
                         // Send confirmation message and delete it after 10 seconds
                         message.channel.send({ embeds: [successEmbed] })
@@ -173,8 +167,7 @@ module.exports = {
                             embeds: [{
                                 color: colors.error,
                                 title: '❌ Clear Failed',
-                                description: `Failed to clear messages: ${error.message}`,
-                                timestamp: new Date()
+                                description: `Failed to clear messages: ${error.message}`
                             }]
                         }).then(msg => {
                             setTimeout(() => msg.delete().catch(() => {}), 10000);
@@ -188,8 +181,7 @@ module.exports = {
                     embeds: [{
                         color: colors.error,
                         title: '❌ Fetch Failed',
-                        description: `Failed to fetch messages: ${error.message}`,
-                        timestamp: new Date()
+                        description: `Failed to fetch messages: ${error.message}`
                     }]
                 }).then(msg => {
                     setTimeout(() => msg.delete().catch(() => {}), 10000);
@@ -197,3 +189,7 @@ module.exports = {
             });
     }
 };
+
+
+
+

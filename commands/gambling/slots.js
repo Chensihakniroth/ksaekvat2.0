@@ -15,8 +15,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please provide a bet amount!\n**Usage:** `Kslots <amount>`\n**Example:** `Ks 1000`',
-                    timestamp: new Date()
+                    description: 'Please provide a bet amount!\n**Usage:** `Kslots <amount>`\n**Example:** `Ks 1000`'
                 }]
             });
         }
@@ -33,8 +32,7 @@ module.exports = {
                     embeds: [{
                         color: colors.error,
                         title: '❌ Invalid Bet Amount',
-                        description: 'Please provide a valid positive number.',
-                        timestamp: new Date()
+                        description: 'Please provide a valid positive number.'
                     }]
                 });
             }
@@ -45,8 +43,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '💸 Minimum Bet Required',
-                    description: `Minimum bet amount is **${minBet.toLocaleString()}** ${config.economy.currency}.`,
-                    timestamp: new Date()
+                    description: `Minimum bet amount is **${minBet.toLocaleString()}** ${config.economy.currency}.`
                 }]
             });
         }
@@ -57,8 +54,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '💸 Insufficient Funds',
-                    description: `You don't have enough ${config.economy.currency}!\n**Your Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
-                    timestamp: new Date()
+                    description: `You don't have enough ${config.economy.currency}!\n**Your Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`
                 }]
             });
         }
@@ -105,7 +101,7 @@ module.exports = {
             .setColor(colors.primary)
             .setTitle('🎰 Slot Machine')
             .setDescription(`**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n🎰 ┃ 🎯 ┃ 🎲 ┃\n**Spinning...**`)
-            .setTimestamp();
+            
 
         const sentMessage = await message.reply({ embeds: [slotEmbed] });
 
@@ -214,3 +210,6 @@ module.exports = {
         await sentMessage.edit({ embeds: [slotEmbed] });
     }
 };
+
+
+

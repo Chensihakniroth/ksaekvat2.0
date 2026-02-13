@@ -25,8 +25,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their ID.',
-                    timestamp: new Date()
+                    description: 'Please mention a valid user or provide their ID.'
                 }]
             });
         }
@@ -111,10 +110,7 @@ module.exports = {
             inline: false
         });
 
-        embed.setFooter({
-            text: `Use Kinv to manage equipment | Combat Power: ${totalStats.attack + totalStats.defense + totalStats.health + totalStats.luck}`,
-            iconURL: target.displayAvatarURL()
-        }).setTimestamp();
+        embed
 
         await message.reply({ embeds: [embed] });
 
@@ -122,3 +118,7 @@ module.exports = {
         database.updateStats(message.author.id, 'command');
     }
 };
+
+
+
+

@@ -30,7 +30,6 @@ module.exports = {
                             color: colors.error,
                             title: "💸 Insufficient Funds",
                             description: `You don't have enough ${config.economy.currency} to bet!\n**Your Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
-                            timestamp: new Date(),
                         },
                     ],
                 });
@@ -108,11 +107,8 @@ module.exports = {
         }
 
         battleEmbed
-            .setFooter({
-                text: "Battle starting in 1 seconds...",
-                iconURL: message.author.displayAvatarURL(),
-            })
-            .setTimestamp();
+            
+            
 
         message.reply({ embeds: [battleEmbed] }).then(async (sentMessage) => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -205,8 +201,8 @@ async function startPvEBattle(message, player, enemy, playerStats, enemyStats, b
                 { name: `${enemy.emoji} ${enemy.name}`, value: `❤️ **HP:** ${Math.max(0, enemyHP)}/${enemyStats.health}`, inline: true },
                 { name: "📜 Battle Log", value: battleLog.slice(-4).join("\n") || "Battle begins...", inline: false }
             )
-            .setFooter({ text: `Round ${round}` })
-            .setTimestamp();
+            
+            
 
         await message.edit({ embeds: [roundEmbed] });
         round++;
@@ -367,13 +363,8 @@ async function startPvEBattle(message, player, enemy, playerStats, enemyStats, b
 
     resultEmbed
         .setThumbnail(playerWon ? player.displayAvatarURL() : null)
-        .setFooter({
-            text: playerWon
-                ? "Great victory! Train more to fight stronger enemies."
-                : "Better luck next time! Keep training to get stronger.",
-            iconURL: player.displayAvatarURL(),
-        })
-        .setTimestamp();
+        
+        
 
     await message.edit({ embeds: [resultEmbed] });
 }
@@ -425,3 +416,6 @@ function getRandomItemDrop(playerWon, enemyLevel) {
     const item = items[Math.floor(Math.random() * items.length)];
     return { type, ...item };
 }
+
+
+

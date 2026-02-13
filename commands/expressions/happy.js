@@ -73,3 +73,7 @@ module.exports = {
         database.updateStats(message.author.id, 'command');
     }
 };
+
+
+
+

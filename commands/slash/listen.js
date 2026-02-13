@@ -84,7 +84,7 @@ module.exports = {
                     { name: 'User ID', value: targetUserId, inline: true },
                     { name: 'Notifications', value: 'You will receive DMs when this user sends messages', inline: true }
                 )
-                .setTimestamp();
+                
 
             await interaction.reply({ embeds: [embed], flags: [4096] });
             
@@ -105,3 +105,6 @@ module.exports = {
         }
     }
 };
+
+
+

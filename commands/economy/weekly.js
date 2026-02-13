@@ -26,8 +26,7 @@ module.exports = {
                     color: colors.warning,
                     title: '⏰ Weekly Already Claimed',
                     description: `You've already claimed your weekly reward! Come back in **${daysLeft}d ${hoursLeft}h**.`,
-                    thumbnail: { url: message.author.displayAvatarURL() },
-                    timestamp: new Date()
+                    thumbnail: { url: message.author.displayAvatarURL() }
                 }]
             });
         }
@@ -114,11 +113,8 @@ module.exports = {
         }
 
         embed.setDescription('🌟 **Weekly rewards are much more valuable than daily rewards!**')
-            .setFooter({ 
-                text: `Next weekly reward available in 7 days!`,
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setTimestamp();
+            
+            
 
         // Update command usage statistics
         database.updateStats(message.author.id, 'command');
@@ -126,3 +122,7 @@ module.exports = {
         message.reply({ embeds: [embed] });
     }
 };
+
+
+
+

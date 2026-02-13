@@ -18,7 +18,6 @@ module.exports = {
                         title: "🔥 Beksloy Command",
                         description:
                             "Please mention someone to beksloy!\n**Usage:** `Kbeksloy @user [message]` or `kkk @user [message]`\n**Example:** `kkk @friend You're so beksloy!`",
-                        timestamp: new Date(),
                     },
                 ],
             });
@@ -34,7 +33,6 @@ module.exports = {
                         color: colors.warning,
                         title: "bekbek",
                         description: "jom ah oun vai klun eng! 😅",
-                        timestamp: new Date(),
                     },
                 ],
             });
@@ -47,7 +45,6 @@ module.exports = {
                         color: colors.warning,
                         title: "🤖 ah nis ngang men ?",
                         description: "juii chlery, c ksae kvat lv ai! 🤖",
-                        timestamp: new Date(),
                     },
                 ],
             });
@@ -86,7 +83,7 @@ const randomMessage =
                                 : ""),
                     )
                     .setImage(gifUrl)
-                    .setFooter({ text: "STEAV INCOMING 🐉 🔪" })
+                    
                     
 
                 await sentMessage.edit({ embeds: [beksloyEmbed] });
@@ -100,3 +97,7 @@ const randomMessage =
         database.updateStats(message.author.id, "command");
     },
 };
+
+
+
+

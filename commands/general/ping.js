@@ -12,8 +12,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
             .setTitle('🏓 Pong!')
-            .setDescription('Calculating ping...')
-            .setTimestamp();
+            .setDescription('Calculating ping...');
 
         message.reply({ embeds: [embed] }).then(sentMessage => {
             const timeDiff = Date.now() - sent;
@@ -44,9 +43,7 @@ module.exports = {
                                apiLatency < 500 ? '🟡 Good' : '🔴 Poor',
                         inline: true
                     }
-                )
-                
-                .setTimestamp();
+                );
 
             sentMessage.edit({ embeds: [updatedEmbed] });
         }).catch(error => {
@@ -54,3 +51,7 @@ module.exports = {
         });
     }
 };
+
+
+
+

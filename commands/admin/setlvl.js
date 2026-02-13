@@ -15,8 +15,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please provide a user and level.\n**Usage:** `Ksetlvl @user <level>`\n**Example:** `Ksetlvl @user 25`',
-                    timestamp: new Date()
+                    description: 'Please provide a user and level.\n**Usage:** `Ksetlvl @user <level>`\n**Example:** `Ksetlvl @user 25`'
                 }]
             });
         }
@@ -35,8 +34,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.',
-                    timestamp: new Date()
+                    description: 'Please mention a valid user or provide their user ID.'
                 }]
             });
         }
@@ -48,8 +46,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Level',
-                    description: 'Please provide a valid level (minimum 1).',
-                    timestamp: new Date()
+                    description: 'Please provide a valid level (minimum 1).'
                 }]
             });
         }
@@ -61,8 +58,7 @@ module.exports = {
                 embeds: [{
                     color: colors.warning,
                     title: '⚠️ Level Too High',
-                    description: `Maximum allowed level is ${maxLevel}.`,
-                    timestamp: new Date()
+                    description: `Maximum allowed level is ${maxLevel}.`
                 }]
             });
         }
@@ -106,8 +102,7 @@ module.exports = {
                     value: [
                         `**Admin:** ${message.author.username}`,
                         `**Action:** Set Level`,
-                        `**Timestamp:** <t:${Math.floor(Date.now() / 1000)}:F>`
-                    ].join('\n'),
+                        ].join('\n'),
                     inline: false
                 }
             );
@@ -126,11 +121,8 @@ module.exports = {
         });
 
         embed.setThumbnail(target.displayAvatarURL())
-            .setFooter({ 
-                text: `Admin command executed by ${message.author.tag}`,
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setTimestamp();
+            
+            
 
         message.reply({ embeds: [embed] });
 
@@ -155,8 +147,8 @@ module.exports = {
                         inline: true
                     }
                 )
-                .setFooter({ text: 'KsaekVat Bot Admin System' })
-                .setTimestamp();
+                
+                
 
             target.send({ embeds: [dmEmbed] }).catch(() => {
                 // User has DMs disabled, ignore
@@ -166,3 +158,7 @@ module.exports = {
         }
     }
 };
+
+
+
+

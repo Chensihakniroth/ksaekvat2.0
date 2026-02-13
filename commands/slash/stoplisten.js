@@ -61,7 +61,7 @@ module.exports = {
                         { name: 'Stopped Tracking', value: `<@${removedUserId}>`, inline: true },
                         { name: 'User ID', value: removedUserId, inline: true }
                     )
-                    .setTimestamp();
+                    
 
                 await interaction.reply({ embeds: [embed], flags: [4096] });
             } else {
@@ -84,3 +84,6 @@ module.exports = {
         }
     }
 };
+
+
+

@@ -64,7 +64,7 @@ module.exports = {
                         { name: 'Previous Target', value: `<@${removedTargetId}>`, inline: true },
                         { name: 'User ID', value: removedTargetId, inline: true }
                     )
-                    .setTimestamp();
+                    
 
                 await interaction.reply({ embeds: [embed], ephemeral: true });
             } else {
@@ -87,3 +87,6 @@ module.exports = {
         }
     }
 };
+
+
+

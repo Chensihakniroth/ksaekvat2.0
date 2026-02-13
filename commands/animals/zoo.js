@@ -144,7 +144,7 @@ module.exports = {
             });
         }
 
-        embed.setTimestamp();
+        embed
 
         // Update command usage statistics
         database.updateStats(message.author.id, 'command');
@@ -152,3 +152,7 @@ module.exports = {
         message.reply({ embeds: [embed] });
     }
 };
+
+
+
+
