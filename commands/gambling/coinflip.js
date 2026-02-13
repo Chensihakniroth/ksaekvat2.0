@@ -164,11 +164,11 @@ module.exports = {
 
                 finalEmbed = new EmbedBuilder()
                     .setColor(colors.success)
-                    .setTitle('🎉 Dak khao hz ah pov!')
-                    .setDescription(`${resultEmoji} The coin landed on **${coinResult}**!\nhg hov vosh! ksaekvat lerng dak khao hz!`)
+                    .setTitle('🎉 Dak luy hz ah pov!')
+                    .setDescription(`${resultEmoji} The coin landed on **${coinResult}**!\nhg hov vosh! ksaekvat lerng dak luy hz!`)
                     .addFields(
                         {
-                            name: '💰 Luy Dak Khao',
+                            name: '💰 Luy knong khao',
                             value: `**+${winAmount.toLocaleString()}** ${config.economy.currency}`,
                             inline: true
                         },
@@ -187,7 +187,7 @@ module.exports = {
                 if (expGain.leveledUp) {
                     finalEmbed.addFields({
                         name: '🎉 Lerng Sak!',
-                        value: `Sart hg vosh! hg lerng tov level **${expGain.newLevel}** hz!`,
+                        value: `kop sari ! hg lerng sak hz tov Level **${expGain.newLevel}**!`,
                         inline: false
                     });
                 }

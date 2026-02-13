@@ -14,15 +14,15 @@ module.exports = {
         
         // Array of work scenarios
         const workScenarios = [
-            { job: 'Ah jek lork karem', action: 'lork karem oy kmeing2 c hz', emoji: '🍦' },
-            { job: 'Tuk Tuk Driver', action: 'dor lork knea len hz ah pov', emoji: '🛺' },
-            { job: 'Internet Cafe Attendant', action: 'mher net oy ke bek hz', emoji: '🖥️' },
-            { job: 'Street Food Vendor', action: 'lork prart korg oy ke c hz', emoji: '🍢' },
-            { job: 'Remorque Driver', action: 'dor lork knea tov ksaekvat hz', emoji: '🚜' },
-            { job: 'Washing Dishes', action: 'leang jan nov rorm ka ke hz', emoji: '🧼' },
-            { job: 'Selling Lottery', action: 'dor lork tbal chher hz ah kbeun', emoji: '🎟️' },
-            { job: 'Market Porter', action: 'lerk it oy ke nov phsar hz', emoji: '📦' },
-            { job: 'Security Guard', action: 'mher hloung oy ke hz ah pov', emoji: '🛡️' }
+            { job: 'Ah jek lork karem', action: 'dor lork karem tam phsar ban luy hz ah pov', emoji: '🍦' },
+            { job: 'Rort Tuk Tuk', action: 'dor lork knea len rort rork luy hz ah pov', emoji: '🛺' },
+            { job: 'Mher Net', action: 'ngoy dek mher net oy ke nov bak took hz', emoji: '🖥️' },
+            { job: 'Lork Prart Korg', action: 'lork prart korg chgnanh2 oy ke c hz', emoji: '🍢' },
+            { job: 'Rort Remorque', action: 'dor lork knea tov ksaekvat ban luy hz', emoji: '🚜' },
+            { job: 'Leang Jan', action: 'leang jan rorm ka ke hz dak khao hz', emoji: '🧼' },
+            { job: 'Lork Tbal Chher', action: 'dor lork lottery hz ah kbeun', emoji: '🎟️' },
+            { job: 'Lerk It', action: 'lerk it nov phsar hz ah pov', emoji: '📦' },
+            { job: 'Mher Hloung', action: 'mher hloung oy ke hz ah pov', emoji: '🛡️' }
         ];
 
         // Select random work scenario
@@ -58,11 +58,11 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.success)
-            .setTitle(`${scenario.emoji} Rerng hz ah pov!`)
-            .setDescription(`hg tver ka lerng bek tver chea **${scenario.job}** hz ${scenario.action}!`)
+            .setTitle(`${scenario.emoji} Tver ka hz ah pov!`)
+            .setDescription(`hg tver chea **${scenario.job}** hz ${scenario.action}!`)
             .addFields(
                 {
-                    name: `💵 Dak khao`,
+                    name: `💵 Earned`,
                     value: `**+${finalReward.toLocaleString()}** ${config.economy.currency}`,
                     inline: true
                 },
@@ -72,7 +72,7 @@ module.exports = {
                     inline: true
                 },
                 {
-                    name: '⭐ Bek XP',
+                    name: '⭐ XP Gained',
                     value: '+15 XP',
                     inline: true
                 }
@@ -102,8 +102,8 @@ module.exports = {
         // Add level up notification if applicable
         if (expGain.leveledUp) {
             embed.addFields({
-                name: '🎉 Lerng Sak hz!',
-                value: `Sart hg vosh! hg lerng tov level **${expGain.newLevel}** hz!`,
+                name: '🎉 Level Up!',
+                value: `kop sari ! hg lerng sak hz tov Level **${expGain.newLevel}**!`,
                 inline: false
             });
         }

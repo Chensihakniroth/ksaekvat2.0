@@ -98,8 +98,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: parseInt(config.colors.error.slice(1), 16),
-                    title: '🚫 Ot hov teh ah pov',
-                    description: 'hg ot mean dak ban teh, ban nherng ksaekvat lerng klun ey hg? (Admin Only)',
+                    title: '🚫 Ot mean sithi teh ah pov',
+                    description: 'hg ot mean dak ban teh ah pov, command nis ban tae Admin Only teh!',
                     timestamp: new Date()
                 }]
             });
@@ -114,7 +114,7 @@ module.exports = {
                     embeds: [{
                         color: parseInt(config.colors.warning.slice(1), 16),
                         title: '⏳ Jam tic mer ah chlery',
-                        description: `hg juii bek tic mer, jam **${Math.ceil(timeLeft / 1000)}s** ទៀត jam execute teat!`,
+                        description: `hg jam tic mer, jam **${Math.ceil(timeLeft / 1000)}s** teat jam execute ban!`,
                         timestamp: new Date()
                     }]
                 });
