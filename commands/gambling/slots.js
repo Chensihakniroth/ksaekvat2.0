@@ -125,22 +125,22 @@ module.exports = {
                 animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**Spinning fast...**';
+                statusText = '**vel lern...**';
             } else if (stage < 4) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**Spinning...**';
+                statusText = '**pg vel...**';
             } else if (stage < 6) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**Slowing down...**';
+                statusText = '**pg chub...**';
             } else if (stage < 7) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**Final spin...**';
+                statusText = '**vel jong kroy...**';
             } else {
                 statusText = '**Result!**';
             }
