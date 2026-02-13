@@ -63,6 +63,7 @@ module.exports = {
                     color: colors.warning,
                     title: '💸 Minimum Bet Required',
                     description: `Minimum bet amount is **${minBet.toLocaleString()}** ${config.economy.currency}.`,
+                    timestamp: new Date()
                 }]
             });
         }
@@ -80,6 +81,7 @@ module.exports = {
                     color: colors.error,
                     title: '💸 kmean luy ma cent jong jak l\'beng',
                     description: `luy ort krub jak lbeng teh! ${config.economy.currency}!\n**Luy hg:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**Trov ka:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
+                    
                 }]
             });
         }
@@ -202,6 +204,11 @@ module.exports = {
                     );
             }
 
+            finalEmbed.setFooter({ 
+                text: `Game completed | Your choice: ${userChoice}${isAllBet ? ' | All-in bet' : ''}`,
+                iconURL: message.author.displayAvatarURL()
+            }).setTimestamp();
+
             // Update command usage statistics
             database.updateStats(message.author.id, 'command');
 
@@ -216,6 +223,3 @@ module.exports = {
         });
     }
 };
-
-
-
