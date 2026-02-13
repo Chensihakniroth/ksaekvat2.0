@@ -11,6 +11,7 @@ module.exports = {
         hp: 'help',
         cf: 'coinflip',
         s: 'slots',
+        ld: 'leaderboard',
         d: 'daily',
         w: 'weekly',
         hunt: 'hunt',
@@ -26,9 +27,9 @@ module.exports = {
         process.env.ADMIN_ID_4
     ].filter(Boolean), // This will filter out any undefined values
 
-                                                                          
+                                                                         
     // API Keys
-    giphyApiKey: process.env.GIPHY_API_KEY || 'default_giphy_key',
+    giphyApiKey: process.env.GHIPHY_API_KEY || process.env.GIPHY_API_KEY || 'default_giphy_key',
     googleApiKey: process.env.GOOGLE_API_KEY || 'default_google_key',
     
     // Economy Configuration

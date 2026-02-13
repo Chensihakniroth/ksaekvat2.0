@@ -66,12 +66,13 @@ module.exports = {
         database.removeBalance(message.author.id, betAmount);
         database.updateStats(message.author.id, 'gambled', betAmount);
 
+        // Adjusted weights: x10 (2%) and x5 (5%) appear less. Coin, Draw, Lose are about equal (~31%).
         const outcomes = [
-            { type: 'diamond', weight: 5, emoji: '🔷', multiplier: 10, name: 'DIAMOND JACKPOT!' },
-            { type: 'rocket', weight: 15, emoji: '🚀', multiplier: 5, name: 'ROCKET BONUS!' },
-            { type: 'coin', weight: 25, emoji: '🪙', multiplier: 2, name: 'COIN WIN!' },
-            { type: 'draw', weight: 30, emoji: '🤝', multiplier: 1, name: 'DRAW!' },
-            { type: 'lose', weight: 25, emoji: '💀', multiplier: 0, name: 'LOSS' }
+            { type: 'diamond', weight: 2, emoji: '🔷', multiplier: 10, name: 'DIAMOND JACKPOT!' },
+            { type: 'rocket', weight: 5, emoji: '🚀', multiplier: 5, name: 'ROCKET BONUS!' },
+            { type: 'coin', weight: 31, emoji: '🪙', multiplier: 2, name: 'COIN WIN!' },
+            { type: 'draw', weight: 31, emoji: '🤝', multiplier: 1, name: 'DRAW!' },
+            { type: 'lose', weight: 31, emoji: '💀', multiplier: 0, name: 'LOSS' }
         ];
 
         let outcomePool = [];

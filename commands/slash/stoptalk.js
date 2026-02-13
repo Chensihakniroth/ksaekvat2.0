@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const { isAdmin } = require('../../utils/adminCheck');
+const isAdmin = require('../../utils/adminCheck');
 
 const TALK_TARGETS_FILE = path.join(__dirname, '../../data/talktargets.json');
 
@@ -36,7 +36,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('stoptalk')
         .setDescription('[Admin] Stop DM message forwarding')
-        .setDefaultMemberPermissions('0'), // No default permissions
+        .setDefaultMemberPermissions('0'),
 
     async execute(interaction) {
         // Immediate admin check

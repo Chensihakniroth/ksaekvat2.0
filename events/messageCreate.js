@@ -184,21 +184,17 @@ async function handleMessageListening(message, client) {
 
 // Handle DM forwarding functionality
 async function handleDMForwarding(message, client) {
-    const adminIDs = process.env.ADMIN_IDS ? process.env.ADMIN_IDS.split(',').map(id => id.trim()) : [];
-    
-    // Only process DMs from admins
-    if (!adminIDs.includes(message.author.id)) return;
-    
     const talkTargets = loadTalkTargets();
     const adminTarget = talkTargets[message.author.id];
     
     if (!adminTarget) return;
     
     try {
-        const guild = await client.guilds.fetch(adminTarget.serverId);
-        const channel = await guild.channels.fetch(adminTarget.channelId);
+        const channel = await client.channels.fetch(adminTarget.channelId);
         
-        // Forward the message content
+        if (!channel) return;
+
+        // Send the message content directly as the bot
         if (message.content) {
             await channel.send(message.content);
         }
@@ -211,12 +207,11 @@ async function handleDMForwarding(message, client) {
         }
         
     } catch (error) {
-        console.error(`Failed to forward DM from admin ${message.author.id}:`, error);
-        // Optionally notify the admin that forwarding failed
+        console.error(`Failed to send DM message from admin ${message.author.id}:`, error);
         try {
-            await message.author.send('❌ Failed to forward your message. Please check if the target server/channel still exists and the bot has permissions.');
+            await message.author.send('❌ Failed to send your message. Please check if the target channel still exists and the bot has permissions.');
         } catch (dmError) {
-            console.error('Failed to notify admin about forwarding failure:', dmError);
+            console.error('Failed to notify admin about sending failure:', dmError);
         }
     }
 }

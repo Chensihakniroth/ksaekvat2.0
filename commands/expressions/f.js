@@ -11,25 +11,28 @@ module.exports = {
     usage: "fuck @user",
     async execute(message, args) {
         if (!message.channel.nsfw) {
-            return message.reply("🚫 This command can only be used in NSFW-marked channels.");
+            return message.reply("🚫 dak ban tah 18+ room teh ah pov.");
         }
 
         if (cooldown.has(message.author.id)) {
-            return message.reply("⏳ Wait a moment before using this command again.");
+            return message.reply("⏳ hg jam tic mer juii hort dae hah.");
         }
 
         const user = message.mentions.users.first();
         if (!user) {
-            return message.reply("👉 Mention someone to fuck.");
+            return message.reply(
+                "👉 you got no hoe (you need to mention s1 idiot).",
+            );
         }
-
         try {
-            const res = await axios.get("https://api.purrbot.site/v2/img/nsfw/fuck/gif");
+            const res = await axios.get(
+                "https://api.purrbot.site/v2/img/nsfw/fuck/gif",
+            );
             const imageUrl = res.data.link;
 
             const embed = new EmbedBuilder()
                 .setTitle("🔞 NSFW Action: Fuck")
-                .setDescription(`${message.author} is fucking ${user} 🔥`)
+                .setDescription(`${message.author} ចុយ ${user} 🔥`)
                 .setImage(imageUrl)
                 .setColor("DarkRed");
 

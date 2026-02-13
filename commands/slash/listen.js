@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const { isAdmin } = require('../../utils/adminCheck'); // Using centralized admin check
+const isAdmin = require('../../utils/adminCheck');
 
 const LISTENERS_FILE = path.join(__dirname, '../../data/listeners.json');
 
@@ -19,6 +19,7 @@ function initDataFiles() {
 // Data handling functions
 function loadListeners() {
     try {
+        if (!fs.existsSync(LISTENERS_FILE)) return {};
         const data = fs.readFileSync(LISTENERS_FILE, 'utf8');
         return JSON.parse(data) || {};
     } catch (error) {
@@ -29,6 +30,10 @@ function loadListeners() {
 
 function saveListeners(data) {
     try {
+        const dataDir = path.dirname(LISTENERS_FILE);
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
         fs.writeFileSync(LISTENERS_FILE, JSON.stringify(data, null, 2), 'utf8');
     } catch (error) {
         console.error('Error saving listeners:', error);
@@ -43,40 +48,34 @@ module.exports = {
             option.setName('target_user_id')
                 .setDescription('The user ID to monitor')
                 .setRequired(true))
-        .setDefaultMemberPermissions('0'), // No default permissions
+        .setDefaultMemberPermissions('0'),
 
     async execute(interaction) {
-        // Initialize data files first
         initDataFiles();
 
-        // Admin check - reject non-admins immediately
-        if (!isAdmin(interaction.user.id)) {
+        if (typeof isAdmin !== 'function' || !isAdmin(interaction.user.id)) {
             return interaction.reply({
                 content: '⛔ This command is restricted to bot administrators.',
-                ephemeral: true
+                flags: [4096]
             });
         }
 
         const targetUserId = interaction.options.getString('target_user_id').trim();
         
-        // Validate user ID format
         if (!/^\d{17,20}$/.test(targetUserId)) {
             return interaction.reply({
                 content: '❌ Invalid user ID format. Please provide a valid Discord user ID.',
-                ephemeral: true
+                flags: [4096]
             });
         }
 
         try {
-            // Verify the user exists
             const targetUser = await interaction.client.users.fetch(targetUserId);
             
-            // Update listeners
             const listeners = loadListeners();
             listeners[interaction.user.id] = targetUserId;
             saveListeners(listeners);
 
-            // Success response
             const embed = new EmbedBuilder()
                 .setColor(0x00FF00)
                 .setTitle('✅ Listening Activated')
@@ -87,22 +86,22 @@ module.exports = {
                 )
                 .setTimestamp();
 
-            await interaction.reply({ embeds: [embed], ephemeral: true });
+            await interaction.reply({ embeds: [embed], flags: [4096] });
             
         } catch (error) {
             console.error('Listen command error:', error);
             
-            let errorMessage;
-            if (error.code === 10013) { // Unknown User
+            let errorMessage = '❌ An error occurred while setting up listener.';
+            if (error.code === 10013) {
                 errorMessage = `❌ User with ID ${targetUserId} not found.`;
-            } else {
-                errorMessage = '❌ An error occurred while setting up listener.';
             }
 
-            await interaction.reply({
-                content: errorMessage,
-                ephemeral: true
-            });
+            if (!interaction.replied) {
+                await interaction.reply({
+                    content: errorMessage,
+                    flags: [4096]
+                });
+            }
         }
     }
 };

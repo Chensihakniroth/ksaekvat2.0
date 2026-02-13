@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Partials } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const config = require('./config/config.js');
@@ -7,8 +7,6 @@ const database = require('./utils/database.js');
 const cron = require('node-cron');
 const express = require('express');
 require('dotenv').config();
-
-// Add this to the TOP of your index.js (right after the requires)
 
 // Auto-deploy slash commands
 async function deployCommands() {
@@ -21,7 +19,7 @@ async function deployCommands() {
     const commandsPath = path.join(__dirname, "commands/slash");
     
     if (!fs.existsSync(commandsPath)) {
-      console.log('No slash commands directory found');
+      logger.warn('No slash commands directory found');
       return;
     }
     
@@ -29,37 +27,48 @@ async function deployCommands() {
 
     for (const file of commandFiles) {
       try {
+        // Clear require cache to get fresh module
+        delete require.cache[require.resolve(`./commands/slash/${file}`)];
         const command = require(`./commands/slash/${file}`);
+        
         if (command.data && typeof command.data.toJSON === "function") {
           const commandJSON = command.data.toJSON();
+          
+          // If name is missing, try to extract from filename
+          if (!commandJSON.name) {
+            const nameFromFile = file.replace('.js', '');
+            commandJSON.name = nameFromFile;
+            logger.warn(`${file}: Using filename as command name`);
+          }
+          
           commands.push(commandJSON);
-          console.log(`✅ Loaded command: ${commandJSON.name}`);
+          logger.success(`Loaded command: ${commandJSON.name}`);
         } else {
-          console.warn(`[WARN] Skipped ${file}: Invalid command structure`);
+          logger.warn(`Skipped ${file}: Invalid command structure`);
         }
       } catch (error) {
-        console.warn(`[WARN] Failed to load ${file}: ${error.message}`);
+        logger.warn(`Failed to load ${file}: ${error.message}`);
       }
     }
 
     if (commands.length === 0) {
-      console.log('No valid commands found to deploy');
+      logger.warn('No valid commands found to deploy');
       return;
     }
 
     const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
     const clientId = process.env.CLIENT_ID;
 
-    console.log(`🔄 Deploying ${commands.length} slash commands...`);
+    logger.info(`Deploying ${commands.length} slash commands...`);
 
     await rest.put(Routes.applicationCommands(clientId), {
       body: commands,
     });
 
-    console.log("✅ Slash commands deployed successfully!");
+    logger.success("Slash commands deployed successfully!");
 
   } catch (error) {
-    console.error("❌ Error deploying commands:", error);
+    logger.error("Error deploying commands:", error);
   }
 }
 
@@ -70,7 +79,7 @@ deployCommands();
 const app = express();
 app.get('/', (req, res) => res.status(200).send('Bot is running'));
 app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
-  console.log(`Server on port ${process.env.PORT || 8080}`);
+  logger.box('HTTP Server', `Running on port ${process.env.PORT || 8080}`);
 });
 
 // Multiple instance prevention
@@ -79,26 +88,27 @@ if (fs.existsSync(pidFile)) {
   const pid = fs.readFileSync(pidFile, 'utf8').trim();
   try {
     process.kill(pid, 0);
-    console.log('❌ Bot is already running!');
-    console.log(`❌ PID: ${pid}`);
-    console.log('❌ Please stop the existing bot first or delete bot.pid file');
-    process.exit(1);
+    logger.warn('Removing stale PID file...');
+    fs.unlinkSync(pidFile);
   } catch {
-    console.log('🧹 Removing stale PID file...');
     fs.unlinkSync(pidFile);
   }
 }
 fs.writeFileSync(pidFile, process.pid.toString());
-console.log(`🤖 Bot starting with PID: ${process.pid}`);
+logger.header('Discord Bot Initializing');
+logger.info(`Process ID: ${process.pid}`);
+logger.divider('═');
+logger.blank();
+
 const cleanup = () => {
   if (fs.existsSync(pidFile)) {
-    console.log('🧹 Cleaning up PID file...');
+    logger.info('Cleaning up PID file...');
     fs.unlinkSync(pidFile);
   }
 };
 process.on('exit', cleanup);
-process.on('SIGINT', () => { console.log('\n🛑 SIGINT'); cleanup(); process.exit(0); });
-process.on('SIGTERM', () => { console.log('\n🛑 SIGTERM'); cleanup(); process.exit(0); });
+process.on('SIGINT', () => { logger.warn('SIGINT Received - Shutting down'); cleanup(); process.exit(0); });
+process.on('SIGTERM', () => { logger.warn('SIGTERM Received - Shutting down'); cleanup(); process.exit(0); });
 
 // Discord bot setup
 const client = new Client({
@@ -109,7 +119,8 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.GuildMessageReactions
-  ]
+  ],
+  partials: [Partials.Channel, Partials.Message]
 });
 
 // Initialize collections
@@ -195,35 +206,46 @@ client.on('interactionCreate', async interaction => {
   }
 });
 
+// Message command handler removed - handled by events/messageCreate.js
+
 // Login
 const token = process.env.DISCORD_TOKEN;
 if (!token) {
-  logger.error('❌ No token found!');
+  logger.error('No token found!');
   cleanup();
   process.exit(1);
 }
-logger.info('🔗 Connecting...');
+logger.section('Connecting to Discord');
 client.login(token)
   .then(() => {
-    logger.info('✅ Logged in!');
-    console.log(`🎉 Bot ready! PID: ${process.pid}`);
+    logger.success('Successfully authenticated with Discord');
   })
   .catch(err => {
-    logger.error('❌ Failed to login:', err);
+    logger.error('Failed to login:', err);
     cleanup();
     process.exit(1);
   });
 
 // Ready event
-client.once('ready', () => {
-  console.log(`🚀 ${client.user.tag} is online!`);
-  console.log(`📊 Serving ${client.guilds.cache.size} servers`);
+client.once('clientReady', () => {
+  logger.blank();
+  logger.header('Bot Connected');
+  logger.section('Status');
+  logger.table(
+    [
+      [client.user.tag, '✓ Online'],
+      [client.guilds.cache.size.toString(), 'Servers'],
+      [new Date().toLocaleString(), 'Started']
+    ],
+    ['Property', 'Value']
+  );
+  logger.blank();
 });
 
 // Reaction events
 client.on('messageReactionAdd', (reaction, user) => {
-  console.log(`🔥 Reaction added: ${reaction.emoji.name} by ${user.username}`);
+  logger.debug(`Reaction added: ${reaction.emoji.name} by ${user.username}`);
 });
 client.on('messageReactionRemove', (reaction, user) => {
-  console.log(`❌ Reaction removed: ${reaction.emoji.name} by ${user.username}`);
+  logger.debug(`Reaction removed: ${reaction.emoji.name} by ${user.username}`);
 });

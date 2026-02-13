@@ -7,7 +7,7 @@ module.exports = {
     description: 'Ban a user from the server (Admin only)',
     usage: 'ban <@user> [reason]',
     adminOnly: true,
-    execute(message, args, client) {
+    async execute(message, args, client) {
         // Check if bot has ban permissions
         if (!message.guild.members.me.permissions.has(PermissionsBitField.Flags.BanMembers)) {
             return message.reply({
@@ -26,7 +26,7 @@ module.exports = {
                 embeds: [{
                     color: colors.error,
                     title: '❌ Invalid Usage',
-                    description: 'Please provide a user to ban.\n**Usage:** `Kban @user [reason]`\n**Example:** `Kban @user Spamming`',
+                    description: 'Please provide a user to ban.\n**Usage:** `Kban @user [reason]`\n**Example:** `Kban @user Breaking rules`',
                     timestamp: new Date()
                 }]
             });
@@ -38,7 +38,11 @@ module.exports = {
             target = message.mentions.users.first();
         } else {
             const userId = args[0];
-            target = client.users.cache.get(userId);
+            try {
+                target = await client.users.fetch(userId);
+            } catch (error) {
+                target = null;
+            }
         }
 
         if (!target) {
@@ -58,63 +62,54 @@ module.exports = {
         // Check if user is in the guild
         const member = message.guild.members.cache.get(target.id);
         
-        if (!member) {
-            return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '⚠️ User Not in Server',
-                    description: 'This user is not a member of this server.',
-                    timestamp: new Date()
-                }]
-            });
-        }
+        if (member) {
+            // Prevent banning yourself
+            if (target.id === message.author.id) {
+                return message.reply({
+                    embeds: [{
+                        color: colors.warning,
+                        title: '🤔 Self Ban',
+                        description: 'You cannot ban yourself!',
+                        timestamp: new Date()
+                    }]
+                });
+            }
 
-        // Prevent banning yourself
-        if (target.id === message.author.id) {
-            return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '🤔 Self Ban',
-                    description: 'You cannot ban yourself!',
-                    timestamp: new Date()
-                }]
-            });
-        }
+            // Prevent banning the bot
+            if (target.id === client.user.id) {
+                return message.reply({
+                    embeds: [{
+                        color: colors.warning,
+                        title: '🤖 Bot Protection',
+                        description: 'I cannot ban myself!',
+                        timestamp: new Date()
+                    }]
+                });
+            }
 
-        // Prevent banning the bot
-        if (target.id === client.user.id) {
-            return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '🤖 Bot Protection',
-                    description: 'I cannot ban myself!',
-                    timestamp: new Date()
-                }]
-            });
-        }
+            // Check if target is bannable
+            if (!member.bannable) {
+                return message.reply({
+                    embeds: [{
+                        color: colors.error,
+                        title: '❌ Cannot Ban User',
+                        description: 'I cannot ban this user. They may have higher permissions than me.',
+                        timestamp: new Date()
+                    }]
+                });
+            }
 
-        // Check if target is bannable
-        if (!member.bannable) {
-            return message.reply({
-                embeds: [{
-                    color: colors.error,
-                    title: '❌ Cannot Ban User',
-                    description: 'I cannot ban this user. They may have higher permissions than me.',
-                    timestamp: new Date()
-                }]
-            });
-        }
-
-        // Check role hierarchy
-        if (member.roles.highest.position >= message.guild.members.me.roles.highest.position) {
-            return message.reply({
-                embeds: [{
-                    color: colors.error,
-                    title: '❌ Insufficient Role Hierarchy',
-                    description: 'I cannot ban this user as they have a role equal to or higher than mine.',
-                    timestamp: new Date()
-                }]
-            });
+            // Check role hierarchy
+            if (member.roles.highest.position >= message.guild.members.me.roles.highest.position) {
+                return message.reply({
+                    embeds: [{
+                        color: colors.error,
+                        title: '❌ Insufficient Role Hierarchy',
+                        description: 'I cannot ban this user as they have a role equal to or higher than mine.',
+                        timestamp: new Date()
+                    }]
+                });
+            }
         }
 
         // Try to DM the user before banning
@@ -139,19 +134,16 @@ module.exports = {
                     inline: true
                 }
             )
-            .setFooter({ text: 'If you believe this was a mistake, contact the server administrators.' })
+            .setFooter({ text: 'This ban is permanent unless appealed.' })
             .setTimestamp();
 
-        // Attempt to send DM (but don't let it fail the ban)
-        target.send({ embeds: [dmEmbed] }).catch(() => {
-            // User has DMs disabled or blocked the bot
+        // Attempt to send DM
+        await target.send({ embeds: [dmEmbed] }).catch(() => {
+            // User has DMs disabled
         });
 
         // Ban the user
-        member.ban({ 
-            reason: `${reason} | Banned by: ${message.author.tag}`,
-            deleteMessageDays: 1 // Delete messages from last 1 day
-        }).then(() => {
+        message.guild.members.ban(target, { reason: `${reason} | Banned by: ${message.author.tag}` }).then(() => {
             const successEmbed = new EmbedBuilder()
                 .setColor(colors.success)
                 .setTitle('🔨 User Banned Successfully')
@@ -174,14 +166,13 @@ module.exports = {
                             `**Date:** <t:${Math.floor(Date.now() / 1000)}:F>`
                         ].join('\n'),
                         inline: true
-                    },
-                    {
-                        name: '🗑️ Message Cleanup',
-                        value: 'Messages from the last 1 day have been deleted.',
-                        inline: false
                     }
                 )
                 .setThumbnail(target.displayAvatarURL())
+                .setFooter({ 
+                    text: `Ban executed by ${message.author.tag}`,
+                    iconURL: message.author.displayAvatarURL()
+                })
                 .setTimestamp();
 
             message.reply({ embeds: [successEmbed] });
@@ -205,5 +196,5 @@ module.exports = {
 
             message.reply({ embeds: [errorEmbed] });
         });
-    }
+    },
 };

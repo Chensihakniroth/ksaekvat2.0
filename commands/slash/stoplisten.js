@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const { isAdmin } = require('../../utils/adminCheck');
+const isAdmin = require('../../utils/adminCheck');
 
 const LISTENERS_FILE = path.join(__dirname, '../../data/listeners.json');
 
@@ -9,7 +9,6 @@ const LISTENERS_FILE = path.join(__dirname, '../../data/listeners.json');
 function loadListeners() {
     try {
         if (!fs.existsSync(LISTENERS_FILE)) {
-            fs.writeFileSync(LISTENERS_FILE, '{}', 'utf8');
             return {};
         }
         const data = fs.readFileSync(LISTENERS_FILE, 'utf8');
@@ -36,14 +35,13 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('stoplisten')
         .setDescription('[Admin] Stop monitoring messages from previously tracked user')
-        .setDefaultMemberPermissions('0'), // No default permissions
+        .setDefaultMemberPermissions('0'),
 
     async execute(interaction) {
-        // Immediate admin check
-        if (!isAdmin(interaction.user.id)) {
+        if (typeof isAdmin !== 'function' || !isAdmin(interaction.user.id)) {
             return interaction.reply({
                 content: '⛔ This command is restricted to bot administrators.',
-                ephemeral: true
+                flags: [4096]
             });
         }
 
@@ -51,12 +49,10 @@ module.exports = {
             const listeners = loadListeners();
             
             if (listeners[interaction.user.id]) {
-                // Remove listener
                 const removedUserId = listeners[interaction.user.id];
                 delete listeners[interaction.user.id];
                 saveListeners(listeners);
 
-                // Create success embed
                 const embed = new EmbedBuilder()
                     .setColor(0x00FF00)
                     .setTitle('✅ Monitoring Stopped')
@@ -67,24 +63,24 @@ module.exports = {
                     )
                     .setTimestamp();
 
-                await interaction.reply({ embeds: [embed], ephemeral: true });
+                await interaction.reply({ embeds: [embed], flags: [4096] });
             } else {
                 await interaction.reply({
                     content: 'ℹ️ You were not currently monitoring any user.',
-                    ephemeral: true
+                    flags: [4096]
                 });
             }
         } catch (error) {
             console.error('Stoplisten command error:', error);
             
-            const errorMessage = error.code === 'ENOENT' 
-                ? '❌ No active monitoring configurations found'
-                : '❌ An error occurred while stopping monitoring';
+            const errorMessage = '❌ An error occurred while stopping monitoring';
 
-            await interaction.reply({
-                content: errorMessage,
-                ephemeral: true
-            });
+            if (!interaction.replied) {
+                await interaction.reply({
+                    content: errorMessage,
+                    flags: [4096]
+                });
+            }
         }
     }
 };

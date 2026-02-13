@@ -4,7 +4,7 @@
     "balance": 544275,
     "level": 415,
     "experience": 41410,
-    "dailyClaimed": true,
+    "dailyClaimed": false,
     "weeklyClaimed": true,
     "lastDaily": "2025-08-03T16:16:11.297Z",
     "lastWeekly": "2025-07-30T07:42:56.978Z",
@@ -118,7 +118,7 @@
     "balance": 431608,
     "level": 4,
     "experience": 320,
-    "dailyClaimed": true,
+    "dailyClaimed": false,
     "weeklyClaimed": true,
     "lastDaily": "2025-08-03T07:15:06.266Z",
     "lastWeekly": "2025-07-30T15:07:05.210Z",
@@ -141,7 +141,7 @@
     "balance": 8755365,
     "level": 420,
     "experience": 41940,
-    "dailyClaimed": true,
+    "dailyClaimed": false,
     "weeklyClaimed": true,
     "lastDaily": "2025-07-30T12:25:15.453Z",
     "lastWeekly": "2025-07-30T12:25:18.698Z",
@@ -164,7 +164,7 @@
     "balance": 1000000000000,
     "level": 20,
     "experience": 1995,
-    "dailyClaimed": true,
+    "dailyClaimed": false,
     "weeklyClaimed": true,
     "lastDaily": "2025-08-01T16:25:56.125Z",
     "lastWeekly": "2025-08-01T16:26:04.699Z",
@@ -189,7 +189,7 @@
     "balance": 20191100,
     "level": 3,
     "experience": 280,
-    "dailyClaimed": true,
+    "dailyClaimed": false,
     "weeklyClaimed": true,
     "lastDaily": "2025-08-03T07:40:31.082Z",
     "lastWeekly": "2025-08-03T07:40:38.646Z",
@@ -210,7 +210,7 @@
     "balance": 0,
     "level": 2,
     "experience": 125,
-    "dailyClaimed": true,
+    "dailyClaimed": false,
     "weeklyClaimed": true,
     "lastDaily": "2025-08-03T07:41:01.216Z",
     "lastWeekly": "2025-08-03T07:42:05.315Z",
@@ -288,5 +288,867 @@
     "totalLost": 0,
     "commandsUsed": 0,
     "joinedAt": 1754239431287
+  },
+  "703266672022388789": {
+    "id": "703266672022388789",
+    "balance": 110815021,
+    "level": 12,
+    "experience": 1165,
+    "dailyClaimed": false,
+    "weeklyClaimed": true,
+    "lastDaily": "2026-01-14T12:59:06.095Z",
+    "lastWeekly": "2026-01-23T08:50:19.357Z",
+    "lastHunt": null,
+    "animals": {
+      "common": {
+        "bird": 1,
+        "rabbit": 1
+      },
+      "rare": {
+        "elephant": 1
+      },
+      "uncommon": {
+        "frog": 1,
+        "panda": 1
+      }
+    },
+    "boosters": {},
+    "inventory": [
+      {
+        "id": "1768582376094rgme7",
+        "type": "Armor",
+        "name": "Leather Armor",
+        "bonus": {
+          "defense": 12
+        },
+        "obtainedAt": "2026-01-16T16:52:56.094Z"
+      },
+      {
+        "id": "1768590237587gkhft",
+        "type": "Accessory",
+        "name": "Ring of Power",
+        "bonus": {
+          "attack": 12,
+          "defense": 12
+        },
+        "obtainedAt": "2026-01-16T19:03:57.587Z"
+      }
+    ],
+    "equipped": {},
+    "totalAnimalsFound": 5,
+    "totalGambled": 164730099,
+    "totalWon": 147722584,
+    "totalLost": 29790000,
+    "commandsUsed": 57,
+    "joinedAt": 1768376053676
+  },
+  "1344206612000407603": {
+    "id": "1344206612000407603",
+    "balance": 15370,
+    "level": 42,
+    "experience": 4145,
+    "dailyClaimed": false,
+    "weeklyClaimed": true,
+    "lastDaily": "2026-01-21T09:05:10.266Z",
+    "lastWeekly": "2026-01-15T07:09:14.891Z",
+    "lastHunt": null,
+    "animals": {
+      "common": {
+        "duck": 1,
+        "mouse": 1,
+        "dog": 1
+      },
+      "uncommon": {
+        "fox": 1,
+        "pig": 2
+      },
+      "rare": {
+        "tiger": 1,
+        "leopard": 1
+      },
+      "epic": {
+        "kraken": 1
+      },
+      "legendary": {
+        "ice_phoenix": 1
+      }
+    },
+    "boosters": {},
+    "inventory": [
+      {
+        "id": "1768396016395fo5dd",
+        "type": "Armor",
+        "name": "Obsidian Plate",
+        "bonus": {
+          "defense": 15,
+          "hp": 20
+        },
+        "obtainedAt": "2026-01-14T13:06:56.395Z"
+      },
+      {
+        "id": "1768583471758ie4da",
+        "type": "Accessory",
+        "name": "Lucky Charm",
+        "bonus": {
+          "luck": 4
+        },
+        "obtainedAt": "2026-01-16T17:11:11.758Z"
+      },
+      {
+        "id": "17685838135963ccls",
+        "type": "Armor",
+        "name": "Leather Armor",
+        "bonus": {
+          "defense": 12
+        },
+        "obtainedAt": "2026-01-16T17:16:53.596Z"
+      },
+      {
+        "id": "1768584085920z4wg8",
+        "type": "Accessory",
+        "name": "Health Amulet",
+        "bonus": {
+          "hp": 25,
+          "defense": 6
+        },
+        "obtainedAt": "2026-01-16T17:21:25.920Z"
+      },
+      {
+        "id": "1768584187035sqs3n",
+        "type": "Accessory",
+        "name": "Ring of Power",
+        "bonus": {
+          "attack": 16,
+          "defense": 16
+        },
+        "obtainedAt": "2026-01-16T17:23:07.035Z"
+      },
+      {
+        "id": "1768584244757h57ze",
+        "type": "Armor",
+        "name": "Mage Robe",
+        "bonus": {
+          "defense": 30,
+          "luck": 4
+        },
+        "obtainedAt": "2026-01-16T17:24:04.757Z"
+      },
+      {
+        "id": "17686213858755vfgq",
+        "type": "Weapon",
+        "name": "Steel Blade",
+        "bonus": {
+          "attack": 63
+        },
+        "obtainedAt": "2026-01-17T03:43:05.875Z"
+      },
+      {
+        "id": "1768621399598u2phg",
+        "type": "Weapon",
+        "name": "War Hammer",
+        "bonus": {
+          "attack": 108,
+          "defense": 2
+        },
+        "obtainedAt": "2026-01-17T03:43:19.598Z"
+      },
+      {
+        "id": "17689863282069vern",
+        "type": "Accessory",
+        "name": "Lucky Charm",
+        "bonus": {
+          "luck": 56
+        },
+        "obtainedAt": "2026-01-21T09:05:28.206Z"
+      }
+    ],
+    "equipped": {},
+    "totalAnimalsFound": 10,
+    "totalGambled": 598814124,
+    "totalWon": 231686894,
+    "totalLost": 259730891,
+    "commandsUsed": 90,
+    "joinedAt": 1768376422599
+  },
+  "971058293734789150": {
+    "id": "971058293734789150",
+    "balance": 3151000,
+    "level": 1,
+    "experience": 0,
+    "dailyClaimed": false,
+    "weeklyClaimed": false,
+    "lastDaily": null,
+    "lastWeekly": null,
+    "lastHunt": null,
+    "animals": {},
+    "boosters": {},
+    "inventory": [],
+    "equipped": {},
+    "totalAnimalsFound": 0,
+    "totalGambled": 10000,
+    "totalWon": 0,
+    "totalLost": 0,
+    "commandsUsed": 9,
+    "joinedAt": 1768377256866
+  },
+  "1250803073685655604": {
+    "id": "1250803073685655604",
+    "balance": 13500000,
+    "level": 2,
+    "experience": 100,
+    "dailyClaimed": false,
+    "weeklyClaimed": false,
+    "lastDaily": null,
+    "lastWeekly": null,
+    "lastHunt": null,
+    "animals": {},
+    "boosters": {},
+    "inventory": [],
+    "equipped": {},
+    "totalAnimalsFound": 0,
+    "totalGambled": 181208000,
+    "totalWon": 22301000,
+    "totalLost": 83802000,
+    "commandsUsed": 3,
+    "joinedAt": 1768400099709
+  },
+  "803255040923533332": {
+    "id": "803255040923533332",
+    "balance": 1797586210444,
+    "level": 1680337175,
+    "experience": 168033717475,
+    "dailyClaimed": false,
+    "weeklyClaimed": true,
+    "lastDaily": "2026-01-18T04:16:47.556Z",
+    "lastWeekly": "2026-01-15T04:29:32.488Z",
+    "lastHunt": null,
+    "animals": {
+      "common": {
+        "mouse": 5,
+        "bird": 6,
+        "chicken": 5,
+        "dog": 4,
+        "cat": 4,
+        "rabbit": 2,
+        "hamster": 5,
+        "duck": 2
+      },
+      "legendary": {
+        "crystal_unicorn": 1,
+        "golden_dragon": 2,
+        "ice_phoenix": 1,
+        "storm_eagle": 1
+      },
+      "uncommon": {
+        "panda": 5,
+        "frog": 6,
+        "koala": 2,
+        "fox": 2,
+        "cow": 3,
+        "pig": 3,
+        "wolf": 1,
+        "bear": 1
+      },
+      "epic": {
+        "griffin": 3,
+        "dragon": 1,
+        "pegasus": 1,
+        "unicorn": 1
+      },
+      "rare": {
+        "tiger": 1,
+        "zebra": 2,
+        "elephant": 2,
+        "rhino": 3,
+        "giraffe": 1,
+        "lion": 1
+      },
+      "mythical": {
+        "void_phoenix": 1
+      }
+    },
+    "boosters": {},
+    "inventory": [
+      {
+        "id": "176858415439619ccf",
+        "type": "Shoe",
+        "name": "Leather Boots",
+        "bonus": {
+          "speed": 36
+        },
+        "obtainedAt": "2026-01-16T17:22:34.396Z"
+      },
+      {
+        "id": "176858423947626fan",
+        "type": "Shoe",
+        "name": "Iron Boots",
+        "bonus": {
+          "speed": 26,
+          "defense": 4
+        },
+        "obtainedAt": "2026-01-16T17:23:59.476Z"
+      },
+      {
+        "id": "17687099941996jk10",
+        "type": "Accessory",
+        "name": "Ring of Power",
+        "bonus": {
+          "attack": 100,
+          "defense": 100
+        },
+        "obtainedAt": "2026-01-18T04:19:54.199Z"
+      },
+      {
+        "id": "17687100116243mit7",
+        "type": "Armor",
+        "name": "Dragon Scale",
+        "bonus": {
+          "defense": 384,
+          "attack": 3
+        },
+        "obtainedAt": "2026-01-18T04:20:11.624Z"
+      },
+      {
+        "id": "1768710355710i5gps",
+        "type": "Weapon",
+        "name": "Flaming Blade",
+        "bonus": {
+          "attack": 320,
+          "critRate": 2
+        },
+        "obtainedAt": "2026-01-18T04:25:55.710Z"
+      },
+      {
+        "id": "1768710365874vw88h",
+        "type": "Weapon",
+        "name": "Shadow Dagger",
+        "bonus": {
+          "attack": 198,
+          "speed": 3
+        },
+        "obtainedAt": "2026-01-18T04:26:05.874Z"
+      },
+      {
+        "id": "1768710525743myjiq",
+        "type": "Weapon",
+        "name": "Iron Sword",
+        "bonus": {
+          "attack": 295
+        },
+        "obtainedAt": "2026-01-18T04:28:45.743Z"
+      },
+      {
+        "id": "1768710880139i0rs8",
+        "type": "Accessory",
+        "name": "Speed Ring",
+        "bonus": {
+          "speed": 705,
+          "evasion": 2
+        },
+        "obtainedAt": "2026-01-18T04:34:40.139Z"
+      },
+      {
+        "id": "1768711285855r5i3w",
+        "type": "Accessory",
+        "name": "Lucky Charm",
+        "bonus": {
+          "luck": 1168
+        },
+        "obtainedAt": "2026-01-18T04:41:25.855Z"
+      },
+      {
+        "id": "1768711121417w82en",
+        "type": "Shoe",
+        "name": "Shadow Steps",
+        "bonus": {
+          "speed": 1458,
+          "luck": 2
+        },
+        "obtainedAt": "2026-01-18T04:38:41.417Z"
+      },
+      {
+        "id": "1768711317011raygn",
+        "type": "Armor",
+        "name": "Dragon Scale",
+        "bonus": {
+          "defense": 3516,
+          "attack": 3
+        },
+        "obtainedAt": "2026-01-18T04:41:57.011Z"
+      },
+      {
+        "id": "17687118051655xnvt",
+        "type": "Armor",
+        "name": "Leather Armor",
+        "bonus": {
+          "defense": 4392
+        },
+        "obtainedAt": "2026-01-18T04:50:05.165Z"
+      },
+      {
+        "id": "1768712377092xjof2",
+        "type": "Weapon",
+        "name": "Iron Sword",
+        "bonus": {
+          "attack": 10975
+        },
+        "obtainedAt": "2026-01-18T04:59:37.092Z"
+      },
+      {
+        "id": "1768712597402ef7h0",
+        "type": "Weapon",
+        "name": "Steel Blade",
+        "bonus": {
+          "attack": 15372
+        },
+        "obtainedAt": "2026-01-18T05:03:17.402Z"
+      },
+      {
+        "id": "1768711413697c02g1",
+        "type": "Shoe",
+        "name": "Iron Boots",
+        "bonus": {
+          "speed": 706,
+          "defense": 4
+        },
+        "obtainedAt": "2026-01-18T04:43:33.697Z"
+      },
+      {
+        "id": "1768711889473j2c38",
+        "type": "Armor",
+        "name": "Mage Robe",
+        "bonus": {
+          "defense": 4390,
+          "luck": 4
+        },
+        "obtainedAt": "2026-01-18T04:51:29.474Z"
+      },
+      {
+        "id": "1768712150244trk1t",
+        "type": "Accessory",
+        "name": "Speed Ring",
+        "bonus": {
+          "speed": 9150,
+          "evasion": 2
+        },
+        "obtainedAt": "2026-01-18T04:55:50.244Z"
+      },
+      {
+        "id": "17687106879060i303",
+        "type": "Weapon",
+        "name": "Flaming Blade",
+        "bonus": {
+          "attack": 960,
+          "critRate": 2
+        },
+        "obtainedAt": "2026-01-18T04:31:27.906Z"
+      },
+      {
+        "id": "17687129081550onb2",
+        "type": "Accessory",
+        "name": "Warrior's Badge",
+        "bonus": {
+          "attack": 19008,
+          "hp": 15
+        },
+        "obtainedAt": "2026-01-18T05:08:28.155Z"
+      },
+      {
+        "id": "1768712636891sf7js",
+        "type": "Shoe",
+        "name": "Shadow Steps",
+        "bonus": {
+          "speed": 13188,
+          "luck": 2
+        },
+        "obtainedAt": "2026-01-18T05:03:56.891Z"
+      },
+      {
+        "id": "1768712989962khe7f",
+        "type": "Weapon",
+        "name": "Iron Sword",
+        "bonus": {
+          "attack": 15840
+        },
+        "obtainedAt": "2026-01-18T05:09:49.962Z"
+      },
+      {
+        "id": "1768714143003nlasy",
+        "type": "Shoe",
+        "name": "Windwalkers",
+        "bonus": {
+          "speed": 95389,
+          "evasion": 3
+        },
+        "obtainedAt": "2026-01-18T05:29:03.003Z"
+      },
+      {
+        "id": "176871340590120x0e",
+        "type": "Accessory",
+        "name": "Speed Ring",
+        "bonus": {
+          "speed": 56775,
+          "evasion": 2
+        },
+        "obtainedAt": "2026-01-18T05:16:45.901Z"
+      },
+      {
+        "id": "1768715273278sd7ig",
+        "type": "Accessory",
+        "name": "Health Amulet",
+        "bonus": {
+          "hp": 25,
+          "defense": 175806
+        },
+        "obtainedAt": "2026-01-18T05:47:53.278Z"
+      },
+      {
+        "id": "1768715919431c8tll",
+        "type": "Shoe",
+        "name": "Leather Boots",
+        "bonus": {
+          "speed": 303798
+        },
+        "obtainedAt": "2026-01-18T05:58:39.431Z"
+      },
+      {
+        "id": "1768715031693v00hq",
+        "type": "Shoe",
+        "name": "Swift Boots",
+        "bonus": {
+          "speed": 141305
+        },
+        "obtainedAt": "2026-01-18T05:43:51.693Z"
+      },
+      {
+        "id": "17687157676542m6rv",
+        "type": "Accessory",
+        "name": "Lucky Charm",
+        "bonus": {
+          "luck": 337556
+        },
+        "obtainedAt": "2026-01-18T05:56:07.654Z"
+      },
+      {
+        "id": "1768712821844ubcbl",
+        "type": "Armor",
+        "name": "Chainmail",
+        "bonus": {
+          "defense": 21104
+        },
+        "obtainedAt": "2026-01-18T05:07:01.844Z"
+      },
+      {
+        "id": "1768716150066lg3a8",
+        "type": "Armor",
+        "name": "Chainmail",
+        "bonus": {
+          "defense": 2177640
+        },
+        "obtainedAt": "2026-01-18T06:02:30.066Z"
+      },
+      {
+        "id": "1768714807786ccu83",
+        "type": "Weapon",
+        "name": "Iron Sword",
+        "bonus": {
+          "attack": 81770
+        },
+        "obtainedAt": "2026-01-18T05:40:07.786Z"
+      },
+      {
+        "id": "1768715985958fxbsz",
+        "type": "Accessory",
+        "name": "Ring of Power",
+        "bonus": {
+          "attack": 567092,
+          "defense": 567092
+        },
+        "obtainedAt": "2026-01-18T05:59:45.958Z"
+      },
+      {
+        "id": "1768715906592warow",
+        "type": "Shoe",
+        "name": "Swift Boots",
+        "bonus": {
+          "speed": 421940
+        },
+        "obtainedAt": "2026-01-18T05:58:26.592Z"
+      },
+      {
+        "id": "1768716240709rxzgg",
+        "type": "Armor",
+        "name": "Chainmail",
+        "bonus": {
+          "defense": 3135808
+        },
+        "obtainedAt": "2026-01-18T06:04:00.709Z"
+      },
+      {
+        "id": "1768716591134tmkj1",
+        "type": "Weapon",
+        "name": "War Hammer",
+        "bonus": {
+          "attack": 9753624,
+          "defense": 2
+        },
+        "obtainedAt": "2026-01-18T06:09:51.134Z"
+      },
+      {
+        "id": "17687165958201fn66",
+        "type": "Accessory",
+        "name": "Speed Ring",
+        "bonus": {
+          "speed": 4064005,
+          "evasion": 2
+        },
+        "obtainedAt": "2026-01-18T06:09:55.820Z"
+      },
+      {
+        "id": "17687168520519n9u5",
+        "type": "Weapon",
+        "name": "War Hammer",
+        "bonus": {
+          "attack": 29124156,
+          "defense": 2
+        },
+        "obtainedAt": "2026-01-18T06:14:12.051Z"
+      },
+      {
+        "id": "17687169584660t9gy",
+        "type": "Weapon",
+        "name": "Shadow Dagger",
+        "bonus": {
+          "attack": 20969400,
+          "speed": 3
+        },
+        "obtainedAt": "2026-01-18T06:15:58.466Z"
+      },
+      {
+        "id": "17687169097125jjpy",
+        "type": "Accessory",
+        "name": "Speed Ring",
+        "bonus": {
+          "speed": 14562075,
+          "evasion": 2
+        },
+        "obtainedAt": "2026-01-18T06:15:09.712Z"
+      },
+      {
+        "id": "1768717098963iz8tw",
+        "type": "Weapon",
+        "name": "Flaming Blade",
+        "bonus": {
+          "attack": 41938790,
+          "critRate": 2
+        },
+        "obtainedAt": "2026-01-18T06:18:18.963Z"
+      },
+      {
+        "id": "1768716795188sogo7",
+        "type": "Armor",
+        "name": "Obsidian Plate",
+        "bonus": {
+          "defense": 30337650,
+          "hp": 20
+        },
+        "obtainedAt": "2026-01-18T06:13:15.188Z"
+      },
+      {
+        "id": "1768717192391tgzzn",
+        "type": "Weapon",
+        "name": "Flaming Blade",
+        "bonus": {
+          "attack": 60391870,
+          "critRate": 2
+        },
+        "obtainedAt": "2026-01-18T06:19:52.391Z"
+      },
+      {
+        "id": "1768717286733r6hwn",
+        "type": "Armor",
+        "name": "Chainmail",
+        "bonus": {
+          "defense": 69571432
+        },
+        "obtainedAt": "2026-01-18T06:21:26.733Z"
+      },
+      {
+        "id": "1768717423631bmrs6",
+        "type": "Armor",
+        "name": "Leather Armor",
+        "bonus": {
+          "defense": 90164574
+        },
+        "obtainedAt": "2026-01-18T06:23:43.631Z"
+      },
+      {
+        "id": "1768716676025zy3w5",
+        "type": "Shoe",
+        "name": "Shadow Steps",
+        "bonus": {
+          "speed": 5852172,
+          "luck": 2
+        },
+        "obtainedAt": "2026-01-18T06:11:16.025Z"
+      },
+      {
+        "id": "176871733577505kva",
+        "type": "Weapon",
+        "name": "Shadow Dagger",
+        "bonus": {
+          "attack": 62614284,
+          "speed": 3
+        },
+        "obtainedAt": "2026-01-18T06:22:15.775Z"
+      },
+      {
+        "id": "1768717595960s8thl",
+        "type": "Armor",
+        "name": "Mage Robe",
+        "bonus": {
+          "defense": 126230405,
+          "luck": 4
+        },
+        "obtainedAt": "2026-01-18T06:26:35.960Z"
+      },
+      {
+        "id": "1768717187340813x2",
+        "type": "Accessory",
+        "name": "Speed Ring",
+        "bonus": {
+          "speed": 30195930,
+          "evasion": 2
+        },
+        "obtainedAt": "2026-01-18T06:19:47.340Z"
+      },
+      {
+        "id": "1768718112931l6fbs",
+        "type": "Accessory",
+        "name": "Warrior's Badge",
+        "bonus": {
+          "attack": 542767662,
+          "hp": 15
+        },
+        "obtainedAt": "2026-01-18T06:35:12.931Z"
+      },
+      {
+        "id": "1768718697455alnbe",
+        "type": "Accessory",
+        "name": "Lucky Charm",
+        "bonus": {
+          "luck": 625268348
+        },
+        "obtainedAt": "2026-01-18T06:44:57.455Z"
+      },
+      {
+        "id": "1768717640770e5sui",
+        "type": "Shoe",
+        "name": "Iron Boots",
+        "bonus": {
+          "speed": 60590594,
+          "defense": 4
+        },
+        "obtainedAt": "2026-01-18T06:27:20.770Z"
+      },
+      {
+        "id": "1768719001010vbe3a",
+        "type": "Shoe",
+        "name": "Shadow Steps",
+        "bonus": {
+          "speed": 1350579642,
+          "luck": 2
+        },
+        "obtainedAt": "2026-01-18T06:50:01.010Z"
+      },
+      {
+        "id": "1768726687380wywig",
+        "type": "Shoe",
+        "name": "Iron Boots",
+        "bonus": {
+          "speed": 540231856,
+          "defense": 4
+        },
+        "obtainedAt": "2026-01-18T08:58:07.380Z"
+      },
+      {
+        "id": "1768718755832ayig2",
+        "type": "Accessory",
+        "name": "Ring of Power",
+        "bonus": {
+          "attack": 750322020,
+          "defense": 750322020
+        },
+        "obtainedAt": "2026-01-18T06:45:55.832Z"
+      },
+      {
+        "id": "1768717797331ay7wj",
+        "type": "Weapon",
+        "name": "War Hammer",
+        "bonus": {
+          "attack": 523502748,
+          "defense": 2
+        },
+        "obtainedAt": "2026-01-18T06:29:57.331Z"
+      }
+    ],
+    "equipped": {
+      "shoe": {
+        "id": "1768726981898ti890",
+        "type": "Shoe",
+        "name": "Iron Boots",
+        "bonus": {
+          "speed": 648278230,
+          "defense": 4
+        },
+        "obtainedAt": "2026-01-18T09:03:01.898Z"
+      },
+      "armor": {
+        "id": "17687179379421ra4l",
+        "type": "Armor",
+        "name": "Leather Armor",
+        "bonus": {
+          "defense": 314101656
+        },
+        "obtainedAt": "2026-01-18T06:32:17.942Z"
+      },
+      "accessory": {
+        "id": "1768727423123ncb0q",
+        "type": "Accessory",
+        "name": "Speed Ring",
+        "bonus": {
+          "speed": 1944834685,
+          "evasion": 2
+        },
+        "obtainedAt": "2026-01-18T09:10:23.124Z"
+      }
+    },
+    "totalAnimalsFound": 78,
+    "totalGambled": 6596917282311279,
+    "totalWon": 2454635758499729,
+    "totalLost": 2453978565125611,
+    "commandsUsed": 437,
+    "joinedAt": 1768450723202
+  },
+  "464071208929984533": {
+    "id": "464071208929984533",
+    "balance": 1501000,
+    "level": 1,
+    "experience": 0,
+    "dailyClaimed": false,
+    "weeklyClaimed": false,
+    "lastDaily": null,
+    "lastWeekly": null,
+    "lastHunt": null,
+    "animals": {},
+    "boosters": {},
+    "inventory": [],
+    "equipped": {},
+    "totalAnimalsFound": 0,
+    "totalGambled": 0,
+    "totalWon": 0,
+    "totalLost": 0,
+    "commandsUsed": 0,
+    "joinedAt": 1768720031125
   }
 }

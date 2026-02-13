@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder, ChannelType } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
-const { isAdmin } = require('../../utils/adminCheck');
+const isAdmin = require('../../utils/adminCheck');
 
 const TALK_TARGETS_FILE = path.join(__dirname, '../../data/talktargets.json');
 
@@ -19,6 +19,7 @@ function initDataFiles() {
 // Data handling functions
 function loadTalkTargets() {
     try {
+        if (!fs.existsSync(TALK_TARGETS_FILE)) return {};
         const data = fs.readFileSync(TALK_TARGETS_FILE, 'utf8');
         return JSON.parse(data) || {};
     } catch (error) {
@@ -29,6 +30,10 @@ function loadTalkTargets() {
 
 function saveTalkTargets(data) {
     try {
+        const dataDir = path.dirname(TALK_TARGETS_FILE);
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
         fs.writeFileSync(TALK_TARGETS_FILE, JSON.stringify(data, null, 2), 'utf8');
     } catch (error) {
         console.error('Error saving talk targets:', error);
@@ -43,61 +48,53 @@ module.exports = {
             option.setName('channel_id')
                 .setDescription('The channel ID to forward DMs to')
                 .setRequired(true))
-        .setDefaultMemberPermissions('0'), // No default permissions
+        .setDefaultMemberPermissions('0'),
 
     async execute(interaction) {
-        // Initialize data files
         initDataFiles();
 
-        // Immediate admin check
-        if (!isAdmin(interaction.user.id)) {
+        if (typeof isAdmin !== 'function' || !isAdmin(interaction.user.id)) {
             return interaction.reply({
                 content: '⛔ This command is restricted to bot administrators.',
-                ephemeral: true
+                flags: [4096]
             });
         }
 
         const channelId = interaction.options.getString('channel_id').trim();
         
-        // Validate channel ID format
         if (!/^\d{17,20}$/.test(channelId)) {
             return interaction.reply({
                 content: '❌ Invalid channel ID format. Please provide a valid Discord channel ID.',
-                ephemeral: true
+                flags: [4096]
             });
         }
 
         try {
-            // Fetch the channel
             const channel = await interaction.client.channels.fetch(channelId);
             
-            // Verify channel type and permissions
             if (!channel.isTextBased()) {
                 return interaction.reply({
                     content: '❌ The specified channel is not a text channel.',
-                    ephemeral: true
+                    flags: [4096]
                 });
             }
             
-            // Check if bot has send permissions
             const permissions = channel.permissionsFor(interaction.client.user);
             if (!permissions.has('SendMessages')) {
                 return interaction.reply({
                     content: '❌ I don\'t have permission to send messages in that channel.',
-                    ephemeral: true
+                    flags: [4096]
                 });
             }
 
-            // Update talk targets
             const talkTargets = loadTalkTargets();
             talkTargets[interaction.user.id] = {
                 channelId: channelId,
-                guildId: channel.guild?.id || 'DM',
+                serverId: channel.guild?.id || 'DM',
                 setAt: new Date().toISOString()
             };
             saveTalkTargets(talkTargets);
 
-            // Create success embed
             const embed = new EmbedBuilder()
                 .setColor(0x00FF00)
                 .setTitle('✅ DM Forwarding Configured')
@@ -110,30 +107,19 @@ module.exports = {
                 .setFooter({ text: `Configured by ${interaction.user.username}` })
                 .setTimestamp();
 
-            await interaction.reply({ embeds: [embed], ephemeral: true });
+            await interaction.reply({ embeds: [embed], flags: [4096] });
             
         } catch (error) {
             console.error('Talk command error:', error);
             
-            let errorMessage;
-            switch (error.code) {
-                case 10003: // Unknown Channel
-                    errorMessage = '❌ Channel not found. Please check the channel ID.';
-                    break;
-                case 50001: // Missing Access
-                    errorMessage = '❌ I don\'t have access to that channel.';
-                    break;
-                case 50013: // Missing Permissions
-                    errorMessage = '❌ Missing permissions to access that channel.';
-                    break;
-                default:
-                    errorMessage = '❌ An error occurred while configuring forwarding.';
-            }
+            let errorMessage = '❌ An error occurred while configuring forwarding.';
+            if (error.code === 10003) errorMessage = '❌ Channel not found. Please check the channel ID.';
+            else if (error.code === 50001) errorMessage = '❌ I don\'t have access to that channel.';
+            else if (error.code === 50013) errorMessage = '❌ Missing permissions to access that channel.';
             
-            await interaction.reply({
-                content: errorMessage,
-                ephemeral: true
-            });
+            if (!interaction.replied) {
+                await interaction.reply({ content: errorMessage, flags: [4096] });
+            }
         }
     }
 };

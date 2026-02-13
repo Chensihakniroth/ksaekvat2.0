@@ -1,6 +1,6 @@
 const logger = require('../utils/logger.js');
 module.exports = {
-    name: 'ready',
+    name: 'clientReady',
     once: true,
     execute(client) {
         // Use success logger for better visibility
