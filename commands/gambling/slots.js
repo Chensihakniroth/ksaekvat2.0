@@ -14,8 +14,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
-                    description: 'Please provide a bet amount!\n**Usage:** `Kslots <amount>`\n**Example:** `Ks 1000`'
+                    title: '❌ khos luy ai ah pov',
+                    description: 'hg dak luy oy trov mer! \n**Usage:** `Kslots <amount>`\n**Example:** `Ks 1000`'
                 }]
             });
         }
@@ -24,15 +24,26 @@ module.exports = {
 
         let betAmount;
         if (args[0].toLowerCase() === 'all') {
-            betAmount = maxBet;
+            const userData = database.getUser(message.author.id);
+            betAmount = Math.min(userData.balance, maxBet);
+            
+            if (betAmount <= 0) {
+                return message.reply({
+                    embeds: [{
+                        color: colors.error,
+                        title: '💸 ort luy heh',
+                        description: `hg ot luy jak lbeng ${config.economy.currency}!`,
+                    }]
+                });
+            }
         } else {
             betAmount = parseInt(args[0]);
             if (isNaN(betAmount) || betAmount <= 0) {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ Invalid Bet Amount',
-                        description: 'Please provide a valid positive number.'
+                        title: '❌ khos luy ai ah pov',
+                        description: 'hg dak luy oy trov mer! dak luy chea lekh mk ah pov.'
                     }]
                 });
             }
@@ -42,8 +53,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '💸 Minimum Bet Required',
-                    description: `Minimum bet amount is **${minBet.toLocaleString()}** ${config.economy.currency}.`
+                    title: '💸 ort luy heh',
+                    description: `Minimum bet hg dak ban tae **${minBet.toLocaleString()}** ${config.economy.currency} teh ah chlery.`
                 }]
             });
         }
@@ -53,8 +64,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '💸 Insufficient Funds',
-                    description: `You don't have enough ${config.economy.currency}!\n**Your Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`
+                    title: '💸 kmean luy ma cent jong jak l\'beng',
+                    description: `luy hg ort krub jak lbeng teh ah pov! ${config.economy.currency}!\n**Luy hg:** ${userData.balance.toLocaleString()}\n**Trov ka:** ${betAmount.toLocaleString()}`
                 }]
             });
         }
@@ -99,8 +110,8 @@ module.exports = {
 
         const slotEmbed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('🎰 Slot Machine')
-            .setDescription(`**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n🎰 ┃ 🎯 ┃ 🎲 ┃\n**Spinning...**`)
+            .setTitle('🎰 Slot Machine (Bek Edition)')
+            .setDescription(`**hg jak :** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n🎰 ┃ 🎯 ┃ 🎲 ┃\n**Jam tic anh quay oy mer...**`)
             
 
         const sentMessage = await message.reply({ embeds: [slotEmbed] });
@@ -114,28 +125,28 @@ module.exports = {
                 animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**Spinning fast...**';
+                statusText = '**hg hov vosh...**';
             } else if (stage < 4) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**Spinning...**';
+                statusText = '**Quay hz ah pov...**';
             } else if (stage < 6) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**Slowing down...**';
+                statusText = '**Srol hz ah pov...**';
             } else if (stage < 7) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**Final spin...**';
+                statusText = '**Bek ksaekvat hz...**';
             } else {
-                statusText = '**Result!**';
+                statusText = '**Mok hz!**';
             }
 
             slotEmbed.setDescription(
-                `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n` +
+                `**hg jak :** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n` +
                 `🎰 ┃ ${animationSymbols.first} ┃ ${animationSymbols.middle} ┃ ${animationSymbols.last} ┃\n` +
                 statusText
             );
@@ -165,19 +176,19 @@ module.exports = {
 
             slotEmbed
                 .setColor(colors.success || 0x43B581)
-                .setTitle(`🎉 ${selectedOutcome.name}`)
+                .setTitle(`🎉 jm loy bos ke!`)
                 .setDescription(
                     `**${selectedOutcome.name}**\n\n` +
                     `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-                    `**Winnings:** +${winAmount.toLocaleString()} ${config.economy.currency}\n` +
-                    `**Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}\n` +
-                    `**Multiplier:** x${selectedOutcome.multiplier}`
+                    `**Luy knong khao:** +${winAmount.toLocaleString()} ${config.economy.currency}\n` +
+                    `**Balance Thmei:** ${newBalance.toLocaleString()} ${config.economy.currency}\n` +
+                    `**Multiplier bek:** x${selectedOutcome.multiplier}`
                 );
 
             if (expGain && expGain.leveledUp) {
                 slotEmbed.addFields({
-                    name: '🎉 Level Up!',
-                    value: `Reached level **${expGain.newLevel}**!`,
+                    name: '🎉 Lerng Sak!',
+                    value: `kop sari ! hg lerng sak hz tov Level **${expGain.newLevel}**!`,
                     inline: false
                 });
             }
@@ -186,12 +197,12 @@ module.exports = {
 
             slotEmbed
                 .setColor(colors.secondary || 0x99AAB5)
-                .setTitle('🤝 Draw!')
+                .setTitle('🤝 Smer knea teh!')
                 .setDescription(
                     `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-                    `**Bet returned!**\n\n` +
-                    `**Amount returned:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
-                    `**Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}`
+                    `**Dak luy mk vinh hz!**\n\n` +
+                    `**Luy mk vinh:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
+                    `**Balance Thmei:** ${newBalance.toLocaleString()} ${config.economy.currency}`
                 );
         } else {
             const userData = database.getUser(message.author.id);
@@ -199,17 +210,14 @@ module.exports = {
 
             slotEmbed
                 .setColor(colors.error || 0xF04747)
-                .setTitle('💀 You Lost')
+                .setTitle('💀 Os luy hz ah pov!')
                 .setDescription(
                     `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-                    `**Amount lost:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
-                    `**Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
+                    `**Bat luy:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
+                    `**Luy nov sol:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
                 );
         }
 
         await sentMessage.edit({ embeds: [slotEmbed] });
     }
 };
-
-
-
