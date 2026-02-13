@@ -25,7 +25,7 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle(`🖼️ Mok bek ah pov ${target.username}`)
+            .setTitle(`🖼️ ah pov ${target.username}`)
             .setImage(target.displayAvatarURL({ size: 1024, dynamic: true }))
             .addFields(
                 {
@@ -38,12 +38,6 @@ module.exports = {
                     inline: true
                 }
             )
-            .setFooter({ 
-                text: `Ah nak bek mher: ${message.author.tag}`,
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setTimestamp();
-
         message.reply({ embeds: [embed] });
     }
 };

@@ -100,9 +100,9 @@ module.exports = {
     
     // Bot Information
     botInfo: {
-        name: 'KsaekVat Bot',
-        version: '1.0.0',
-        description: 'A Discord bot inspired by OwO bot with gambling, economy, and fun commands!',
-        author: 'KsaekVat Team'
+        name: 'KsaeKvat Bot',
+        version: '69.69.420',
+        description: 'bot jes tah tver tver lg ng hah',
+        author: '@_callme_.mo'
     }
 };

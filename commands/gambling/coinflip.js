@@ -15,9 +15,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
-                    description: 'Please provide a bet amount!\n**Usage:** `Kcoinflip <amount/all> [heads/tails]`\n**Example:** `Kcf 1000 heads` or `Kcf all tails`',
-                    timestamp: new Date()
+                    title: '❌ khos luy ai ah pov',
+                    description: 'hg dak luy oy trov mer! \n**Usage:** `Kcoinflip <amount/all> [heads/tails]`\n**Example:** `Kcf 1000 heads` or `Kcf all tails`',
                 }]
             });
         }
@@ -37,9 +36,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '💸 No Balance',
-                        description: `You don't have any ${config.economy.currency} to bet!`,
-                        timestamp: new Date()
+                        title: '💸 ort luy heh',
+                        description: `hg ot luy jak lbeng ${config.economy.currency}!`,
                     }]
                 });
             }
@@ -50,9 +48,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ Invalid Bet Amount',
-                        description: 'Please provide a valid positive number or use "all".',
-                        timestamp: new Date()
+                        title: '❌ khos luy ai ah pov',
+                        description: 'hg dak luy oy trov mer! or brer "all".',
                     }]
                 });
             }
@@ -82,8 +79,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '💸 Insufficient Funds',
-                    description: `You don't have enough ${config.economy.currency}!\n**Your Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
+                    title: '💸 kmean luy ma cent jong jak l\'beng',
+                    description: `luy ort krub jak lbeng teh! ${config.economy.currency}!\n**Luy hg:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**Trov ka:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
                     timestamp: new Date()
                 }]
             });
@@ -114,14 +111,8 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('🪙 Coinflip Game (Beksloy Style)')
-            .setDescription(`**hg bet:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**hg tver chea rous:** ${userChoice.charAt(0).toUpperCase() + userChoice.slice(1)}\n\n${frames[0]} **Jam tic anh flip oy mer...**`)
-            .setFooter({ 
-                text: `${message.author.username} ksaekvat lerng klun`,
-                iconURL: message.author.displayAvatarURL()
-            })
-            .setTimestamp();
-
+            .setTitle('🪙 Coinflip')
+            .setDescription(`**hg jak :** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**hg rers :** ${userChoice.charAt(0).toUpperCase() + userChoice.slice(1)}\n\n${frames[0]} **Jam tic anh flip oy mer...**`)
         message.reply({ embeds: [embed] }).then(async (sentMessage) => {
             // Animate the spinning coin
             for (let i = 0; i < 6; i++) {
@@ -130,14 +121,8 @@ module.exports = {
 
                 const animationEmbed = new EmbedBuilder()
                     .setColor(colors.primary)
-                    .setTitle('🪙 Coinflip Game (Beksloy Style)')
-                    .setDescription(`**hg bet:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**hg tver chea rous:** ${userChoice.charAt(0).toUpperCase() + userChoice.slice(1)}\n\n${frames[frameIndex]} **Jam tic anh flip oy mer...**`)
-                    .setFooter({ 
-                        text: `${message.author.username} ksaekvat lerng klun`,
-                        iconURL: message.author.displayAvatarURL()
-                    })
-                    .setTimestamp();
-
+                    .setTitle('🪙 Coinflip')
+                    .setDescription(`**hg jak :** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**hg rers :** ${userChoice.charAt(0).toUpperCase() + userChoice.slice(1)}\n\n${frames[frameIndex]} **Jam tic anh flip oy mer...**`)
                 try {
                     await sentMessage.edit({ embeds: [animationEmbed] });
                 } catch (error) {
@@ -164,8 +149,8 @@ module.exports = {
 
                 finalEmbed = new EmbedBuilder()
                     .setColor(colors.success)
-                    .setTitle('🎉 Dak luy hz ah pov!')
-                    .setDescription(`${resultEmoji} The coin landed on **${coinResult}**!\nhg hov vosh! ksaekvat lerng dak luy hz!`)
+                    .setTitle('🎉 jm loy bos ke!')
+                    .setDescription(`${resultEmoji} The coin landed on **${coinResult}**!\nTos pherk!`)
                     .addFields(
                         {
                             name: '💰 Luy knong khao',
@@ -202,18 +187,18 @@ module.exports = {
                     .setDescription(`${resultEmoji} The coin landed on **${coinResult}**.\nOs luy hz ah pov, jam flip teat tov!`)
                     .addFields(
                         {
-                            name: '💸 Bay luy',
+                            name: '💸 Bat luy',
                             value: `-${betAmount.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '💳 Luy nov sars',
+                            name: '💳 Luy nov sol',
                             value: `${currentUserData.balance.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         },
                         {
                             name: '🎯 Chance',
-                            value: '50/50 juii bek',
+                            value: '50/50',
                             inline: true
                         }
                     );

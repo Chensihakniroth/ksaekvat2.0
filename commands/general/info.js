@@ -18,16 +18,16 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('🤖 Rerng rorb ah pov Bot (Beksloy Edition)')
+            .setTitle('🤖 reab rorb pi ah pov Ksaekvat')
             .setThumbnail(client.user.displayAvatarURL())
             .addFields(
                 {
                     name: '📊 Bek Stats',
                     value: [
-                        `**Server bek:** ${client.guilds.cache.size}`,
-                        `**Kneal bek:** ${client.users.cache.size}`,
-                        `**Ban bek:** ${client.commands.size} commands`,
-                        `**Ngorb hz:** ${uptimeString} (Uptime)`
+                        `**Server bek :** ${client.guilds.cache.size}`,
+                        `**Knea bek :** ${client.users.cache.size}`,
+                        `**Ban bek :** ${client.commands.size} commands`,
+                        `**Morrng rous :** ${uptimeString} (Uptime)`
                     ].join('\n'),
                     inline: true
                 },
@@ -36,33 +36,33 @@ module.exports = {
                     value: [
                         `**Node.js:** ${process.version}`,
                         `**Djs:** v14`,
-                        `**Luy Memory:** ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`,
-                        `**Plat bek:** ${process.platform}`
+                        `**size:** ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`,
+                        `**rous nv ler:** ${process.platform}`
                     ].join('\n'),
                     inline: true
                 },
                 {
-                    name: '🎮 Bot Rerng Bek',
+                    name: '🎮 p\'vat t\'rub',
                     value: [
-                        `**Chmous:** ${config.botInfo.name}`,
-                        `**Version:** ${config.botInfo.version}`,
-                        `**Ah nak tver:** ${config.botInfo.author}`,
+                        `**Chmous :** ${config.botInfo.name}`,
+                        `**Version :** ${config.botInfo.version}`,
+                        `**Chmous Ah nak tver :** ${config.botInfo.author}`,
                         `**Prefix:** K, k`
                     ].join('\n'),
                     inline: false
                 },
                 {
-                    name: '🌟 Bek Features',
+                    name: '🌟 Features Bek Bek',
                     value: [
-                        '• Game bek2 (coinflip, slots, dice)',
-                        '• Luy Riel bek (Economy)',
-                        '• Dor lork sat (Hunting)',
-                        '• Zoo bek (Collection)',
-                        '• Expressions GIF bek (Fun)',
-                        '• Admin bek tools (Moderation)',
-                        '• Profile bek (Statistics)',
-                        '• Reward bek (Daily/Weekly)',
-                        '• Booster bek (Boosters)'
+                        '• leng l\'beng (coinflip, slots, dice)',
+                        '• Luy Riel (Economy)',
+                        '• der banh sat (Hunting)',
+                        '• soun sat (Collection)',
+                        '• Expressions GIF bek bek (Fun)',
+                        '• Admin tools (Moderation)',
+                        '• Profile (Statistics)',
+                        '• Reward (Daily/Weekly)',
+                        '• Booster (Boosters)'
                     ].join('\n'),
                     inline: false
                 }
