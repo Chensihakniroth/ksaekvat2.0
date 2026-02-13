@@ -63,7 +63,6 @@ module.exports = {
                     color: colors.warning,
                     title: '💸 Minimum Bet Required',
                     description: `Minimum bet amount is **${minBet.toLocaleString()}** ${config.economy.currency}.`,
-                    timestamp: new Date()
                 }]
             });
         }
@@ -203,11 +202,6 @@ module.exports = {
                         }
                     );
             }
-
-            finalEmbed.setFooter({ 
-                text: `Game completed | Your choice: ${userChoice}${isAllBet ? ' | All-in bet' : ''}`,
-                iconURL: message.author.displayAvatarURL()
-            }).setTimestamp();
 
             // Update command usage statistics
             database.updateStats(message.author.id, 'command');
