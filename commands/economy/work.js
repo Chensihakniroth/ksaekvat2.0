@@ -14,21 +14,15 @@ module.exports = {
         
         // Array of work scenarios
         const workScenarios = [
-            { job: 'Pizza Delivery Driver', action: 'delivered pizzas', emoji: '🍕' },
-            { job: 'Uber Driver', action: 'drove passengers around', emoji: '🚗' },
-            { job: 'Dog Walker', action: 'walked cute dogs', emoji: '🐕' },
-            { job: 'Freelance Developer', action: 'coded some websites', emoji: '💻' },
-            { job: 'Barista', action: 'made delicious coffee', emoji: '☕' },
-            { job: 'Tutor', action: 'taught students', emoji: '📚' },
-            { job: 'Food Critic', action: 'reviewed restaurants', emoji: '🍽️' },
-            { job: 'Street Performer', action: 'entertained people', emoji: '🎭' },
-            { job: 'Content Creator', action: 'made viral videos', emoji: '📹' },
-            { job: 'Gardener', action: 'tended to beautiful gardens', emoji: '🌱' },
-            { job: 'Photographer', action: 'took stunning photos', emoji: '📸' },
-            { job: 'Chef', action: 'cooked amazing meals', emoji: '👨‍🍳' },
-            { job: 'Taxi Driver', action: 'gave rides to customers', emoji: '🚕' },
-            { job: 'Cleaner', action: 'cleaned office buildings', emoji: '🧹' },
-            { job: 'Translator', action: 'translated documents', emoji: '🌍' }
+            { job: 'Ah jek lork karem', action: 'lork karem oy kmeing2 c hz', emoji: '🍦' },
+            { job: 'Tuk Tuk Driver', action: 'dor lork knea len hz ah pov', emoji: '🛺' },
+            { job: 'Internet Cafe Attendant', action: 'mher net oy ke bek hz', emoji: '🖥️' },
+            { job: 'Street Food Vendor', action: 'lork prart korg oy ke c hz', emoji: '🍢' },
+            { job: 'Remorque Driver', action: 'dor lork knea tov ksaekvat hz', emoji: '🚜' },
+            { job: 'Washing Dishes', action: 'leang jan nov rorm ka ke hz', emoji: '🧼' },
+            { job: 'Selling Lottery', action: 'dor lork tbal chher hz ah kbeun', emoji: '🎟️' },
+            { job: 'Market Porter', action: 'lerk it oy ke nov phsar hz', emoji: '📦' },
+            { job: 'Security Guard', action: 'mher hloung oy ke hz ah pov', emoji: '🛡️' }
         ];
 
         // Select random work scenario
@@ -64,21 +58,21 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.success)
-            .setTitle(`${scenario.emoji} Work Complete!`)
-            .setDescription(`You worked as a **${scenario.job}** and ${scenario.action}!`)
+            .setTitle(`${scenario.emoji} Rerng hz ah pov!`)
+            .setDescription(`hg tver ka lerng bek tver chea **${scenario.job}** hz ${scenario.action}!`)
             .addFields(
                 {
-                    name: `${config.economy.currencySymbol} Earned`,
+                    name: `💵 Dak khao`,
                     value: `**+${finalReward.toLocaleString()}** ${config.economy.currency}`,
                     inline: true
                 },
                 {
-                    name: '💰 New Balance',
+                    name: '💰 Luy knong khao',
                     value: `**${newBalance.toLocaleString()}** ${config.economy.currency}`,
                     inline: true
                 },
                 {
-                    name: '⭐ XP Gained',
+                    name: '⭐ Bek XP',
                     value: '+15 XP',
                     inline: true
                 }
@@ -88,11 +82,11 @@ module.exports = {
         let breakdownText = [`Base Pay: ${baseReward.toLocaleString()} ${config.economy.currency}`];
         
         if (levelBonus > 0) {
-            breakdownText.push(`Experience Bonus: +${levelBonus.toLocaleString()} ${config.economy.currency}`);
+            breakdownText.push(`Level Bonus: +${levelBonus.toLocaleString()} ${config.economy.currency}`);
         }
         
         if (tip > 0) {
-            breakdownText.push(`Customer Tip: +${tip.toLocaleString()} ${config.economy.currency} 🎉`);
+            breakdownText.push(`Ke oy tip hg: +${tip.toLocaleString()} ${config.economy.currency} 🧧`);
         }
         
         if (moneyBooster) {
@@ -108,8 +102,8 @@ module.exports = {
         // Add level up notification if applicable
         if (expGain.leveledUp) {
             embed.addFields({
-                name: '🎉 Level Up!',
-                value: `Congratulations! You reached level **${expGain.newLevel}**!`,
+                name: '🎉 Lerng Sak hz!',
+                value: `Sart hg vosh! hg lerng tov level **${expGain.newLevel}** hz!`,
                 inline: false
             });
         }

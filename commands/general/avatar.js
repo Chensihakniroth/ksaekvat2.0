@@ -25,22 +25,21 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle(`🖼️ ${target.username}'s Avatar`)
+            .setTitle(`🖼️ Mok bek ah pov ${target.username}`)
             .setImage(target.displayAvatarURL({ size: 1024, dynamic: true }))
             .addFields(
                 {
-                    name: '👤 User Info',
+                    name: '👤 User Bek Info',
                     value: [
-                        `**Username:** ${target.username}`,
-                        `**Discriminator:** #${target.discriminator}`,
-                        `**ID:** ${target.id}`,
-                        `**Created:** <t:${Math.floor(target.createdTimestamp / 1000)}:R>`
+                        `**Chmous:** ${target.username}`,
+                        `**ID bek:** ${target.id}`,
+                        `**Kert pi ang kal:** <t:${Math.floor(target.createdTimestamp / 1000)}:R>`
                     ].join('\n'),
                     inline: true
                 }
             )
             .setFooter({ 
-                text: `Requested by ${message.author.tag}`,
+                text: `Ah nak bek mher: ${message.author.tag}`,
                 iconURL: message.author.displayAvatarURL()
             })
             .setTimestamp();

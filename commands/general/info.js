@@ -18,51 +18,51 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('🤖 Bot Information')
+            .setTitle('🤖 Rerng rorb ah pov Bot (Beksloy Edition)')
             .setThumbnail(client.user.displayAvatarURL())
             .addFields(
                 {
-                    name: '📊 Statistics',
+                    name: '📊 Bek Stats',
                     value: [
-                        `**Servers:** ${client.guilds.cache.size}`,
-                        `**Users:** ${client.users.cache.size}`,
-                        `**Commands:** ${client.commands.size}`,
-                        `**Uptime:** ${uptimeString}`
+                        `**Server bek:** ${client.guilds.cache.size}`,
+                        `**Kneal bek:** ${client.users.cache.size}`,
+                        `**Ban bek:** ${client.commands.size} commands`,
+                        `**Ngorb hz:** ${uptimeString} (Uptime)`
                     ].join('\n'),
                     inline: true
                 },
                 {
-                    name: '💻 System',
+                    name: '💻 Bek Machine',
                     value: [
                         `**Node.js:** ${process.version}`,
-                        `**Discord.js:** v14`,
-                        `**Memory:** ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`,
-                        `**Platform:** ${process.platform}`
+                        `**Djs:** v14`,
+                        `**Luy Memory:** ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`,
+                        `**Plat bek:** ${process.platform}`
                     ].join('\n'),
                     inline: true
                 },
                 {
-                    name: '🎮 Bot Details',
+                    name: '🎮 Bot Rerng Bek',
                     value: [
-                        `**Name:** ${config.botInfo.name}`,
+                        `**Chmous:** ${config.botInfo.name}`,
                         `**Version:** ${config.botInfo.version}`,
-                        `**Author:** ${config.botInfo.author}`,
+                        `**Ah nak tver:** ${config.botInfo.author}`,
                         `**Prefix:** K, k`
                     ].join('\n'),
                     inline: false
                 },
                 {
-                    name: '🌟 Features',
+                    name: '🌟 Bek Features',
                     value: [
-                        '• Animated gambling games (coinflip, slots, dice)',
-                        '• Complete economy system with riel currency',
-                        '• Hunting system with 7 rarity tiers',
-                        '• Zoo collection system',
-                        '• Expression GIF commands',
-                        '• Admin moderation tools',
-                        '• User profiles and statistics',
-                        '• Daily/weekly rewards',
-                        '• Booster system'
+                        '• Game bek2 (coinflip, slots, dice)',
+                        '• Luy Riel bek (Economy)',
+                        '• Dor lork sat (Hunting)',
+                        '• Zoo bek (Collection)',
+                        '• Expressions GIF bek (Fun)',
+                        '• Admin bek tools (Moderation)',
+                        '• Profile bek (Statistics)',
+                        '• Reward bek (Daily/Weekly)',
+                        '• Booster bek (Boosters)'
                     ].join('\n'),
                     inline: false
                 }

@@ -68,8 +68,8 @@ module.exports = {
 
             const embed = new EmbedBuilder()
                 .setColor(colors.primary || 0x7289DA)
-                .setTitle(`🎮 ${config.botInfo.name} Commands`)
-                .setDescription(`Use \`${prefix}help [command]\` for detailed info on a specific command.\n\n**Main Prefix:** \`${prefix.toUpperCase()}\` or \`${prefix.toLowerCase()}\``)
+                .setTitle(`🎮 Ah pov ${config.botInfo.name} Commands (Bek Edition)`)
+                .setDescription(`hg hov vosh! use \`${prefix}help [command]\` mer detailed info.\n\n**Main Prefix:** \`${prefix.toUpperCase()}\` or \`${prefix.toLowerCase()}\``)
                 .setThumbnail(client.user.displayAvatarURL())
                 .setTimestamp();
 

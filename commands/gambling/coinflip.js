@@ -114,10 +114,10 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('🪙 Coinflip Game')
-            .setDescription(`**Bet Amount:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**Your Choice:** ${userChoice.charAt(0).toUpperCase() + userChoice.slice(1)}\n\n${frames[0]} **Flipping coin...**`)
+            .setTitle('🪙 Coinflip Game (Beksloy Style)')
+            .setDescription(`**hg bet:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**hg tver chea rous:** ${userChoice.charAt(0).toUpperCase() + userChoice.slice(1)}\n\n${frames[0]} **Jam tic anh flip oy mer...**`)
             .setFooter({ 
-                text: `${message.author.username} is gambling`,
+                text: `${message.author.username} ksaekvat lerng klun`,
                 iconURL: message.author.displayAvatarURL()
             })
             .setTimestamp();
@@ -130,10 +130,10 @@ module.exports = {
 
                 const animationEmbed = new EmbedBuilder()
                     .setColor(colors.primary)
-                    .setTitle('🪙 Coinflip Game')
-                    .setDescription(`**Bet Amount:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**Your Choice:** ${userChoice.charAt(0).toUpperCase() + userChoice.slice(1)}\n\n${frames[frameIndex]} **Flipping coin...**`)
+                    .setTitle('🪙 Coinflip Game (Beksloy Style)')
+                    .setDescription(`**hg bet:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**hg tver chea rous:** ${userChoice.charAt(0).toUpperCase() + userChoice.slice(1)}\n\n${frames[frameIndex]} **Jam tic anh flip oy mer...**`)
                     .setFooter({ 
-                        text: `${message.author.username} is gambling`,
+                        text: `${message.author.username} ksaekvat lerng klun`,
                         iconURL: message.author.displayAvatarURL()
                     })
                     .setTimestamp();
@@ -164,21 +164,21 @@ module.exports = {
 
                 finalEmbed = new EmbedBuilder()
                     .setColor(colors.success)
-                    .setTitle('🎉 You Won!')
-                    .setDescription(`${resultEmoji} The coin landed on **${coinResult}**!\nYou guessed correctly!`)
+                    .setTitle('🎉 Dak khao hz ah pov!')
+                    .setDescription(`${resultEmoji} The coin landed on **${coinResult}**!\nhg hov vosh! ksaekvat lerng dak khao hz!`)
                     .addFields(
                         {
-                            name: '💰 Winnings',
-                            value: `+${winAmount.toLocaleString()} ${config.economy.currency}`,
+                            name: '💰 Luy Dak Khao',
+                            value: `**+${winAmount.toLocaleString()}** ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '💳 New Balance',
+                            name: '💳 Balance Thmei',
                             value: `${newBalance.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '⭐ XP Gained',
+                            name: '⭐ Bek XP',
                             value: '+20 XP',
                             inline: true
                         }
@@ -186,8 +186,8 @@ module.exports = {
 
                 if (expGain.leveledUp) {
                     finalEmbed.addFields({
-                        name: '🎉 Level Up!',
-                        value: `Congratulations! You reached level **${expGain.newLevel}**!`,
+                        name: '🎉 Lerng Sak!',
+                        value: `Sart hg vosh! hg lerng tov level **${expGain.newLevel}** hz!`,
                         inline: false
                     });
                 }
@@ -198,22 +198,22 @@ module.exports = {
 
                 finalEmbed = new EmbedBuilder()
                     .setColor(colors.error)
-                    .setTitle('💸 You Lost!')
-                    .setDescription(`${resultEmoji} The coin landed on **${coinResult}**.\nBetter luck next time!`)
+                    .setTitle('💸 Os luy hz ah pov!')
+                    .setDescription(`${resultEmoji} The coin landed on **${coinResult}**.\nOs luy hz ah pov, jam flip teat tov!`)
                     .addFields(
                         {
-                            name: '💸 Lost',
+                            name: '💸 Bay luy',
                             value: `-${betAmount.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '💳 Remaining Balance',
+                            name: '💳 Luy nov sars',
                             value: `${currentUserData.balance.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '🎯 Win Rate',
-                            value: '50% chance',
+                            name: '🎯 Chance',
+                            value: '50/50 juii bek',
                             inline: true
                         }
                     );

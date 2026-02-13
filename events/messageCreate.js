@@ -98,8 +98,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: parseInt(config.colors.error.slice(1), 16),
-                    title: '❌ Access Denied',
-                    description: 'This command is only available to administrators.',
+                    title: '🚫 Ot hov teh ah pov',
+                    description: 'hg ot mean dak ban teh, ban nherng ksaekvat lerng klun ey hg? (Admin Only)',
                     timestamp: new Date()
                 }]
             });
@@ -113,8 +113,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: parseInt(config.colors.warning.slice(1), 16),
-                        title: '⏰ Cooldown Active',
-                        description: `Please wait ${Math.ceil(timeLeft / 1000)} more seconds before using this command again.`,
+                        title: '⏳ Jam tic mer ah chlery',
+                        description: `hg juii bek tic mer, jam **${Math.ceil(timeLeft / 1000)}s** ទៀត jam execute teat!`,
                         timestamp: new Date()
                     }]
                 });
