@@ -14,15 +14,15 @@ module.exports = {
         
         // Array of work scenarios
         const workScenarios = [
-            { job: 'jinh chork', action: 'jinh chork ban somrach', emoji: '🍦' },
-            { job: 'Rut passapp', action: 'tren tren tren ban ma moy', emoji: '🛺' },
-            { job: 'luk jab houy', action: 'jouy tinh sin hei bong', emoji: '🖥️' },
-            { job: 'luk tnam', action: 'yor ah domlai marn ?', emoji: '🍢' },
-            { job: 'luk k\'cha', action: 'ah ng ma derm dg tahbek morng', emoji: '🚜' },
-            { job: 'Leang Jan', action: 'leang jan dory sa c bay ot oy luy ke', emoji: '🧼' },
-            { job: 'jinh b\'lorn', action: 'p\'lorn teas ouknha', emoji: '🎟️' },
-            { job: 'derk Grab', action: 'dak mhub oy pheav 1', emoji: '📦' },
-            { job: 'jing bong', action: ' thom thom os ai kur yul', emoji: '🛡️' }
+            { job: 'jao', action: 'jinh chork ban somrach', emoji: '🍦' },
+            { job: 'pu rut passapp', action: 'tren tren tren ban ma moy', emoji: '🛺' },
+            { job: 'neak luk jab houy', action: 'jouy tinh 1 sin hei bong', emoji: '🖥️' },
+            { job: 'neak luk tnam', action: 'yor ah domlai marn ?', emoji: '🍢' },
+            { job: 'neak luk k\'cha', action: 'ah ng ma derm dg tah bek morng', emoji: '🚜' },
+            { job: 'neak leang Jan', action: 'leang jan dory sa c bay ot oy luy ke', emoji: '🧼' },
+            { job: 'neak jinh p\'lorn', action: 'p\'lorn teas ouknha', emoji: '🎟️' },
+            { job: 'neak derk Grab', action: 'dak mhub oy pheav 1', emoji: '📦' },
+            { job: 'neak jenh bong', action: ' thom thom os ai kur yul', emoji: '🛡️' }
         ];
 
         // Select random work scenario

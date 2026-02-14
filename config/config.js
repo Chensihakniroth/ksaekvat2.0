@@ -31,6 +31,7 @@ module.exports = {
     // API Keys
     giphyApiKey: process.env.GHIPHY_API_KEY || process.env.GIPHY_API_KEY || 'default_giphy_key',
     googleApiKey: process.env.GOOGLE_API_KEY || 'default_google_key',
+    simsimiApiKey: process.env.SIMSIMI_API_KEY || 'dM-GN-OBcSf45RxWApljYKQORtxb1eRvUIZwjTvJ',
     
     // Economy Configuration
     economy: {

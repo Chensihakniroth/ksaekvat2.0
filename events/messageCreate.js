@@ -5,6 +5,7 @@ const database = require('../utils/database.js');
 const { EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 
 // File paths for persistent storage
 const LISTENERS_FILE = path.join(__dirname, '../data/listeners.json');
@@ -36,6 +37,12 @@ module.exports = {
 
         // === LISTEN FUNCTIONALITY ===
         handleMessageListening(message, client);
+
+        // === CHATBOT FUNCTIONALITY ===
+        if (message.mentions.has(client.user) && !message.mentions.everyone) {
+            handleChatbot(message);
+            return;
+        }
 
         // === DM FORWARDING FUNCTIONALITY ===
         if (message.channel.type === 1) { // DM Channel
@@ -213,5 +220,54 @@ async function handleDMForwarding(message, client) {
         } catch (dmError) {
             console.error('Failed to notify admin about sending failure:', dmError);
         }
+    }
+}
+
+async function handleChatbot(message) {
+    // Remove the mention from the text
+    const text = message.content.replace(/<@!?[0-9]+>/g, '').trim();
+    
+    // If only mentioned without text, give a greeting
+    if (!text) {
+        return message.reply('Suesdey! mean kar ey men? (Mention knhom rouch dak peak ey mork)');
+    }
+
+    try {
+        // Show typing indicator
+        await message.channel.sendTyping();
+        
+        // Call SimSimi API
+        // Using api.simsimi.net/v2/ as it's a common endpoint for this key type
+        const response = await axios.get('https://api.simsimi.net/v2/', {
+            params: {
+                text: text,
+                lc: 'kh',
+                key: config.simsimiApiKey
+            }
+        });
+        
+        if (response.data && response.data.success) {
+            message.reply(response.data.success);
+        } else {
+            // Try with English if Khmer fails
+            const enResponse = await axios.get('https://api.simsimi.net/v2/', {
+                params: {
+                    text: text,
+                    lc: 'en',
+                    key: config.simsimiApiKey
+                }
+            });
+            
+            if (enResponse.data && enResponse.data.success) {
+                message.reply(enResponse.data.success);
+            } else {
+                message.reply('Sry ah pov, knhom ot yol hg niyeay ey teh.');
+            }
+        }
+    } catch (error) {
+        logger.error('SimSimi API Error:', error.message);
+        
+        // Try fallback to a simpler response if API fails
+        message.reply('Zzz... knhom nget ngui nas, jam knhom skor ban chlery teat.');
     }
 }
