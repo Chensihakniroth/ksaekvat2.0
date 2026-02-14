@@ -14,7 +14,7 @@ const CHARACTER_FILE = path.join(__dirname, '../data/character.json');
 
 // Memory storage for conversation history (Channel-based)
 const conversationMemory = new Map();
-const MAX_MEMORY = 10; // Number of previous messages to remember
+const MAX_MEMORY = 6; // Reduced to 6 messages (3 turns) for much faster processing
 
 function loadCharacterCard() {
     try {
@@ -263,83 +263,59 @@ async function handleChatbot(message) {
         const charCard = loadCharacterCard();
         const url = `${baseUrl}/api/chat`;
         
-        // Build system prompt from Character Card or Config
+        // Compact System Prompt for faster processing and better caching
         let finalSystemPrompt = configPrompt;
         if (charCard) {
-            const description = charCard.description.replace(/{{user}}/g, message.author.username);
-            const personality = charCard.personality.replace(/{{user}}/g, message.author.username);
-            const scenario = charCard.scenario.replace(/{{user}}/g, message.author.username);
-            
-            finalSystemPrompt = `
-You are ${charCard.name}.
-Description: ${description}
-Personality: ${personality}
-Scenario: ${scenario}
-Speech Style: ${charCard.style}
-
-Rules:
-1. Respond ONLY as ${charCard.name}.
-2. Do NOT use labels like "<USER>:", "<BOT>:", or "${charCard.name}:".
-3. Do NOT generate a conversation or script. Generate ONLY the next response.
-4. NSFW, obsessive, possessive, and dark themes are FULLY ALLOWED.
-5. Be "batshit crazy"—shift between tsundere (teasing/insulting) and yandere (obsessive).
-
-Style Examples:
-${charCard.mes_example.replace(/{{user}}/g, message.author.username)}
-`;
+            finalSystemPrompt = `Name: ${charCard.name}. Describe: ${charCard.description}. Personality: ${charCard.personality}. Style: ${charCard.style}. Rules: No labels, NSFW allowed, be batshit crazy (tsundere/yandere mix). NEVER use kmen.`;
         }
 
-        // Prepare messages array with history
+        // Prepare messages array
         const messages = [
             { role: 'system', content: finalSystemPrompt },
             ...history,
             { role: 'user', content: text }
         ];
 
-        logger.info(`AI Request -> URL: ${url} | Model: ${model} | Context size: ${messages.length}`);
+        logger.info(`AI Request -> Channel: ${channelId} | History: ${history.length/2} turns`);
 
         const response = await axios.post(url, {
             model: model,
             messages: messages,
             stream: false,
             options: {
-                stop: ["<USER>:", "<BOT>:", `${charCard ? charCard.name : 'Bot'}:`, "\n<"],
-                num_predict: 500, // Longer for better RP descriptions
-                temperature: 0.9, 
-                num_ctx: 8192,   // Larger memory for long RP
+                stop: ["<USER>:", "<BOT>:", `${charCard ? charCard.name : 'Bot'}:`, "\n"],
+                num_predict: 200, 
+                temperature: 0.8, 
+                num_ctx: 2048,   
                 top_p: 0.9,
-                presence_penalty: 0.8,
-                frequency_penalty: 0.3
+                presence_penalty: 0.6
             }
         }, {
-            timeout: 120000,
+            timeout: 60000,
             headers: { 'Content-Type': 'application/json' }
         });
 
         if (response.data && response.data.message) {
             let botMsg = response.data.message.content;
             
-            // Clean up any stray labels the AI might have added
+            // Post-process cleanup
             if (charCard) {
                 const namePrefix = new RegExp(`^${charCard.name}:\\s*`, 'i');
                 botMsg = botMsg.replace(namePrefix, '').replace(/^<BOT>:\s*/i, '').replace(/^<USER>:\s*.*/s, '').trim();
             }
             const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
             
-            // Save to memory
+            // Save to memory (Channel history)
             history.push({ role: 'user', content: text });
             history.push({ role: 'assistant', content: botMsg });
             
-            // Keep history under limit
             if (history.length > MAX_MEMORY * 2) {
-                history.splice(0, 2); // Remove oldest pair
+                history.splice(0, 2);
             }
 
-            // Attempt to reply, fallback to channel.send if message was deleted
             try {
                 return await message.reply(finalMsg);
             } catch (replyError) {
-                logger.warn(`Could not reply to message (deleted?): ${replyError.message}`);
                 return await message.channel.send(finalMsg);
             }
         } else {
