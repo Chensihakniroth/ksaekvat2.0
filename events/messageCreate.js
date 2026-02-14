@@ -267,15 +267,21 @@ async function handleChatbot(message) {
         let finalSystemPrompt = configPrompt;
         if (charCard) {
             finalSystemPrompt = `
-Name: ${charCard.name}
+You are ${charCard.name}.
 Description: ${charCard.description}
 Personality: ${charCard.personality}
 Scenario: ${charCard.scenario}
 Speech Style: ${charCard.style}
-Example Dialogues:
-${charCard.mes_example}
 
-Current Instructions: You are ${charCard.name}. Follow the personality and style above. Be savage, unfiltered, and use cursed words. Mix Khmer and English.
+Rules:
+1. Respond ONLY as ${charCard.name}.
+2. Do NOT use labels like "<USER>:", "<BOT>:", or "${charCard.name}:".
+3. Do NOT generate a conversation or script. Generate ONLY the next response.
+4. Be savage, unfiltered, and use cursed words. Mix Khmer and English.
+5. NEVER use the word "kmen" or "k'men". Use "ah pov" or "ah kdouy" instead.
+
+Style Examples:
+${charCard.mes_example}
 `;
         }
 
@@ -291,14 +297,23 @@ Current Instructions: You are ${charCard.name}. Follow the personality and style
         const response = await axios.post(url, {
             model: model,
             messages: messages,
-            stream: false
+            stream: false,
+            options: {
+                stop: ["<USER>:", "<BOT>:", `${charCard ? charCard.name : 'Bot'}:`, "\n<"]
+            }
         }, {
             timeout: 120000,
             headers: { 'Content-Type': 'application/json' }
         });
 
         if (response.data && response.data.message) {
-            const botMsg = response.data.message.content;
+            let botMsg = response.data.message.content;
+            
+            // Clean up any stray labels the AI might have added
+            if (charCard) {
+                const namePrefix = new RegExp(`^${charCard.name}:\\s*`, 'i');
+                botMsg = botMsg.replace(namePrefix, '').replace(/^<BOT>:\s*/i, '').replace(/^<USER>:\s*.*/s, '').trim();
+            }
             const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
             
             // Save to memory
