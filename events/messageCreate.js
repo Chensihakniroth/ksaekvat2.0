@@ -291,7 +291,7 @@ async function handleChatbot(message) {
                 presence_penalty: 0.6
             }
         }, {
-            timeout: 60000,
+            timeout: 300000, // Increased to 5 minutes for heavy models
             headers: { 'Content-Type': 'application/json' }
         });
 
