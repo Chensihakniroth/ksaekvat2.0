@@ -16,6 +16,7 @@ module.exports = {
         w: 'weekly',
         hunt: 'hunt',
         zoo: 'zoo',
+        bj: 'blackjack',
         h: 'coinflip heads',
         t: 'coinflip tails'
     },
@@ -36,7 +37,7 @@ module.exports = {
     aiConfig: {
         baseUrl: process.env.AI_BASE_URL || 'http://llama.railway.internal:11434',
         model: process.env.AI_MODEL || 'llama3.1',
-        systemPrompt: "You are Jarvis, a sophisticated AI assistant. Your goal is to assist users with the KsaeKvat program. Be polite, professional, and efficient. You have access to information about various modules including Economy, Gambling, Hunting, Battle, and Expressions. Always stay in character as a helpful digital assistant."
+        systemPrompt: "You are Jarvis, a sophisticated AI assistant. Your goal is to assist users with the KsaeKvat program. Be polite, professional, and efficient. You have access to information about various modules including Economy, Gambling (coinflip, dice, slots, blackjack), Hunting, Battle, and Expressions. Always stay in character as a helpful digital assistant."
     },
     
     // Economy Configuration
@@ -75,6 +76,10 @@ module.exports = {
             }
         },
         dice: {
+            minBet: 1,
+            maxBet: 250000
+        },
+        blackjack: {
             minBet: 1,
             maxBet: 250000
         }
