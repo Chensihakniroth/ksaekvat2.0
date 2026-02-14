@@ -250,7 +250,13 @@ async function handleChatbot(message) {
     const history = conversationMemory.get(channelId);
 
     logger.info(`AI Chatbot input from ${message.author.tag}: "${text}"`);
-    await message.channel.sendTyping();
+    
+    // Show typing indicator, but don't crash if it fails
+    try {
+        await message.channel.sendTyping();
+    } catch (e) {
+        logger.warn('Failed to send typing indicator');
+    }
 
     try {
         const { baseUrl, model, systemPrompt: configPrompt } = config.aiConfig;
@@ -303,7 +309,13 @@ Current Instructions: You are ${charCard.name}. Follow the personality and style
                 history.splice(0, 2); // Remove oldest pair
             }
 
-            return message.reply(botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg);
+            // Attempt to reply, fallback to channel.send if message was deleted
+            try {
+                return await message.reply(finalMsg);
+            } catch (replyError) {
+                logger.warn(`Could not reply to message (deleted?): ${replyError.message}`);
+                return await message.channel.send(finalMsg);
+            }
         } else {
             logger.error(`Invalid response structure: ${JSON.stringify(response.data)}`);
             message.reply('Sry ah pov, AI chlery mork neng ot yol teh.');
