@@ -18,6 +18,7 @@ module.exports = {
         zoo: 'zoo',
         bj: 'blackjack',
         bjob: 'blowjob',
+        rps: 'rps',
         h: 'coinflip heads',
         t: 'coinflip tails'
     },
@@ -76,7 +77,7 @@ module.exports = {
                 skull: { emoji: '💀', multiplier: 0, weight: 15 }
             }
         },
-        dice: {
+        rps: {
             minBet: 1,
             maxBet: 250000
         },
