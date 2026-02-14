@@ -6,148 +6,85 @@ const config = require('../../config/config.js');
 module.exports = {
     name: 'hunt',
     aliases: ['hunting'],
-    description: 'Hunt for animals with 10-second cooldown and 7 rarity tiers',
+    description: 'Hunt for animals. Chance for Loot Boxes!',
     usage: 'hunt',
-    cooldown: 10000, // 10 seconds
+    cooldown: 10000,
     execute(message, args, client) {
         const userData = database.getUser(message.author.id);
         const animalsData = database.loadAnimals();
         
-        // Check if user gets distracted (30% chance)
         if (Math.random() < config.hunting.distractionChance) {
-            // Distraction scenarios
-            const distractions = [
-                { emoji: '📱', text: 'got distracted by your phone', type: 'phone' },
-                { emoji: '🍕', text: 'got hungry and went to get pizza', type: 'food' },
-                { emoji: '😴', text: 'fell asleep while waiting', type: 'sleep' },
-                { emoji: '🌧️', text: 'got caught in the rain and ran for shelter', type: 'weather' },
-                { emoji: '🎮', text: 'got distracted by a game notification', type: 'game' },
-                { emoji: '📺', text: 'got distracted by a funny video', type: 'video' },
-                { emoji: '🚗', text: 'had to help a friend with car trouble', type: 'friend' },
-                { emoji: '☕', text: 'needed a coffee break', type: 'coffee' },
-                { emoji: '📚', text: 'remembered you had homework to do', type: 'homework' },
-                { emoji: '🐱', text: 'got distracted by a cute cat', type: 'cat' },
-                { emoji: '🎵', text: 'stopped to listen to your favorite song', type: 'music' },
-                { emoji: '💤', text: 'dozed off and missed all the animals', type: 'nap' }
-            ];
-            
-            const distraction = distractions[Math.floor(Math.random() * distractions.length)];
-            
-            const embed = new EmbedBuilder()
-                .setColor(colors.warning)
-                .setTitle('😅 Hunting Distraction!')
-                .setDescription(`${distraction.emoji} **You ${distraction.text}!**\n\nNo animals were found this time. Try hunting again!`)
-                
-                
-
-            // Update command usage statistics
-            database.updateStats(message.author.id, 'command');
-            
-            return message.reply({ embeds: [embed] });
+            return message.reply({
+                embeds: [new EmbedBuilder()
+                    .setColor(colors.warning)
+                    .setTitle('😅 Distracted!')
+                    .setDescription('hg got distracted and found nothing!')]
+            });
         }
 
-        // Determine rarity based on weights
+        // --- RARITY LOGIC ---
         const rarities = config.hunting.rarities;
+        const isBoosted = userData.hunt_boost > 0;
+        
         let totalWeight = 0;
-        for (const rarity of Object.values(rarities)) {
-            totalWeight += rarity.weight;
+        for (const [key, r] of Object.entries(rarities)) {
+            // Apply 5x multiplier to non-common rarities if boosted
+            const weightMult = (isBoosted && key !== 'common') ? 5 : 1;
+            totalWeight += r.weight * weightMult;
         }
 
         const random = Math.random() * totalWeight;
         let currentWeight = 0;
         let selectedRarity = 'common';
 
-        for (const [rarityKey, rarityData] of Object.entries(rarities)) {
-            currentWeight += rarityData.weight;
+        for (const [key, r] of Object.entries(rarities)) {
+            const weightMult = (isBoosted && key !== 'common') ? 5 : 1;
+            currentWeight += r.weight * weightMult;
             if (random <= currentWeight) {
-                selectedRarity = rarityKey;
+                selectedRarity = key;
                 break;
             }
         }
 
-        // Get animals of the selected rarity
-        const availableAnimals = animalsData[selectedRarity];
-        if (!availableAnimals) {
-            return message.reply('❌ No animals available for this rarity.');
+        const available = animalsData[selectedRarity];
+        const animalKey = Object.keys(available)[Math.floor(Math.random() * Object.keys(available).length)];
+        const animal = available[animalKey];
+
+        // --- REWARDS ---
+        database.addAnimal(message.author.id, animalKey, selectedRarity);
+        const expReward = Math.floor(rarities[selectedRarity].value / 25) + 5;
+        const expRes = database.addExperience(message.author.id, expReward);
+
+        // Loot Box Chance (25%)
+        let gotLootBox = false;
+        if (Math.random() < 0.25) {
+            userData.lootbox = (userData.lootbox || 0) + 1;
+            gotLootBox = true;
         }
 
-        // Select random animal from the rarity tier
-        const animalKeys = Object.keys(availableAnimals);
-        const selectedAnimalKey = animalKeys[Math.floor(Math.random() * animalKeys.length)];
-        const selectedAnimal = availableAnimals[selectedAnimalKey];
-
-        // Add animal to user's collection
-        database.addAnimal(message.author.id, selectedAnimalKey, selectedRarity);
-
-        // Calculate rewards
-        const rarityData = rarities[selectedRarity];
-        let coinReward = selectedAnimal.value;
-        let expReward = Math.floor(rarityData.value / 20); // Experience based on rarity value
-
-        // Apply money booster if active
-        const moneyBooster = database.getActiveBooster(message.author.id, 'money');
-        if (moneyBooster) {
-            coinReward = Math.floor(coinReward * moneyBooster.multiplier);
+        // Consume Boost Turn
+        if (isBoosted) {
+            userData.hunt_boost--;
         }
-
-        // Add rewards
-        const newBalance = database.addBalance(message.author.id, coinReward);
-        const expGain = database.addExperience(message.author.id, expReward);
-
-        // Chance for booster drop (rare)
-        let boosterReward = null;
-        if (selectedRarity === 'legendary' || selectedRarity === 'mythical' || selectedRarity === 'priceless') {
-            if (Math.random() < 0.15) { // 15% chance for rare rarities
-                const boosterType = Math.random() < 0.5 ? 'money' : 'exp';
-                const duration = 60 * 60 * 1000; // 1 hour
-                database.addBooster(message.author.id, boosterType, 2, duration);
-                boosterReward = { type: boosterType, multiplier: 2 };
-            }
-        }
+        database.saveUser(userData);
 
         const embed = new EmbedBuilder()
-            .setColor(parseInt(rarityData.color.slice(1), 16))
-            .setTitle(`${selectedAnimal.emoji} Hunting Success!`)
-            .setDescription(`hg rork khernh **${selectedAnimal.name}**!\n*${rarityData.name} Rarity*`)
+            .setColor(parseInt(rarities[selectedRarity].color.slice(1), 16))
+            .setTitle(`${animal.emoji} Hunt Success!`)
+            .setDescription(`hg khernh **${animal.name}**!\n*${rarities[selectedRarity].name} Rarity*`)
             .addFields(
-                {
-                    name: '🎁 Rewards',
-                    value: `💰 **+${coinReward.toLocaleString()}** ${config.economy.currency}\n⭐ **+${expReward}** XP`,
-                    inline: true
-                },
-                {
-                    name: '👤 Stats',
-                    value: `💳 **${newBalance.toLocaleString()}** ${config.economy.currency}\n🆙 **Level ${expGain.newLevel}**`,
-                    inline: true
-                }
+                { name: '⭐ Rank Exp', value: `+${expReward} XP`, inline: true },
+                { name: '✨ Status', value: isBoosted ? `🔥 **BOOSTED** (${userData.hunt_boost} left)` : 'Normal', inline: true }
             );
 
-        if (boosterReward) {
-            embed.addFields({
-                name: '✨ Bonus!',
-                value: `found **${boosterReward.type} x${boosterReward.multiplier}** (1h)`,
-                inline: false
-            });
+        if (gotLootBox) {
+            embed.addFields({ name: '🎁 Special Find!', value: 'hg khernh **Loot Box** 1! Open it in `Kinv`!' });
         }
 
-        if (expGain.leveledUp) {
-            embed.addFields({
-                name: '🎉 Level Up!',
-                value: `hg lerng level **${expGain.newLevel}** hz!`,
-                inline: false
-            });
-        }
+        if (expRes.leveledUp) embed.setFooter({ text: `🎉 Level Up! You are now Rank ${expRes.newLevel}` });
 
-        embed.setFooter({ text: `Target: ${selectedAnimal.name} | Total Found: ${userData.totalAnimalsFound + 1}` });
-
-        // Update command usage statistics
         database.updateStats(message.author.id, 'command');
         database.updateStats(message.author.id, 'hunt_success', 1);
-
         message.reply({ embeds: [embed] });
     }
 };
-
-
-
-

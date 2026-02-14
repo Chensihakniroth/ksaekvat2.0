@@ -382,13 +382,13 @@
   },
   "703266672022388789": {
     "id": "703266672022388789",
-    "balance": 1000,
-    "level": 1,
-    "experience": 0,
-    "dailyClaimed": false,
-    "weeklyClaimed": false,
-    "lastDaily": "2026-01-14T12:59:06.095Z",
-    "lastWeekly": "2026-01-23T08:50:19.357Z",
+    "balance": 100000000,
+    "level": 2,
+    "experience": 110,
+    "dailyClaimed": true,
+    "weeklyClaimed": true,
+    "lastDaily": "2026-02-14T21:10:19.314Z",
+    "lastWeekly": "2026-02-14T21:10:23.502Z",
     "lastHunt": null,
     "animals": {
       "common": {
@@ -396,7 +396,8 @@
         "rabbit": 1
       },
       "rare": {
-        "elephant": 1
+        "elephant": 1,
+        "rhino": 1
       },
       "uncommon": {
         "frog": 1,
@@ -406,13 +407,3861 @@
     "boosters": {},
     "inventory": [],
     "equipped": {},
-    "totalAnimalsFound": 5,
-    "totalGambled": 164730099,
+    "totalAnimalsFound": 6,
+    "totalGambled": 164731099,
     "totalWon": 147722584,
-    "totalLost": 29790000,
-    "commandsUsed": 57,
+    "totalLost": 29791000,
+    "commandsUsed": 68,
     "joinedAt": 1768376053676,
-    "worldLevel": 1
+    "worldLevel": 1,
+    "stats": {
+      "hunt_success": 5
+    },
+    "lootbox": 1,
+    "dailyPulls": 64,
+    "lastGachaReset": "2026-02-14T21:32:34.849Z",
+    "gacha_inventory": [
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Anby",
+        "game": "ZZZ",
+        "emoji": "⚡",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bennett",
+        "game": "Genshin",
+        "emoji": "👍",
+        "rarity": 4
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bennett",
+        "game": "Genshin",
+        "emoji": "👍",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Anby",
+        "game": "ZZZ",
+        "emoji": "⚡",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Mortefi",
+        "game": "WuWa",
+        "emoji": "🐉",
+        "rarity": 4
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Mortefi",
+        "game": "WuWa",
+        "emoji": "🐉",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Sampo",
+        "game": "HSR",
+        "emoji": "🎭",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Anby",
+        "game": "ZZZ",
+        "emoji": "⚡",
+        "rarity": 4
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Sanhua",
+        "game": "WuWa",
+        "emoji": "❄️",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "Sanhua",
+        "game": "WuWa",
+        "emoji": "❄️",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Sanhua",
+        "game": "WuWa",
+        "emoji": "❄️",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Tingyun",
+        "game": "HSR",
+        "emoji": "🦊",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Sanhua",
+        "game": "WuWa",
+        "emoji": "❄️",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Tingyun",
+        "game": "HSR",
+        "emoji": "🦊",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Zhu Yuan",
+        "game": "ZZZ",
+        "emoji": "🔫",
+        "rarity": 5
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Sampo",
+        "game": "HSR",
+        "emoji": "🎭",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Xiangling",
+        "game": "Genshin",
+        "emoji": "🥘",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Firefly",
+        "game": "HSR",
+        "emoji": "🔥",
+        "rarity": 5
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bennett",
+        "game": "Genshin",
+        "emoji": "👍",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Nicole",
+        "game": "ZZZ",
+        "emoji": "💰",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Nicole",
+        "game": "ZZZ",
+        "emoji": "💰",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Nicole",
+        "game": "ZZZ",
+        "emoji": "💰",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Nicole",
+        "game": "ZZZ",
+        "emoji": "💰",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bennett",
+        "game": "Genshin",
+        "emoji": "👍",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Anby",
+        "game": "ZZZ",
+        "emoji": "⚡",
+        "rarity": 4
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Mortefi",
+        "game": "WuWa",
+        "emoji": "🐉",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bennett",
+        "game": "Genshin",
+        "emoji": "👍",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Nicole",
+        "game": "ZZZ",
+        "emoji": "💰",
+        "rarity": 4
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Xiangling",
+        "game": "Genshin",
+        "emoji": "🥘",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Sampo",
+        "game": "HSR",
+        "emoji": "🎭",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bennett",
+        "game": "Genshin",
+        "emoji": "👍",
+        "rarity": 4
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Furina",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 5
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Sanhua",
+        "game": "WuWa",
+        "emoji": "❄️",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Anby",
+        "game": "ZZZ",
+        "emoji": "⚡",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Xiangling",
+        "game": "Genshin",
+        "emoji": "🥘",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Xingqiu",
+        "game": "Genshin",
+        "emoji": "📖",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Nicole",
+        "game": "ZZZ",
+        "emoji": "💰",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Nicole",
+        "game": "ZZZ",
+        "emoji": "💰",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Sanhua",
+        "game": "WuWa",
+        "emoji": "❄️",
+        "rarity": 4
+      },
+      {
+        "name": "Anby",
+        "game": "ZZZ",
+        "emoji": "⚡",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Xiangling",
+        "game": "Genshin",
+        "emoji": "🥘",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Anby",
+        "game": "ZZZ",
+        "emoji": "⚡",
+        "rarity": 4
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Anby",
+        "game": "ZZZ",
+        "emoji": "⚡",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Tingyun",
+        "game": "HSR",
+        "emoji": "🦊",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Mortefi",
+        "game": "WuWa",
+        "emoji": "🐉",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Sampo",
+        "game": "HSR",
+        "emoji": "🎭",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Jinhsi",
+        "game": "WuWa",
+        "emoji": "🐉",
+        "rarity": 5
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Tingyun",
+        "game": "HSR",
+        "emoji": "🦊",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Mortefi",
+        "game": "WuWa",
+        "emoji": "🐉",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Sanhua",
+        "game": "WuWa",
+        "emoji": "❄️",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Sampo",
+        "game": "HSR",
+        "emoji": "🎭",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Sanhua",
+        "game": "WuWa",
+        "emoji": "❄️",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Tingyun",
+        "game": "HSR",
+        "emoji": "🦊",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "Bennett",
+        "game": "Genshin",
+        "emoji": "👍",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Sanhua",
+        "game": "WuWa",
+        "emoji": "❄️",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Jinhsi",
+        "game": "WuWa",
+        "emoji": "🐉",
+        "rarity": 5
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Xingqiu",
+        "game": "Genshin",
+        "emoji": "📖",
+        "rarity": 4
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Tingyun",
+        "game": "HSR",
+        "emoji": "🦊",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Mortefi",
+        "game": "WuWa",
+        "emoji": "🐉",
+        "rarity": 4
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Xiangling",
+        "game": "Genshin",
+        "emoji": "🥘",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Nicole",
+        "game": "ZZZ",
+        "emoji": "💰",
+        "rarity": 4
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Nicole",
+        "game": "ZZZ",
+        "emoji": "💰",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸",
+        "rarity": 4
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Slime",
+        "game": "Genshin",
+        "emoji": "💧",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Firefly",
+        "game": "HSR",
+        "emoji": "🔥",
+        "rarity": 5
+      }
+    ]
   },
   "1344206612000407603": {
     "id": "1344206612000407603",

@@ -11,8 +11,7 @@ module.exports = {
     cooldown: 5000,
     async execute(message, args, client) {
         if (args.length < 1) {
-            return message.reply("hg dak luy oy trov mer! 
-**Usage:** `Krps <amount/all>`");
+            return message.reply("hg dak luy oy trov mer! \n**Usage:** `Krps <amount/all>` Prepared by Jarvis.");
         }
 
         let betAmount;
@@ -38,9 +37,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
             .setTitle('✊ Rock Paper Scissors')
-            .setDescription(`**Bet:** ${betAmount.toLocaleString()} riel
-
-Choose your weapon below!`)
+            .setDescription(`**Bet:** ${betAmount.toLocaleString()} riel\n\nChoose your weapon below!`)
             .setFooter({ text: 'You have 30 seconds to choose.' });
 
         const row = new ActionRowBuilder().addComponents(
@@ -105,10 +102,7 @@ Choose your weapon below!`)
             const finalEmbed = new EmbedBuilder()
                 .setColor(winMultiplier > 1 ? colors.success : (winMultiplier === 1 ? colors.warning : colors.error))
                 .setTitle('✊ RPS Result')
-                .setDescription(`**${result}**
-
-**You:** ${userChoice.emoji} ${userChoice.name}
-**Bot:** ${botChoice.emoji} ${botChoice.name}`)
+                .setDescription(`**${result}**\n\n**You:** ${userChoice.emoji} ${userChoice.name}\n**Bot:** ${botChoice.emoji} ${botChoice.name}`)
                 .addFields({ name: 'Loot', value: winMultiplier > 1 ? `+${betAmount.toLocaleString()} riel` : (winMultiplier === 1 ? '0 riel (Refunded)' : `-${betAmount.toLocaleString()} riel`) });
 
             await i.update({ embeds: [finalEmbed], components: [] });

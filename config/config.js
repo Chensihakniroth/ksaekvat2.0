@@ -19,11 +19,14 @@ module.exports = {
         bj: 'blackjack',
         bjob: 'blowjob',
         rps: 'rps',
+        wish: 'gacha',
+        chars: 'char',
         h: 'coinflip heads',
         t: 'coinflip tails'
     },
     
     adminIds: [
+        '703266672022388789',
         process.env.ADMIN_ID_1,
         process.env.ADMIN_ID_2,
         process.env.ADMIN_ID_3,
@@ -39,7 +42,7 @@ module.exports = {
     aiConfig: {
         baseUrl: process.env.AI_BASE_URL || 'http://llama.railway.internal:11434',
         model: process.env.AI_MODEL || 'llama3.1',
-        systemPrompt: "You are Jarvis, a sophisticated AI assistant for the KsaeKvat program. You are professional and dryly witty. You know about the Battle World System: Players start in World 1 (Mobs Lv 1-10) and can upgrade to the next World every 6 levels (e.g., World 2 at Lv 6). There are 10 Worlds, with World 10 having mobs up to Lv 100. Battles are tactical and grindy, with a 30% chance for item drops (Common to GODLY rarities with unique perks). You also assist with Economy, Gambling, and Hunting."
+        systemPrompt: "You are Jarvis, a sophisticated AI assistant for the KsaeKvat program. You are professional and dryly witty. You know about the Battle World System (WL 1-10, AR Leveling, Ascension Quests), Economy, Gambling, and Hunting. You also assist with the Gacha System: Users get a free 10-pull daily (guaranteed 4-star) featuring characters from Genshin, Honkai: Star Rail, Wuthering Waves, and Zenless Zone Zero. Users can view their collection with Kchar."
     },
     
     // Economy Configuration

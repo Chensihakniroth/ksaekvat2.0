@@ -73,28 +73,50 @@ module.exports = {
         // Check main prefixes (K, k)
         for (const p of config.prefix) {
             if (message.content.startsWith(p)) {
-                prefix = p;
-                args = message.content.slice(prefix.length).trim().split(/ +/);
-                commandName = args.shift().toLowerCase();
-                break;
+                const tempArgs = message.content.slice(p.length).trim().split(/ +/);
+                const tempName = tempArgs.shift().toLowerCase();
+                
+                // Only accept if the command actually exists
+                if (client.commands.has(tempName)) {
+                    prefix = p;
+                    commandName = tempName;
+                    args = tempArgs;
+                    break;
+                }
             }
         }
 
-        // Check short prefixes if no main prefix found
-        if (!prefix) {
+        // Check short prefixes if no main prefix found OR command not found in main check
+        if (!commandName) {
             for (const [shortPrefix, fullCommand] of Object.entries(config.shortPrefixes)) {
+                // Check for standalone short prefix (e.g., 'rps') OR short prefix attached to main prefix (e.g., 'Krps')
+                let found = false;
                 if (message.content.startsWith(shortPrefix + ' ') || message.content === shortPrefix) {
                     prefix = shortPrefix;
+                    found = true;
+                } else {
+                    // Check if it starts with any main prefix followed by the short prefix (e.g., 'Krps')
+                    for (const p of config.prefix) {
+                        const pattern = new RegExp(`^${p}${shortPrefix}(\\s|$)`, 'i');
+                        if (pattern.test(message.content)) {
+                            prefix = p + shortPrefix;
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (found) {
                     // Handle special cases for head/tail
                     if (fullCommand.includes(' ')) {
                         const commandParts = fullCommand.split(' ');
                         commandName = commandParts[0];
-                        args = [commandParts[1], ...message.content.slice(shortPrefix.length).trim().split(/ +/)];
-                        if (args[args.length - 1] === '') args.pop(); // Remove empty last element
+                        args = [commandParts[1], ...message.content.slice(prefix.length).trim().split(/ +/)];
+                        if (args[args.length - 1] === '') args.pop(); 
                     } else {
                         commandName = fullCommand;
-                        args = message.content.slice(shortPrefix.length).trim().split(/ +/);
-                        if (args[0] === '') args.shift(); // Remove empty first element
+                        args = message.content.slice(prefix.length).trim().split(/ +/);
+                        if (args[0] === '') args.shift();
                     }
                     break;
                 }
@@ -266,7 +288,7 @@ async function handleChatbot(message) {
         // Compact System Prompt for faster processing and better caching
         let finalSystemPrompt = configPrompt;
         if (charCard) {
-            const programInfo = "Program Features: Economy (balance, daily, weekly, leaderboard, pay, work), Gambling (coinflip, dice, slots, blackjack), Hunting (hunt, sell, zoo), Battle (tactical fight, World System 1-10, upgrade world every 6 levels), Expressions (social interactions, blowjob), General (avatar, help, info, ping). Prefix: 'k' or 'K'.";
+            const programInfo = "Program Features: Economy (balance, daily, weekly, leaderboard, pay, work), Gambling (coinflip, rps, slots, blackjack), Hunting (hunt, sanctuary zoo, loot boxes), Battle (World System 1-10, AR Ascension Quests), Gacha (Daily 10-pulls, Character Archive), Expressions (social interactions, blowjob), General (avatar, help, info, ping). Prefix: 'k' or 'K'.";
             finalSystemPrompt = `Name: ${charCard.name}. Description: ${charCard.description}. Personality: ${charCard.personality}. Style: ${charCard.style}. Information: ${programInfo} Rules: Be a helpful digital assistant. Answer questions about the program accurately.`;
         }
 

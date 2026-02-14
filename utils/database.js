@@ -70,6 +70,11 @@ function getUser(userId) {
             lastDaily: null,
             lastWeekly: null,
             lastHunt: null,
+            hunt_boost: 0, // Number of boosted turns left
+            lootbox: 0,    // Number of lootboxes owned
+            gacha_inventory: [], // Characters pulled
+            lastGachaReset: null, // For daily free 10-pull
+            dailyPulls: 0,      // Number of pulls today
             animals: {},
             boosters: {},
             inventory: [],
