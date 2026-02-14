@@ -10,6 +10,20 @@ const axios = require('axios');
 // File paths for persistent storage
 const LISTENERS_FILE = path.join(__dirname, '../data/listeners.json');
 const TALK_TARGETS_FILE = path.join(__dirname, '../data/talktargets.json');
+const CHARACTER_FILE = path.join(__dirname, '../data/character.json');
+
+// Memory storage for conversation history (Channel-based)
+const conversationMemory = new Map();
+const MAX_MEMORY = 10; // Number of previous messages to remember
+
+function loadCharacterCard() {
+    try {
+        if (!fs.existsSync(CHARACTER_FILE)) return null;
+        return JSON.parse(fs.readFileSync(CHARACTER_FILE, 'utf8'));
+    } catch (error) {
+        return null;
+    }
+}
 
 function loadListeners() {
     try {
@@ -227,21 +241,50 @@ async function handleChatbot(message) {
     const text = message.content.replace(/<@!?[0-9]+>/g, '').trim();
     if (!text) return message.reply('Suesdey! mean kar ey men? (Type ey mork jam knhom chlery)');
 
-    logger.info(`AI Chatbot input: "${text}"`);
+    const channelId = message.channel.id;
+    
+    // Initialize or get history for this channel
+    if (!conversationMemory.has(channelId)) {
+        conversationMemory.set(channelId, []);
+    }
+    const history = conversationMemory.get(channelId);
+
+    logger.info(`AI Chatbot input from ${message.author.tag}: "${text}"`);
     await message.channel.sendTyping();
 
     try {
-        const { baseUrl, model, systemPrompt } = config.aiConfig;
+        const { baseUrl, model, systemPrompt: configPrompt } = config.aiConfig;
+        const charCard = loadCharacterCard();
         const url = `${baseUrl}/api/chat`;
         
-        logger.info(`AI Request -> URL: ${url} | Model: ${model}`);
+        // Build system prompt from Character Card or Config
+        let finalSystemPrompt = configPrompt;
+        if (charCard) {
+            finalSystemPrompt = `
+Name: ${charCard.name}
+Description: ${charCard.description}
+Personality: ${charCard.personality}
+Scenario: ${charCard.scenario}
+Speech Style: ${charCard.style}
+Example Dialogues:
+${charCard.mes_example}
+
+Current Instructions: You are ${charCard.name}. Follow the personality and style above. Be savage, unfiltered, and use cursed words. Mix Khmer and English.
+`;
+        }
+
+        // Prepare messages array with history
+        const messages = [
+            { role: 'system', content: finalSystemPrompt },
+            ...history,
+            { role: 'user', content: text }
+        ];
+
+        logger.info(`AI Request -> URL: ${url} | Model: ${model} | Context size: ${messages.length}`);
 
         const response = await axios.post(url, {
             model: model,
-            messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: text }
-            ],
+            messages: messages,
             stream: false
         }, {
             timeout: 120000,
@@ -250,6 +293,16 @@ async function handleChatbot(message) {
 
         if (response.data && response.data.message) {
             const botMsg = response.data.message.content;
+            
+            // Save to memory
+            history.push({ role: 'user', content: text });
+            history.push({ role: 'assistant', content: botMsg });
+            
+            // Keep history under limit
+            if (history.length > MAX_MEMORY * 2) {
+                history.splice(0, 2); // Remove oldest pair
+            }
+
             return message.reply(botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg);
         } else {
             logger.error(`Invalid response structure: ${JSON.stringify(response.data)}`);
