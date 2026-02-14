@@ -4,11 +4,8 @@ const database = require('../../utils/database.js');
 // Use built-in fetch (Node.js 18+) or axios as fallback
 const fetch = global.fetch || require('axios').get;
 
-const TENOR_API_KEY = process.env.GOOGLE_API_KEY; // Use GOOGLE_API_KEY from environment variables
-
-if (!TENOR_API_KEY) {
-    console.error('GOOGLE_API_KEY is not defined. Please check your environment variables.');
-}
+const TENOR_API_KEY = 'AIzaSyB7vnFuwkD_wKJ_2G6fyFnCmVsm6FAPUiI'; // Updated API Key
+const CLIENT_KEY = 'my_test_app';
 
 module.exports = {
     name: 'jail',
@@ -26,34 +23,30 @@ module.exports = {
             ]
         });
 
-        if (!TENOR_API_KEY) {
-            console.error('GOOGLE_API_KEY is not defined. Please check your environment variables.');
-            await sent.edit({
-                embeds: [new EmbedBuilder()
-                    .setColor(colors.danger || 0xFF4444)
-                    .setTitle('🔒 JAIL TIME!')
-                    .setDescription(`**${mentionedUser?.username || message.author.username}** has been sent to jail! (No GIF available)`)
-                ]
-            });
-            return;
-        }
-
         try {
             let gifUrl = null;
+            let gifId = null;
 
             // First try Tenor API with randomization
             try {
                 const query = 'jail handcuff arrest prison';
-                const url = `https://tenor.googleapis.com/v2/search?key=${TENOR_API_KEY}&q=${encodeURIComponent(query)}&limit=10&random=true&media_filter=gif`;
+                const url = `https://tenor.googleapis.com/v2/search?key=${TENOR_API_KEY}&client_key=${CLIENT_KEY}&q=${encodeURIComponent(query)}&limit=10&random=true&media_filter=gif`;
                 const response = await fetch(url);
                 const data = global.fetch ? await response.json() : response.data;
 
-                console.log('Tenor Response Status:', global.fetch ? response.status : response.status);
-                console.log('Tenor Response Headers:', global.fetch ? response.headers : response.headers);
-
                 if (data.results && Array.isArray(data.results) && data.results.length > 0) {
                     const randomIndex = Math.floor(Math.random() * data.results.length);
-                    gifUrl = data.results[randomIndex].media_formats.gif.url;
+                    const selectedGif = data.results[randomIndex];
+                    gifUrl = selectedGif.media_formats.gif.url;
+                    gifId = selectedGif.id;
+
+                    // Register share for the selected GIF
+                    try {
+                        const shareUrl = `https://tenor.googleapis.com/v2/registershare?id=${gifId}&key=${TENOR_API_KEY}&client_key=${CLIENT_KEY}&q=${encodeURIComponent(query)}`;
+                        await fetch(shareUrl);
+                    } catch (shareErr) {
+                        console.log('Tenor Register Share failed:', shareErr.message);
+                    }
                 }
             } catch (e) {
                 console.log('Tenor API failed:', e);

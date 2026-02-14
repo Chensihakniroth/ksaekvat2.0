@@ -107,70 +107,42 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(parseInt(rarityData.color.slice(1), 16))
-            .setTitle('🏹 Hunting Success!')
-            .setDescription(`You found a **${selectedAnimal.name}**!\n${selectedAnimal.emoji} *${rarityData.name}* rarity`)
+            .setTitle(`${selectedAnimal.emoji} Hunting Success!`)
+            .setDescription(`hg rork khernh **${selectedAnimal.name}**!\n*${rarityData.name} Rarity*`)
             .addFields(
                 {
-                    name: '💰 Coin Reward',
-                    value: `+${coinReward.toLocaleString()} ${config.economy.currency}`,
+                    name: '🎁 Rewards',
+                    value: `💰 **+${coinReward.toLocaleString()}** ${config.economy.currency}\n⭐ **+${expReward}** XP`,
                     inline: true
                 },
                 {
-                    name: '⭐ XP Reward',
-                    value: `+${expReward} XP`,
+                    name: '👤 Stats',
+                    value: `💳 **${newBalance.toLocaleString()}** ${config.economy.currency}\n🆙 **Level ${expGain.newLevel}**`,
                     inline: true
-                },
-                {
-                    name: '💳 New Balance',
-                    value: `${newBalance.toLocaleString()} ${config.economy.currency}`,
-                    inline: true
-                },
-                {
-                    name: '🎯 Rarity Info',
-                    value: [
-                        `**Rarity:** ${rarityData.name}`,
-                        `**Base Value:** ${selectedAnimal.value.toLocaleString()} ${config.economy.currency}`,
-                        `**Collection:** +1 ${selectedAnimal.name}`
-                    ].join('\n'),
-                    inline: false
                 }
             );
 
-        // Add booster reward if received
         if (boosterReward) {
             embed.addFields({
-                name: '🎁 Bonus Reward!',
-                value: `You found a **${boosterReward.type} booster x${boosterReward.multiplier}** (1 hour)!`,
+                name: '✨ Bonus!',
+                value: `found **${boosterReward.type} x${boosterReward.multiplier}** (1h)`,
                 inline: false
             });
         }
 
-        // Add level up notification if applicable
         if (expGain.leveledUp) {
             embed.addFields({
                 name: '🎉 Level Up!',
-                value: `Congratulations! You reached level **${expGain.newLevel}**!`,
+                value: `hg lerng level **${expGain.newLevel}** hz!`,
                 inline: false
             });
         }
 
-        // Add some hunting tips based on rarity
-        let tip = '💡 Keep hunting to find rarer animals!';
-        if (selectedRarity === 'priceless') {
-            tip = '🌟 **INCREDIBLE!** You found a priceless animal! This is extremely rare!';
-        } else if (selectedRarity === 'mythical') {
-            tip = '✨ **AMAZING!** Mythical animals are incredibly rare finds!';
-        } else if (selectedRarity === 'legendary') {
-            tip = '🔥 **WOW!** Legendary animals are very special!';
-        }
-
-        embed.setDescription(`You found a **${selectedAnimal.name}**!\n${selectedAnimal.emoji} *${rarityData.name}* rarity\n\n${tip}`)
-            .setThumbnail('https://cdn.discordapp.com/emojis/hunt.png') // Placeholder
-            
-            
+        embed.setFooter({ text: `Target: ${selectedAnimal.name} | Total Found: ${userData.totalAnimalsFound + 1}` });
 
         // Update command usage statistics
         database.updateStats(message.author.id, 'command');
+        database.updateStats(message.author.id, 'hunt_success', 1);
 
         message.reply({ embeds: [embed] });
     }

@@ -17,6 +17,7 @@ module.exports = {
         hunt: 'hunt',
         zoo: 'zoo',
         bj: 'blackjack',
+        bjob: 'blowjob',
         h: 'coinflip heads',
         t: 'coinflip tails'
     },
@@ -37,7 +38,7 @@ module.exports = {
     aiConfig: {
         baseUrl: process.env.AI_BASE_URL || 'http://llama.railway.internal:11434',
         model: process.env.AI_MODEL || 'llama3.1',
-        systemPrompt: "You are Jarvis, a sophisticated AI assistant. Your goal is to assist users with the KsaeKvat program. Be polite, professional, and efficient. You have access to information about various modules including Economy, Gambling (coinflip, dice, slots, blackjack), Hunting, Battle, and Expressions. Always stay in character as a helpful digital assistant."
+        systemPrompt: "You are Jarvis, a sophisticated AI assistant for the KsaeKvat program. You are professional and dryly witty. You know about the Battle World System: Players start in World 1 (Mobs Lv 1-10) and can upgrade to the next World every 6 levels (e.g., World 2 at Lv 6). There are 10 Worlds, with World 10 having mobs up to Lv 100. Battles are tactical and grindy, with a 30% chance for item drops (Common to GODLY rarities with unique perks). You also assist with Economy, Gambling, and Hunting."
     },
     
     // Economy Configuration

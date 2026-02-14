@@ -51,100 +51,79 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle(`🏛️ ${target.username}'s Zoo`)
+            .setTitle(`🏛️ ${target.username}'s Zoo Collection`)
             .setThumbnail(target.displayAvatarURL())
-            .setDescription(`**Total Animals:** ${totalAnimals}\n**Collection Value:** ${totalValue.toLocaleString()} ${config.economy.currency}`)
+            .setDescription(`**Collection Overview**\n🐾 **Total:** ${totalAnimals} animals\n💰 **Value:** ${totalValue.toLocaleString()} ${config.economy.currency}`)
             .addFields(
                 {
-                    name: '📊 Collection Summary',
+                    name: '📊 Rarity Status',
                     value: totalAnimals > 0 ? 
-                        `**Animals Found:** ${userData.totalAnimalsFound}\n**Unique Species:** ${Object.keys(userAnimals).reduce((sum, rarity) => sum + Object.keys(userAnimals[rarity] || {}).length, 0)}\n**Average Value:** ${Math.floor(totalValue / totalAnimals).toLocaleString()} ${config.economy.currency}` :
-                        'No animals found yet! Use `Khunt` to start collecting.',
+                        Object.entries(rarityStats)
+                            .filter(([_, data]) => data.count > 0)
+                            .map(([rarity, data]) => {
+                                const info = config.hunting.rarities[rarity];
+                                return `\`${info.name.padEnd(10)}\` **${data.count.toString().padStart(3)}** animals`;
+                            }).join('\n') :
+                        'No animals found yet! Use `Khunt` to start.',
                     inline: false
                 }
             );
 
-        // Add rarity breakdown
+        // Show rarest animals in a clean way
         if (totalAnimals > 0) {
-            const rarityBreakdown = [];
-            
-            for (const [rarity, data] of Object.entries(rarityStats)) {
-                if (data.count > 0) {
-                    const rarityInfo = config.hunting.rarities[rarity];
-                    const percentage = ((data.count / totalAnimals) * 100).toFixed(1);
-                    rarityBreakdown.push(
-                        `**${rarityInfo.name}:** ${data.count} (${percentage}%) - ${data.value.toLocaleString()} ${config.economy.currency}`
-                    );
+            const topRarities = Object.entries(rarityStats)
+                .filter(([rarity, data]) => data.count > 0 && ['priceless', 'mythical', 'legendary', 'epic'].includes(rarity))
+                .sort((a, b) => config.hunting.rarities[a[0]].weight - config.hunting.rarities[b[0]].weight)
+                .slice(0, 2);
+
+            for (const [rarity, _] of topRarities) {
+                const info = config.hunting.rarities[rarity];
+                const animalList = Object.entries(userAnimals[rarity] || {})
+                    .map(([key, count]) => {
+                        const animal = animalsData[rarity][key];
+                        return `${animal.emoji} \`x${count}\``;
+                    }).join(' ');
+
+                if (animalList) {
+                    embed.addFields({
+                        name: `⭐ ${info.name} Collection`,
+                        value: animalList,
+                        inline: false
+                    });
                 }
             }
+
+            // Other animals summary
+            const otherRarities = Object.entries(rarityStats)
+                .filter(([rarity, data]) => data.count > 0 && !['priceless', 'mythical', 'legendary', 'epic'].includes(rarity));
             
-            if (rarityBreakdown.length > 0) {
+            if (otherRarities.length > 0) {
+                const otherList = otherRarities.map(([rarity, data]) => {
+                    const info = config.hunting.rarities[rarity];
+                    return `**${info.name}:** ${data.count}`;
+                }).join(' • ');
+                
                 embed.addFields({
-                    name: '🌟 Rarity Breakdown',
-                    value: rarityBreakdown.join('\n'),
+                    name: '📦 Common Species',
+                    value: otherList,
                     inline: false
                 });
             }
-
-            // Show detailed animals (up to 3 rarest rarities)
-            const sortedRarities = Object.entries(rarityStats)
-                .filter(([_, data]) => data.count > 0)
-                .sort((a, b) => config.hunting.rarities[a[0]].weight - config.hunting.rarities[b[0]].weight)
-                .slice(0, 3);
-
-            for (const [rarity, _] of sortedRarities) {
-                if (userAnimals[rarity]) {
-                    const rarityInfo = config.hunting.rarities[rarity];
-                    const animalList = [];
-                    
-                    for (const [animalKey, count] of Object.entries(userAnimals[rarity])) {
-                        if (animalsData[rarity] && animalsData[rarity][animalKey]) {
-                            const animal = animalsData[rarity][animalKey];
-                            animalList.push(`${animal.emoji} **${animal.name}** x${count}`);
-                        }
-                    }
-                    
-                    if (animalList.length > 0) {
-                        // Limit to 10 animals per rarity to avoid embed length issues
-                        const displayList = animalList.slice(0, 10);
-                        if (animalList.length > 10) {
-                            displayList.push(`*...and ${animalList.length - 10} more*`);
-                        }
-                        
-                        embed.addFields({
-                            name: `${rarityInfo.name} Animals`,
-                            value: displayList.join('\n'),
-                            inline: true
-                        });
-                    }
-                }
-            }
         }
 
-        // Add achievement-like information
-        const achievements = [];
-        if (userData.totalAnimalsFound >= 100) achievements.push('🏆 Animal Hunter (100+ finds)');
-        if (userData.totalAnimalsFound >= 500) achievements.push('🥇 Animal Master (500+ finds)');
-        if (totalValue >= 100000) achievements.push('💰 Wealthy Collector (100k+ value)');
-        if (Object.keys(userAnimals).length >= 5) achievements.push('🌈 Rarity Collector (5+ rarities)');
-        
-        // Check for rare animals
-        if (userAnimals.priceless && Object.keys(userAnimals.priceless).length > 0) {
-            achievements.push('⭐ Priceless Collector');
-        }
-        if (userAnimals.mythical && Object.keys(userAnimals.mythical).length > 0) {
-            achievements.push('✨ Mythical Hunter');
-        }
+        // Simple Achievements
+        const badges = [];
+        if (userData.totalAnimalsFound >= 100) badges.push('🏆 Hunter');
+        if (totalValue >= 100000) badges.push('💰 Rich');
+        if (userAnimals.priceless) badges.push('⭐ Star');
 
-        if (achievements.length > 0) {
+        if (badges.length > 0) {
             embed.addFields({
-                name: '🏅 Achievements',
-                value: achievements.join('\n'),
+                name: '🏅 Badges',
+                value: badges.join(' • '),
                 inline: false
             });
         }
-
-        embed
 
         // Update command usage statistics
         database.updateStats(message.author.id, 'command');

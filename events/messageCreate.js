@@ -266,7 +266,7 @@ async function handleChatbot(message) {
         // Compact System Prompt for faster processing and better caching
         let finalSystemPrompt = configPrompt;
         if (charCard) {
-            const programInfo = "Program Features: Economy (balance, daily, weekly, leaderboard, pay, work), Gambling (coinflip, dice, slots, blackjack), Hunting (hunt, sell, zoo), Battle (duel, fight, item, player), Expressions (social interactions), General (avatar, help, info, ping). Prefix: 'k' or 'K'.";
+            const programInfo = "Program Features: Economy (balance, daily, weekly, leaderboard, pay, work), Gambling (coinflip, dice, slots, blackjack), Hunting (hunt, sell, zoo), Battle (tactical fight, World System 1-10, upgrade world every 6 levels), Expressions (social interactions, blowjob), General (avatar, help, info, ping). Prefix: 'k' or 'K'.";
             finalSystemPrompt = `Name: ${charCard.name}. Description: ${charCard.description}. Personality: ${charCard.personality}. Style: ${charCard.style}. Information: ${programInfo} Rules: Be a helpful digital assistant. Answer questions about the program accurately.`;
         }
 

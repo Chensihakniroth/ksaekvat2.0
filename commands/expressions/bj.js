@@ -6,8 +6,8 @@ const COOLDOWN_TIME = 2 * 1000;
 
 module.exports = {
     name: "blowjob",
-    aliases: ["bj"],
-    description: "NSFW: Give a blowjob to another user (18+)",
+    aliases: ["bjob"],
+    description: "NSFW: Give a blowjob to another user (18+) additions: bjob",
     usage: "blowjob @user",
     async execute(message, args) {
         if (!message.channel.nsfw) {

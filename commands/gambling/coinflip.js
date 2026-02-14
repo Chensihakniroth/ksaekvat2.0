@@ -143,6 +143,7 @@ module.exports = {
                 const winAmount = betAmount * 2;
                 const newBalance = database.addBalance(message.author.id, winAmount);
                 database.updateStats(message.author.id, 'won', betAmount);
+                database.updateStats(message.author.id, 'coinflip_win', 1);
 
                 // Add experience for winning
                 const expGain = database.addExperience(message.author.id, 20);

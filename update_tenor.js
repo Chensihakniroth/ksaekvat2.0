@@ -2,7 +2,7 @@
 // Helper script to update expression commands to use Tenor API
 // Run this to see the pattern for updating other commands
 
-const tenorApiKey = 'AIzaSyA3mHp0BiA_o4isPpXsc5ykRlHarIyQo8M';
+const tenorApiKey = 'AIzaSyB7vnFuwkD_wKJ_2G6fyFnCmVsm6FAPUiI';
 
 // Example of how to construct Tenor API URLs for different commands
 const commandSearchTerms = {

@@ -63,6 +63,7 @@ function getUser(userId) {
             id: userId,
             balance: 1000,
             level: 1,
+            worldLevel: 1,
             experience: 0,
             dailyClaimed: false,
             weeklyClaimed: false,
@@ -97,27 +98,42 @@ function getAllUsers() {
     return Object.values(users);
 }
 
-// Experience and level functions
+// Experience and level functions (Genshin-style curve)
+function getRequiredExp(level) {
+    // Level 1-5: Very fast
+    if (level < 5) return level * 100;
+    // Level 5-15: Moderate
+    if (level < 15) return Math.floor(500 * Math.pow(1.2, level - 5));
+    // Level 15+: Exponentially harder
+    return Math.floor(3000 * Math.pow(1.15, level - 15) + (level * 200));
+}
+
 function addExperience(userId, amount) {
     const user = getUser(userId);
 
     // Apply exp booster if active
-    if (user.boosters.exp && user.boosters.exp.expiresAt > Date.now()) {
+    if (user.boosters && user.boosters.exp && user.boosters.exp.expiresAt > Date.now()) {
         amount *= user.boosters.exp.multiplier;
     }
 
     user.experience += amount;
 
-    // Check for level up (100 exp per level)
-    const newLevel = Math.floor(user.experience / 100) + 1;
-    const leveledUp = newLevel > user.level;
+    let leveledUp = false;
+    let currentLevel = user.level;
+
+    // Check for level up using the curve
+    while (user.experience >= getRequiredExp(currentLevel)) {
+        user.experience -= getRequiredExp(currentLevel);
+        currentLevel++;
+        leveledUp = true;
+    }
 
     if (leveledUp) {
-        user.level = newLevel;
+        user.level = currentLevel;
     }
 
     saveUser(user);
-    return { leveledUp, newLevel };
+    return { leveledUp, newLevel: currentLevel, currentExp: user.experience, nextExp: getRequiredExp(currentLevel) };
 }
 
 // Balance functions
@@ -199,6 +215,8 @@ function getActiveBooster(userId, type) {
 function updateStats(userId, type, amount = 1) {
     const user = getUser(userId);
 
+    if (!user.stats) user.stats = {};
+
     switch (type) {
         case 'gambled':
             user.totalGambled += amount;
@@ -212,6 +230,9 @@ function updateStats(userId, type, amount = 1) {
         case 'command':
             user.commandsUsed += amount;
             break;
+        default:
+            // Generic stat tracking
+            user.stats[type] = (user.stats[type] || 0) + amount;
     }
 
     saveUser(user);
