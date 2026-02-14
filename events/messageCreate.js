@@ -224,50 +224,37 @@ async function handleDMForwarding(message, client) {
 }
 
 async function handleChatbot(message) {
-    // Remove the mention from the text
     const text = message.content.replace(/<@!?[0-9]+>/g, '').trim();
-    
-    // If only mentioned without text, give a greeting
-    if (!text) {
-        return message.reply('Suesdey! mean kar ey men? (Mention knhom rouch dak peak ey mork)');
-    }
+    if (!text) return message.reply('Suesdey! mean kar ey men? (Type ey mork jam knhom chlery)');
+
+    logger.info(`AI Chatbot input: "${text}"`);
+    await message.channel.sendTyping();
 
     try {
-        // Show typing indicator
-        await message.channel.sendTyping();
+        const { baseUrl, model } = config.aiConfig;
         
-        // Call SimSimi API
-        // Using api.simsimi.net/v2/ as it's a common endpoint for this key type
-        const response = await axios.get('https://api.simsimi.net/v2/', {
-            params: {
-                text: text,
-                lc: 'kh',
-                key: config.simsimiApiKey
-            }
+        // Using Ollama /api/generate endpoint
+        const url = `${baseUrl}/api/generate`;
+
+        const response = await axios.post(url, {
+            model: model,
+            prompt: `You are a helpful and funny Discord bot named KsaeKvat. 
+            User says: ${text}
+            Response (concise, friendly, can use Khmer and English):`,
+            stream: false
+        }, {
+            timeout: 60000 // AI can take longer to respond
         });
-        
-        if (response.data && response.data.success) {
-            message.reply(response.data.success);
-        } else {
-            // Try with English if Khmer fails
-            const enResponse = await axios.get('https://api.simsimi.net/v2/', {
-                params: {
-                    text: text,
-                    lc: 'en',
-                    key: config.simsimiApiKey
-                }
-            });
-            
-            if (enResponse.data && enResponse.data.success) {
-                message.reply(enResponse.data.success);
-            } else {
-                message.reply('Sry ah pov, knhom ot yol hg niyeay ey teh.');
-            }
+
+        const botMsg = response.data.response;
+
+        if (botMsg) {
+            // Discord has a 2000 character limit
+            const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
+            message.reply(finalMsg);
         }
     } catch (error) {
-        logger.error('SimSimi API Error:', error.message);
-        
-        // Try fallback to a simpler response if API fails
-        message.reply('Zzz... knhom nget ngui nas, jam knhom skor ban chlery teat.');
+        logger.error('AI API Error:', error.message);
+        message.reply('Sry ah pov, knhom nget ngui nas (AI Error). Jam tic teat jam talk mork knhom teat.');
     }
 }

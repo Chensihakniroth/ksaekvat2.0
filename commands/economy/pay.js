@@ -165,9 +165,6 @@ module.exports = {
                         inline: true
                     }
                 )
-                
-                
-                });
 
             // Send confirmation message
             message.reply({ embeds: [successEmbed] });

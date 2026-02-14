@@ -31,7 +31,12 @@ module.exports = {
     // API Keys
     giphyApiKey: process.env.GHIPHY_API_KEY || process.env.GIPHY_API_KEY || 'default_giphy_key',
     googleApiKey: process.env.GOOGLE_API_KEY || 'default_google_key',
-    simsimiApiKey: process.env.SIMSIMI_API_KEY || 'dM-GN-OBcSf45RxWApljYKQORtxb1eRvUIZwjTvJ',
+    
+    // AI Chatbot Configuration (Ollama/Open WebUI)
+    aiConfig: {
+        baseUrl: process.env.AI_BASE_URL || 'http://ollama.railway.internal:11434',
+        model: process.env.AI_MODEL || 'llama3'
+    },
     
     // Economy Configuration
     economy: {

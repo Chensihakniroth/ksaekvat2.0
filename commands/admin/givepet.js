@@ -168,9 +168,6 @@ module.exports = {
                     }
                 )
                 .setThumbnail(target.displayAvatarURL({ dynamic: true }))
-                
-                })
-                
 
             await message.reply({ embeds: [embed] });
 
