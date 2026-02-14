@@ -299,6 +299,7 @@ Current Instructions: You are ${charCard.name}. Follow the personality and style
 
         if (response.data && response.data.message) {
             const botMsg = response.data.message.content;
+            const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
             
             // Save to memory
             history.push({ role: 'user', content: text });
