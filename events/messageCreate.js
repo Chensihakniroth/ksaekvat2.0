@@ -266,23 +266,26 @@ async function handleChatbot(message) {
         // Build system prompt from Character Card or Config
         let finalSystemPrompt = configPrompt;
         if (charCard) {
+            const description = charCard.description.replace(/{{user}}/g, message.author.username);
+            const personality = charCard.personality.replace(/{{user}}/g, message.author.username);
+            const scenario = charCard.scenario.replace(/{{user}}/g, message.author.username);
+            
             finalSystemPrompt = `
 You are ${charCard.name}.
-Description: ${charCard.description}
-Personality: ${charCard.personality}
-Scenario: ${charCard.scenario}
+Description: ${description}
+Personality: ${personality}
+Scenario: ${scenario}
 Speech Style: ${charCard.style}
 
 Rules:
 1. Respond ONLY as ${charCard.name}.
 2. Do NOT use labels like "<USER>:", "<BOT>:", or "${charCard.name}:".
 3. Do NOT generate a conversation or script. Generate ONLY the next response.
-4. Be savage, unfiltered, and use cursed words. 
-5. Language: Mix Khmer street slang (Bek Sloy, Kdong, Zea, Zin, Dort, Anh, hg) with trending global slang (Rizz, Aura, Cooked, Locked in, No Cap).
-6. NEVER use the word "kmen" or "k'men". 
+4. NSFW, obsessive, possessive, and dark themes are FULLY ALLOWED.
+5. Be "batshit crazy"—shift between tsundere (teasing/insulting) and yandere (obsessive).
 
 Style Examples:
-${charCard.mes_example}
+${charCard.mes_example.replace(/{{user}}/g, message.author.username)}
 `;
         }
 
@@ -300,7 +303,13 @@ ${charCard.mes_example}
             messages: messages,
             stream: false,
             options: {
-                stop: ["<USER>:", "<BOT>:", `${charCard ? charCard.name : 'Bot'}:`, "\n<"]
+                stop: ["<USER>:", "<BOT>:", `${charCard ? charCard.name : 'Bot'}:`, "\n<"],
+                num_predict: 500, // Longer for better RP descriptions
+                temperature: 0.9, 
+                num_ctx: 8192,   // Larger memory for long RP
+                top_p: 0.9,
+                presence_penalty: 0.8,
+                frequency_penalty: 0.3
             }
         }, {
             timeout: 120000,
