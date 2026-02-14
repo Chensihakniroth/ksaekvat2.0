@@ -232,39 +232,36 @@ async function handleChatbot(message) {
 
     try {
         const { baseUrl, model } = config.aiConfig;
-        const url = `${baseUrl}/api/generate`;
+        const url = `${baseUrl}/api/chat`;
         
-        logger.info(`Sending request to Ollama: ${url} (Model: ${model})`);
+        logger.info(`AI Request -> URL: ${url} | Model: ${model}`);
 
         const response = await axios.post(url, {
             model: model,
-            prompt: `You are a helpful and funny Discord bot named KsaeKvat. 
-            User says: ${text}
-            Response (concise, friendly, can use Khmer and English):`,
+            messages: [
+                { role: 'user', content: `System: You are KsaeKvat, a funny Discord bot. User: ${text}` }
+            ],
             stream: false
         }, {
-            timeout: 60000 
+            timeout: 120000,
+            headers: { 'Content-Type': 'application/json' }
         });
 
-        logger.info(`Ollama raw response received: ${JSON.stringify(response.data).substring(0, 200)}...`);
-
-        const botMsg = response.data.response;
-
-        if (botMsg) {
-            const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
-            message.reply(finalMsg);
+        if (response.data && response.data.message) {
+            const botMsg = response.data.message.content;
+            return message.reply(botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg);
         } else {
-            logger.warn('Ollama returned an empty response.');
-            message.reply('Sry ah pov, knhom ot deng chlery ey teh (Empty response).');
+            logger.error(`Invalid response structure: ${JSON.stringify(response.data)}`);
+            message.reply('Sry ah pov, AI chlery mork neng ot yol teh.');
         }
     } catch (error) {
-        if (error.code === 'ECONNREFUSED') {
-            logger.error(`Ollama connection refused at ${error.config.url}. Is the service running?`);
-        } else if (error.code === 'ETIMEDOUT') {
-            logger.error('Ollama request timed out. The model might be loading or too slow.');
+        if (error.code === 'ENOTFOUND') {
+            logger.error(`DNS Error: Could not find host ${baseUrl}. check name railway internal hg mer?`);
+        } else if (error.code === 'ECONNREFUSED') {
+            logger.error(`Connection Refused: Port 11434 is closed on ${baseUrl}.`);
         } else {
-            logger.error('AI API Error:', error.message);
+            logger.error(`AI Error (${error.code || 'UNKNOWN'}): ${error.message}`);
         }
-        message.reply('Sry ah pov, knhom nget ngui nas (AI Error). Jam tic teat jam talk mork knhom teat.');
+        message.reply(`Sry ah pov, AI error: ${error.code || 'TIMEOUT'}. Jam tic teat jam talk teat.`);
     }
 }

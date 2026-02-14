@@ -34,7 +34,7 @@ module.exports = {
     
     // AI Chatbot Configuration (Ollama/Open WebUI)
     aiConfig: {
-        baseUrl: process.env.AI_BASE_URL || 'http://ollama.railway.internal:11434',
+        baseUrl: process.env.AI_BASE_URL || 'http://llama.railway.internal:11434',
         model: process.env.AI_MODEL || 'nemotron-mini:4b-instruct-q3_K_S'
     },
     
