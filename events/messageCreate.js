@@ -232,9 +232,9 @@ async function handleChatbot(message) {
 
     try {
         const { baseUrl, model } = config.aiConfig;
-        
-        // Using Ollama /api/generate endpoint
         const url = `${baseUrl}/api/generate`;
+        
+        logger.info(`Sending request to Ollama: ${url} (Model: ${model})`);
 
         const response = await axios.post(url, {
             model: model,
@@ -243,18 +243,28 @@ async function handleChatbot(message) {
             Response (concise, friendly, can use Khmer and English):`,
             stream: false
         }, {
-            timeout: 60000 // AI can take longer to respond
+            timeout: 60000 
         });
+
+        logger.info(`Ollama raw response received: ${JSON.stringify(response.data).substring(0, 200)}...`);
 
         const botMsg = response.data.response;
 
         if (botMsg) {
-            // Discord has a 2000 character limit
             const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
             message.reply(finalMsg);
+        } else {
+            logger.warn('Ollama returned an empty response.');
+            message.reply('Sry ah pov, knhom ot deng chlery ey teh (Empty response).');
         }
     } catch (error) {
-        logger.error('AI API Error:', error.message);
+        if (error.code === 'ECONNREFUSED') {
+            logger.error(`Ollama connection refused at ${error.config.url}. Is the service running?`);
+        } else if (error.code === 'ETIMEDOUT') {
+            logger.error('Ollama request timed out. The model might be loading or too slow.');
+        } else {
+            logger.error('AI API Error:', error.message);
+        }
         message.reply('Sry ah pov, knhom nget ngui nas (AI Error). Jam tic teat jam talk mork knhom teat.');
     }
 }
