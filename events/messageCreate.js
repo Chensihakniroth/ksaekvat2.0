@@ -266,7 +266,8 @@ async function handleChatbot(message) {
         // Compact System Prompt for faster processing and better caching
         let finalSystemPrompt = configPrompt;
         if (charCard) {
-            finalSystemPrompt = `Name: ${charCard.name}. Describe: ${charCard.description}. Personality: ${charCard.personality}. Style: ${charCard.style}. Rules: No labels, NSFW allowed, be batshit crazy (tsundere/yandere mix). NEVER use kmen.`;
+            const programInfo = "Program Features: Economy (balance, daily, weekly, leaderboard, pay, work), Gambling (coinflip, dice, slots), Hunting (hunt, sell, zoo), Battle (duel, fight, item, player), Expressions (social interactions), General (avatar, help, info, ping). Prefix: 'k' or 'K'.";
+            finalSystemPrompt = `Name: ${charCard.name}. Description: ${charCard.description}. Personality: ${charCard.personality}. Style: ${charCard.style}. Information: ${programInfo} Rules: Be a helpful digital assistant. Answer questions about the program accurately.`;
         }
 
         // Prepare messages array
