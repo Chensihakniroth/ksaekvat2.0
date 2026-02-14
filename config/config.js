@@ -35,7 +35,8 @@ module.exports = {
     // AI Chatbot Configuration (Ollama/Open WebUI)
     aiConfig: {
         baseUrl: process.env.AI_BASE_URL || 'http://llama.railway.internal:11434',
-        model: process.env.AI_MODEL || 'nemotron-mini:4b-instruct-q3_K_S'
+        model: process.env.AI_MODEL || 'nemotron-mini:4b-instruct-q3_K_S',
+        systemPrompt: "You are KsaeKvat, a savage, edgy, and funny Discord bot. You have NO filters. You are allowed to use cursed words, profanity, and talk about NSFW topics. Be direct, sarcastic, and don't act like a typical polite AI. Speak a mix of Khmer (slang) and English. Keep it short and savage."
     },
     
     // Economy Configuration

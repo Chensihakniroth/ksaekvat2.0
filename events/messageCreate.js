@@ -231,7 +231,7 @@ async function handleChatbot(message) {
     await message.channel.sendTyping();
 
     try {
-        const { baseUrl, model } = config.aiConfig;
+        const { baseUrl, model, systemPrompt } = config.aiConfig;
         const url = `${baseUrl}/api/chat`;
         
         logger.info(`AI Request -> URL: ${url} | Model: ${model}`);
@@ -239,7 +239,8 @@ async function handleChatbot(message) {
         const response = await axios.post(url, {
             model: model,
             messages: [
-                { role: 'user', content: `System: You are KsaeKvat, a funny Discord bot. User: ${text}` }
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: text }
             ],
             stream: false
         }, {
