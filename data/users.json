@@ -1,9 +1,9 @@
 {
   "1160984144290005012": {
     "id": "1160984144290005012",
-    "balance": 13900,
+    "balance": 1501076,
     "level": 7,
-    "experience": 45,
+    "experience": 170,
     "dailyClaimed": true,
     "weeklyClaimed": true,
     "lastDaily": "2026-02-14T17:03:21.565Z",
@@ -33,10 +33,10 @@
     },
     "boosters": {},
     "totalAnimalsFound": 11,
-    "totalGambled": 104893529,
-    "totalWon": 35075317,
-    "totalLost": 78819521,
-    "commandsUsed": 521,
+    "totalGambled": 106435229,
+    "totalWon": 35839217,
+    "totalLost": 79097321,
+    "commandsUsed": 524,
     "joinedAt": 1753861341576,
     "inventory": [
       {
@@ -168,7 +168,10 @@
         "obtainedAt": "2026-02-14T18:32:35.219Z"
       }
     },
-    "worldLevel": 1
+    "worldLevel": 1,
+    "stats": {
+      "coinflip_win": 1
+    }
   },
   "764691513242025995": {
     "id": "764691513242025995",
@@ -382,9 +385,9 @@
   },
   "703266672022388789": {
     "id": "703266672022388789",
-    "balance": 100000000,
-    "level": 2,
-    "experience": 110,
+    "balance": 99754654,
+    "level": 3,
+    "experience": 70,
     "dailyClaimed": true,
     "weeklyClaimed": true,
     "lastDaily": "2026-02-14T21:10:19.314Z",
@@ -408,18 +411,18 @@
     "inventory": [],
     "equipped": {},
     "totalAnimalsFound": 6,
-    "totalGambled": 164731099,
-    "totalWon": 147722584,
-    "totalLost": 29791000,
-    "commandsUsed": 68,
+    "totalGambled": 165731099,
+    "totalWon": 147972584,
+    "totalLost": 30291000,
+    "commandsUsed": 78,
     "joinedAt": 1768376053676,
     "worldLevel": 1,
     "stats": {
       "hunt_success": 5
     },
     "lootbox": 1,
-    "dailyPulls": 64,
-    "lastGachaReset": "2026-02-14T21:32:34.849Z",
+    "dailyPulls": 1,
+    "lastGachaReset": "2026-02-17T09:14:36.915Z",
     "gacha_inventory": [
       {
         "name": "Debby",
@@ -4260,6 +4263,66 @@
         "game": "HSR",
         "emoji": "🔥",
         "rarity": 5
+      },
+      {
+        "name": "Debby",
+        "game": "ZZZ",
+        "emoji": "📦",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "TD Echo",
+        "game": "WuWa",
+        "emoji": "👻",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
+      },
+      {
+        "name": "Bennett",
+        "game": "Genshin",
+        "emoji": "👍",
+        "rarity": 4
+      },
+      {
+        "name": "Hilight",
+        "game": "HSR",
+        "emoji": "🤖",
+        "rarity": 3
+      },
+      {
+        "name": "Bangboo",
+        "game": "ZZZ",
+        "emoji": "🐰",
+        "rarity": 3
       }
     ]
   },
@@ -4307,9 +4370,9 @@
   },
   "971058293734789150": {
     "id": "971058293734789150",
-    "balance": 1000,
+    "balance": 1220,
     "level": 1,
-    "experience": 0,
+    "experience": 41,
     "dailyClaimed": false,
     "weeklyClaimed": false,
     "lastDaily": null,
@@ -4323,9 +4386,10 @@
     "totalGambled": 10000,
     "totalWon": 0,
     "totalLost": 0,
-    "commandsUsed": 9,
+    "commandsUsed": 11,
     "joinedAt": 1768377256866,
-    "worldLevel": 1
+    "worldLevel": 1,
+    "stats": {}
   },
   "1250803073685655604": {
     "id": "1250803073685655604",

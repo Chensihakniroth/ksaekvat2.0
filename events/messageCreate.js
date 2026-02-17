@@ -14,7 +14,7 @@ const CHARACTER_FILE = path.join(__dirname, '../data/character.json');
 
 // Memory storage for conversation history (Channel-based)
 const conversationMemory = new Map();
-const MAX_MEMORY = 10; // Increased for better context
+const MAX_MEMORY = 20; // Increased to 20 messages (10 turns) for much better context retention
 
 function loadCharacterCard() {
     try {
@@ -125,12 +125,6 @@ module.exports = {
 
         // If no valid prefix found, return
         if (!prefix || !commandName) return;
-
-        // Handle "all" betting prefix
-        if (args.length > 0 && args[0].toLowerCase() === 'all') {
-            const user = database.getUser(message.author.id);
-            args[0] = Math.min(user.balance, 250000).toString(); // Bet everything up to the max
-        }
 
         // Get the command
         const command = client.commands.get(commandName);
@@ -283,20 +277,75 @@ async function handleChatbot(message) {
     try {
         const { baseUrl, model, systemPrompt: configPrompt } = config.aiConfig;
         const charCard = loadCharacterCard();
-        const url = `${baseUrl}/api/chat`;
+
+        // --- STEP 1: Understanding with Gemini ---
+        let processedUserMessage = text;
+        
+        async function callGemini(retryCount = 0, useFlash = false) {
+            const modelName = useFlash ? "gemini-2.5-flash" : "gemini-2.5-pro";
+            try {
+                const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${config.googleApiKey}`;
+                const geminiResponse = await axios.post(geminiUrl, {
+                    contents: [{
+                        parts: [{
+                            text: `Convert this message to pure Khmer script. Respond ONLY with the Khmer script, no English, no explanations. Message: "${text}"`
+                        }]
+                    }],
+                    generationConfig: {
+                        temperature: 0.1,
+                        maxOutputTokens: 200
+                    }
+                }, { timeout: 10000 });
+
+                if (geminiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    return geminiResponse.data.candidates[0].content.parts[0].text.trim();
+                }
+            } catch (error) {
+                // If 429 and we haven't tried Flash yet, try Flash immediately
+                if (error.response?.status === 429 && !useFlash) {
+                    logger.warn(`Gemini 2.5 Pro Limited. Falling back to 2.5 Flash...`);
+                    return callGemini(0, true);
+                }
+                
+                // If still 429, perform standard backoff
+                if (error.response?.status === 429 && retryCount < 2) {
+                    const delay = Math.pow(2, retryCount) * 1000;
+                    logger.warn(`Gemini ${modelName} Rate Limited. Retrying in ${delay}ms...`);
+                    await new Promise(r => setTimeout(r, delay));
+                    return callGemini(retryCount + 1, useFlash);
+                }
+                throw error;
+            }
+            return text;
+        }
+
+        try {
+            processedUserMessage = await callGemini();
+            if (processedUserMessage !== text) {
+                logger.info(`Gemini Understood: "${text}" -> "${processedUserMessage}"`);
+            }
+        } catch (geminiError) {
+            // Silently fall back to original text without heavy error logging if it's just a rate limit
+            if (geminiError.response?.status !== 429) {
+                logger.error(`Gemini processing failed: ${geminiError.message}`);
+            }
+            processedUserMessage = text;
+        }
+
+        // --- STEP 2: Response generation with Sea Lion ---
+        const url = `${baseUrl}/chat/completions`;
         
         // Compact System Prompt for faster processing and better caching
         let finalSystemPrompt = configPrompt;
         if (charCard) {
-            const programInfo = "Program Features: Economy (balance, daily, weekly, leaderboard, pay, work), Gambling (coinflip, rps, slots, blackjack), Hunting (hunt, sanctuary zoo, loot boxes), Battle (World System 1-10, AR Ascension Quests), Gacha (Daily 10-pulls, Character Archive), Expressions (social interactions, blowjob), General (avatar, help, info, ping). Prefix: 'k' or 'K'.";
-            finalSystemPrompt = `Name: ${charCard.name}. Description: ${charCard.description}. Personality: ${charCard.personality}. Style: ${charCard.style}. Information: ${programInfo} Rules: Be a helpful digital assistant. Answer questions about the program accurately.`;
+            finalSystemPrompt = `Name: ${charCard.name}. Style: ${charCard.style}. Personality: ${charCard.personality}. Rules: You understand Khmer script, sync Khmer, and English. Respond ONLY in Khmer script. Keep it EXTREMELY short and direct. No yapping. Be flirty beksloy by default, but savage if provoked. IMPORTANT: Maintain context but stay brief.`;
         }
 
         // Prepare messages array
         const messages = [
             { role: 'system', content: finalSystemPrompt },
             ...history,
-            { role: 'user', content: text }
+            { role: 'user', content: processedUserMessage }
         ];
 
         logger.info(`AI Request -> Channel: ${channelId} | History: ${history.length/2} turns`);
@@ -304,22 +353,20 @@ async function handleChatbot(message) {
         const response = await axios.post(url, {
             model: model,
             messages: messages,
-            stream: false,
-            options: {
-                stop: ["<USER>:", "<BOT>:", `${charCard ? charCard.name : 'Bot'}:`, "\n"],
-                num_predict: 500, 
-                temperature: 0.7, 
-                num_ctx: 4096,   
-                top_p: 0.9,
-                presence_penalty: 0.6
-            }
+            max_completion_tokens: 150, 
+            temperature: 0.7, 
+            top_p: 0.9,
+            presence_penalty: 0.6
         }, {
-            timeout: 300000, // Increased to 5 minutes for heavy models
-            headers: { 'Content-Type': 'application/json' }
+            timeout: 60000, // 1 minute is usually enough for cloud APIs
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${config.seaLionApiKey}`
+            }
         });
 
-        if (response.data && response.data.message) {
-            let botMsg = response.data.message.content;
+        if (response.data && response.data.choices && response.data.choices[0]) {
+            let botMsg = response.data.choices[0].message.content;
             
             // Post-process cleanup
             if (charCard) {
@@ -329,7 +376,7 @@ async function handleChatbot(message) {
             const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
             
             // Save to memory (Channel history)
-            history.push({ role: 'user', content: text });
+            history.push({ role: 'user', content: processedUserMessage });
             history.push({ role: 'assistant', content: botMsg });
             
             if (history.length > MAX_MEMORY * 2) {

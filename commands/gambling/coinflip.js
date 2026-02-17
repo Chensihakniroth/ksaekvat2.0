@@ -6,8 +6,8 @@ const config = require('../../config/config.js');
 module.exports = {
     name: 'coinflip',
     aliases: ['cf', 'flip'],
-    description: 'Flip a coin and gamble your coins',
-    usage: 'coinflip <amount/all> [heads/tails]',
+    description: 'បោះកាក់ផ្សងសំណាងជាមួយបង',
+    usage: 'coinflip <ចំនួន/all> [ក្បាល/កន្ទុយ]',
     cooldown: 3000, // 3 seconds
     execute(message, args, client) {
         // Check arguments
@@ -15,8 +15,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ khos luy ai ah pov',
-                    description: 'hg dak luy oy trov mer! \n**Usage:** `Kcoinflip <amount/all> [heads/tails]`\n**Example:** `Kcf 1000 heads` or `Kcf all tails`',
+                    title: '❌ ដាក់លុយខុសហើយអូនសម្លាញ់',
+                    description: 'ដាក់លុយឱ្យត្រូវមើលម្ចាស់ថ្លៃ! \n**របៀបប្រើ:** `Kcoinflip <ចំនួន/all> [heads/tails]`\n**ឧទាហរណ៍:** `Kcf 1000 heads` ឬ `Kcf all tails`',
                 }]
             });
         }
@@ -29,66 +29,58 @@ module.exports = {
         if (args[0].toLowerCase() === 'all') {
             isAllBet = true;
             const { maxBet } = config.gambling.coinflip;
-            // Use the smaller value between user's balance and maxBet cap
             betAmount = Math.min(userData.balance, maxBet);
 
             if (betAmount <= 0) {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '💸 ort luy heh',
-                        description: `hg ot luy jak lbeng ${config.economy.currency}!`,
+                        title: '💸 អត់មានលុយទេអូន',
+                        description: `អូនអត់មានលុយក្នុងខ្លួនផង ចង់លេងល្បែងមិចកើត!`,
                     }]
                 });
             }
         } else {
-            // Parse specific bet amount
             betAmount = parseInt(args[0]);
             if (isNaN(betAmount) || betAmount <= 0) {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ khos luy ai ah pov',
-                        description: 'hg dak luy oy trov mer! or brer "all".',
+                        title: '❌ ដាក់លុយឱ្យត្រូវមើលមាសស្ងួន',
+                        description: 'ដាក់ជាលេខមកម្ចាស់ថ្លៃ កុំធ្វើឱ្យបងពិបាកចិត្តអី។',
                     }]
                 });
             }
         }
 
-        // Check minimum bet requirement for both cases
         const { minBet, maxBet } = config.gambling.coinflip;
         if (betAmount < minBet) {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '💸 Minimum Bet Required',
-                    description: `Minimum bet amount is **${minBet.toLocaleString()}** ${config.economy.currency}.`,
+                    title: '💸 លុយតិចពេកហើយអូន',
+                    description: `យ៉ាងហោចណាស់ក៏ត្រូវមាន **${minBet.toLocaleString()}** ${config.economy.currency} ដែរណាម្ចាស់ស្នេហ៍។`,
                     timestamp: new Date()
                 }]
             });
         }
 
-        // Apply max bet restriction ONLY when using "all"
         if (isAllBet && betAmount > maxBet) {
             betAmount = maxBet;
         }
-        // For specific number bets, no max restriction - only check if user has enough balance
 
-        // Check if user has enough balance
         if (!database.hasBalance(message.author.id, betAmount)) {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '💸 kmean luy ma cent jong jak l\'beng',
-                    description: `luy ort krub jak lbeng teh! ${config.economy.currency}!\n**Luy hg:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**Trov ka:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
-                    
+                    title: '💸 អត់លុយគ្រប់ទេអូនសម្លាញ់',
+                    description: `លុយអូនអត់គ្រប់ចាក់ទេណា! \n**លុយអូនមាន:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**ត្រូវការ:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
                 }]
             });
         }
 
-        // Get user's choice (heads or tails)
-        let userChoice = 'heads'; // default
-        const choiceArgIndex = isAllBet ? 1 : 1; // Choice is always the second argument
+        let userChoice = 'heads'; 
+        const choiceArgIndex = 1; 
         if (args.length > choiceArgIndex) {
             const choice = args[choiceArgIndex].toLowerCase();
             if (choice === 'tails' || choice === 't') {
@@ -98,40 +90,35 @@ module.exports = {
             }
         }
 
-        // Remove bet amount from user's balance
         database.removeBalance(message.author.id, betAmount);
         database.updateStats(message.author.id, 'gambled', betAmount);
 
-        // Animation frames for spinning coin
         const frames = ['🪙', '⚪', '🪙', '⚪', '🪙', '⚪', '🪙'];
         let frameIndex = 0;
 
-        // Add bet type indicator in the description
-        const betTypeText = isAllBet ? ` (${betAmount >= maxBet ? 'Max Bet' : 'All-In'})` : '';
+        const betTypeText = isAllBet ? ` (${betAmount >= maxBet ? 'ចាក់អស់ស៊ុប' : 'ចាក់ទាំងអស់'})` : '';
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('🪙 Coinflip')
-            .setDescription(`**hg jak :** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**hg rers :** ${userChoice.charAt(0).toUpperCase() + userChoice.slice(1)}\n\n${frames[0]} **Jam tic anh flip oy mer...**`)
+            .setTitle('🪙 បោះកាក់ផ្សងសំណាង')
+            .setDescription(`**អូនចាក់ :** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**អូនរើស :** ${userChoice === 'heads' ? 'ក្បាល (Heads)' : 'កន្ទុយ (Tails)'}\n\n${frames[0]} **ចាំបន្តិចណាម្ចាស់ថ្លៃ បងកំពុងបោះកាក់ឱ្យហើយ...**`)
+        
         message.reply({ embeds: [embed] }).then(async (sentMessage) => {
-            // Animate the spinning coin
             for (let i = 0; i < 6; i++) {
                 await new Promise(resolve => setTimeout(resolve, 150));
                 frameIndex = (frameIndex + 1) % frames.length;
 
                 const animationEmbed = new EmbedBuilder()
                     .setColor(colors.primary)
-                    .setTitle('🪙 Coinflip')
-                    .setDescription(`**hg jak :** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**hg rers :** ${userChoice.charAt(0).toUpperCase() + userChoice.slice(1)}\n\n${frames[frameIndex]} **Jam tic anh flip oy mer...**`)
+                    .setTitle('🪙 បោះកាក់ផ្សងសំណាង')
+                    .setDescription(`**អូនចាក់ :** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**អូនរើស :** ${userChoice === 'heads' ? 'ក្បាល (Heads)' : 'កន្ទុយ (Tails)'}\n\n${frames[frameIndex]} **ចាំបន្តិចណាម្ចាស់ថ្លៃ បងកំពុងបោះកាក់ឱ្យហើយ...**`)
                 try {
                     await sentMessage.edit({ embeds: [animationEmbed] });
                 } catch (error) {
-                    // Message might be deleted, stop animation
                     return;
                 }
             }
 
-            // Determine result
             const coinResult = Math.random() < 0.5 ? 'heads' : 'tails';
             const won = coinResult === userChoice;
             const resultEmoji = coinResult === 'heads' ? '🟡' : '⚪';
@@ -139,32 +126,29 @@ module.exports = {
             let finalEmbed;
 
             if (won) {
-                // User won - double their money
                 const winAmount = betAmount * 2;
                 const newBalance = database.addBalance(message.author.id, winAmount);
                 database.updateStats(message.author.id, 'won', betAmount);
                 database.updateStats(message.author.id, 'coinflip_win', 1);
-
-                // Add experience for winning
                 const expGain = database.addExperience(message.author.id, 20);
 
                 finalEmbed = new EmbedBuilder()
                     .setColor(colors.success)
-                    .setTitle('🎉 jm loy bos ke!')
-                    .setDescription(`${resultEmoji} The coin landed on **${coinResult}**!\nTos pherk!`)
+                    .setTitle('🎉 ហេងណាស់ម្ចាស់ស្នេហ៍បង!')
+                    .setDescription(`${resultEmoji} កាក់ធ្លាក់ចំ **${coinResult === 'heads' ? 'ក្បាល' : 'កន្ទុយ'}** ហើយអូន!\nបងជូនសំណាងឱ្យហើយណាម្ចាស់ថ្លៃ។`)
                     .addFields(
                         {
-                            name: '💰 Luy knong khao',
+                            name: '💰 លុយចូលហោប៉ៅ',
                             value: `**+${winAmount.toLocaleString()}** ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '💳 Balance Thmei',
+                            name: '💳 សរុបថ្មី',
                             value: `${newBalance.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '⭐ Bek XP',
+                            name: '⭐ XP កើនបាន',
                             value: '+20 XP',
                             inline: true
                         }
@@ -172,33 +156,32 @@ module.exports = {
 
                 if (expGain.leveledUp) {
                     finalEmbed.addFields({
-                        name: '🎉 Lerng Sak!',
-                        value: `kop sari ! hg lerng sak hz tov Level **${expGain.newLevel}**!`,
+                        name: '🎉 ឡើងស័កហើយ!',
+                        value: `កប់ស៊េរី! អូនឡើងដល់កម្រិតទី **${expGain.newLevel}** ហើយណាម្ចាស់ថ្លៃ!`,
                         inline: false
                     });
                 }
             } else {
-                // User lost
                 const currentUserData = database.getUser(message.author.id);
                 database.updateStats(message.author.id, 'lost', betAmount);
 
                 finalEmbed = new EmbedBuilder()
                     .setColor(colors.error)
-                    .setTitle('💸 Os luy hz ah pov!')
-                    .setDescription(`${resultEmoji} The coin landed on **${coinResult}**.\nOs luy hz ah pov, jam flip teat tov!`)
+                    .setTitle('💸 អស់លុយបាត់ហើយម្ចាស់ស្នេហ៍!')
+                    .setDescription(`${resultEmoji} កាក់ធ្លាក់ចំ **${coinResult === 'heads' ? 'ក្បាល' : 'កន្ទុយ'}**។\nកុំតូចចិត្តអីអូនសម្លាញ់ ចាំបន្តិចទៀតសាកសំណាងជាមួយបងថ្មីណា។`)
                     .addFields(
                         {
-                            name: '💸 Bat luy',
+                            name: '💸 បាត់បង់លុយ',
                             value: `-${betAmount.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '💳 Luy nov sol',
+                            name: '💳 លុយនៅសល់',
                             value: `${currentUserData.balance.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '🎯 Chance',
+                            name: '🎯 ឱកាសឈ្នះ',
                             value: '50/50',
                             inline: true
                         }
@@ -206,17 +189,15 @@ module.exports = {
             }
 
             finalEmbed.setFooter({ 
-                text: `Game completed | Your choice: ${userChoice}${isAllBet ? ' | All-in bet' : ''}`,
+                text: `ល្បែងចប់ហើយ | អូនរើស: ${userChoice} | ស្នេហ៍ពិតមិនចាញ់ល្បែងទេ`,
                 iconURL: message.author.displayAvatarURL()
             }).setTimestamp();
 
-            // Update command usage statistics
             database.updateStats(message.author.id, 'command');
 
             try {
                 await sentMessage.edit({ embeds: [finalEmbed] });
             } catch (error) {
-                // Message might be deleted
                 message.channel.send({ embeds: [finalEmbed] });
             }
         }).catch(error => {

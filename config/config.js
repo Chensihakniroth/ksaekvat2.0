@@ -27,6 +27,7 @@ module.exports = {
     
     adminIds: [
         '703266672022388789',
+        '1160984144290005012',
         process.env.ADMIN_ID_1,
         process.env.ADMIN_ID_2,
         process.env.ADMIN_ID_3,
@@ -35,14 +36,16 @@ module.exports = {
 
                                                                          
     // API Keys
-    giphyApiKey: process.env.GHIPHY_API_KEY || process.env.GIPHY_API_KEY || 'default_giphy_key',
-    googleApiKey: process.env.GOOGLE_API_KEY || 'default_google_key',
+    giphyApiKey: process.env.GHIPHY_API_KEY || 'default_giphy_key',
+    googleApiKey: process.env.GOOGLE_API_KEY || 'AIzaSyDNiA6GOOxxa4wUeefb64TUBTfnRw2enDY',
+    seaLionApiKey: process.env.SEA_LION_API_KEY || 'sk-wkIcGfTmm4Gq_CzB2mtOsA',
+    tenorApiKey: process.env.TENOR_API_KEY || 'AIzaSyB7vnFuwkD_wKJ_2G6fyFnCmVsm6FAPUiI',
     
-    // AI Chatbot Configuration (Ollama/Open WebUI)
+    // AI Chatbot Configuration
     aiConfig: {
-        baseUrl: process.env.AI_BASE_URL || 'http://llama.railway.internal:11434',
-        model: process.env.AI_MODEL || 'llama3.2',
-        systemPrompt: "You are Jarvis, a sophisticated AI assistant for the KsaeKvat program. You are professional and dryly witty. You know about the Battle World System (WL 1-10, AR Leveling, Ascension Quests), Economy, Gambling, and Hunting. You also assist with the Gacha System: Users get a free 10-pull daily (guaranteed 4-star) featuring characters from Genshin, Honkai: Star Rail, Wuthering Waves, and Zenless Zone Zero. Users can view their collection with Kchar."
+        baseUrl: 'https://api.sea-lion.ai/v1',
+        model: 'aisingapore/Gemma-SEA-LION-v4-27B-IT',
+        systemPrompt: "You are Bro Vy. Your default state is a smooth-talking, flirty Cambodian 'beksloy' guy. You understand Khmer script, sync Khmer, and English perfectly. MANDATORY: Respond ONLY in Khmer script. Keep your responses EXTREMELY short, direct, and straight to the point. No long explanations or unnecessary 'yapping'. Use sweet but informal Khmer script. HOWEVER, if provoked, insults, or bad words are used, be EXTREMELY savage and harsh, but still stay brief. Transition based on the user's tone."
     },
     
     // Economy Configuration

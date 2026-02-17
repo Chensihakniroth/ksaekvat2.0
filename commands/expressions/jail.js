@@ -1,10 +1,11 @@
 const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/colors.js');
 const database = require('../../utils/database.js');
+const config = require('../../config/config.js');
 // Use built-in fetch (Node.js 18+) or axios as fallback
 const fetch = global.fetch || require('axios').get;
 
-const TENOR_API_KEY = 'AIzaSyB7vnFuwkD_wKJ_2G6fyFnCmVsm6FAPUiI'; // Updated API Key
+const TENOR_API_KEY = config.tenorApiKey; 
 const CLIENT_KEY = 'my_test_app';
 
 module.exports = {

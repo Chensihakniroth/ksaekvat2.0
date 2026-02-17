@@ -6,16 +6,16 @@ const config = require('../../config/config.js');
 module.exports = {
     name: 'slots',
     aliases: ['s', 'slot', 'slotmachine'],
-    description: 'Play the slot machine with tiered rewards',
-    usage: 'slots <amount>',
+    description: 'លេងម៉ាស៊ីនស្លុតផ្សងសំណាងជាមួយបង',
+    usage: 'slots <ចំនួន>',
     cooldown: 5000,
     async execute(message, args, client) {
         if (args.length < 1) {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ khos luy ai ah pov',
-                    description: 'hg dak luy oy trov mer! \n**Usage:** `Kslots <amount>`\n**Example:** `Ks 1000`'
+                    title: '❌ ដាក់លុយខុសហើយអូនសម្លាញ់',
+                    description: 'ដាក់លុយឱ្យត្រូវមើលម្ចាស់ថ្លៃ! \n**របៀបប្រើ:** `Kslots <ចំនួន>`\n**ឧទាហរណ៍:** `Ks 1000`'
                 }]
             });
         }
@@ -31,8 +31,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '💸 ort luy heh',
-                        description: `hg ot luy jak lbeng ${config.economy.currency}!`,
+                        title: '💸 អត់មានលុយទេអូន',
+                        description: `អូនអត់មានលុយក្នុងខ្លួនផង ចង់លេងស្លុតមិចកើត!`,
                     }]
                 });
             }
@@ -42,8 +42,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ khos luy ai ah pov',
-                        description: 'hg dak luy oy trov mer! dak luy chea lek mk ah pov.'
+                        title: '❌ ដាក់លុយឱ្យត្រូវមើលមាសស្ងួន',
+                        description: 'ដាក់ជាលេខមកម្ចាស់ថ្លៃ កុំឱ្យបងពិបាកចិត្តអី។'
                     }]
                 });
             }
@@ -53,8 +53,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '💸 ort luy heh',
-                    description: `Minimum bet hg dak ban tae **${minBet.toLocaleString()}** ${config.economy.currency} teh ah chlery.`
+                    title: '💸 លុយតិចពេកហើយអូន',
+                    description: `យ៉ាងហោចណាស់ក៏ត្រូវមាន **${minBet.toLocaleString()}** ${config.economy.currency} ដែរណាម្ចាស់ស្នេហ៍បង។`
                 }]
             });
         }
@@ -64,8 +64,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '💸 kmean luy ma cent jong jak l\'beng',
-                    description: `luy hg ort krub jak lbeng teh ah pov! ${config.economy.currency}!\n**Luy hg:** ${userData.balance.toLocaleString()}\n**Trov ka:** ${betAmount.toLocaleString()}`
+                    title: '💸 អត់លុយគ្រប់ទេអូនសម្លាញ់',
+                    description: `លុយអូនអត់គ្រប់ចាក់ទេណាម្ចាស់ថ្លៃ! \n**លុយអូនមាន:** ${userData.balance.toLocaleString()}\n**ត្រូវការ:** ${betAmount.toLocaleString()}`
                 }]
             });
         }
@@ -73,13 +73,12 @@ module.exports = {
         database.removeBalance(message.author.id, betAmount);
         database.updateStats(message.author.id, 'gambled', betAmount);
 
-        // Adjusted weights: x10 (2%) and x5 (5%) appear less. Coin, Draw, Lose are about equal (~31%).
         const outcomes = [
-            { type: 'diamond', weight: 2, emoji: '🔷', multiplier: 10, name: 'DIAMOND JACKPOT!' },
-            { type: 'rocket', weight: 5, emoji: '🚀', multiplier: 5, name: 'ROCKET BONUS!' },
-            { type: 'coin', weight: 31, emoji: '🪙', multiplier: 2, name: 'COIN WIN!' },
-            { type: 'draw', weight: 31, emoji: '🤝', multiplier: 1, name: 'DRAW!' },
-            { type: 'lose', weight: 31, emoji: '💀', multiplier: 0, name: 'LOSS' }
+            { type: 'diamond', weight: 2, emoji: '💎', multiplier: 10, name: 'ឈ្នះដុំពេជ្រធំហើយអូន!' },
+            { type: 'rocket', weight: 5, emoji: '🚀', multiplier: 5, name: 'ហោះឡើងឋានសួគ៌ហើយ!' },
+            { type: 'coin', weight: 31, emoji: '🪙', multiplier: 2, name: 'ឈ្នះលុយហើយអូនសម្លាញ់!' },
+            { type: 'draw', weight: 31, emoji: '🤝', multiplier: 1, name: 'ស្មើគ្នាទេម្ចាស់ថ្លៃ' },
+            { type: 'lose', weight: 31, emoji: '💀', multiplier: 0, name: 'ចាញ់បាត់ហើយអូន' }
         ];
 
         let outcomePool = [];
@@ -110,8 +109,8 @@ module.exports = {
 
         const slotEmbed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('🎰 Slot Machine (Bek Edition)')
-            .setDescription(`**hg jak :** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n🎰 ┃ 🎯 ┃ 🎲 ┃\n**Spinning...**`)
+            .setTitle('🎰 Slot Machine')
+            .setDescription(`**អូនចាក់ :** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n🎰 ┃ 🎯 ┃ 🎲 ┃\n**កំពុងវិលឱ្យអូនហើយ...**`)
             
 
         const sentMessage = await message.reply({ embeds: [slotEmbed] });
@@ -125,29 +124,29 @@ module.exports = {
                 animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**vel lern...**';
+                statusText = '**វិលលឿនៗ...**';
             } else if (stage < 4) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**pg vel...**';
+                statusText = '**កំពុងវិល...**';
             } else if (stage < 6) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**pg chub...**';
+                statusText = '**ជិតឈប់ហើយ...**';
             } else if (stage < 7) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**vel jong kroy...**';
+                statusText = '**វិលចុងក្រោយ...**';
             } else {
-                statusText = '**Result!**';
+                statusText = '**លទ្ធផលបានហើយ!**';
             }
 
             slotEmbed.setDescription(
-                `**hg jak :** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n` +
-                `🎰 ┃ ${animationSymbols.first} ┃ ${animationSymbols.middle} ┃ ${animationSymbols.last} ┃\n` +
+                `**អូនចាក់ :** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n` +
+                `🎰 ┃ ${animationSymbols.first} ┃ ${animationSymbols.middle} ┃ ${animationSymbols.last} ┃\n\n` +
                 statusText
             );
 
@@ -175,20 +174,20 @@ module.exports = {
             const expGain = database.addExperience(message.author.id, 25);
 
             slotEmbed
-                .setColor(colors.success || 0x43B581)
-                .setTitle(`🎉 jm loy bos ke!`)
+                .setColor(colors.success)
+                .setTitle(`🎉 ហេងណាស់ម្ចាស់ស្នេហ៍បង!`)
                 .setDescription(
                     `**${selectedOutcome.name}**\n\n` +
                     `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-                    `**Luy knong khao:** +${winAmount.toLocaleString()} ${config.economy.currency}\n` +
-                    `**Balance Thmei:** ${newBalance.toLocaleString()} ${config.economy.currency}\n` +
-                    `**Multiplier bek:** x${selectedOutcome.multiplier}`
+                    `**លុយចូលហោប៉ៅ:** +${winAmount.toLocaleString()} ${config.economy.currency}\n` +
+                    `**សរុបថ្មី:** ${newBalance.toLocaleString()} ${config.economy.currency}\n` +
+                    `**មេគុណសំណាង:** x${selectedOutcome.multiplier}`
                 );
 
             if (expGain && expGain.leveledUp) {
                 slotEmbed.addFields({
-                    name: '🎉 Lerng Sak!',
-                    value: `kop sari ! hg lerng sak hz tov Level **${expGain.newLevel}**!`,
+                    name: '🎉 ឡើងស័កហើយ!',
+                    value: `កប់ស៊េរី! អូនឡើងដល់កម្រិតទី **${expGain.newLevel}** ហើយណាម្ចាស់ថ្លៃ!`,
                     inline: false
                 });
             }
@@ -196,25 +195,25 @@ module.exports = {
             const newBalance = database.addBalance(message.author.id, betAmount);
 
             slotEmbed
-                .setColor(colors.secondary || 0x99AAB5)
-                .setTitle('🤝 Smer knea teh!')
+                .setColor(colors.secondary)
+                .setTitle('🤝 ស្មើគ្នាទេណាម្ចាស់ថ្លៃ!')
                 .setDescription(
                     `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-                    `**Dak luy mk vinh hz!**\n\n` +
-                    `**Luy mk vinh:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
-                    `**Balance Thmei:** ${newBalance.toLocaleString()} ${config.economy.currency}`
+                    `**បងជូនលុយអូនវិញហើយ!**\n\n` +
+                    `**លុយបានវិញ:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
+                    `**សរុបថ្មី:** ${newBalance.toLocaleString()} ${config.economy.currency}`
                 );
         } else {
             const userData = database.getUser(message.author.id);
             database.updateStats(message.author.id, 'lost', betAmount);
 
             slotEmbed
-                .setColor(colors.error || 0xF04747)
-                .setTitle('💀 Os luy hz ah pov!')
+                .setColor(colors.error)
+                .setTitle('💀 អស់លុយបាត់ហើយម្ចាស់ស្នេហ៍!')
                 .setDescription(
                     `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-                    `**Bat luy:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
-                    `**Luy nov sol:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
+                    `**បាត់បង់លុយ:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
+                    `**លុយនៅសល់:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
                 );
         }
 
