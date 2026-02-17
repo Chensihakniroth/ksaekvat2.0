@@ -14,7 +14,7 @@ const CHARACTER_FILE = path.join(__dirname, '../data/character.json');
 
 // Memory storage for conversation history (Channel-based)
 const conversationMemory = new Map();
-const MAX_MEMORY = 6; // Reduced to 6 messages (3 turns) for much faster processing
+const MAX_MEMORY = 10; // Increased for better context
 
 function loadCharacterCard() {
     try {
@@ -307,9 +307,9 @@ async function handleChatbot(message) {
             stream: false,
             options: {
                 stop: ["<USER>:", "<BOT>:", `${charCard ? charCard.name : 'Bot'}:`, "\n"],
-                num_predict: 200, 
-                temperature: 0.8, 
-                num_ctx: 2048,   
+                num_predict: 500, 
+                temperature: 0.7, 
+                num_ctx: 4096,   
                 top_p: 0.9,
                 presence_penalty: 0.6
             }

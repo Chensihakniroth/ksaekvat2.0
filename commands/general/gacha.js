@@ -6,12 +6,12 @@ const fs = require('fs');
 const path = require('path');
 
 const POOL_FILE = path.join(__dirname, '../../data/character_pool.json');
-const PULL_COST = 1000000;
+const PULL_COST = 10000;
 
 module.exports = {
     name: 'gacha',
     aliases: ['pull', 'wish', 'roll'],
-    description: 'Daily free 10-pull, or buy more for 1M riel!',
+    description: 'Daily free 10-pull, or buy more for 10k riel!',
     usage: 'gacha',
     cooldown: 5000,
     async execute(message, args, client) {
