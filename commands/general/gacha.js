@@ -11,10 +11,21 @@ const PULL_COST = 10000;
 module.exports = {
     name: 'gacha',
     aliases: ['pull', 'wish', 'roll'],
-    description: 'Daily free 10-pull, or buy more for 10k riel!',
-    usage: 'gacha',
+    description: 'Daily free 10-pull, or buy more for 10k riel! (GS, HSR, WuWa)',
+    usage: 'gacha <gs/hsr/wuwa>',
     cooldown: 5000,
     async execute(message, args, client) {
+        const gameArg = args.join(' ').toLowerCase();
+        let gameKey = '';
+
+        if (gameArg.includes('genshin') || gameArg === 'gs') gameKey = 'genshin';
+        else if (gameArg.includes('hsr') || gameArg.includes('honkai') || gameArg.includes('star rail')) gameKey = 'hsr';
+        else if (gameArg.includes('wuwa') || gameArg.includes('wuthering') || gameArg.includes('waves')) gameKey = 'wuwa';
+
+        if (!gameKey) {
+            return message.reply('✨ Please specify a game! Example: `kwish gs`, `kwish hsr`, or `kwish wuwa` (ﾉ´ヮ`)ﾉ*:･ﾟ✧');
+        }
+
         const userData = database.getUser(message.author.id);
         const now = new Date();
         const lastReset = userData.lastGachaReset ? new Date(userData.lastGachaReset) : null;
@@ -32,19 +43,29 @@ module.exports = {
             database.removeBalance(message.author.id, PULL_COST);
         }
 
-        const pool = JSON.parse(fs.readFileSync(POOL_FILE, 'utf8'));
+        const fullPool = JSON.parse(fs.readFileSync(POOL_FILE, 'utf8'));
+        const pool = fullPool[gameKey];
+        
+        if (!pool) {
+            return message.reply('❌ Oopsie! I couldn\'t find that game pool. (っ˘ω˘ς)');
+        }
+
         let results = [];
         for (let i = 0; i < 10; i++) {
             let rarity;
             const rand = Math.random() * 100;
             const hasEpicPlus = results.some(r => r.rarity >= 4);
-            if (i === 9 && !hasEpicPlus) rarity = Math.random() < 0.1 ? "5" : "4"; 
-            else {
+            
+            if (i === 9 && !hasEpicPlus) {
+                rarity = Math.random() < 0.1 ? "5" : "4"; 
+            } else {
                 if (rand < 0.6) rarity = "5";
                 else if (rand < 5.7) rarity = "4";
                 else rarity = "3";
             }
-            const char = pool[rarity][Math.floor(Math.random() * pool[rarity].length)];
+            
+            const charList = pool[rarity];
+            const char = charList[Math.floor(Math.random() * charList.length)];
             results.push({ ...char, rarity: parseInt(rarity) });
         }
 
@@ -58,27 +79,24 @@ module.exports = {
             ? 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2FoZ2Rid3E4MnduY245eWhzaDNpczNwcmZmczY1eWtsdGU5YjlubCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/d6NUYe7RL9UyZA8yQg/giphy.gif' 
             : 'https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExamRjeTA2Zm1sdXdpZTR5MHY0OGh3bnR2a3Fpa3JnczI4MHpybndvYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/lEHPEcGSmREHCqtqDw/giphy.gif';
 
-        // 1. Send Cinematic Initial Embed (No color, just GIF)
         const initialEmbed = new EmbedBuilder()
-            .setColor('#2F3136') // Dark grey / invisible-ish color
-            .setTitle('✨ Manifesting...')
+            .setColor('#2F3136')
+            .setTitle(`✨ Manifesting in ${gameKey.toUpperCase()}...`)
             .setImage(bannerGif);
 
         const gameMsg = await message.reply({ embeds: [initialEmbed] });
 
-        // 2. Dynamic Wait: 4.9s for 4-star, 9s for 5-star
         const waitTime = hasFiveStar ? 9000 : 4900;
         await new Promise(r => setTimeout(r, waitTime));
 
-        // 3. Reveal Results
         const resultText = results.map(r => {
             const starIcon = r.rarity === 5 ? '🔶' : (r.rarity === 4 ? '🔷' : '⚪');
-            return `${starIcon} **${r.name}** \`[${r.game}]\``;
+            return `${starIcon} ${r.emoji} **${r.name}**`;
         }).join('\n');
 
         const finalEmbed = new EmbedBuilder()
             .setColor(hasFiveStar ? '#FFB13F' : '#A256FF')
-            .setTitle(`✨ Manifestation Confirmed`)
+            .setTitle(`✨ Manifestation Confirmed [${gameKey.toUpperCase()}]`)
             .setDescription(`**Results:**\n${resultText}`)
             .setFooter({ text: isFree ? 'Daily Free Pull used!' : `Paid Pull (${PULL_COST.toLocaleString()} riel)` });
 
