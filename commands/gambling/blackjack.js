@@ -6,7 +6,7 @@ const config = require('../../config/config.js');
 module.exports = {
     name: 'blackjack',
     aliases: ['bj', '21'],
-    description: 'Play a game of Blackjack and gamble your coins',
+    description: 'Play a game of Blackjack with Mommy! (◕‿◕✿)',
     usage: 'blackjack <amount/all>',
     cooldown: 5000,
     async execute(message, args, client) {
@@ -14,8 +14,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ khos luy ai ah pov',
-                    description: 'hg dak luy oy trov mer! \n**Usage:** `Kblackjack <amount/all>`',
+                    title: '❌ Wrong amount, sweetie!',
+                    description: 'Please specify a valid amount to bet. (｡♥‿♥｡) \n**Usage:** `Kblackjack <amount/all>`',
                 }]
             });
         }
@@ -31,16 +31,34 @@ module.exports = {
         }
 
         if (isNaN(betAmount) || betAmount <= 0) {
-            return message.reply('hg dak luy oy trov mer!');
+            return message.reply({
+                embeds: [{
+                    color: colors.error,
+                    title: '❌ Invalid amount',
+                    description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)',
+                }]
+            });
         }
 
         const { minBet, maxBet } = config.gambling.blackjack;
         if (betAmount < minBet || (maxBet && betAmount > maxBet)) {
-            return message.reply(`Bet must be between ${minBet.toLocaleString()} and ${(maxBet || 'unlimited').toLocaleString()} ${config.economy.currency}.`);
+            return message.reply({
+                embeds: [{
+                    color: colors.warning,
+                    title: '💸 Bet out of range',
+                    description: `Your bet must be between **${minBet.toLocaleString()}** and **${(maxBet || 'unlimited').toLocaleString()}** ${config.economy.currency}. (｡♥‿♥｡)`,
+                }]
+            });
         }
 
         if (!database.hasBalance(message.author.id, betAmount)) {
-            return message.reply('luy ort krub jak lbeng teh!');
+            return message.reply({
+                embeds: [{
+                    color: colors.error,
+                    title: '💸 Insufficient funds',
+                    description: `You don't have enough to play Blackjack right now, darling. (｡•́︿•̀｡)`,
+                }]
+            });
         }
 
         // Remove bet
@@ -92,12 +110,8 @@ module.exports = {
         let dealerHand = [drawCard(), drawCard()];
 
         if (shouldBias) {
-            // If we want to nudge a win, ensure player starts with a strong hand (15-20)
-            // This prevents "card pulling fatigue"
             let attempts = 0;
             while (calculateScore(playerHand) < 15 && attempts < 10) {
-                // Return cards to deck and reshuffle would be complex, so we just redraw 
-                // from the already shuffled deck for the start
                 playerHand = [drawCard(), drawCard()];
                 attempts++;
             }
@@ -109,9 +123,9 @@ module.exports = {
             const dealerDisplay = isFinal ? dealerHand.map(c => c.display).join('\n') : `${dealerHand[0].display}\n🎴`;
 
             const embed = new EmbedBuilder()
-                .setTitle('🃏 Blackjack')
+                .setTitle('🃏 Blackjack with Mommy')
                 .addFields(
-                    { name: `Dealer: ${dealerScore}`, value: dealerDisplay, inline: true },
+                    { name: `Mommy: ${dealerScore}`, value: dealerDisplay, inline: true },
                     { name: `You: ${playerScore}`, value: playerHand.map(c => c.display).join('\n'), inline: true }
                 )
                 .setFooter({ text: `Bet: ${betAmount.toLocaleString()} riel`, iconURL: message.author.displayAvatarURL() });
@@ -119,18 +133,18 @@ module.exports = {
             if (isFinal) {
                 const dealerFinal = calculateScore(dealerHand);
                 if (playerScore > 21) {
-                    embed.setColor(colors.error).setDescription('**Bust! Dealer Wins.**\nOs luy hz ah pov.');
+                    embed.setColor(colors.error).setDescription('**Bust! Mommy wins.**\nDon\'t be sad, darling! You can try again later (っ˘ω˘ς)');
                 } else if (dealerFinal > 21) {
-                    embed.setColor(colors.success).setDescription('**Dealer Busts! You Win.**\nTos pherk!');
+                    embed.setColor(colors.success).setDescription('**Dealer Busts! You Win.**\nCongratulations, sweetie! ヽ(>∀<☆)ノ');
                 } else if (playerScore > dealerFinal) {
-                    embed.setColor(colors.success).setDescription('**You Win!**\nTos pherk!');
+                    embed.setColor(colors.success).setDescription('**You Win!**\nMommy is so proud of you! (｡♥‿♥｡)');
                 } else if (playerScore < dealerFinal) {
-                    embed.setColor(colors.error).setDescription('**Dealer Wins.**\nOs luy hz ah pov.');
+                    embed.setColor(colors.error).setDescription('**Mommy Wins.**\nBetter luck next time, sweetie. (｡•́︿•̀｡)');
                 } else {
-                    embed.setColor(colors.warning).setDescription('**Push!**\nLuy nov darl heh.');
+                    embed.setColor(colors.warning).setDescription('**Push!**\nIt\'s a draw, little one. Mommy will give your money back. (◕‿◕✿)');
                 }
             } else {
-                embed.setColor(colors.primary);
+                embed.setColor(colors.primary).setDescription('What will you do, darling? (｡♥‿♥｡)');
             }
 
             return embed;

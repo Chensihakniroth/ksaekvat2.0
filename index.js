@@ -242,6 +242,51 @@ client.once('clientReady', () => {
   logger.blank();
 });
 
+// --- Console Input for Codegen ---
+const readline = require('readline');
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    terminal: false
+});
+
+const promoUtil = require('./utils/promo.js');
+
+rl.on('line', (line) => {
+    const args = line.trim().split(/ +/);
+    const command = args.shift().toLowerCase();
+    
+    if (command === 'codegen') {
+        if (args.length === 0) {
+            console.log('\n--- Code Generation Menu ---');
+            console.log('1. Riel Code ($1,000,000): "codegen riel"');
+            console.log('2. Pulls Code (1x 10-Pull): "codegen pulls"');
+            console.log('3. Custom: "codegen <name> <riel|pulls> <amount> [maxUses]"');
+            return;
+        }
+
+        if (args[0] === 'riel') {
+            const code = promoUtil.createCode('riel');
+            logger.success(`Generated Riel Code: ${code}`);
+        } else if (args[0] === 'pulls') {
+            const code = promoUtil.createCode('pulls');
+            logger.success(`Generated Pulls Code: ${code}`);
+        } else if (args.length >= 3) {
+            const name = args[0];
+            const type = args[1];
+            const amount = parseInt(args[2]);
+            const maxUses = parseInt(args[3]) || 1;
+            
+            if (['riel', 'pulls'].includes(type) && !isNaN(amount)) {
+                promoUtil.createCustomCode(name, type, amount, maxUses);
+                logger.success(`Created Custom Code: ${name} (${amount} ${type}, ${maxUses} uses)`);
+            } else {
+                logger.error('Invalid arguments for custom code. Usage: codegen <name> <riel|pulls> <amount> [maxUses]');
+            }
+        }
+    }
+});
+
 // Reaction events
 client.on('messageReactionAdd', (reaction, user) => {
   logger.debug(`Reaction added: ${reaction.emoji.name} by ${user.username}`);

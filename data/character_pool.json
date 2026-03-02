@@ -172,5 +172,42 @@
       { "name": "Basic Broadblade", "game": "WuWa", "emoji": "⚔️" },
       { "name": "Basic Gauntlets", "game": "WuWa", "emoji": "🥊" }
     ]
+  },
+  "zzz": {
+    "5": [
+      { "name": "Ellen Joe", "game": "ZZZ", "emoji": "🦈" },
+      { "name": "Zhu Yuan", "game": "ZZZ", "emoji": "🔫" },
+      { "name": "Qingyi", "game": "ZZZ", "emoji": "🍵" },
+      { "name": "Jane Doe", "game": "ZZZ", "emoji": "🐭" },
+      { "name": "Caesar King", "game": "ZZZ", "emoji": "🛡️" },
+      { "name": "Burnice White", "game": "ZZZ", "emoji": "🔥" },
+      { "name": "Hoshimi Miyabi", "game": "ZZZ", "emoji": "❄️" },
+      { "name": "Von Lycaon", "game": "ZZZ", "emoji": "🐺" },
+      { "name": "Rina", "game": "ZZZ", "emoji": "👗" },
+      { "name": "Grace Howard", "game": "ZZZ", "emoji": "🔧" },
+      { "name": "Koleda Belobog", "game": "ZZZ", "emoji": "🔨" },
+      { "name": "Nekomata", "game": "ZZZ", "emoji": "🐱" },
+      { "name": "Soldier 11", "game": "ZZZ", "emoji": "⚔️" },
+      { "name": "Yanagi", "game": "ZZZ", "emoji": "🐍" },
+      { "name": "Lighter", "game": "ZZZ", "emoji": "🥊" }
+    ],
+    "4": [
+      { "name": "Anby Demara", "game": "ZZZ", "emoji": "⚡" },
+      { "name": "Billy Kid", "game": "ZZZ", "emoji": "🔫" },
+      { "name": "Nicole Demara", "game": "ZZZ", "emoji": "💼" },
+      { "name": "Corin Wickes", "game": "ZZZ", "emoji": "🪚" },
+      { "name": "Anton Ivanov", "game": "ZZZ", "emoji": "⚡" },
+      { "name": "Ben Bigger", "game": "ZZZ", "emoji": "🐻" },
+      { "name": "Soukaku", "game": "ZZZ", "emoji": "👹" },
+      { "name": "Lucy", "game": "ZZZ", "emoji": "🐗" },
+      { "name": "Piper Wheel", "game": "ZZZ", "emoji": "🚜" },
+      { "name": "Seth Lowell", "game": "ZZZ", "emoji": "🐱" }
+    ],
+    "3": [
+      { "name": "Bangboo", "game": "ZZZ", "emoji": "🐰" },
+      { "name": "W-Engine", "game": "ZZZ", "emoji": "💿" },
+      { "name": "Disc Drive", "game": "ZZZ", "emoji": "📻" },
+      { "name": "Plating Agent", "game": "ZZZ", "emoji": "🧪" }
+    ]
   }
 }

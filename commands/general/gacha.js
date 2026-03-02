@@ -21,9 +21,10 @@ module.exports = {
         if (gameArg.includes('genshin') || gameArg === 'gs') gameKey = 'genshin';
         else if (gameArg.includes('hsr') || gameArg.includes('honkai') || gameArg.includes('star rail')) gameKey = 'hsr';
         else if (gameArg.includes('wuwa') || gameArg.includes('wuthering') || gameArg.includes('waves')) gameKey = 'wuwa';
+        else if (gameArg.includes('zzz') || gameArg.includes('zenless') || gameArg.includes('zero')) gameKey = 'zzz';
 
         if (!gameKey) {
-            return message.reply('✨ Please specify a game! Example: `kwish gs`, `kwish hsr`, or `kwish wuwa` (ﾉ´ヮ`)ﾉ*:･ﾟ✧');
+            return message.reply('✨ Please specify a game! Example: `kwish gs`, `kwish hsr`, `kwish wuwa`, or `kwish zzz` (ﾉ´ヮ`)ﾉ*:･ﾟ✧');
         }
 
         const userData = database.getUser(message.author.id);
@@ -35,10 +36,20 @@ module.exports = {
             userData.lastGachaReset = now.toISOString();
         }
 
-        let isFree = userData.dailyPulls === 0;
+        let isFree = false;
+        let usedExtra = false;
+
+        if (userData.extraPulls > 0) {
+            userData.extraPulls--;
+            usedExtra = true;
+            isFree = true;
+        } else if (userData.dailyPulls === 0) {
+            isFree = true;
+        }
+
         if (!isFree) {
             if (!database.hasBalance(message.author.id, PULL_COST)) {
-                return message.reply(`💸 hg bat pull free hz! Trov ka **${PULL_COST.toLocaleString()}** riel teat.`);
+                return message.reply(`💸 Oh no, sweetie! Your free pull is already used, and you need **${PULL_COST.toLocaleString()}** riel to wish again. (｡•́︿•̀｡)`);
             }
             database.removeBalance(message.author.id, PULL_COST);
         }
@@ -71,7 +82,11 @@ module.exports = {
 
         userData.gacha_inventory = userData.gacha_inventory || [];
         userData.gacha_inventory.push(...results);
-        userData.dailyPulls++;
+        
+        if (!usedExtra) {
+            userData.dailyPulls++;
+        }
+        
         database.saveUser(userData);
 
         const hasFiveStar = results.some(r => r.rarity === 5);
@@ -94,11 +109,15 @@ module.exports = {
             return `${starIcon} ${r.emoji} **${r.name}**`;
         }).join('\n');
 
+        let footerText = `Paid Pull (${PULL_COST.toLocaleString()} riel)`;
+        if (usedExtra) footerText = `Used Promo Pull (${userData.extraPulls} left)`;
+        else if (isFree) footerText = 'Daily Free Pull used!';
+
         const finalEmbed = new EmbedBuilder()
             .setColor(hasFiveStar ? '#FFB13F' : '#A256FF')
             .setTitle(`✨ Manifestation Confirmed [${gameKey.toUpperCase()}]`)
             .setDescription(`**Results:**\n${resultText}`)
-            .setFooter({ text: isFree ? 'Daily Free Pull used!' : `Paid Pull (${PULL_COST.toLocaleString()} riel)` });
+            .setFooter({ text: footerText });
 
         await gameMsg.edit({ embeds: [finalEmbed] });
     }

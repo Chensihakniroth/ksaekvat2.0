@@ -6,16 +6,16 @@ const config = require('../../config/config.js');
 module.exports = {
     name: 'slots',
     aliases: ['s', 'slot', 'slotmachine'],
-    description: 'លេងម៉ាស៊ីនស្លុតផ្សងសំណាងជាមួយបង',
-    usage: 'slots <ចំនួន>',
+    description: 'Play the slot machine with Mommy! (◕‿◕✿)',
+    usage: 'slots <amount>',
     cooldown: 5000,
     async execute(message, args, client) {
         if (args.length < 1) {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ ដាក់លុយខុសហើយអូនសម្លាញ់',
-                    description: 'ដាក់លុយឱ្យត្រូវមើលម្ចាស់ថ្លៃ! \n**របៀបប្រើ:** `Kslots <ចំនួន>`\n**ឧទាហរណ៍:** `Ks 1000`'
+                    title: '❌ Missing amount',
+                    description: 'Please specify how much you\'d like to bet. (｡♥‿♥｡) \n**Usage:** `Kslots <amount>`',
                 }]
             });
         }
@@ -31,8 +31,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '💸 អត់មានលុយទេអូន',
-                        description: `អូនអត់មានលុយក្នុងខ្លួនផង ចង់លេងស្លុតមិចកើត!`,
+                        title: '💸 No funds found!',
+                        description: `You don't have any money to play right now, sweetie. (◕‿◕✿)`,
                     }]
                 });
             }
@@ -42,8 +42,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ ដាក់លុយឱ្យត្រូវមើលមាសស្ងួន',
-                        description: 'ដាក់ជាលេខមកម្ចាស់ថ្លៃ កុំឱ្យបងពិបាកចិត្តអី។'
+                        title: '❌ Invalid amount',
+                        description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)'
                     }]
                 });
             }
@@ -53,8 +53,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '💸 លុយតិចពេកហើយអូន',
-                    description: `យ៉ាងហោចណាស់ក៏ត្រូវមាន **${minBet.toLocaleString()}** ${config.economy.currency} ដែរណាម្ចាស់ស្នេហ៍បង។`
+                    title: '💸 Bet too low',
+                    description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)`
                 }]
             });
         }
@@ -64,8 +64,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '💸 អត់លុយគ្រប់ទេអូនសម្លាញ់',
-                    description: `លុយអូនអត់គ្រប់ចាក់ទេណាម្ចាស់ថ្លៃ! \n**លុយអូនមាន:** ${userData.balance.toLocaleString()}\n**ត្រូវការ:** ${betAmount.toLocaleString()}`
+                    title: '💸 Insufficient funds',
+                    description: `You don't have enough to make that bet, darling! (｡•́︿•̀｡)`
                 }]
             });
         }
@@ -74,11 +74,11 @@ module.exports = {
         database.updateStats(message.author.id, 'gambled', betAmount);
 
         const outcomes = [
-            { type: 'diamond', weight: 2, emoji: '💎', multiplier: 10, name: 'ឈ្នះដុំពេជ្រធំហើយអូន!' },
-            { type: 'rocket', weight: 5, emoji: '🚀', multiplier: 5, name: 'ហោះឡើងឋានសួគ៌ហើយ!' },
-            { type: 'coin', weight: 31, emoji: '🪙', multiplier: 2, name: 'ឈ្នះលុយហើយអូនសម្លាញ់!' },
-            { type: 'draw', weight: 31, emoji: '🤝', multiplier: 1, name: 'ស្មើគ្នាទេម្ចាស់ថ្លៃ' },
-            { type: 'lose', weight: 31, emoji: '💀', multiplier: 0, name: 'ចាញ់បាត់ហើយអូន' }
+            { type: 'diamond', weight: 2, emoji: '💎', multiplier: 10, name: 'A big diamond for a big winner! ✨' },
+            { type: 'rocket', weight: 5, emoji: '🚀', multiplier: 5, name: 'To the moon, darling! 🚀' },
+            { type: 'coin', weight: 31, emoji: '🪙', multiplier: 2, name: 'You won some money, sweetie! 💰' },
+            { type: 'draw', weight: 31, emoji: '🤝', multiplier: 1, name: 'It\'s a draw, little one' },
+            { type: 'lose', weight: 31, emoji: '💀', multiplier: 0, name: 'Oh no, you lost, darling' }
         ];
 
         let outcomePool = [];
@@ -110,7 +110,7 @@ module.exports = {
         const slotEmbed = new EmbedBuilder()
             .setColor(colors.primary)
             .setTitle('🎰 Slot Machine')
-            .setDescription(`**អូនចាក់ :** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n🎰 ┃ 🎯 ┃ 🎲 ┃\n**កំពុងវិលឱ្យអូនហើយ...**`)
+            .setDescription(`**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n🎰 ┃ 🎯 ┃ 🎲 ┃\n**Spinning... (ﾉ´ヮ)ﾉ*:･ﾟ✧**`)
             
 
         const sentMessage = await message.reply({ embeds: [slotEmbed] });
@@ -124,28 +124,28 @@ module.exports = {
                 animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**វិលលឿនៗ...**';
+                statusText = '**Spinning fast...**';
             } else if (stage < 4) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.first = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**កំពុងវិល...**';
+                statusText = '**Still spinning...**';
             } else if (stage < 6) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
                 animationSymbols.last = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**ជិតឈប់ហើយ...**';
+                statusText = '**Slowing down...**';
             } else if (stage < 7) {
                 const randomEmojis = outcomes.map(o => o.emoji);
                 animationSymbols.middle = randomEmojis[Math.floor(Math.random() * randomEmojis.length)];
-                statusText = '**វិលចុងក្រោយ...**';
+                statusText = '**Almost there...**';
             } else {
-                statusText = '**លទ្ធផលបានហើយ!**';
+                statusText = '**Here are the results!**';
             }
 
             slotEmbed.setDescription(
-                `**អូនចាក់ :** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n` +
+                `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n` +
                 `🎰 ┃ ${animationSymbols.first} ┃ ${animationSymbols.middle} ┃ ${animationSymbols.last} ┃\n\n` +
                 statusText
             );
@@ -175,19 +175,19 @@ module.exports = {
 
             slotEmbed
                 .setColor(colors.success)
-                .setTitle(`🎉 ហេងណាស់ម្ចាស់ស្នេហ៍បង!`)
+                .setTitle(`🎉 You won, my lucky little one! ヽ(>∀<☆)ノ`)
                 .setDescription(
                     `**${selectedOutcome.name}**\n\n` +
                     `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-                    `**លុយចូលហោប៉ៅ:** +${winAmount.toLocaleString()} ${config.economy.currency}\n` +
-                    `**សរុបថ្មី:** ${newBalance.toLocaleString()} ${config.economy.currency}\n` +
-                    `**មេគុណសំណាង:** x${selectedOutcome.multiplier}`
+                    `**Winnings:** +${winAmount.toLocaleString()} ${config.economy.currency}\n` +
+                    `**New Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}\n` +
+                    `**Multiplier:** x${selectedOutcome.multiplier}`
                 );
 
             if (expGain && expGain.leveledUp) {
                 slotEmbed.addFields({
-                    name: '🎉 ឡើងស័កហើយ!',
-                    value: `កប់ស៊េរី! អូនឡើងដល់កម្រិតទី **${expGain.newLevel}** ហើយណាម្ចាស់ថ្លៃ!`,
+                    name: '🎉 Level Up!',
+                    value: `Congratulations! You've reached level **${expGain.newLevel}**, sweetie! (◕‿◕✿)`,
                     inline: false
                 });
             }
@@ -196,12 +196,12 @@ module.exports = {
 
             slotEmbed
                 .setColor(colors.secondary)
-                .setTitle('🤝 ស្មើគ្នាទេណាម្ចាស់ថ្លៃ!')
+                .setTitle('🤝 It\'s a draw, little one!')
                 .setDescription(
                     `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-                    `**បងជូនលុយអូនវិញហើយ!**\n\n` +
-                    `**លុយបានវិញ:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
-                    `**សរុបថ្មី:** ${newBalance.toLocaleString()} ${config.economy.currency}`
+                    `**Mommy is giving your money back!**\n\n` +
+                    `**Returned:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
+                    `**Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}`
                 );
         } else {
             const userData = database.getUser(message.author.id);
@@ -209,11 +209,11 @@ module.exports = {
 
             slotEmbed
                 .setColor(colors.error)
-                .setTitle('💀 អស់លុយបាត់ហើយម្ចាស់ស្នេហ៍!')
+                .setTitle('💀 Oh no, you lost, darling (｡•́︿•̀｡)')
                 .setDescription(
                     `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-                    `**បាត់បង់លុយ:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
-                    `**លុយនៅសល់:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
+                    `**Loss:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
+                    `**Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
                 );
         }
 

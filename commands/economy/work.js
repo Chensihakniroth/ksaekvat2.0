@@ -6,7 +6,7 @@ const config = require('../../config/config.js');
 module.exports = {
     name: 'work',
     aliases: ['job'],
-    description: 'ធ្វើការរកលុយមកចិញ្ចឹមអូន',
+    description: 'Work hard to make Mommy proud! (◕‿◕✿)',
     usage: 'work',
     cooldown: 30000, // 30 seconds cooldown
     execute(message, args, client) {
@@ -14,15 +14,15 @@ module.exports = {
 
         // Array of work scenarios
         const workScenarios = [
-            { job: 'អ្នកលក់ការ៉េម', action: 'ញ៉ាំការ៉េមបងទៅ ធានាថាផ្អែមដល់បេះដូង', emoji: '🍦' }, 
-            { job: 'អ្នករត់ PassApp', action: 'ទីងៗ! ឡើងមកអូនចាំបងឌុបទៅដល់ឋានសួគ៌', emoji: '🛺' }, 
-            { job: 'អ្នកលក់អីវ៉ាន់អនឡាញ', action: 'ជួយទិញមួយទៅអូនសម្លាញ់ ចាំបងថែមស្នាមញញឹមឱ្យ', emoji: '💻' }, 
-            { job: 'អ្នកលក់ទឹកកក', action: 'ទឹកកកបងត្រជាក់ តែបេះដូងបងកក់ក្ដៅណាស់ណា', emoji: '🧊' }, 
-            { job: 'អ្នកលក់ខ្ចៅ', action: 'ខ្ចៅស្ងោរឆ្ងាញ់ដូចអ្នកលក់ដែរហ្នឹង', emoji: '🐚' }, 
-            { job: 'អ្នកលាងចាន', action: 'លាងចានសងថ្លៃបាយ តែចង់បានអូនមកលាងបេះដូងឱ្យវិញ', emoji: '🧼' }, 
-            { job: 'អ្នកលក់ផ្លែឈើ', action: 'ផ្លែឈើបងផ្អែម តែមិនទាន់ផ្អែមស្មើបបូរមាត់អូនទេ', emoji: '🍎' }, 
-            { job: 'អ្នកដឹកជញ្ជូន', action: 'ឥវ៉ាន់ដល់ហើយ ចេញមកយកទៅអូន ម្ចាស់ឥវ៉ាន់សង្ហាណាស់', emoji: '📦' }, 
-            { job: 'អ្នកចាំផ្ទះ', action: 'នៅផ្ទះម្នាក់ឯងអផ្សុក ចង់បានអ្នកមកនៅក្បែរដល់ហើយ', emoji: '🏠' }
+            { job: 'Ice Cream Seller', action: 'Mommy loves seeing you sell such sweet treats! 🍦', emoji: '🍦' }, 
+            { job: 'Delivery Driver', action: 'Be safe on the road, my hardworking little one! 📦', emoji: '📦' }, 
+            { job: 'Online Seller', action: 'Mommy is your number one customer, sweetie! 💻', emoji: '💻' }, 
+            { job: 'Baker', action: 'The bread smells as sweet as you do, darling! 🥖', emoji: '🥖' }, 
+            { job: 'Gardener', action: 'Helping the flowers grow just like you\'re growing! 🌱', emoji: '🌱' }, 
+            { job: 'Dishwasher', action: 'Hard work builds a strong character, little one! 🧼', emoji: '🧼' }, 
+            { job: 'Fruit Seller', action: 'Fresh and sweet, just like your smile! 🍎', emoji: '🍎' }, 
+            { job: 'House Sitter', action: 'Keeping everything tidy for Mommy? How sweet! 🏠', emoji: '🏠' }, 
+            { job: 'Artist', action: 'Mommy will hang your beautiful painting on the wall! 🎨', emoji: '🎨' }
         ];
 
         // Select random work scenario
@@ -58,21 +58,21 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.success)
-            .setTitle(`${scenario.emoji} ធ្វើការហើយហើយម្ចាស់ថ្លៃ!`)
-            .setDescription(`បងធ្វើជា **${scenario.job}** ចុះ ${scenario.action}!`)
+            .setTitle(`${scenario.emoji} You worked so hard! (｡♥‿♥｡)`)
+            .setDescription(`You worked as a **${scenario.job}**! ${scenario.action}`)
             .addFields(
                 {
-                    name: `💵 លុយចិញ្ចឹមអូន`,
+                    name: `💵 Earnings`,
                     value: `**+${finalReward.toLocaleString()}** ${config.economy.currency}`,
                     inline: true
                 },
                 {
-                    name: '💰 លុយក្នុងហោប៉ៅ',
+                    name: '💰 New Balance',
                     value: `**${newBalance.toLocaleString()}** ${config.economy.currency}`,
                     inline: true
                 },
                 {
-                    name: '⭐ XP ឡើងបាន',
+                    name: '⭐ XP Gained',
                     value: '+15 XP',
                     inline: true
                 }
@@ -81,7 +81,7 @@ module.exports = {
         // Show tip if applicable
         if (tip > 0) {
             embed.addFields({
-                name: '🧧 គេឱ្យធីបបងដែរតើ',
+                name: '🧧 A little tip!',
                 value: `**+${tip.toLocaleString()}** ${config.economy.currency}`,
                 inline: true
             });
@@ -90,8 +90,8 @@ module.exports = {
         // Add level up notification if applicable
         if (expGain.leveledUp) {
             embed.addFields({
-                name: '🎉 ឡើងស័កហើយ!',
-                value: `កប់ស៊េរី! បងឡើងដល់កម្រិតទី **${expGain.newLevel}** ហើយណាអូន!`,
+                name: '🎉 Level Up!',
+                value: `Congratulations, sweetie! You've reached level **${expGain.newLevel}**! (◕‿◕✿)`,
                 inline: false
             });
         }

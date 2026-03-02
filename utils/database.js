@@ -75,6 +75,7 @@ function getUser(userId) {
             gacha_inventory: [], // Characters pulled
             lastGachaReset: null, // For daily free 10-pull
             dailyPulls: 0,      // Number of pulls today
+            extraPulls: 0,      // Extra 10-pulls from promo codes
             animals: {},
             boosters: {},
             inventory: [],

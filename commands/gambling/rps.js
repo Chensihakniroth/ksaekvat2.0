@@ -6,12 +6,18 @@ const config = require('../../config/config.js');
 module.exports = {
     name: 'rps',
     aliases: ['rockpaperscissors'],
-    description: 'Play Rock Paper Scissors and gamble your coins',
+    description: 'Play Rock Paper Scissors with Mommy! (◕‿◕✿)',
     usage: 'rps <amount/all>',
     cooldown: 5000,
     async execute(message, args, client) {
         if (args.length < 1) {
-            return message.reply("hg dak luy oy trov mer! \n**Usage:** `Krps <amount/all>` Prepared by Jarvis.");
+            return message.reply({
+                embeds: [{
+                    color: colors.error,
+                    title: '❌ Missing amount',
+                    description: 'Please specify how much you\'d like to bet, sweetie. (｡♥‿♥｡) \n**Usage:** `Krps <amount/all>`',
+                }]
+            });
         }
 
         let betAmount;
@@ -22,8 +28,25 @@ module.exports = {
             betAmount = parseInt(args[0]);
         }
 
-        if (isNaN(betAmount) || betAmount <= 0) return message.reply("hg dak luy oy trov mer!");
-        if (!database.hasBalance(message.author.id, betAmount)) return message.reply("💸 hg ot luy krub heh!");
+        if (isNaN(betAmount) || betAmount <= 0) {
+            return message.reply({
+                embeds: [{
+                    color: colors.error,
+                    title: '❌ Invalid amount',
+                    description: 'Please use a proper number, darling. (｡•́︿•̀｡)',
+                }]
+            });
+        }
+
+        if (!database.hasBalance(message.author.id, betAmount)) {
+            return message.reply({
+                embeds: [{
+                    color: colors.error,
+                    title: '💸 Insufficient funds',
+                    description: 'You don\'t have enough money to play RPS right now. (っ˘ω˘ς)',
+                }]
+            });
+        }
 
         database.removeBalance(message.author.id, betAmount);
         database.updateStats(message.author.id, "gambled", betAmount);
@@ -37,7 +60,7 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
             .setTitle('✊ Rock Paper Scissors')
-            .setDescription(`**Bet:** ${betAmount.toLocaleString()} riel\n\nChoose your weapon below!`)
+            .setDescription(`**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\nChoose your weapon below, darling! (｡♥‿♥｡)`)
             .setFooter({ text: 'You have 30 seconds to choose.' });
 
         const row = new ActionRowBuilder().addComponents(
@@ -101,8 +124,8 @@ module.exports = {
 
             const finalEmbed = new EmbedBuilder()
                 .setColor(winMultiplier > 1 ? colors.success : (winMultiplier === 1 ? colors.warning : colors.error))
-                .setTitle('✊ RPS Result')
-                .setDescription(`**${result}**\n\n**You:** ${userChoice.emoji} ${userChoice.name}\n**Bot:** ${botChoice.emoji} ${botChoice.name}`)
+                .setTitle('✊ Rock Paper Scissors Result')
+                .setDescription(`**${result}**\n\n**You:** ${userChoice.emoji} ${userChoice.name}\n**Mommy:** ${botChoice.emoji} ${botChoice.name}\n\n${winMultiplier > 1 ? 'Mommy is so proud of you! (｡♥‿♥｡)' : (winMultiplier === 1 ? 'A draw! Mommy will give your money back (◕‿◕✿)' : 'Don\'t be sad, darling! (っ˘ω˘ς)')}`)
                 .addFields({ name: 'Loot', value: winMultiplier > 1 ? `+${betAmount.toLocaleString()} riel` : (winMultiplier === 1 ? '0 riel (Refunded)' : `-${betAmount.toLocaleString()} riel`) });
 
             await i.update({ embeds: [finalEmbed], components: [] });
@@ -110,7 +133,7 @@ module.exports = {
 
         collector.on('end', async (collected, reason) => {
             if (reason === 'time') {
-                await gameMsg.edit({ content: '⌛ Time expired! Bet lost.', embeds: [], components: [] });
+                await gameMsg.edit({ content: '⌛ Time expired! Mommy waited for you, sweetie. Bet lost. (｡•́︿•̀｡)', embeds: [], components: [] });
             }
         });
     }

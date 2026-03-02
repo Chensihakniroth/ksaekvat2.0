@@ -6,8 +6,8 @@ const config = require('../../config/config.js');
 module.exports = {
     name: 'coinflip',
     aliases: ['cf', 'flip'],
-    description: 'បោះកាក់ផ្សងសំណាងជាមួយបង',
-    usage: 'coinflip <ចំនួន/all> [ក្បាល/កន្ទុយ]',
+    description: 'Flip a coin with Mommy! (◕‿◕✿)',
+    usage: 'coinflip <amount/all> [heads/tails]',
     cooldown: 3000, // 3 seconds
     execute(message, args, client) {
         // Check arguments
@@ -15,8 +15,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ ដាក់លុយខុសហើយអូនសម្លាញ់',
-                    description: 'ដាក់លុយឱ្យត្រូវមើលម្ចាស់ថ្លៃ! \n**របៀបប្រើ:** `Kcoinflip <ចំនួន/all> [heads/tails]`\n**ឧទាហរណ៍:** `Kcf 1000 heads` ឬ `Kcf all tails`',
+                    title: '❌ Wrong amount, sweetie!',
+                    description: 'Please specify a valid amount to bet. (｡♥‿♥｡) \n**Usage:** `Kcoinflip <amount/all> [heads/tails]`',
                 }]
             });
         }
@@ -35,8 +35,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '💸 អត់មានលុយទេអូន',
-                        description: `អូនអត់មានលុយក្នុងខ្លួនផង ចង់លេងល្បែងមិចកើត!`,
+                        title: '💸 No funds found!',
+                        description: `You don't have any money to play with Mommy right now. (◕‿◕✿)`,
                     }]
                 });
             }
@@ -46,8 +46,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ ដាក់លុយឱ្យត្រូវមើលមាសស្ងួន',
-                        description: 'ដាក់ជាលេខមកម្ចាស់ថ្លៃ កុំធ្វើឱ្យបងពិបាកចិត្តអី។',
+                        title: '❌ Invalid amount',
+                        description: 'Please use a proper number, darling. (｡•́︿•̀｡)',
                     }]
                 });
             }
@@ -58,8 +58,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '💸 លុយតិចពេកហើយអូន',
-                    description: `យ៉ាងហោចណាស់ក៏ត្រូវមាន **${minBet.toLocaleString()}** ${config.economy.currency} ដែរណាម្ចាស់ស្នេហ៍។`,
+                    title: '💸 Bet too low',
+                    description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)`,
                     timestamp: new Date()
                 }]
             });
@@ -73,8 +73,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '💸 អត់លុយគ្រប់ទេអូនសម្លាញ់',
-                    description: `លុយអូនអត់គ្រប់ចាក់ទេណា! \n**លុយអូនមាន:** ${userData.balance.toLocaleString()} ${config.economy.currency}\n**ត្រូវការ:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
+                    title: '💸 Insufficient funds',
+                    description: `You don't have enough to make that bet, darling! (｡•́︿•̀｡)\n**You have:** ${userData.balance.toLocaleString()} ${config.economy.currency}`,
                 }]
             });
         }
@@ -96,12 +96,12 @@ module.exports = {
         const frames = ['🪙', '⚪', '🪙', '⚪', '🪙', '⚪', '🪙'];
         let frameIndex = 0;
 
-        const betTypeText = isAllBet ? ` (${betAmount >= maxBet ? 'ចាក់អស់ស៊ុប' : 'ចាក់ទាំងអស់'})` : '';
+        const betTypeText = isAllBet ? ` (Going All In!)` : '';
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('🪙 បោះកាក់ផ្សងសំណាង')
-            .setDescription(`**អូនចាក់ :** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**អូនរើស :** ${userChoice === 'heads' ? 'ក្បាល (Heads)' : 'កន្ទុយ (Tails)'}\n\n${frames[0]} **ចាំបន្តិចណាម្ចាស់ថ្លៃ បងកំពុងបោះកាក់ឱ្យហើយ...**`)
+            .setTitle('🪙 Flipping a Coin!')
+            .setDescription(`**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**Choice:** ${userChoice === 'heads' ? 'Heads' : 'Tails'}\n\n${frames[0]} **Wait a moment, darling! Mommy is flipping it for you... (ﾉ´ヮ)ﾉ*:･ﾟ✧**`)
         
         message.reply({ embeds: [embed] }).then(async (sentMessage) => {
             for (let i = 0; i < 6; i++) {
@@ -110,8 +110,8 @@ module.exports = {
 
                 const animationEmbed = new EmbedBuilder()
                     .setColor(colors.primary)
-                    .setTitle('🪙 បោះកាក់ផ្សងសំណាង')
-                    .setDescription(`**អូនចាក់ :** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**អូនរើស :** ${userChoice === 'heads' ? 'ក្បាល (Heads)' : 'កន្ទុយ (Tails)'}\n\n${frames[frameIndex]} **ចាំបន្តិចណាម្ចាស់ថ្លៃ បងកំពុងបោះកាក់ឱ្យហើយ...**`)
+                    .setTitle('🪙 Flipping a Coin!')
+                    .setDescription(`**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**Choice:** ${userChoice === 'heads' ? 'Heads' : 'Tails'}\n\n${frames[frameIndex]} **Wait a moment, darling! Mommy is flipping it for you... (ﾉ´ヮ)ﾉ*:･ﾟ✧**`)
                 try {
                     await sentMessage.edit({ embeds: [animationEmbed] });
                 } catch (error) {
@@ -134,21 +134,21 @@ module.exports = {
 
                 finalEmbed = new EmbedBuilder()
                     .setColor(colors.success)
-                    .setTitle('🎉 ហេងណាស់ម្ចាស់ស្នេហ៍បង!')
-                    .setDescription(`${resultEmoji} កាក់ធ្លាក់ចំ **${coinResult === 'heads' ? 'ក្បាល' : 'កន្ទុយ'}** ហើយអូន!\nបងជូនសំណាងឱ្យហើយណាម្ចាស់ថ្លៃ។`)
+                    .setTitle('🎉 You won, sweetie! ヽ(>∀<☆)ノ')
+                    .setDescription(`${resultEmoji} It landed on **${coinResult === 'heads' ? 'Heads' : 'Tails'}**!\nMommy is so proud of your luck! (ﾉ´ヮ)ﾉ*:･ﾟ✧`)
                     .addFields(
                         {
-                            name: '💰 លុយចូលហោប៉ៅ',
+                            name: '💰 Winnings',
                             value: `**+${winAmount.toLocaleString()}** ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '💳 សរុបថ្មី',
+                            name: '💳 New Balance',
                             value: `${newBalance.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '⭐ XP កើនបាន',
+                            name: '⭐ XP Gained',
                             value: '+20 XP',
                             inline: true
                         }
@@ -156,8 +156,8 @@ module.exports = {
 
                 if (expGain.leveledUp) {
                     finalEmbed.addFields({
-                        name: '🎉 ឡើងស័កហើយ!',
-                        value: `កប់ស៊េរី! អូនឡើងដល់កម្រិតទី **${expGain.newLevel}** ហើយណាម្ចាស់ថ្លៃ!`,
+                        name: '🎉 Level Up!',
+                        value: `Congratulations! You've reached level **${expGain.newLevel}**, sweetie! (◕‿◕✿)`,
                         inline: false
                     });
                 }
@@ -167,21 +167,21 @@ module.exports = {
 
                 finalEmbed = new EmbedBuilder()
                     .setColor(colors.error)
-                    .setTitle('💸 អស់លុយបាត់ហើយម្ចាស់ស្នេហ៍!')
-                    .setDescription(`${resultEmoji} កាក់ធ្លាក់ចំ **${coinResult === 'heads' ? 'ក្បាល' : 'កន្ទុយ'}**។\nកុំតូចចិត្តអីអូនសម្លាញ់ ចាំបន្តិចទៀតសាកសំណាងជាមួយបងថ្មីណា។`)
+                    .setTitle('💸 Better luck next time!')
+                    .setDescription(`${resultEmoji} It landed on **${coinResult === 'heads' ? 'Heads' : 'Tails'}**.\nDon't be sad, darling! You can try again later. (っ˘ω˘ς)`)
                     .addFields(
                         {
-                            name: '💸 បាត់បង់លុយ',
+                            name: '💸 Loss',
                             value: `-${betAmount.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '💳 លុយនៅសល់',
+                            name: '💳 Balance',
                             value: `${currentUserData.balance.toLocaleString()} ${config.economy.currency}`,
                             inline: true
                         },
                         {
-                            name: '🎯 ឱកាសឈ្នះ',
+                            name: '🎯 Odds',
                             value: '50/50',
                             inline: true
                         }
@@ -189,7 +189,7 @@ module.exports = {
             }
 
             finalEmbed.setFooter({ 
-                text: `ល្បែងចប់ហើយ | អូនរើស: ${userChoice} | ស្នេហ៍ពិតមិនចាញ់ល្បែងទេ`,
+                text: `Game over | You picked: ${userChoice}`,
                 iconURL: message.author.displayAvatarURL()
             }).setTimestamp();
 

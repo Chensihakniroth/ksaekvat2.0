@@ -135,8 +135,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: parseInt(config.colors.error.slice(1), 16),
-                    title: '🚫 Ot mean sithi teh ah pov',
-                    description: 'hg ot mean dak ban teh ah pov, command nis ban tae Admin Only teh!',
+                    title: '🚫 Access Denied, sweetie (｡•́︿•̀｡)',
+                    description: 'I\'m sorry, darling, but this command is only for Mommy\'s special helpers! (◕‿◕✿)',
                     timestamp: new Date()
                 }]
             });
@@ -150,8 +150,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: parseInt(config.colors.warning.slice(1), 16),
-                        title: '⏳ Jam tic mer ah chlery',
-                        description: `hg jam tic mer, jam **${Math.ceil(timeLeft / 1000)}s** teat jam execute ban!`,
+                        title: '⏳ Wait a moment, darling (｡♥‿♥｡)',
+                        description: `You're going a bit too fast, sweetie! Please wait **${Math.ceil(timeLeft / 1000)}s** more. Mommy needs a little break too! (っ˘ω˘ς)`,
                         timestamp: new Date()
                     }]
                 });
@@ -168,8 +168,8 @@ module.exports = {
             message.reply({
                 embeds: [{
                     color: parseInt(config.colors.error.slice(1), 16),
-                    title: '❌ Command Error',
-                    description: 'There was an error executing this command. Please try again later.',
+                    title: '❌ Oh no, an error! (｡•́︿•̀｡)',
+                    description: 'Something went wrong, sweetie. Mommy will try to fix it soon! (っ˘ω˘ς)',
                     timestamp: new Date()
                 }]
             });
@@ -255,7 +255,7 @@ async function handleDMForwarding(message, client) {
 
 async function handleChatbot(message) {
     const text = message.content.replace(/<@!?[0-9]+>/g, '').trim();
-    if (!text) return message.reply('Suesdey! mean kar ey men? (Type ey mork jam knhom chlery)');
+    if (!text) return message.reply('Hello there, sweetie! (◕‿◕✿) Is there something you wanted to talk to Mommy about? (｡♥‿♥｡)');
 
     const channelId = message.channel.id;
     
@@ -288,7 +288,7 @@ async function handleChatbot(message) {
                 const geminiResponse = await axios.post(geminiUrl, {
                     contents: [{
                         parts: [{
-                            text: `Convert this message to pure Khmer script. Respond ONLY with the Khmer script, no English, no explanations. Message: "${text}"`
+                            text: `Analyze this message and fix any typos or slang for better understanding. Respond ONLY with the corrected English text. Message: "${text}"`
                         }]
                     }],
                     generationConfig: {
@@ -338,7 +338,7 @@ async function handleChatbot(message) {
         // Compact System Prompt for faster processing and better caching
         let finalSystemPrompt = configPrompt;
         if (charCard) {
-            finalSystemPrompt = `Name: ${charCard.name}. Style: ${charCard.style}. Personality: ${charCard.personality}. Rules: You understand Khmer script, sync Khmer, and English. Respond ONLY in Khmer script. Keep it EXTREMELY short and direct. No yapping. Be flirty beksloy by default, but savage if provoked. IMPORTANT: Maintain context but stay brief.`;
+            finalSystemPrompt = `Name: ${charCard.name}. Style: ${charCard.style}. Personality: ${charCard.personality}. Rules: Respond ONLY in English. No Khmer script. Keep it short, sweet, and nurturing like a mommy anime waifu. Use kaomojis (ﾉ´ヮ\`)ﾉ*:･ﾟ✧.`;
         }
 
         // Prepare messages array
@@ -390,16 +390,16 @@ async function handleChatbot(message) {
             }
         } else {
             logger.error(`Invalid response structure: ${JSON.stringify(response.data)}`);
-            message.reply('Sry ah pov, AI chlery mork neng ot yol teh.');
+            message.reply('I\'m sorry, sweetie, but Mommy didn\'t quite understand that. (っ˘ω˘ς)');
         }
     } catch (error) {
         if (error.code === 'ENOTFOUND') {
-            logger.error(`DNS Error: Could not find host ${baseUrl}. check name railway internal hg mer?`);
+            logger.error(`DNS Error: Could not find host ${baseUrl}.`);
         } else if (error.code === 'ECONNREFUSED') {
             logger.error(`Connection Refused: Port 11434 is closed on ${baseUrl}.`);
         } else {
             logger.error(`AI Error (${error.code || 'UNKNOWN'}): ${error.message}`);
         }
-        message.reply(`Sry ah pov, AI error: ${error.code || 'TIMEOUT'}. Jam tic teat jam talk teat.`);
+        message.reply(`I'm sorry, darling, but Mommy is feeling a bit tired right now (Error: ${error.code || 'TIMEOUT'}). Let's talk again in a little while! (◕‿◕✿)`);
     }
 }
