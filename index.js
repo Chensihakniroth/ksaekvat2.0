@@ -208,6 +208,17 @@ client.on('interactionCreate', async interaction => {
 
 // Message command handler removed - handled by events/messageCreate.js
 
+const mongoose = require('mongoose');
+
+// --- MongoDB Connection ---
+const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/ksae_bot';
+mongoose.connect(mongoURI)
+  .then(() => logger.success(`Successfully connected to MongoDB 🌿 [${mongoURI.includes('127.0.0.1') ? 'LOCAL' : 'REMOTE'}]`))
+  .catch(err => {
+    logger.error('Failed to connect to MongoDB:', err);
+    process.exit(1);
+  });
+
 // Login
 const token = process.env.DISCORD_TOKEN;
 if (!token) {

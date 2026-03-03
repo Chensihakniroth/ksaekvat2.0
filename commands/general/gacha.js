@@ -27,7 +27,7 @@ module.exports = {
             return message.reply('✨ Please specify a game! Example: `kwish gs`, `kwish hsr`, `kwish wuwa`, or `kwish zzz` (ﾉ´ヮ`)ﾉ*:･ﾟ✧');
         }
 
-        const userData = database.getUser(message.author.id);
+        const userData = await database.getUser(message.author.id);
         const now = new Date();
         const lastReset = userData.lastGachaReset ? new Date(userData.lastGachaReset) : null;
 
@@ -48,10 +48,10 @@ module.exports = {
         }
 
         if (!isFree) {
-            if (!database.hasBalance(message.author.id, PULL_COST)) {
+            if (!(await database.hasBalance(message.author.id, PULL_COST))) {
                 return message.reply(`💸 Oh no, sweetie! Your free pull is already used, and you need **${PULL_COST.toLocaleString()}** riel to wish again. (｡•́︿•̀｡)`);
             }
-            database.removeBalance(message.author.id, PULL_COST);
+            await database.removeBalance(message.author.id, PULL_COST);
         }
 
         const fullPool = JSON.parse(fs.readFileSync(POOL_FILE, 'utf8'));
@@ -62,8 +62,6 @@ module.exports = {
         }
 
         let results = [];
-        const inventory = userData.gacha_inventory || [];
-
         for (let i = 0; i < 10; i++) {
             let rarity;
             const rand = Math.random() * 100;
@@ -79,41 +77,17 @@ module.exports = {
             
             const charList = pool[rarity];
             const item = charList[Math.floor(Math.random() * charList.length)];
-            const isWeapon = rarity === "3";
             
-            const newItem = { 
-                ...item, 
-                rarity: parseInt(rarity), 
-                type: isWeapon ? "weapon" : "character",
-                game: gameKey
-            };
-
-            if (isWeapon) {
-                // Auto-ascend weapons
-                const existingWeapon = inventory.find(w => w.name === newItem.name && w.type === "weapon");
-                if (existingWeapon) {
-                    existingWeapon.refinement = Math.min(5, (existingWeapon.refinement || 1) + 1);
-                    results.push({ ...existingWeapon, isDuplicate: true });
-                } else {
-                    newItem.refinement = 1;
-                    inventory.push(newItem);
-                    results.push(newItem);
-                }
-            } else {
-                // Characters: Add to inventory, user will ascend manually
-                newItem.ascension = 0;
-                inventory.push(newItem);
-                results.push(newItem);
-            }
+            const addedItem = await database.addGachaItem(message.author.id, item.name);
+            results.push(addedItem);
         }
 
-        userData.gacha_inventory = inventory;
-        
         if (!usedExtra) {
             userData.dailyPulls++;
+            await database.saveUser(userData);
         }
         
-        database.saveUser(userData);
+        await database.saveUser(userData);
 
         const hasFiveStar = results.some(r => r.rarity === 5);
         const bannerGif = hasFiveStar 

@@ -9,7 +9,7 @@ module.exports = {
     usage: 'inv',
     async execute(message, args, client) {
         const userData = database.getUser(message.author.id);
-        const inventory = userData.gacha_inventory || [];
+        const inventory = database.getHydratedInventory(message.author.id);
 
         if (inventory.length === 0) {
             return message.reply("💸 hg ot mean item teat! Use `Kgacha` pull mork. (｡•́︿•̀｡)");
@@ -37,7 +37,7 @@ module.exports = {
             const list = Object.values(grouped).sort((a, b) => b.rarity - a.rarity).map(i => {
                 const star = i.rarity === 5 ? '🔶' : (i.rarity === 4 ? '🔷' : '⚪');
                 const extra = i.type === 'weapon' ? `[R${i.refinement || 1}]` : `x${i.count}`;
-                return `${star} **${i.name}** ${extra} `[${i.game.toUpperCase()}]``;
+                return `${star} **${i.name}** ${extra} [${i.game.toUpperCase()}]`;
             });
 
             const display = list.slice(0, 15).join('

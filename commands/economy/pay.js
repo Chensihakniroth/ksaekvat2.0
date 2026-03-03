@@ -5,205 +5,77 @@ const config = require('../../config/config.js');
 
 module.exports = {
     name: 'pay',
-    aliases: ['give', 'transfer'],
-    description: 'Pay coins to another user',
+    aliases: ['give', 'send'],
+    description: 'Send riel to another user',
     usage: 'pay <@user> <amount>',
-    cooldown: 5, // 5 second cooldown to prevent spam
     async execute(message, args, client) {
-        // Check if user provided enough arguments
-        if (args.length < 2) {
-            return message.reply({
-                embeds: [{
-                    color: colors.error,
-                    title: '❌ Invalid Usage',
-                    description: 'Please provide a user and amount to pay.\n**Usage:** `Kpay @user <amount>`'
-                }]
-            });
-        }
-
-        // Get target user
-        let target = null;
-        if (message.mentions.users.size > 0) {
-            target = message.mentions.users.first();
-        } else {
-            // Try to find by ID
-            const userId = args[0];
-            target = client.users.cache.get(userId);
-        }
-
+        // Check for target user
+        const target = message.mentions.users.first();
         if (!target) {
-            return message.reply({
-                embeds: [{
-                    color: colors.error,
-                    title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.'
-                }]
-            });
+            return message.reply('❓ Who are you trying to send money to, sweetie? Please mention them! (◕‿◕✿)');
         }
 
-        // Can't pay yourself
         if (target.id === message.author.id) {
-            return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '🤔 Self Payment',
-                    description: 'You cannot pay yourself! That would be silly.'
-                }]
-            });
+            return message.reply('🚫 You can\'t send money to yourself, darling! That would be silly! (っ˘ω˘ς)');
         }
 
-        // Can't pay bots
         if (target.bot) {
-            return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '🤖 Bot Payment',
-                    description: 'You cannot pay bots. They don\'t need money!'
-                }]
-            });
+            return message.reply('🤖 Bots don\'t need money, sweetie! They only need code! (◕‿-)');
         }
 
-        // Parse amount - handle 'all' or 'max' keywords
-        let amount;
-        if (args[1].toLowerCase() === 'all' || args[1].toLowerCase() === 'max') {
-            const senderData = database.getUser(message.author.id);
+        // Check for amount
+        let amount = args[1];
+        if (!amount) {
+            return message.reply('💰 How much do you want to send, darling? Please specify an amount!');
+        }
+
+        const senderData = await database.getUser(message.author.id, message.author.username);
+
+        if (amount.toLowerCase() === 'all') {
             amount = senderData.balance;
         } else {
-            amount = parseInt(args[1]);
+            amount = parseInt(amount);
         }
 
         if (isNaN(amount) || amount <= 0) {
-            return message.reply({
-                embeds: [{
-                    color: colors.error,
-                    title: '❌ Invalid Amount',
-                    description: 'Please provide a valid positive number, or use "all" to pay your entire balance.'
-                }]
-            });
+            return message.reply('🚫 That\'s not a valid amount, sweetie! Please enter a positive number.');
         }
 
-        // Check minimum payment amount
-        if (amount < 1) {
-            return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '💸 Minimum Payment',
-                    description: `Minimum payment amount is 1 ${config.economy.currency}.`
-                }]
-            });
+        if (senderData.balance < amount) {
+            return message.reply(`💸 You don't have enough money, darling! You only have **${senderData.balance.toLocaleString()}** ${config.economy.currency}.`);
         }
 
-        // Get sender data
-        const senderData = database.getUser(message.author.id);
+        // Process the transaction
+        const targetData = await database.getUser(target.id, target.username);
 
-        // Check if sender has enough balance
-        if (!database.hasBalance(message.author.id, amount)) {
-            return message.reply({
-                embeds: [{
-                    color: colors.error,
-                    title: '💸 Insufficient Funds',
-                    description: `You don't have enough ${config.economy.currency}!\n**Your Balance:** ${senderData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${amount.toLocaleString()} ${config.economy.currency}`
-                }]
-            });
-        }
+        // Update balances
+        senderData.balance -= amount;
+        targetData.balance += amount;
 
-        // Determine maximum payment limit based on user level
-        const senderLevel = senderData.level || 1; // Default to level 1 if not set
-        let maxPayment;
+        await database.saveUser(senderData);
+        await database.saveUser(targetData);
 
-        if (senderLevel < 5) {
-            maxPayment = 250000;
-        } else if (senderLevel < 10) {
-            maxPayment = 250000; // No additional amount for levels 5-9
-        } else if (senderLevel < 15) {
-            maxPayment = 750000; // 250k + 500k
-        } else {
-            maxPayment = 1500000; // 250k + 500k + 750k = Maximum amount
-        }
-
-        // Check maximum payment limit (prevent abuse)
-        if (amount > maxPayment) {
-            return message.reply({
-                embeds: [{
-                    color: colors.warning,
-                    title: '💰 Payment Limit Exceeded',
-                    description: `You can only pay up to ${maxPayment.toLocaleString()} ${config.economy.currency} based on your level (${senderLevel}).\n\n**Level Limits:**\n• Levels 1-4: 250,000\n• Levels 5-9: 250,000\n• Levels 10-14: 750,000\n• Level 15+: 1,500,000`
-                }]
-            });
-        }
-
-        try {
-            // Process the payment
-            const senderNewBalance = database.removeBalance(message.author.id, amount);
-            const recipientNewBalance = database.addBalance(target.id, amount);
-
-            // Log the transaction (if you have a transaction logging system)
-            if (database.logTransaction) {
-                database.logTransaction({
-                    type: 'payment',
-                    from: message.author.id,
-                    to: target.id,
-                    amount: amount,
-                    guild: message.guild.id
-                });
-            }
-
-            // Create success embed
-            const successEmbed = new EmbedBuilder()
-                .setColor(colors.success)
-                .setTitle('💸 Payment Successful')
-                .setDescription(`**${message.author.username}** paid **${target.username}** ${amount.toLocaleString()} ${config.economy.currency}!`)
-                .addFields(
-                    {
-                        name: '💰 Your New Balance',
-                        value: `${senderNewBalance.toLocaleString()} ${config.economy.currency}`,
-                        inline: true
-                    },
-                    {
-                        name: '🎯 Recipient\'s New Balance',
-                        value: `${recipientNewBalance.toLocaleString()} ${config.economy.currency}`,
-                        inline: true
-                    }
-                )
-
-            // Send confirmation message
-            message.reply({ embeds: [successEmbed] });
-
-            // Optional: Send DM notification to recipient
-            if (config.economy.notifyRecipient !== false) {
-                try {
-                    const dmEmbed = new EmbedBuilder()
-                        .setColor(colors.success)
-                        .setTitle('💰 You Received Payment!')
-                        .setDescription(`**${message.author.username}** sent you ${amount.toLocaleString()} ${config.economy.currency}`)
-                        .addFields({
-                            name: '💳 Your New Balance',
-                            value: `${recipientNewBalance.toLocaleString()} ${config.economy.currency}`,
-                            inline: true
-                        })
-                        
-                        .setThumbnail(message.author.displayAvatarURL({ dynamic: true }));
-
-                    await target.send({ embeds: [dmEmbed] });
-                } catch (error) {
-                    // Recipient has DMs disabled or bot can't send DM
-                    console.log(`Could not send payment notification to ${target.username}: ${error.message}`);
+        const embed = new EmbedBuilder()
+            .setColor(colors.success)
+            .setTitle('💸 Transaction Successful!')
+            .setDescription(`You successfully sent **${amount.toLocaleString()}** ${config.economy.currency} to **${target.username}**!`)
+            .addFields(
+                {
+                    name: '👤 From',
+                    value: message.author.username,
+                    inline: true
+                },
+                {
+                    name: '👤 To',
+                    value: target.username,
+                    inline: true
                 }
-            }
+            )
+            .setTimestamp();
 
-        } catch (error) {
-            console.error('Error processing payment:', error);
+        // Update statistics
+        database.updateStats(message.author.id, 'command');
 
-            return message.reply({
-                embeds: [{
-                    color: colors.error,
-                    title: '❌ Payment Failed',
-                    description: 'An error occurred while processing the payment. Please try again later.'
-                }]
-            });
-        }
+        message.reply({ embeds: [embed] });
     }
 };
-
-
-

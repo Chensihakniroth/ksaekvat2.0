@@ -8,7 +8,7 @@ module.exports = {
     aliases: ['p', 'stats', 'me'],
     description: 'View your or another user\'s profile',
     usage: 'profile [@user]',
-    execute(message, args, client) {
+    async execute(message, args, client) {
         let target = message.author;
 
         if (message.mentions.users.size > 0) {
@@ -19,7 +19,7 @@ module.exports = {
             if (foundUser) target = foundUser;
         }
 
-        const userData = database.getUser(target.id);
+        const userData = await database.getUser(target.id, target.username);
         const animalsData = database.loadAnimals();
 
         // Calculate essential stats

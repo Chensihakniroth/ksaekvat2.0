@@ -4,27 +4,73 @@ const colors = require('../../utils/colors.js');
 
 /**
  * Helper to get the best possible image URL for a character.
- * Uses Wiki-based Special:FilePath redirects for 100% reliability.
+ * Uses Wiki-based Special:FilePath redirects with refined name mapping.
  */
 function getCharacterImage(char) {
-    const name = char.name.replace(/\s+/g, '_');
+    let name = char.name.replace(/\s+/g, '_');
     const game = char.game?.toLowerCase();
     
+    // --- SPECIAL CASE MAPPING ---
+    const hsrMapping = {
+        "Dan_Heng_•_IL": "Dan_Heng_•_Imbibitor_Lunae",
+        "Dan_Heng_•_Imbibitor_Lunae": "Dan_Heng_•_Imbibitor_Lunae",
+        "March_7th": "March_7th",
+        "Dr._Ratio": "Dr._Ratio",
+        "Topaz": "Topaz_&_Numby",
+        "Trailblazer_(Physical)": "Trailblazer",
+        "Trailblazer_(Fire)": "Trailblazer",
+        "Trailblazer_(Imaginary)": "Trailblazer"
+    };
+
+    const genshinMapping = {
+        "Raiden_Shogun": "Raiden_Shogun",
+        "Kuki_Shinobu": "Kuki_Shinobu",
+        "Ayaka": "Kamisato_Ayaka",
+        "Itto": "Arataki_Itto",
+        "Ayato": "Kamisato_Ayato",
+        "Kokomi": "Sangonomiya_Kokomi",
+        "Heizou": "Shikanoin_Heizou",
+        "Kazuha": "Kaedehara_Kazuha",
+        "Sara": "Kujou_Sara",
+        "Shinobu": "Kuki_Shinobu",
+        "Traveler_(Aether)": "Traveler",
+        "Traveler_(Lumine)": "Traveler"
+    };
+
+    const wuwaMapping = {
+        "Rover": "Rover_(Spectro)",
+        "The_Shorekeeper": "The_Shorekeeper",
+        "Shorekeeper": "The_Shorekeeper"
+    };
+
+    const zzzMapping = {
+        "Ellen_Joe": "Ellen_Joe",
+        "Zhu_Yuan": "Zhu_Yuan",
+        "Jane_Doe": "Jane_Doe",
+        "Caesar_King": "Caesar_King",
+        "Burnice_White": "Burnice_White",
+        "Hoshimi_Miyabi": "Hoshimi_Miyabi",
+        "Von_Lycaon": "Von_Lycaon",
+        "Soldier_11": "Soldier_11"
+    };
+
+    if (game === 'hsr' && hsrMapping[name]) name = hsrMapping[name];
+    else if (game === 'genshin' && genshinMapping[name]) name = genshinMapping[name];
+    else if (game === 'wuwa' && wuwaMapping[name]) name = wuwaMapping[name];
+    else if (game === 'zzz' && zzzMapping[name]) name = zzzMapping[name];
+
+    const width = "?width=1000"; 
+
     if (game === 'genshin') {
-        // Genshin Wiki: Character_[Name]_Splash_Art.png
-        return `https://genshin-impact.fandom.com/wiki/Special:FilePath/Character_${name}_Splash_Art.png`;
+        return `https://genshin-impact.fandom.com/wiki/Special:FilePath/Character_${name}_Splash_Art.png${width}`;
     } else if (game === 'hsr') {
-        // HSR Wiki: [Name]_Splash_Art.png
-        return `https://honkai-star-rail.fandom.com/wiki/Special:FilePath/${name}_Splash_Art.png`;
+        return `https://honkai-star-rail.fandom.com/wiki/Special:FilePath/${name}_Splash_Art.png${width}`;
     } else if (game === 'wuwa') {
-        // WuWa Wiki: [Name]_Splash_Art.png
-        return `https://wutheringwaves.fandom.com/wiki/Special:FilePath/${name}_Splash_Art.png`;
+        return `https://wutheringwaves.fandom.com/wiki/Special:FilePath/${name}_Splash_Art.png${width}`;
     } else if (game === 'zzz') {
-        // ZZZ Wiki: Agent_[Name]_Portrait.png
-        return `https://zenless-zone-zero.fandom.com/wiki/Special:FilePath/Agent_${name}_Portrait.png`;
+        return `https://zenless-zone-zero.fandom.com/wiki/Special:FilePath/Agent_${name}_Portrait.png${width}`;
     }
     
-    // Fallback for unknown games
     return `https://api.dicebear.com/7.x/bottts/svg?seed=${name}`;
 }
 
@@ -34,8 +80,10 @@ module.exports = {
     description: 'View, sort, and manage your character collection!',
     usage: 'char [name]',
     async execute(message, args, client) {
-        const userData = database.getUser(message.author.id);
-        const inventory = userData.gacha_inventory || [];
+        const userData = await database.getUser(message.author.id);
+        const inventory = await database.getHydratedInventory(message.author.id);
+        
+        // Handle legacy characters without type (default to character)
         const characters = inventory.filter(i => i.type === 'character' || !i.type);
 
         if (characters.length === 0) {
@@ -190,8 +238,8 @@ module.exports = {
 
             if (i.customId.startsWith('splash_')) {
                 const name = i.customId.split('_')[1];
-                const { embed } = renderDetail(name, true);
-                await i.update({ embeds: [embed] });
+                const { embed, char } = renderDetail(name, true);
+                await i.update({ embeds: [embed], components: getRows(currentSort, filterGame, char) });
             }
 
             if (i.customId.startsWith('ascend_')) {

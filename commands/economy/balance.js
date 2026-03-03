@@ -8,17 +8,17 @@ module.exports = {
     aliases: ['bal', 'money', 'coins'],
     description: 'Check your or another user\'s balance',
     usage: 'balance [@user]',
-    execute(message, args, client) {
+    async execute(message, args, client) {
         let target = message.author;
 
         // Determine the target user
         target = getTargetUser(message, args, client);
 
-        const userData = database.getUser(target.id);
+        const userData = await database.getUser(target.id, target.username);
         const embed = createBalanceEmbed(target, userData);
 
         // Add active boosters if any
-        addActiveBoosters(embed, target);
+        await addActiveBoosters(embed, target);
 
         // Update command usage statistics
         database.updateStats(message.author.id, 'command');
@@ -65,9 +65,9 @@ function createBalanceEmbed(target, userData) {
 }
 
 // Function to add active boosters to the embed
-function addActiveBoosters(embed, target) {
-    const moneyBooster = database.getActiveBooster(target.id, 'money');
-    const expBooster = database.getActiveBooster(target.id, 'exp');
+async function addActiveBoosters(embed, target) {
+    const moneyBooster = await database.getActiveBooster(target.id, 'money');
+    const expBooster = await database.getActiveBooster(target.id, 'exp');
 
     if (moneyBooster || expBooster) {
         const boosterText = [];
@@ -89,7 +89,3 @@ function addActiveBoosters(embed, target) {
         });
     }
 }
-
-
-
-

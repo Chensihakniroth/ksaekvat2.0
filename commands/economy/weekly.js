@@ -8,8 +8,8 @@ module.exports = {
     aliases: ['w'],
     description: 'Claim your weekly reward',
     usage: 'weekly',
-    execute(message, args, client) {
-        const userData = database.getUser(message.author.id);
+    async execute(message, args, client) {
+        const userData = await database.getUser(message.author.id, message.author.username);
         
         // Check if user has already claimed weekly reward
         const now = new Date();
@@ -31,46 +31,37 @@ module.exports = {
             });
         }
 
-        // Generate random reward amount (much higher than daily)
+        // Generate random reward amount
         const { min, max } = config.economy.weeklyReward;
         const baseReward = Math.floor(Math.random() * (max - min + 1)) + min;
         
         // Apply money booster if active
         let finalReward = baseReward;
-        const moneyBooster = database.getActiveBooster(message.author.id, 'money');
+        const moneyBooster = await database.getActiveBooster(message.author.id, 'money');
         if (moneyBooster) {
             finalReward = Math.floor(baseReward * moneyBooster.multiplier);
         }
 
-        // Add significant level bonus
+        // Add bonus based on level
         const levelBonus = Math.floor(userData.level * 50);
         finalReward += levelBonus;
-
-        // Chance for bonus booster (5% chance)
-        let bonusBooster = null;
-        if (Math.random() < 0.05) {
-            const boosterType = Math.random() < 0.5 ? 'money' : 'exp';
-            const duration = 30 * 60 * 1000; // 30 minutes
-            database.addBooster(message.author.id, boosterType, 2, duration);
-            bonusBooster = { type: boosterType, multiplier: 2, duration: 30 };
-        }
 
         // Update user data
         userData.balance += finalReward;
         userData.lastWeekly = now.toISOString();
         userData.weeklyClaimed = true;
-        database.saveUser(userData);
+        await database.saveUser(userData);
 
-        // Add substantial experience
-        database.addExperience(message.author.id, 100);
+        // Add some experience
+        await database.addExperience(message.author.id, 100);
 
         const embed = new EmbedBuilder()
             .setColor(colors.success)
-            .setTitle('🎊 Weekly Reward Claimed!')
-            .setThumbnail('https://cdn.discordapp.com/emojis/123456789.gif') // Placeholder for celebration animation
+            .setTitle('🌟 Weekly Reward Claimed!')
+            .setThumbnail('https://cdn.discordapp.com/emojis/987654321.gif') // Placeholder for big gift
             .addFields(
                 {
-                    name: `${config.economy.currencySymbol} Weekly Reward`,
+                    name: `${config.economy.currencySymbol} Reward`,
                     value: `**+${finalReward.toLocaleString()}** ${config.economy.currency}`,
                     inline: true
                 },
@@ -86,7 +77,7 @@ module.exports = {
                 }
             );
 
-        // Show breakdown
+        // Show breakdown if there are bonuses
         let breakdownText = [`Base: ${baseReward.toLocaleString()} ${config.economy.currency}`];
         
         if (levelBonus > 0) {
@@ -103,18 +94,7 @@ module.exports = {
             inline: false
         });
 
-        // Add bonus booster information if received
-        if (bonusBooster) {
-            embed.addFields({
-                name: '🎉 Bonus Reward!',
-                value: `You received a **${bonusBooster.type} booster x${bonusBooster.multiplier}** for ${bonusBooster.duration} minutes!`,
-                inline: false
-            });
-        }
-
-        embed.setDescription('🌟 **Weekly rewards are much more valuable than daily rewards!**')
-            
-            
+        embed.setDescription('🎊 **Congratulations!** See you again next week for more rewards!')
 
         // Update command usage statistics
         database.updateStats(message.author.id, 'command');
@@ -122,7 +102,3 @@ module.exports = {
         message.reply({ embeds: [embed] });
     }
 };
-
-
-
-

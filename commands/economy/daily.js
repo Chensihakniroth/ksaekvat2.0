@@ -8,8 +8,8 @@ module.exports = {
     aliases: ['d'],
     description: 'Claim your daily reward',
     usage: 'daily',
-    execute(message, args, client) {
-        const userData = database.getUser(message.author.id);
+    async execute(message, args, client) {
+        const userData = await database.getUser(message.author.id, message.author.username);
         
         // Check if user has already claimed daily reward
         const now = new Date();
@@ -37,7 +37,7 @@ module.exports = {
         
         // Apply money booster if active
         let finalReward = baseReward;
-        const moneyBooster = database.getActiveBooster(message.author.id, 'money');
+        const moneyBooster = await database.getActiveBooster(message.author.id, 'money');
         if (moneyBooster) {
             finalReward = Math.floor(baseReward * moneyBooster.multiplier);
         }
@@ -50,10 +50,10 @@ module.exports = {
         userData.balance += finalReward;
         userData.lastDaily = now.toISOString();
         userData.dailyClaimed = true;
-        database.saveUser(userData);
+        await database.saveUser(userData);
 
         // Add some experience
-        database.addExperience(message.author.id, 25);
+        await database.addExperience(message.author.id, 25);
 
         const embed = new EmbedBuilder()
             .setColor(colors.success)
