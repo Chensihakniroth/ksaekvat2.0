@@ -62,6 +62,8 @@ module.exports = {
         }
 
         let results = [];
+        const inventory = userData.gacha_inventory || [];
+
         for (let i = 0; i < 10; i++) {
             let rarity;
             const rand = Math.random() * 100;
@@ -76,12 +78,36 @@ module.exports = {
             }
             
             const charList = pool[rarity];
-            const char = charList[Math.floor(Math.random() * charList.length)];
-            results.push({ ...char, rarity: parseInt(rarity) });
+            const item = charList[Math.floor(Math.random() * charList.length)];
+            const isWeapon = rarity === "3";
+            
+            const newItem = { 
+                ...item, 
+                rarity: parseInt(rarity), 
+                type: isWeapon ? "weapon" : "character",
+                game: gameKey
+            };
+
+            if (isWeapon) {
+                // Auto-ascend weapons
+                const existingWeapon = inventory.find(w => w.name === newItem.name && w.type === "weapon");
+                if (existingWeapon) {
+                    existingWeapon.refinement = Math.min(5, (existingWeapon.refinement || 1) + 1);
+                    results.push({ ...existingWeapon, isDuplicate: true });
+                } else {
+                    newItem.refinement = 1;
+                    inventory.push(newItem);
+                    results.push(newItem);
+                }
+            } else {
+                // Characters: Add to inventory, user will ascend manually
+                newItem.ascension = 0;
+                inventory.push(newItem);
+                results.push(newItem);
+            }
         }
 
-        userData.gacha_inventory = userData.gacha_inventory || [];
-        userData.gacha_inventory.push(...results);
+        userData.gacha_inventory = inventory;
         
         if (!usedExtra) {
             userData.dailyPulls++;

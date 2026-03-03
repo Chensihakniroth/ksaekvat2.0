@@ -169,10 +169,10 @@ async function showInventory(message, args, existingMsg = null) {
 }
 
 module.exports = {
-    name: 'inv',
-    aliases: ['inventory', 'item', 'items'],
-    description: 'Character Profile, Inventory and Loot Boxes',
-    usage: 'inv [page]',
+    name: 'rpginv',
+    aliases: ['ri', 'bag', 'equip'],
+    description: 'Character Profile, RPG Inventory and Loot Boxes',
+    usage: 'rpginv [page]',
     cooldown: 3000,
     async execute(message, args) {
         await showInventory(message, args);

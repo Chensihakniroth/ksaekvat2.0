@@ -6,15 +6,10 @@ const itemUtils = require("./item.js");
 // --- UTILS: Character Image Mapping ---
 function getSplashArt(char) {
     const name = char.name.replace(/\s+/g, '_');
-    const game = char.game.toLowerCase();
+    const game = char.game?.toLowerCase();
     
     if (game === 'genshin') {
-        // Common pattern for Genshin Splash Art (Official Wiki/Fan sites)
         return `https://api.ambr.top/assets/UI/UI_Gacha_AvatarIcon_${name}.png`;
-    } else if (game === 'hsr') {
-        return `https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/icon/character/1001.png`; // Fallback to March 7th for now
-    } else if (game === 'wuwa') {
-        return `https://api.dicebear.com/7.x/identicon/svg?seed=${name}`; // Fallback for WuWa
     }
     return `https://api.dicebear.com/7.x/bottts/svg?seed=${name}`;
 }
@@ -22,87 +17,16 @@ function getSplashArt(char) {
 module.exports = {
     name: "fight",
     aliases: ["battle", "combat", "kfight"],
-    description: "Turn-based combat with your team! Use 'kfight team' to manage your squad.",
-    usage: "fight [bet/upgrade/team/add/remove]",
+    description: "Start a turn-based team battle! Use 'kteam' to manage your squad.",
+    usage: "fight [bet/upgrade]",
     cooldown: 5,
     async execute(message, args, client) {
         const userData = database.getUser(message.author.id);
         if (!userData.worldLevel) userData.worldLevel = 1;
         if (!userData.team) userData.team = [];
 
-        const sub = args[0]?.toLowerCase();
-
-        // --- SUBCOMMAND: TEAM MANAGEMENT ---
-        if (sub === 'team') {
-            const embed = new EmbedBuilder()
-                .setColor(colors.primary)
-                .setTitle(`🛡️ ${message.author.username}'s Battle Team`)
-                .setDescription("hg ach dak character hz hz luy hz luy ban hz! (4 slots max)");
-
-            if (userData.team.length === 0) {
-                embed.addFields({ name: "Team Status", value: "hg ot torm team heh! Use `kfight add <name>` to add characters." });
-            }
-
-            userData.team.forEach((char, index) => {
-                const starIcon = char.rarity === 5 ? '🔶' : (char.rarity === 4 ? '🔷' : '⚪');
-                embed.addFields({
-                    name: `Slot ${index + 1}: ${char.emoji} ${char.name}`,
-                    value: `${starIcon} Rarity: ${char.rarity}★ | Game: ${char.game}`,
-                    inline: true
-                });
-            });
-
-            // If there's at least one char, show the splash art of the leader (first slot)
-            if (userData.team.length > 0) {
-                embed.setImage(getSplashArt(userData.team[0]));
-            }
-
-            return message.reply({ embeds: [embed] });
-        }
-
-        // --- SUBCOMMAND: ADD TO TEAM ---
-        if (sub === 'add') {
-            const charName = args.slice(1).join(' ').toLowerCase();
-            if (!charName) return message.reply("❓ hg jong add nak na? Example: `kfight add Raiden Shogun` (ﾉ´ヮ`)ﾉ*:･ﾟ✧");
-
-            if (userData.team.length >= 4) return message.reply("🚫 Team hg korn hz! (Max 4 slots)");
-
-            const inventory = userData.gacha_inventory || [];
-            const found = inventory.find(c => c.name.toLowerCase().includes(charName));
-
-            if (!found) return message.reply(`❌ hg ot mean character **${charName}** knong inventory heh!`);
-            
-            // Check if already in team
-            if (userData.team.some(c => c.name === found.name)) return message.reply("🚫 character ng mean hz knong team!");
-
-            userData.team.push(found);
-            database.saveUser(userData);
-
-            const embed = new EmbedBuilder()
-                .setColor(colors.success)
-                .setTitle("✅ Character Added!")
-                .setDescription(`hg add **${found.name}** tov team hz!`)
-                .setThumbnail(getSplashArt(found));
-
-            return message.reply({ embeds: [embed] });
-        }
-
-        // --- SUBCOMMAND: REMOVE FROM TEAM ---
-        if (sub === 'remove') {
-            const slot = parseInt(args[1]);
-            if (isNaN(slot) || slot < 1 || slot > userData.team.length) {
-                return message.reply(`❓ hg jong remove slot na? (1-${userData.team.length})`);
-            }
-
-            const removed = userData.team.splice(slot - 1, 1);
-            database.saveUser(userData);
-
-            return message.reply(`✅ Removed **${removed[0].name}** from your team! (◕‿◕✿)`);
-        }
-
         // --- SUBCOMMAND: UPGRADE (WL Ascension Quest) ---
-        if (sub === 'upgrade') {
-            // Keep existing upgrade logic...
+        if (args[0]?.toLowerCase() === 'upgrade') {
             const nextWorld = userData.worldLevel + 1;
             const requiredLevel = userData.worldLevel * 10;
             const stats = userData.stats || {};
@@ -128,7 +52,7 @@ module.exports = {
 
         // --- BATTLE LOGIC ---
         if (userData.team.length === 0) {
-            return message.reply("🚫 hg ot mean team krub fighting heh! Use `kfight add` first! (｡•́︿•̀｡)");
+            return message.reply("🚫 hg ot mean team krub fighting heh! Use `kteam add` first! (｡•́︿•̀｡)");
         }
 
         let betAmount = 0;
@@ -142,15 +66,18 @@ module.exports = {
             database.removeBalance(message.author.id, betAmount);
         }
 
-        // Initialize Team Stats
+        // Initialize Team Stats (Using Ascension Levels)
         const bonuses = itemUtils.calculateEquippedBonuses(message.author.id);
-        const team = userData.team.map(char => ({
-            ...char,
-            maxHp: Math.floor((char.rarity * 50) + (userData.level * 10) + 200),
-            hp: Math.floor((char.rarity * 50) + (userData.level * 10) + 200),
-            atk: Math.floor((char.rarity * 15) + (userData.level * 5) + 30) + (bonuses.attack || 0),
-            def: Math.floor((char.rarity * 10) + (userData.level * 4) + 20) + (bonuses.defense || 0),
-        }));
+        const team = userData.team.map(char => {
+            const asc = char.ascension || 0;
+            return {
+                ...char,
+                maxHp: Math.floor((char.rarity * 50) + (asc * 100) + (userData.level * 10) + 200),
+                hp: Math.floor((char.rarity * 50) + (asc * 100) + (userData.level * 10) + 200),
+                atk: Math.floor((char.rarity * 15) + (asc * 30) + (userData.level * 5) + 30) + (bonuses.attack || 0),
+                def: Math.floor((char.rarity * 10) + (asc * 20) + (userData.level * 4) + 20) + (bonuses.defense || 0),
+            };
+        });
 
         // Enemy Setup
         const enemyLevel = Math.floor(Math.random() * (userData.worldLevel * 10 - userData.level + 1)) + userData.level;
@@ -178,10 +105,10 @@ module.exports = {
         const getBattleEmbed = () => {
             const activeMember = team.find(c => c.hp > 0) || team[0];
             const teamDisplay = team.map(c => 
-                `${c.hp > 0 ? c.emoji : '💀'} **${c.name}**\n\`[${'■'.repeat(Math.ceil((c.hp/c.maxHp)*10))}${"-".repeat(10-Math.ceil((c.hp/c.maxHp)*10))}]\` ${Math.max(0, c.hp)}/${c.maxHp}`
+                `${c.hp > 0 ? c.emoji : '💀'} **${c.name}**\n\`[${'■'.repeat(Math.ceil((c.hp/c.maxHp)*10))}${"-".repeat(Math.max(0, 10-Math.ceil((c.hp/c.maxHp)*10)))}]\` ${Math.max(0, c.hp)}/${c.maxHp}`
             ).join('\n');
 
-            const enemyDisplay = `${enemy.emoji} **${enemy.name}** (Lv.${enemy.level})\n\`[${'■'.repeat(Math.ceil((enemy.hp/enemy.maxHp)*10))}${"-".repeat(10-Math.ceil((enemy.hp/enemy.maxHp)*10))}]\` ${Math.max(0, enemy.hp)}/${enemy.maxHp}`;
+            const enemyDisplay = `${enemy.emoji} **${enemy.name}** (Lv.${enemy.level})\n\`[${'■'.repeat(Math.ceil((enemy.hp/enemy.maxHp)*10))}${"-".repeat(Math.max(0, 10-Math.ceil((enemy.hp/enemy.maxHp)*10)))}]\` ${Math.max(0, enemy.hp)}/${enemy.maxHp}`;
 
             return new EmbedBuilder()
                 .setColor(colors.primary)
@@ -280,8 +207,3 @@ module.exports = {
         });
     }
 };
-
-function generateItem(lvl) {
-    // Keep item generation the same or move to a separate utility if needed
-    // ...
-}
