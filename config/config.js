@@ -21,6 +21,9 @@ module.exports = {
         rps: 'rps',
         wish: 'gacha',
         chars: 'char',
+        item: 'item',
+        kkk: 'ksaekvat',
+        kk: 'ksaekvat',
         h: 'coinflip heads',
         t: 'coinflip tails'
     },

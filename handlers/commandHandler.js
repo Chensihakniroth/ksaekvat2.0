@@ -4,8 +4,12 @@ const logger = require('../utils/logger.js');
 
 module.exports = (client) => {
     const commandsPath = path.join(__dirname, '..', 'commands');
+    let loadedCount = 0;
+    let errorCount = 0;
     
-    // Function to recursively load commands from all subdirectories
+    logger.section('Command Loader');
+    const loadProgress = logger.loader('Indexing command files');
+
     function loadCommands(dir) {
         const items = fs.readdirSync(dir, { withFileTypes: true });
         
@@ -13,42 +17,29 @@ module.exports = (client) => {
             const itemPath = path.join(dir, item.name);
             
             if (item.isDirectory()) {
-                // Skip slash commands directory as they are handled separately
                 if (item.name === 'slash') continue;
-                // Recursively load commands from subdirectories
                 loadCommands(itemPath);
             } else if (item.isFile() && item.name.endsWith('.js')) {
                 try {
                     const command = require(itemPath);
-                    
-                    // Validate command structure
-                    if (!command.name) {
-                        logger.warn(`Command at ${itemPath} is missing a name property`);
+                    if (!command.name || !command.execute) {
+                        logger.warn(`Skipped ${item.name}: Missing name/execute`);
+                        errorCount++;
                         continue;
                     }
                     
-                    if (!command.execute) {
-                        logger.warn(`Command ${command.name} at ${itemPath} is missing an execute function`);
-                        continue;
-                    }
-                    
-                    // Set the command in the collection
-                    if (!command.category) {
-                        command.category = path.basename(dir);
-                    }
+                    if (!command.category) command.category = path.basename(dir);
                     client.commands.set(command.name, command);
                     
-                    // Also set aliases if they exist
                     if (command.aliases && Array.isArray(command.aliases)) {
                         for (const alias of command.aliases) {
                             client.commands.set(alias, command);
                         }
                     }
-                    
-                    logger.info(`Loaded command: ${command.name}`);
-                    
+                    loadedCount++;
                 } catch (error) {
-                    logger.error(`Error loading command at ${itemPath}:`, error);
+                    logger.error(`Failed to load ${item.name}`, error);
+                    errorCount++;
                 }
             }
         }
@@ -57,11 +48,13 @@ module.exports = (client) => {
     try {
         if (fs.existsSync(commandsPath)) {
             loadCommands(commandsPath);
-            logger.info(`Successfully loaded ${client.commands.size} commands`);
+            loadProgress.done();
+            logger.item('Prefix Cmds', loadedCount, '\x1b[32m');
+            if (errorCount > 0) logger.item('Failures', errorCount, '\x1b[31m');
         } else {
-            logger.warn('Commands directory not found');
+            loadProgress.fail('Directory not found');
         }
     } catch (error) {
-        logger.error('Error loading commands:', error);
+        loadProgress.fail(error.message);
     }
 };

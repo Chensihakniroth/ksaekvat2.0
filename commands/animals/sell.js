@@ -1,4 +1,3 @@
-
 const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
@@ -9,7 +8,7 @@ module.exports = {
     aliases: ['sellpet', 'sellanimals'],
     description: 'Sell animals from your collection',
     usage: 'sell <animal_name> or sell all',
-    execute(message, args, client) {
+    async execute(message, args, client) {
         if (args.length === 0) {
             return message.reply({
                 embeds: [{
@@ -20,15 +19,16 @@ module.exports = {
             });
         }
 
-        const userData = database.getUser(message.author.id);
-        const animalsData = database.loadAnimals();
+        const userData = await database.getUser(message.author.id, message.author.username);
+        const animalsData = await database.loadAnimals();
         const userAnimals = userData.animals || {};
 
         // Check if user has any animals
         let totalAnimals = 0;
         for (const rarity of Object.keys(userAnimals)) {
-            for (const animal of Object.keys(userAnimals[rarity] || {})) {
-                totalAnimals += userAnimals[rarity][animal];
+            const rarityAnimals = userAnimals[rarity] || {};
+            for (const animal of Object.keys(rarityAnimals)) {
+                totalAnimals += (rarityAnimals instanceof Map ? rarityAnimals.get(animal) : rarityAnimals[animal]) || 0;
             }
         }
 
@@ -52,7 +52,8 @@ module.exports = {
 
             for (const [rarity, animals] of Object.entries(userAnimals)) {
                 if (animalsData[rarity]) {
-                    for (const [animalKey, count] of Object.entries(animals)) {
+                    const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
+                    for (const [animalKey, count] of animalEntries) {
                         if (animalsData[rarity][animalKey] && count > 0) {
                             const animal = animalsData[rarity][animalKey];
                             const value = animal.value * count;
@@ -75,9 +76,9 @@ module.exports = {
             }
 
             // Clear all animals and add money
-            userData.animals = {};
+            userData.animals = new Map();
             userData.balance += totalValue;
-            database.saveUser(userData);
+            await database.saveUser(userData);
 
             const embed = new EmbedBuilder()
                 .setColor(colors.success)
@@ -92,9 +93,10 @@ module.exports = {
                     name: '💳 New Balance',
                     value: `${userData.balance.toLocaleString()} ${config.economy.currency}`,
                     inline: true
-                })
-                
-                
+                });
+
+            // Update command usage statistics
+            await database.updateStats(message.author.id, 'command');
 
             return message.reply({ embeds: [embed] });
         } else {
@@ -107,7 +109,8 @@ module.exports = {
             // Search for the animal in user's collection
             for (const [rarity, animals] of Object.entries(userAnimals)) {
                 if (animalsData[rarity]) {
-                    for (const [animalKey, count] of Object.entries(animals)) {
+                    const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
+                    for (const [animalKey, count] of animalEntries) {
                         if (animalsData[rarity][animalKey] && count > 0) {
                             const animal = animalsData[rarity][animalKey];
                             if (animal.name.toLowerCase().includes(animalName) || animalKey.toLowerCase().includes(animalName)) {
@@ -133,19 +136,29 @@ module.exports = {
             }
 
             // Sell one of the animal
-            const currentCount = userAnimals[foundRarity][foundKey];
-            const sellValue = foundAnimal.value;
-
-            userAnimals[foundRarity][foundKey] -= 1;
-            if (userAnimals[foundRarity][foundKey] <= 0) {
-                delete userAnimals[foundRarity][foundKey];
-                if (Object.keys(userAnimals[foundRarity]).length === 0) {
-                    delete userAnimals[foundRarity];
+            let currentCount = 0;
+            if (userAnimals instanceof Map) {
+                const rarityMap = userAnimals.get(foundRarity);
+                currentCount = rarityMap.get(foundKey);
+                rarityMap.set(foundKey, currentCount - 1);
+                if (rarityMap.get(foundKey) <= 0) {
+                    rarityMap.delete(foundKey);
+                    if (rarityMap.size === 0) userAnimals.delete(foundRarity);
+                }
+            } else {
+                currentCount = userAnimals[foundRarity][foundKey];
+                userAnimals[foundRarity][foundKey] -= 1;
+                if (userAnimals[foundRarity][foundKey] <= 0) {
+                    delete userAnimals[foundRarity][foundKey];
+                    if (Object.keys(userAnimals[foundRarity]).length === 0) {
+                        delete userAnimals[foundRarity];
+                    }
                 }
             }
 
+            const sellValue = foundAnimal.value;
             userData.balance += sellValue;
-            database.saveUser(userData);
+            await database.saveUser(userData);
 
             const rarityInfo = config.hunting.rarities[foundRarity];
             const embed = new EmbedBuilder()
@@ -161,17 +174,12 @@ module.exports = {
                     name: '💳 New Balance',
                     value: `${userData.balance.toLocaleString()} ${config.economy.currency}`,
                     inline: true
-                })
-                
+                });
+
+            // Update command usage statistics
+            await database.updateStats(message.author.id, 'command');
 
             return message.reply({ embeds: [embed] });
         }
-
-        // Update command usage statistics
-        database.updateStats(message.author.id, 'command');
     }
 };
-
-
-
-

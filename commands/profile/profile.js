@@ -95,7 +95,7 @@ module.exports = {
         message.reply({ embeds: [embed] });
 
         // Update command usage statistics
-        database.updateStats(message.author.id, 'command');
+        await database.updateStats(message.author.id, 'command');
     }
 };
 

@@ -9,7 +9,7 @@ module.exports = {
     description: 'Give an item to a user (Admin only)',
     usage: 'giveitem <@user> <item_type> [amount/duration]',
     adminOnly: true,
-    execute(message, args, client) {
+    async execute(message, args, client) {
         // Check arguments
         if (args.length < 2) {
             return message.reply({
@@ -58,7 +58,7 @@ module.exports = {
         const amount = args[2] ? parseInt(args[2]) : null;
 
         // Get user data
-        const userData = database.getUser(target.id);
+        const userData = await database.getUser(target.id, target.username);
 
         let resultEmbed;
         let success = false;
@@ -77,7 +77,8 @@ module.exports = {
                     });
                 }
 
-                const newBalance = database.addBalance(target.id, amount);
+                const userUpdate = await database.addBalance(target.id, amount);
+                const newBalance = userUpdate.balance;
                 
                 resultEmbed = new EmbedBuilder()
                     .setColor(colors.success)
@@ -111,7 +112,8 @@ module.exports = {
                 }
 
                 const previousLevel = userData.level;
-                const expGain = database.addExperience(target.id, amount);
+                const expGain = await database.addExperience(target.id, amount);
+                const updatedUser = await database.getUser(target.id, target.username);
                 
                 resultEmbed = new EmbedBuilder()
                     .setColor(colors.success)
@@ -122,8 +124,8 @@ module.exports = {
                             name: '📊 Experience Update',
                             value: [
                                 `**Added:** +${amount} XP`,
-                                `**New Total:** ${database.getUser(target.id).experience} XP`,
-                                expGain.leveledUp ? `🎉 **Level Up!** ${previousLevel} → ${expGain.newLevel}` : `**Current Level:** ${userData.level}`
+                                `**New Total:** ${updatedUser.experience} XP`,
+                                expGain.leveledUp ? `🎉 **Level Up!** ${previousLevel} → ${expGain.newLevel}` : `**Current Level:** ${updatedUser.level}`
                             ].join('\n'),
                             inline: true
                         }
@@ -144,7 +146,7 @@ module.exports = {
                     });
                 }
 
-                database.addBooster(target.id, 'money', 2, moneyDuration * 60 * 1000);
+                await database.addBooster(target.id, 'money', 2, moneyDuration * 60 * 1000);
                 
                 resultEmbed = new EmbedBuilder()
                     .setColor(colors.success)
@@ -179,7 +181,7 @@ module.exports = {
                     });
                 }
 
-                database.addBooster(target.id, 'exp', 2, expDuration * 60 * 1000);
+                await database.addBooster(target.id, 'exp', 2, expDuration * 60 * 1000);
                 
                 resultEmbed = new EmbedBuilder()
                     .setColor(colors.success)

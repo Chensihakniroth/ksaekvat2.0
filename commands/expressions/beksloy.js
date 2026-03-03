@@ -5,11 +5,11 @@ const database = require("../../utils/database.js");
 
 module.exports = {
     name: "ksaekvat",
-    aliases: ["kk"],
+    aliases: ["kk", "kkk", "beksloy"],
     description: "Send beksloy vibes with an action GIF",
     usage: "kkk <@user> [message]",
     cooldown: 3000,
-    execute(message, args, client) {
+    async execute(message, args, client) {
         if (args.length < 1 || message.mentions.users.size === 0) {
             return message.reply({
                 embeds: [
@@ -94,7 +94,7 @@ const randomMessage =
             }
         });
 
-        database.updateStats(message.author.id, "command");
+        await database.updateStats(message.author.id, "command");
     },
 };
 

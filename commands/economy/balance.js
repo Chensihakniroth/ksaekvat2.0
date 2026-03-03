@@ -21,7 +21,7 @@ module.exports = {
         await addActiveBoosters(embed, target);
 
         // Update command usage statistics
-        database.updateStats(message.author.id, 'command');
+        await database.updateStats(message.author.id, 'command');
 
         message.reply({ embeds: [embed] });
     }

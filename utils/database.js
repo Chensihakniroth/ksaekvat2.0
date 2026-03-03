@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const registry = require('./registry.js');
 const logger = require('./logger.js');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * DATABASE UTILITY (Gold Standard - MongoDB Edition)
@@ -98,9 +100,9 @@ async function addGachaItem(userId, itemName) {
 
     if (item.type === 'weapon') {
         if (existing) {
-            existing.refinement = Math.min(5, (existing.refinement || 1) + 1);
+            existing.count = (existing.count || 1) + 1;
         } else {
-            user.gacha_inventory.push({ name: itemName, type: 'weapon', refinement: 1 });
+            user.gacha_inventory.push({ name: itemName, type: 'weapon', refinement: 1, count: 1 });
         }
     } else {
         if (existing) {

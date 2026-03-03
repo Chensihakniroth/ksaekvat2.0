@@ -73,7 +73,7 @@ module.exports = {
         }
 
         // Update command usage statistics
-        database.updateStats(message.author.id, 'command');
+        await database.updateStats(message.author.id, 'command');
 
         message.reply({ embeds: [embed] });
     }

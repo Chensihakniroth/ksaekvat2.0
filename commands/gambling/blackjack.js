@@ -21,7 +21,7 @@ module.exports = {
         }
 
         let betAmount;
-        const userData = database.getUser(message.author.id);
+        const userData = await database.getUser(message.author.id, message.author.username);
 
         if (args[0].toLowerCase() === 'all') {
             const { maxBet } = config.gambling.blackjack;
@@ -51,7 +51,7 @@ module.exports = {
             });
         }
 
-        if (!database.hasBalance(message.author.id, betAmount)) {
+        if (!(await database.hasBalance(message.author.id, betAmount))) {
             return message.reply({
                 embeds: [{
                     color: colors.error,
@@ -62,8 +62,8 @@ module.exports = {
         }
 
         // Remove bet
-        database.removeBalance(message.author.id, betAmount);
-        database.updateStats(message.author.id, 'gambled', betAmount);
+        await database.removeBalance(message.author.id, betAmount);
+        await database.updateStats(message.author.id, 'gambled', betAmount);
 
         // Deck Setup
         const suits = ['♠️', '♥️', '♦️', '♣️'];
@@ -199,13 +199,13 @@ module.exports = {
 
             if (winMultiplier > 0) {
                 const winAmount = Math.floor(betAmount * winMultiplier);
-                database.addBalance(message.author.id, winAmount);
+                await database.addBalance(message.author.id, winAmount);
                 if (winMultiplier > 1) {
-                    database.updateStats(message.author.id, 'won', betAmount);
-                    database.updateStats(message.author.id, 'blackjack_win', 1);
+                    await database.updateStats(message.author.id, 'won', betAmount);
+                    await database.updateStats(message.author.id, 'blackjack_win', 1);
                 }
             } else {
-                database.updateStats(message.author.id, 'lost', betAmount);
+                await database.updateStats(message.author.id, 'lost', betAmount);
             }
 
             try {

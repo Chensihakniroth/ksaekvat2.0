@@ -9,7 +9,7 @@ module.exports = {
     description: 'Set a user\'s balance (Admin only)',
     usage: 'setbal <@user> <amount>',
     adminOnly: true,
-    execute(message, args, client) {
+    async execute(message, args, client) {
         // Check arguments
         if (args.length < 2) {
             return message.reply({
@@ -65,12 +65,12 @@ module.exports = {
         }
 
         // Get user data and previous balance
-        const userData = database.getUser(target.id);
-        const previousBalance = userData.balance;
+        const userData = await database.getUser(target.id, target.username);
+        const previousBalance = userData.balance || 0;
 
         // Set new balance
         userData.balance = amount;
-        database.saveUser(userData);
+        await database.saveUser(userData);
 
         const embed = new EmbedBuilder()
             .setColor(colors.success)

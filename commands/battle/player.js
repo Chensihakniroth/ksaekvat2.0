@@ -1,17 +1,17 @@
-
 const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const { getEquippedItems, calculateEquippedBonuses } = require('./item.js');
+const CombatService = require('../../services/CombatService.js');
+const EconomyService = require('../../services/EconomyService.js');
 
 module.exports = {
     name: 'player',
     aliases: ['stats', 'pstats', 'playerstats'],
     description: 'View detailed player combat statistics',
     usage: 'player [@user]',
-    cooldown: 5000, // 5 seconds
+    cooldown: 5000,
     async execute(message, args, client) {
-        // Get target user (mentioned user or command author)
         let target = message.author;
         if (message.mentions.users.size > 0) {
             target = message.mentions.users.first();
@@ -30,25 +30,12 @@ module.exports = {
             });
         }
 
-        const userData = database.getUser(target.id);
-        const equipped = getEquippedItems(target.id);
-        const bonuses = calculateEquippedBonuses(target.id);
+        const userData = await database.getUser(target.id, target.username);
+        const equipped = await getEquippedItems(target.id);
+        const bonuses = await calculateEquippedBonuses(target.id);
 
-        // Calculate base stats
-        const baseStats = {
-            attack: Math.floor(userData.level * 10 + userData.experience / 100),
-            defense: Math.floor(userData.level * 8 + userData.experience / 150),
-            health: Math.floor(userData.level * 15 + 100),
-            luck: Math.floor(userData.level * 2)
-        };
-
-        // Calculate total stats (base + equipped bonuses)
-        const totalStats = {
-            attack: baseStats.attack + bonuses.attack,
-            defense: baseStats.defense + bonuses.defense,
-            health: baseStats.health + bonuses.hp,
-            luck: baseStats.luck + bonuses.luck
-        };
+        // --- CALCULATE STATS (Using Service) ---
+        const { baseStats, totalStats } = CombatService.calculatePlayerStats(userData, bonuses);
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
@@ -59,7 +46,7 @@ module.exports = {
                     name: '📊 Base Stats',
                     value: [
                         `**Level:** ${userData.level}`,
-                        `**Experience:** ${userData.experience.toLocaleString()}`,
+                        `**Experience:** ${EconomyService.format(userData.experience)}`,
                         `**Attack:** ${baseStats.attack}`,
                         `**Defense:** ${baseStats.defense}`,
                         `**Health:** ${baseStats.health}`,
@@ -74,9 +61,9 @@ module.exports = {
                         `**Defense:** ${totalStats.defense} ${bonuses.defense > 0 ? `(+${bonuses.defense})` : ''}`,
                         `**Health:** ${totalStats.health} ${bonuses.hp > 0 ? `(+${bonuses.hp})` : ''}`,
                         `**Luck:** ${totalStats.luck} ${bonuses.luck > 0 ? `(+${bonuses.luck})` : ''}`,
-                        bonuses.speed > 0 ? `**Speed:** +${bonuses.speed}` : '',
-                        bonuses.critRate > 0 ? `**Crit Rate:** +${bonuses.critRate}` : '',
-                        bonuses.evasion > 0 ? `**Evasion:** +${bonuses.evasion}` : ''
+                        totalStats.speed > 0 ? `**Speed:** +${totalStats.speed}` : '',
+                        totalStats.critRate > 0 ? `**Crit Rate:** +${totalStats.critRate}%` : '',
+                        totalStats.evasion > 0 ? `**Evasion:** +${totalStats.evasion}%` : ''
                     ].filter(Boolean).join('\n'),
                     inline: true
                 }
@@ -92,33 +79,22 @@ module.exports = {
             }).join('\n')
             : 'No items equipped';
 
-        embed.addFields({
-            name: '🛡️ Equipped Items',
-            value: equippedText,
-            inline: false
-        });
+        embed.addFields({ name: '🛡️ Equipped Items', value: equippedText, inline: false });
 
         // Battle statistics
+        const stats = userData.stats || {};
         embed.addFields({
             name: '🏆 Battle Record',
             value: [
-                `**Total Gambled:** ${userData.totalGambled?.toLocaleString() || 0}`,
-                `**Total Won:** ${userData.totalWon?.toLocaleString() || 0}`,
-                `**Total Lost:** ${userData.totalLost?.toLocaleString() || 0}`,
-                `**Win Rate:** ${userData.totalGambled > 0 ? Math.round((userData.totalWon / userData.totalGambled) * 100) : 0}%`
+                `**Total Gambled:** ${EconomyService.format(stats.totalGambled || 0)}`,
+                `**Total Won:** ${EconomyService.format(stats.totalWon || 0)}`,
+                `**Total Lost:** ${EconomyService.format(stats.totalLost || 0)}`,
+                `**Win Rate:** ${stats.totalGambled > 0 ? Math.round((stats.totalWon / (stats.totalWon + stats.totalLost)) * 100) : 0}%`
             ].join('\n'),
             inline: false
         });
 
-        embed
-
         await message.reply({ embeds: [embed] });
-
-        // Update command usage statistics
-        database.updateStats(message.author.id, 'command');
+        await database.updateStats(message.author.id, 'command');
     }
 };
-
-
-
-

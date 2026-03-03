@@ -9,10 +9,9 @@ module.exports = {
     usage: 'promolist',
     adminOnly: true,
     async execute(message, args, client) {
-        const codes = promoUtil.getAllCodes();
-        const codeKeys = Object.keys(codes);
+        const codes = await promoUtil.getAllCodes();
 
-        if (codeKeys.length === 0) {
+        if (codes.length === 0) {
             return message.reply('There are no active promo codes right now, sweetie! (っ˘ω˘ς)');
         }
 
@@ -22,8 +21,8 @@ module.exports = {
             .setTimestamp();
 
         let description = '';
-        codeKeys.forEach(code => {
-            const data = codes[code];
+        codes.forEach(data => {
+            const code = data.code;
             const remaining = data.maxUses - data.usedBy.length;
             const rewardType = data.type === 'riel' ? 'riel 💸' : '10-pulls ✨';
             const rewardAmount = data.type === 'riel' ? data.amount.toLocaleString() : data.amount;
@@ -31,7 +30,7 @@ module.exports = {
             description += `**\`${code}\`**\n`;
             description += `┗ Reward: ${rewardAmount} ${rewardType}\n`;
             description += `┗ Uses: ${data.usedBy.length}/${data.maxUses} (${remaining} left)\n`;
-            description += `┗ Created: <t:${Math.floor(data.createdAt / 1000)}:R>\n\n`;
+            description += `┗ Created: <t:${Math.floor(new Date(data.createdAt).getTime() / 1000)}:R>\n\n`;
         });
 
         // Handle description length limits

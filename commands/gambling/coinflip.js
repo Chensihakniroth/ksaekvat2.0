@@ -9,7 +9,7 @@ module.exports = {
     description: 'Flip a coin with Mommy! (◕‿◕✿)',
     usage: 'coinflip <amount/all> [heads/tails]',
     cooldown: 3000, // 3 seconds
-    execute(message, args, client) {
+    async execute(message, args, client) {
         // Check arguments
         if (args.length < 1) {
             return message.reply({
@@ -23,7 +23,7 @@ module.exports = {
 
         let betAmount;
         let isAllBet = false;
-        const userData = database.getUser(message.author.id);
+        const userData = await database.getUser(message.author.id, message.author.username);
 
         // Check if user wants to bet "all"
         if (args[0].toLowerCase() === 'all') {
@@ -69,7 +69,7 @@ module.exports = {
             betAmount = maxBet;
         }
 
-        if (!database.hasBalance(message.author.id, betAmount)) {
+        if (!(await database.hasBalance(message.author.id, betAmount))) {
             return message.reply({
                 embeds: [{
                     color: colors.error,
@@ -90,8 +90,8 @@ module.exports = {
             }
         }
 
-        database.removeBalance(message.author.id, betAmount);
-        database.updateStats(message.author.id, 'gambled', betAmount);
+        await database.removeBalance(message.author.id, betAmount);
+        await database.updateStats(message.author.id, 'gambled', betAmount);
 
         const frames = ['🪙', '⚪', '🪙', '⚪', '🪙', '⚪', '🪙'];
         let frameIndex = 0;
@@ -127,10 +127,11 @@ module.exports = {
 
             if (won) {
                 const winAmount = betAmount * 2;
-                const newBalance = database.addBalance(message.author.id, winAmount);
-                database.updateStats(message.author.id, 'won', betAmount);
-                database.updateStats(message.author.id, 'coinflip_win', 1);
-                const expGain = database.addExperience(message.author.id, 20);
+                const userUpdate = await database.addBalance(message.author.id, winAmount);
+                const newBalance = userUpdate.balance;
+                await database.updateStats(message.author.id, 'won', betAmount);
+                await database.updateStats(message.author.id, 'coinflip_win', 1);
+                const expGain = await database.addExperience(message.author.id, 20);
 
                 finalEmbed = new EmbedBuilder()
                     .setColor(colors.success)
@@ -162,8 +163,8 @@ module.exports = {
                     });
                 }
             } else {
-                const currentUserData = database.getUser(message.author.id);
-                database.updateStats(message.author.id, 'lost', betAmount);
+                const currentUserData = await database.getUser(message.author.id, message.author.username);
+                await database.updateStats(message.author.id, 'lost', betAmount);
 
                 finalEmbed = new EmbedBuilder()
                     .setColor(colors.error)
@@ -193,7 +194,7 @@ module.exports = {
                 iconURL: message.author.displayAvatarURL()
             }).setTimestamp();
 
-            database.updateStats(message.author.id, 'command');
+            await database.updateStats(message.author.id, 'command');
 
             try {
                 await sentMessage.edit({ embeds: [finalEmbed] });

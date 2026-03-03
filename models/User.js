@@ -20,6 +20,8 @@ const UserSchema = new mongoose.Schema({
     lastGachaReset: { type: Date, default: null },
     dailyPulls: { type: Number, default: 0 },
     extraPulls: { type: Number, default: 0 },
+    pity: { type: Number, default: 0 },   // 5-star pity
+    pity4: { type: Number, default: 0 },  // 4-star pity
     
     // Collection Systems
     gacha_inventory: [{

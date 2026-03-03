@@ -1,9 +1,10 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
-const config = require('../../config/config.js');
 const fs = require('fs');
 const path = require('path');
+const GachaService = require('../../services/GachaService.js');
+const EconomyService = require('../../services/EconomyService.js');
 
 const POOL_FILE = path.join(__dirname, '../../data/character_pool.json');
 const PULL_COST = 10000;
@@ -11,8 +12,8 @@ const PULL_COST = 10000;
 module.exports = {
     name: 'gacha',
     aliases: ['pull', 'wish', 'roll'],
-    description: 'Daily free 10-pull, or buy more for 10k riel! (GS, HSR, WuWa)',
-    usage: 'gacha <gs/hsr/wuwa>',
+    description: 'Daily free 10-pull, or buy more for 10k riel! Includes PITY SYSTEM! ✨',
+    usage: 'gacha <gs/hsr/wuwa/zzz>',
     cooldown: 5000,
     async execute(message, args, client) {
         const gameArg = args.join(' ').toLowerCase();
@@ -27,10 +28,11 @@ module.exports = {
             return message.reply('✨ Please specify a game! Example: `kwish gs`, `kwish hsr`, `kwish wuwa`, or `kwish zzz` (ﾉ´ヮ`)ﾉ*:･ﾟ✧');
         }
 
-        const userData = await database.getUser(message.author.id);
+        const userData = await database.getUser(message.author.id, message.author.username);
         const now = new Date();
         const lastReset = userData.lastGachaReset ? new Date(userData.lastGachaReset) : null;
 
+        // Daily Reset Logic
         if (!lastReset || lastReset.getDate() !== now.getDate() || lastReset.getMonth() !== now.getMonth()) {
             userData.dailyPulls = 0;
             userData.lastGachaReset = now.toISOString();
@@ -47,9 +49,10 @@ module.exports = {
             isFree = true;
         }
 
+        // Balance Check for Paid Pulls
         if (!isFree) {
             if (!(await database.hasBalance(message.author.id, PULL_COST))) {
-                return message.reply(`💸 Oh no, sweetie! Your free pull is already used, and you need **${PULL_COST.toLocaleString()}** riel to wish again. (｡•́︿•̀｡)`);
+                return message.reply(`💸 Oh no, sweetie! Your free pull is already used, and you need **${EconomyService.format(PULL_COST)}** riel to wish again. (｡•́︿•̀｡)`);
             }
             await database.removeBalance(message.author.id, PULL_COST);
         }
@@ -61,34 +64,24 @@ module.exports = {
             return message.reply('❌ Oopsie! I couldn\'t find that game pool. (っ˘ω˘ς)');
         }
 
-        let results = [];
-        for (let i = 0; i < 10; i++) {
-            let rarity;
-            const rand = Math.random() * 100;
-            const hasEpicPlus = results.some(r => r.rarity >= 4);
-            
-            if (i === 9 && !hasEpicPlus) {
-                rarity = Math.random() < 0.1 ? "5" : "4"; 
-            } else {
-                if (rand < 0.6) rarity = "5";
-                else if (rand < 5.7) rarity = "4";
-                else rarity = "3";
-            }
-            
-            const charList = pool[rarity];
-            const item = charList[Math.floor(Math.random() * charList.length)];
-            
-            const addedItem = await database.addGachaItem(message.author.id, item.name);
-            results.push(addedItem);
+        // --- PERFORM PULLS (Using Service) ---
+        const { results: rawResults, pity5, pity4 } = GachaService.performMultiPull(userData, pool);
+        
+        // Update user pity and daily status
+        userData.pity = pity5;
+        userData.pity4 = pity4;
+        if (!usedExtra) userData.dailyPulls++;
+        
+        // Add items to database and hydrate them
+        const results = [];
+        for (const item of rawResults) {
+            const added = await database.addGachaItem(message.author.id, item.name);
+            results.push(added);
         }
 
-        if (!usedExtra) {
-            userData.dailyPulls++;
-            await database.saveUser(userData);
-        }
-        
         await database.saveUser(userData);
 
+        // --- RENDER UI ---
         const hasFiveStar = results.some(r => r.rarity === 5);
         const bannerGif = hasFiveStar 
             ? 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExb2FoZ2Rid3E4MnduY245eWhzaDNpczNwcmZmczY1eWtsdGU5YjlubCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/d6NUYe7RL9UyZA8yQg/giphy.gif' 
@@ -109,15 +102,18 @@ module.exports = {
             return `${starIcon} ${r.emoji} **${r.name}**`;
         }).join('\n');
 
-        let footerText = `Paid Pull (${PULL_COST.toLocaleString()} riel)`;
-        if (usedExtra) footerText = `Used Promo Pull (${userData.extraPulls} left)`;
-        else if (isFree) footerText = 'Daily Free Pull used!';
+        let footerParts = [];
+        if (usedExtra) footerParts.push(`Used Promo Pull (${userData.extraPulls} left)`);
+        else if (isFree) footerParts.push('Daily Free Pull used!');
+        else footerParts.push(`Paid Pull (${EconomyService.format(PULL_COST)} riel)`);
+        
+        footerParts.push(`Pity: ${userData.pity}/90`);
 
         const finalEmbed = new EmbedBuilder()
             .setColor(hasFiveStar ? '#FFB13F' : '#A256FF')
             .setTitle(`✨ Manifestation Confirmed [${gameKey.toUpperCase()}]`)
             .setDescription(`**Results:**\n${resultText}`)
-            .setFooter({ text: footerText });
+            .setFooter({ text: footerParts.join(' | ') });
 
         await gameMsg.edit({ embeds: [finalEmbed] });
     }

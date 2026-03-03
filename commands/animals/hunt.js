@@ -9,9 +9,9 @@ module.exports = {
     description: 'Hunt for animals. Chance for Loot Boxes!',
     usage: 'hunt',
     cooldown: 10000,
-    execute(message, args, client) {
-        const userData = database.getUser(message.author.id);
-        const animalsData = database.loadAnimals();
+    async execute(message, args, client) {
+        const userData = await database.getUser(message.author.id, message.author.username);
+        const animalsData = await database.loadAnimals();
         
         if (Math.random() < config.hunting.distractionChance) {
             return message.reply({
@@ -47,13 +47,16 @@ module.exports = {
         }
 
         const available = animalsData[selectedRarity];
+        if (!available || Object.keys(available).length === 0) {
+            return message.reply("❌ Error: No animals found for this rarity. Please check the animal data.");
+        }
         const animalKey = Object.keys(available)[Math.floor(Math.random() * Object.keys(available).length)];
         const animal = available[animalKey];
 
         // --- REWARDS ---
-        database.addAnimal(message.author.id, animalKey, selectedRarity);
+        await database.addAnimal(message.author.id, animalKey, selectedRarity);
         const expReward = Math.floor(rarities[selectedRarity].value / 25) + 5;
-        const expRes = database.addExperience(message.author.id, expReward);
+        const expRes = await database.addExperience(message.author.id, expReward);
 
         // Loot Box Chance (25%)
         let gotLootBox = false;
@@ -66,7 +69,7 @@ module.exports = {
         if (isBoosted) {
             userData.hunt_boost--;
         }
-        database.saveUser(userData);
+        await database.saveUser(userData);
 
         const embed = new EmbedBuilder()
             .setColor(parseInt(rarities[selectedRarity].color.slice(1), 16))
@@ -78,13 +81,13 @@ module.exports = {
             );
 
         if (gotLootBox) {
-            embed.addFields({ name: '🎁 Special Find!', value: 'hg khernh **Loot Box** 1! Open it in `Kinv`!' });
+            embed.addFields({ name: '🎁 Special Find!', value: 'hg khernh **Loot Box** 1! Open it in `Krpginv`!' });
         }
 
         if (expRes.leveledUp) embed.setFooter({ text: `🎉 Level Up! You are now Rank ${expRes.newLevel}` });
 
-        database.updateStats(message.author.id, 'command');
-        database.updateStats(message.author.id, 'hunt_success', 1);
+        await database.updateStats(message.author.id, 'command');
+        await database.updateStats(message.author.id, 'hunt_success', 1);
         message.reply({ embeds: [embed] });
     }
 };

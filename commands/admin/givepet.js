@@ -115,7 +115,7 @@ module.exports = {
 
             // Add animal to user's collection
             for (let i = 0; i < amount; i++) {
-                database.addAnimal(target.id, animalName, rarity);
+                await database.addAnimal(target.id, animalName, rarity);
             }
 
             // Calculate total value
@@ -132,6 +132,8 @@ module.exports = {
             if (config.hunting && config.hunting.rarities && config.hunting.rarities[rarity] && config.hunting.rarities[rarity].name) {
                 rarityName = config.hunting.rarities[rarity].name;
             }
+
+            const targetData = await database.getUser(target.id, target.username);
 
             const embed = new EmbedBuilder()
                 .setColor(rarityColor)
@@ -154,7 +156,7 @@ module.exports = {
                         value: [
                             `**Username:** ${target.username}`,
                             `**User ID:** ${target.id}`,
-                            `**Total Animals:** ${database.getUser(target.id).totalAnimalsFound || 0}`
+                            `**Total Animals:** ${targetData.stats?.totalAnimalsFound || 0}`
                         ].join('\n'),
                         inline: true
                     },

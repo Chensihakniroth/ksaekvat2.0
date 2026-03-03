@@ -13,7 +13,7 @@ module.exports = {
         await message.guild.members.fetch();
         const guildMemberIds = message.guild.members.cache.map(m => m.id);
         
-        const allUsers = database.getAllUsers();
+        const allUsers = await database.getAllUsers();
         
         // Filter users who are in this guild and sort by balance
         const serverUsers = allUsers

@@ -74,7 +74,7 @@ module.exports = {
             .setTimestamp();
 
         // Update statistics
-        database.updateStats(message.author.id, 'command');
+        await database.updateStats(message.author.id, 'command');
 
         message.reply({ embeds: [embed] });
     }

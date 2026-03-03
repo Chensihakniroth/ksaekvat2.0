@@ -2,6 +2,8 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
+const AdminService = require('../../services/AdminService.js');
+const EconomyService = require('../../services/EconomyService.js');
 
 module.exports = {
     name: 'reset',
@@ -9,7 +11,7 @@ module.exports = {
     description: 'Reset a user\'s data completely (Admin only)',
     usage: 'reset <@user>',
     adminOnly: true,
-    execute(message, args, client) {
+    async execute(message, args, client) {
         // Check arguments
         if (args.length < 1) {
             return message.reply({
@@ -52,16 +54,13 @@ module.exports = {
         }
 
         // Get current user data for backup info
-        const userData = database.getUser(target.id);
+        const userData = await database.getUser(target.id, target.username);
         const backupData = {
-            balance: userData.balance,
-            level: userData.level,
-            experience: userData.experience,
-            totalAnimalsFound: userData.totalAnimalsFound,
-            totalGambled: userData.totalGambled,
-            totalWon: userData.totalWon,
-            totalLost: userData.totalLost,
-            commandsUsed: userData.commandsUsed,
+            balance: userData.balance || 0,
+            level: userData.level || 1,
+            experience: userData.experience || 0,
+            totalAnimalsFound: userData.stats?.totalAnimalsFound || 0,
+            commandsUsed: userData.stats?.commandsUsed || 0,
             animalCount: Object.keys(userData.animals || {}).reduce((total, rarity) => 
                 total + Object.keys(userData.animals[rarity] || {}).length, 0)
         };
@@ -77,14 +76,14 @@ module.exports = {
                     value: [
                         `**Username:** ${target.username}`,
                         `**User ID:** ${target.id}`,
-                        `**Account Age:** ${Math.floor((Date.now() - userData.joinedAt) / (1000 * 60 * 60 * 24))} days`
+                        `**Account Age:** ${Math.floor((Date.now() - (userData.joinedAt || Date.now())) / (1000 * 60 * 60 * 24))} days`
                     ].join('\n'),
                     inline: true
                 },
                 {
                     name: '📊 Current Data (WILL BE LOST)',
                     value: [
-                        `**Balance:** ${backupData.balance.toLocaleString()} ${config.economy.currency}`,
+                        `**Balance:** ${EconomyService.format(backupData.balance)} ${config.economy.currency}`,
                         `**Level:** ${backupData.level} (${backupData.experience} XP)`,
                         `**Animals Found:** ${backupData.totalAnimalsFound}`,
                         `**Unique Animals:** ${backupData.animalCount}`,
@@ -109,9 +108,7 @@ module.exports = {
                     value: '✅ React with ✅ to confirm reset\n❌ React with ❌ to cancel',
                     inline: false
                 }
-            )
-            
-            
+            );
 
         message.reply({ embeds: [confirmEmbed] }).then(async (sentMessage) => {
             // Add reaction options
@@ -127,28 +124,9 @@ module.exports = {
 
             collector.on('collect', async (reaction, user) => {
                 if (reaction.emoji.name === '✅') {
-                    // Reset confirmed - reset user data
-                    const newUserData = {
-                        id: target.id,
-                        balance: 1000,
-                        level: 1,
-                        experience: 0,
-                        dailyClaimed: false,
-                        weeklyClaimed: false,
-                        lastDaily: null,
-                        lastWeekly: null,
-                        lastHunt: null,
-                        animals: {},
-                        boosters: {},
-                        totalAnimalsFound: 0,
-                        totalGambled: 0,
-                        totalWon: 0,
-                        totalLost: 0,
-                        commandsUsed: 0,
-                        joinedAt: Date.now() // Reset join date to now
-                    };
-
-                    database.saveUser(newUserData);
+                    // Reset confirmed - using Service
+                    AdminService.resetUser(userData);
+                    await database.saveUser(userData);
 
                     const resetEmbed = new EmbedBuilder()
                         .setColor(colors.success)
@@ -161,7 +139,7 @@ module.exports = {
                                     `**User:** ${target.username} (${target.id})`,
                                     `**Reset by:** ${message.author.username}`,
                                     `**Reset time:** <t:${Math.floor(Date.now() / 1000)}:F>`,
-                                    `**Previous balance:** ${backupData.balance.toLocaleString()} ${config.economy.currency}`,
+                                    `**Previous balance:** ${EconomyService.format(backupData.balance)} ${config.economy.currency}`,
                                     `**Previous level:** ${backupData.level}`
                                 ].join('\n'),
                                 inline: false
@@ -177,9 +155,7 @@ module.exports = {
                                 inline: false
                             }
                         )
-                        .setThumbnail(target.displayAvatarURL())
-                        
-                        
+                        .setThumbnail(target.displayAvatarURL());
 
                     await sentMessage.edit({ embeds: [resetEmbed] });
                     await sentMessage.reactions.removeAll();
@@ -187,7 +163,7 @@ module.exports = {
                     // Log the admin action
                     console.log(`[ADMIN] ${message.author.tag} RESET ${target.tag}'s account completely`);
 
-                    // Try to DM the user about the reset
+                    // Try to DM the user
                     try {
                         const dmEmbed = new EmbedBuilder()
                             .setColor(colors.warning)
@@ -197,24 +173,17 @@ module.exports = {
                                 name: 'What happened?',
                                 value: 'All your progress, animals, and statistics have been reset to default values.',
                                 inline: false
-                            })
-                            
-                            
+                            });
 
-                        target.send({ embeds: [dmEmbed] }).catch(() => {
-                            // User has DMs disabled, ignore
-                        });
-                    } catch (error) {
-                        // Ignore DM errors
-                    }
+                        target.send({ embeds: [dmEmbed] }).catch(() => {});
+                    } catch (error) {}
 
                 } else {
                     // Reset cancelled
                     const cancelEmbed = new EmbedBuilder()
                         .setColor(colors.secondary)
                         .setTitle('❌ Reset Cancelled')
-                        .setDescription(`Reset operation for **${target.username}** has been cancelled.\n\nNo data was modified.`)
-                        
+                        .setDescription(`Reset operation for **${target.username}** has been cancelled.\n\nNo data was modified.`);
 
                     await sentMessage.edit({ embeds: [cancelEmbed] });
                     await sentMessage.reactions.removeAll();
@@ -223,12 +192,10 @@ module.exports = {
 
             collector.on('end', async (collected) => {
                 if (collected.size === 0) {
-                    // Timeout
                     const timeoutEmbed = new EmbedBuilder()
                         .setColor(colors.warning)
                         .setTitle('⏰ Reset Timeout')
-                        .setDescription(`Reset confirmation timed out for **${target.username}**.\n\nNo action was taken.`)
-                        
+                        .setDescription(`Reset confirmation timed out for **${target.username}**.\n\nNo action was taken.`);
 
                     await sentMessage.edit({ embeds: [timeoutEmbed] });
                     await sentMessage.reactions.removeAll();
@@ -237,7 +204,3 @@ module.exports = {
         });
     }
 };
-
-
-
-

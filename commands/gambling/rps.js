@@ -21,7 +21,7 @@ module.exports = {
         }
 
         let betAmount;
-        const userData = database.getUser(message.author.id);
+        const userData = await database.getUser(message.author.id, message.author.username);
         if (args[0].toLowerCase() === 'all') {
             betAmount = Math.min(userData.balance, config.gambling.rps.maxBet);
         } else {
@@ -38,7 +38,7 @@ module.exports = {
             });
         }
 
-        if (!database.hasBalance(message.author.id, betAmount)) {
+        if (!(await database.hasBalance(message.author.id, betAmount))) {
             return message.reply({
                 embeds: [{
                     color: colors.error,
@@ -48,8 +48,8 @@ module.exports = {
             });
         }
 
-        database.removeBalance(message.author.id, betAmount);
-        database.updateStats(message.author.id, "gambled", betAmount);
+        await database.removeBalance(message.author.id, betAmount);
+        await database.updateStats(message.author.id, "gambled", betAmount);
 
         const choices = [
             { name: 'Rock', emoji: '🪨', beats: 'Scissors' },
@@ -113,13 +113,13 @@ module.exports = {
             }
 
             if (winMultiplier > 0) {
-                database.addBalance(message.author.id, Math.floor(betAmount * winMultiplier));
+                await database.addBalance(message.author.id, Math.floor(betAmount * winMultiplier));
                 if (winMultiplier > 1) {
-                    database.updateStats(message.author.id, 'won', betAmount);
-                    database.updateStats(message.author.id, 'rps_win', 1);
+                    await database.updateStats(message.author.id, 'won', betAmount);
+                    await database.updateStats(message.author.id, 'rps_win', 1);
                 }
             } else {
-                database.updateStats(message.author.id, 'lost', betAmount);
+                await database.updateStats(message.author.id, 'lost', betAmount);
             }
 
             const finalEmbed = new EmbedBuilder()

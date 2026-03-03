@@ -14,22 +14,22 @@ module.exports = {
             return message.reply('✨ Please provide a promo code! (ﾉ´ヮ`)ﾉ*:･ﾟ✧');
         }
 
-        const result = promoUtil.redeemCode(message.author.id, code);
+        const result = await promoUtil.redeemCode(message.author.id, code);
 
         if (!result.success) {
             return message.reply(result.message);
         }
 
-        const userData = database.getUser(message.author.id);
+        const userData = await database.getUser(message.author.id, message.author.username);
         const reward = result.reward;
         let rewardText = '';
 
         if (reward.type === 'riel') {
-            database.addBalance(message.author.id, reward.amount);
+            await database.addBalance(message.author.id, reward.amount);
             rewardText = `**${reward.amount.toLocaleString()}** riel! 💸`;
         } else if (reward.type === 'pulls') {
             userData.extraPulls = (userData.extraPulls || 0) + reward.amount;
-            database.saveUser(userData);
+            await database.saveUser(userData);
             rewardText = `**${reward.amount}** free 10-pulls! ✨`;
         }
 

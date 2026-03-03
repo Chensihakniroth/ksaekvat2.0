@@ -4,28 +4,28 @@ const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 
 // Add item to user's inventory
-function addItemToInventory(userId, item) {
-    const userData = database.getUser(userId);
+async function addItemToInventory(userId, item) {
+    const userData = await database.getUser(userId);
     if (!userData.inventory) userData.inventory = [];
     const itemId = Math.random().toString(36).substr(2, 4).toUpperCase();
     const newItem = { id: itemId, ...item, obtainedAt: new Date().toISOString() };
     userData.inventory.push(newItem);
-    database.saveUser(userData);
+    await database.saveUser(userData);
     return itemId;
 }
 
-function getInventory(userId) {
-    const userData = database.getUser(userId);
+async function getInventory(userId) {
+    const userData = await database.getUser(userId);
     return userData.inventory || [];
 }
 
-function getEquippedItems(userId) {
-    const userData = database.getUser(userId);
+async function getEquippedItems(userId) {
+    const userData = await database.getUser(userId);
     return userData.equipped || {};
 }
 
-function equipItem(userId, itemId) {
-    const userData = database.getUser(userId);
+async function equipItem(userId, itemId) {
+    const userData = await database.getUser(userId);
     const inventory = userData.inventory || [];
     const equipped = userData.equipped || {};
     const itemIndex = inventory.findIndex(item => item.id.toUpperCase() === itemId.toUpperCase());
@@ -37,12 +37,12 @@ function equipItem(userId, itemId) {
     inventory.splice(itemIndex, 1);
     userData.equipped = equipped;
     userData.inventory = inventory;
-    database.saveUser(userData);
+    await database.saveUser(userData);
     return { success: true, item, slot };
 }
 
-function unequipItem(userId, slot) {
-    const userData = database.getUser(userId);
+async function unequipItem(userId, slot) {
+    const userData = await database.getUser(userId);
     const equipped = userData.equipped || {};
     const inventory = userData.inventory || [];
     if (!equipped[slot]) return { success: false, message: `No item equipped in ${slot}` };
@@ -51,12 +51,12 @@ function unequipItem(userId, slot) {
     inventory.push(item);
     userData.equipped = equipped;
     userData.inventory = inventory;
-    database.saveUser(userData);
+    await database.saveUser(userData);
     return { success: true, item, slot };
 }
 
-function calculateEquippedBonuses(userId) {
-    const equipped = getEquippedItems(userId);
+async function calculateEquippedBonuses(userId) {
+    const equipped = await getEquippedItems(userId);
     const bonuses = { attack: 0, defense: 0, hp: 0, speed: 0, luck: 0 };
     Object.values(equipped).forEach(item => {
         if (item.bonus) {
@@ -70,10 +70,10 @@ function calculateEquippedBonuses(userId) {
 
 async function showInventory(message, args, existingMsg = null) {
     const userId = message.author.id;
-    const userData = database.getUser(userId);
-    const inventory = getInventory(userId);
-    const equipped = getEquippedItems(userId);
-    const bonuses = calculateEquippedBonuses(userId);
+    const userData = await database.getUser(userId, message.author.username);
+    const inventory = await getInventory(userId);
+    const equipped = await getEquippedItems(userId);
+    const bonuses = await calculateEquippedBonuses(userId);
     
     const page = parseInt(args[0]) || 1;
     const itemsPerPage = 5;
@@ -134,7 +134,7 @@ async function showInventory(message, args, existingMsg = null) {
     collector.on('collect', async i => {
         let result = { success: false };
         if (i.customId === 'equip_select') {
-            result = equipItem(userId, i.values[0]);
+            result = await equipItem(userId, i.values[0]);
         } else if (i.customId === 'open_box') {
             if (userData.lootbox > 0) {
                 userData.lootbox--;
@@ -149,13 +149,13 @@ async function showInventory(message, args, existingMsg = null) {
                     const name = wpns[Math.floor(Math.random() * wpns.length)];
                     const mult = Math.max(1, Math.floor(userData.level / 5));
                     const wpnItem = { name: `L-${name}`, type: 'Weapon', rarity: 'Rare', perk: '✨ Looted', bonus: { attack: 15 * mult } };
-                    const id = addItemToInventory(userId, wpnItem);
+                    const id = await addItemToInventory(userId, wpnItem);
                     result = { success: true, message: `You found a **${name}**! \`[${id}]\`` };
                 }
-                database.saveUser(userData);
+                await database.saveUser(userData);
             }
         } else if (i.customId === 'un_weapon') {
-            result = unequipItem(userId, 'weapon');
+            result = await unequipItem(userId, 'weapon');
         }
 
         if (result.success) {
@@ -163,7 +163,7 @@ async function showInventory(message, args, existingMsg = null) {
             if (i.deferred || i.replied) {} else await i.deferUpdate();
             return showInventory(message, [page], msg);
         } else {
-            await i.reply({ content: result.message || 'Error', ephemeral: true });
+            if (i.deferred || i.replied) {} else await i.reply({ content: result.message || 'Error', ephemeral: true });
         }
     });
 }
@@ -178,5 +178,6 @@ module.exports = {
         await showInventory(message, args);
     },
     addItemToInventory,
-    calculateEquippedBonuses
+    calculateEquippedBonuses,
+    getEquippedItems
 };

@@ -97,7 +97,7 @@ module.exports = {
         embed.setDescription('🎊 **Congratulations!** See you again next week for more rewards!')
 
         // Update command usage statistics
-        database.updateStats(message.author.id, 'command');
+        await database.updateStats(message.author.id, 'command');
 
         message.reply({ embeds: [embed] });
     }

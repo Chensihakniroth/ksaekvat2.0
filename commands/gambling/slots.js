@@ -24,7 +24,7 @@ module.exports = {
 
         let betAmount;
         if (args[0].toLowerCase() === 'all') {
-            const userData = database.getUser(message.author.id);
+            const userData = await database.getUser(message.author.id, message.author.username);
             betAmount = Math.min(userData.balance, maxBet);
             
             if (betAmount <= 0) {
@@ -59,19 +59,19 @@ module.exports = {
             });
         }
 
-        if (!database.hasBalance(message.author.id, betAmount)) {
-            const userData = database.getUser(message.author.id);
+        if (!(await database.hasBalance(message.author.id, betAmount))) {
+            const userData = await database.getUser(message.author.id, message.author.username);
             return message.reply({
                 embeds: [{
                     color: colors.error,
                     title: '💸 Insufficient funds',
-                    description: `You don't have enough to make that bet, darling! (｡•́︿•̀｡)`
+                    description: `You don't have enough to make that bet, darling! (｡•́︿•̀｡)\n**Current Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
                 }]
             });
         }
 
-        database.removeBalance(message.author.id, betAmount);
-        database.updateStats(message.author.id, 'gambled', betAmount);
+        await database.removeBalance(message.author.id, betAmount);
+        await database.updateStats(message.author.id, 'gambled', betAmount);
 
         const outcomes = [
             { type: 'diamond', weight: 2, emoji: '💎', multiplier: 10, name: 'A big diamond for a big winner! ✨' },
@@ -169,9 +169,10 @@ module.exports = {
 
         if (selectedOutcome.type === 'diamond' || selectedOutcome.type === 'rocket' || selectedOutcome.type === 'coin') {
             const winAmount = betAmount * selectedOutcome.multiplier;
-            const newBalance = database.addBalance(message.author.id, winAmount);
-            database.updateStats(message.author.id, 'won', winAmount - betAmount);
-            const expGain = database.addExperience(message.author.id, 25);
+            const userUpdate = await database.addBalance(message.author.id, winAmount);
+            const newBalance = userUpdate.balance;
+            await database.updateStats(message.author.id, 'won', winAmount - betAmount);
+            const expGain = await database.addExperience(message.author.id, 25);
 
             slotEmbed
                 .setColor(colors.success)
@@ -192,7 +193,8 @@ module.exports = {
                 });
             }
         } else if (selectedOutcome.type === 'draw') {
-            const newBalance = database.addBalance(message.author.id, betAmount);
+            const userUpdate = await database.addBalance(message.author.id, betAmount);
+            const newBalance = userUpdate.balance;
 
             slotEmbed
                 .setColor(colors.secondary)
@@ -204,8 +206,8 @@ module.exports = {
                     `**Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}`
                 );
         } else {
-            const userData = database.getUser(message.author.id);
-            database.updateStats(message.author.id, 'lost', betAmount);
+            const userData = await database.getUser(message.author.id, message.author.username);
+            await database.updateStats(message.author.id, 'lost', betAmount);
 
             slotEmbed
                 .setColor(colors.error)

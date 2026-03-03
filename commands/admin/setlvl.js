@@ -8,7 +8,7 @@ module.exports = {
     description: 'Set a user\'s level (Admin only)',
     usage: 'setlvl <@user> <level>',
     adminOnly: true,
-    execute(message, args, client) {
+    async execute(message, args, client) {
         // Check arguments
         if (args.length < 2) {
             return message.reply({
@@ -64,14 +64,14 @@ module.exports = {
         }
 
         // Get user data and previous level
-        const userData = database.getUser(target.id);
+        const userData = await database.getUser(target.id, target.username);
         const previousLevel = userData.level;
         const previousExperience = userData.experience;
 
         // Set new level and experience
         userData.level = level;
         userData.experience = (level - 1) * 100; // Set experience to match the level
-        database.saveUser(userData);
+        await database.saveUser(userData);
 
         const embed = new EmbedBuilder()
             .setColor(colors.success)

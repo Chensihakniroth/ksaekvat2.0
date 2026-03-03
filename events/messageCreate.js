@@ -45,22 +45,22 @@ function loadTalkTargets() {
 
 module.exports = {
     name: 'messageCreate',
-    execute(message, client) {
+    async execute(message, client) {
         // Ignore messages from bots
         if (message.author.bot) return;
 
         // === LISTEN FUNCTIONALITY ===
-        handleMessageListening(message, client);
+        await handleMessageListening(message, client);
 
         // === CHATBOT FUNCTIONALITY ===
         if (message.mentions.has(client.user) && !message.mentions.everyone) {
-            handleChatbot(message);
+            await handleChatbot(message);
             return;
         }
 
         // === DM FORWARDING FUNCTIONALITY ===
         if (message.channel.type === 1) { // DM Channel
-            handleDMForwarding(message, client);
+            await handleDMForwarding(message, client);
             return; // Don't process DMs as regular commands
         }
 
@@ -88,18 +88,21 @@ module.exports = {
 
         // Check short prefixes if no main prefix found OR command not found in main check
         if (!commandName) {
+            const contentLower = message.content.toLowerCase();
             for (const [shortPrefix, fullCommand] of Object.entries(config.shortPrefixes)) {
+                const spLower = shortPrefix.toLowerCase();
                 // Check for standalone short prefix (e.g., 'rps') OR short prefix attached to main prefix (e.g., 'Krps')
                 let found = false;
-                if (message.content.startsWith(shortPrefix + ' ') || message.content === shortPrefix) {
-                    prefix = shortPrefix;
+                if (contentLower.startsWith(spLower + ' ') || contentLower === spLower) {
+                    prefix = message.content.slice(0, shortPrefix.length);
                     found = true;
                 } else {
                     // Check if it starts with any main prefix followed by the short prefix (e.g., 'Krps')
                     for (const p of config.prefix) {
-                        const pattern = new RegExp(`^${p}${shortPrefix}(\\s|$)`, 'i');
-                        if (pattern.test(message.content)) {
-                            prefix = p + shortPrefix;
+                        const pLower = p.toLowerCase();
+                        const pattern = new RegExp(`^${pLower}${spLower}(\\s|$)`, 'i');
+                        if (pattern.test(contentLower)) {
+                            prefix = message.content.slice(0, p.length + shortPrefix.length);
                             found = true;
                             break;
                         }
@@ -161,7 +164,7 @@ module.exports = {
 
         // Execute the command
         try {
-            command.execute(message, args, client);
+            await command.execute(message, args, client);
             logger.info(`${message.author.tag} used command: ${commandName} in ${message.guild ? message.guild.name : 'DM'}`);
         } catch (error) {
             logger.error(`Error executing command ${commandName}:`, error);

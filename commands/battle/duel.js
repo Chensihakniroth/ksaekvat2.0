@@ -72,11 +72,11 @@ module.exports = {
         }
 
         // Check if both users have enough balance for bet
-        const challengerData = database.getUser(message.author.id);
-        const targetData = database.getUser(target.id);
+        const challengerData = await database.getUser(message.author.id, message.author.username);
+        const targetData = await database.getUser(target.id, target.username);
 
         if (betAmount > 0) {
-            if (!database.hasBalance(message.author.id, betAmount)) {
+            if (!(await database.hasBalance(message.author.id, betAmount))) {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
@@ -86,7 +86,7 @@ module.exports = {
                 });
             }
 
-            if (!database.hasBalance(target.id, betAmount)) {
+            if (!(await database.hasBalance(target.id, betAmount))) {
                 return message.reply({
                     embeds: [{
                         color: colors.warning,
@@ -99,8 +99,8 @@ module.exports = {
 
         // Get equipped item bonuses
         const { calculateEquippedBonuses } = require('./item.js');
-        const challengerBonuses = calculateEquippedBonuses(message.author.id);
-        const targetBonuses = calculateEquippedBonuses(target.id);
+        const challengerBonuses = await calculateEquippedBonuses(message.author.id);
+        const targetBonuses = await calculateEquippedBonuses(target.id);
 
         // Calculate combat stats based on level and experience + equipped items
         const challengerStats = {
@@ -159,8 +159,6 @@ module.exports = {
             inline: false
         });
 
-        inviteEmbed
-
         const sentMessage = await message.reply({ embeds: [inviteEmbed] });
 
         try {
@@ -171,17 +169,9 @@ module.exports = {
             await sentMessage.react('⚔️');
             await sentMessage.react('❌');
 
-            console.log(`Duel invitation sent. Waiting for ${target.username} (${target.id}) to respond...`);
-
-            // Create reaction collector with comprehensive debugging
+            // Create reaction collector
             const filter = (reaction, user) => {
-                const isCorrectEmoji = ['⚔️', '❌'].includes(reaction.emoji.name);
-                const isTargetUser = user.id === target.id;
-                const isNotBot = !user.bot;
-
-                console.log(`Filter check - Emoji: ${reaction.emoji.name} (${isCorrectEmoji}), User: ${user.username} (${user.id}) (target: ${isTargetUser}), Not bot: ${isNotBot}`);
-
-                return isCorrectEmoji && isTargetUser && isNotBot;
+                return ['⚔️', '❌'].includes(reaction.emoji.name) && user.id === target.id;
             };
 
             const collector = sentMessage.createReactionCollector({ 
@@ -190,71 +180,46 @@ module.exports = {
                 max: 1
             });
 
-            let processed = false; // Prevent double processing
+            let processed = false;
 
             collector.on('collect', async (reaction, user) => {
                 if (processed) return;
                 processed = true;
 
-                try {
-                    console.log(`✅ Reaction collected: ${reaction.emoji.name} from ${user.username}`);
+                if (reaction.emoji.name === '⚔️') {
+                    const acceptEmbed = new EmbedBuilder()
+                        .setColor(colors.success)
+                        .setTitle('⚔️ Duel Accepted!')
+                        .setDescription(`${target} accepted the challenge! Preparing for battle...`);
 
-                    if (reaction.emoji.name === '⚔️') {
-                        console.log('🔥 Duel accepted! Starting battle...');
+                    await sentMessage.edit({ embeds: [acceptEmbed] });
+                    await sentMessage.reactions.removeAll().catch(() => {});
 
-                        // Show acceptance message first
-                        const acceptEmbed = new EmbedBuilder()
-                            .setColor(colors.success)
-                            .setTitle('⚔️ Duel Accepted!')
-                            .setDescription(`${target} accepted the challenge! Preparing for battle...`)
-                            
-                            
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                    await startDuel(sentMessage, message.author, target, challengerStats, targetStats, betAmount);
 
-                        await sentMessage.edit({ embeds: [acceptEmbed] });
-                        await sentMessage.reactions.removeAll().catch(() => {});
+                } else if (reaction.emoji.name === '❌') {
+                    const declineEmbed = new EmbedBuilder()
+                        .setColor(colors.error)
+                        .setTitle('❌ Duel Declined')
+                        .setDescription(`${target} declined the duel challenge.`);
 
-                        // Wait 3 seconds then start the duel
-                        await new Promise(resolve => setTimeout(resolve, 3000));
-                        await startDuel(sentMessage, message.author, target, challengerStats, targetStats, betAmount);
-
-                    } else if (reaction.emoji.name === '❌') {
-                        console.log('❌ Duel declined');
-
-                        const declineEmbed = new EmbedBuilder()
-                            .setColor(colors.error)
-                            .setTitle('❌ Duel Declined')
-                            .setDescription(`${target} declined the duel challenge.`)
-                            
-                            
-
-                        await sentMessage.edit({ embeds: [declineEmbed] });
-                        await sentMessage.reactions.removeAll().catch(() => {});
-                    }
-                } catch (error) {
-                    console.error('❌ Error processing reaction:', error);
-                    await message.channel.send('An error occurred while processing the duel response. Please try again.');
+                    await sentMessage.edit({ embeds: [declineEmbed] });
+                    await sentMessage.reactions.removeAll().catch(() => {});
                 }
             });
 
             collector.on('end', async (collected, reason) => {
-                if (processed) return; // Already handled
+                if (processed) return;
 
-                try {
-                    console.log(`⏰ Collector ended - Reason: ${reason}, Collected: ${collected.size}`);
+                if (collected.size === 0) {
+                    const timeoutEmbed = new EmbedBuilder()
+                        .setColor(colors.warning)
+                        .setTitle('⏰ Duel Timeout')
+                        .setDescription(`${target} didn't respond to the duel challenge in time.`);
 
-                    if (collected.size === 0) {
-                        const timeoutEmbed = new EmbedBuilder()
-                            .setColor(colors.warning)
-                            .setTitle('⏰ Duel Timeout')
-                            .setDescription(`${target} didn't respond to the duel challenge in time.`)
-                            
-                            
-
-                        await sentMessage.edit({ embeds: [timeoutEmbed] });
-                        await sentMessage.reactions.removeAll().catch(() => {});
-                    }
-                } catch (error) {
-                    console.error('❌ Error in collector end:', error);
+                    await sentMessage.edit({ embeds: [timeoutEmbed] });
+                    await sentMessage.reactions.removeAll().catch(() => {});
                 }
             });
 
@@ -264,7 +229,7 @@ module.exports = {
         }
 
         // Update command usage statistics
-        database.updateStats(message.author.id, 'command');
+        await database.updateStats(message.author.id, 'command');
     }
 };
 
@@ -276,10 +241,10 @@ async function startDuel(message, challenger, defender, challengerStats, defende
 
     // Process bet if applicable
     if (betAmount > 0) {
-        database.removeBalance(challenger.id, betAmount);
-        database.removeBalance(defender.id, betAmount);
-        database.updateStats(challenger.id, 'gambled', betAmount);
-        database.updateStats(defender.id, 'gambled', betAmount);
+        await database.removeBalance(challenger.id, betAmount);
+        await database.removeBalance(defender.id, betAmount);
+        await database.updateStats(challenger.id, 'gambled', betAmount);
+        await database.updateStats(defender.id, 'gambled', betAmount);
     }
 
     const battleEmbed = new EmbedBuilder()
@@ -297,18 +262,15 @@ async function startDuel(message, challenger, defender, challengerStats, defende
                 value: `❤️ **HP:** ${defenderHP}/${defenderStats.health}`,
                 inline: true
             }
-        )
-        
-        
+        );
 
     await message.edit({ embeds: [battleEmbed] });
     await message.reactions.removeAll();
 
     // Battle loop
-    while (challengerHP > 0 && defenderHP > 0 && round <= 10) {
-        await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay between rounds
+    while (challengerHP > 0 && defenderHP > 0 && round <= 15) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
-        // Determine turn order (based on luck + random)
         const challengerInitiative = challengerStats.luck + Math.random() * 20;
         const defenderInitiative = defenderStats.luck + Math.random() * 20;
 
@@ -326,24 +288,18 @@ async function startDuel(message, challenger, defender, challengerStats, defende
             defenderStatsInRound = challengerStats;
         }
 
-        // Calculate damage
         const baseDamage = attackerStats.attack + Math.random() * 20;
         const defense = defenderStatsInRound.defense + Math.random() * 10;
         const damage = Math.max(1, Math.floor(baseDamage - defense));
 
-        // Apply damage to the correct player
         if (currentAttacker.id === challenger.id) {
-            defenderHP -= damage;
-            defenderHP = Math.max(0, defenderHP); // Ensure HP doesn't go below 0
+            defenderHP = Math.max(0, defenderHP - damage);
         } else {
-            challengerHP -= damage;
-            challengerHP = Math.max(0, challengerHP); // Ensure HP doesn't go below 0
+            challengerHP = Math.max(0, challengerHP - damage);
         }
 
-        // Add to battle log
         battleLog.push(`⚔️ ${currentAttacker.username} attacks ${currentDefender.username} for **${damage}** damage!`);
 
-        // Update battle display
         const roundEmbed = new EmbedBuilder()
             .setColor(colors.primary)
             .setTitle(`⚔️ Duel - Round ${round}`)
@@ -364,26 +320,17 @@ async function startDuel(message, challenger, defender, challengerStats, defende
                     value: battleLog.slice(-4).join('\n') || 'Battle begins...',
                     inline: false
                 }
-            )
-            
-            
+            );
 
         await message.edit({ embeds: [roundEmbed] });
-
         round++;
     }
 
     // Determine winner
     let winner, loser;
     if (challengerHP <= 0 && defenderHP <= 0) {
-        // Both died - it's a draw, but we'll give it to whoever has higher original stats
-        if (challengerStats.health >= defenderStats.health) {
-            winner = challenger;
-            loser = defender;
-        } else {
-            winner = defender;
-            loser = challenger;
-        }
+        winner = challengerStats.health >= defenderStats.health ? challenger : defender;
+        loser = winner.id === challenger.id ? defender : challenger;
     } else if (challengerHP <= 0) {
         winner = defender;
         loser = challenger;
@@ -391,7 +338,6 @@ async function startDuel(message, challenger, defender, challengerStats, defende
         winner = challenger;
         loser = defender;
     } else {
-        // Timeout - higher HP wins
         if (challengerHP > defenderHP) {
             winner = challenger;
             loser = defender;
@@ -399,25 +345,22 @@ async function startDuel(message, challenger, defender, challengerStats, defende
             winner = defender;
             loser = challenger;
         } else {
-            // Equal HP - random winner
             winner = Math.random() < 0.5 ? challenger : defender;
             loser = winner.id === challenger.id ? defender : challenger;
         }
     }
 
-    // Process rewards
     let rewardText = '';
     if (betAmount > 0) {
         const winAmount = betAmount * 2;
-        database.addBalance(winner.id, winAmount);
-        database.updateStats(winner.id, 'won', betAmount);
-        database.updateStats(loser.id, 'lost', betAmount);
+        await database.addBalance(winner.id, winAmount);
+        await database.updateStats(winner.id, 'won', betAmount);
+        await database.updateStats(loser.id, 'lost', betAmount);
         rewardText = `\n\n💰 **${winner.username}** wins **${winAmount.toLocaleString()}** ${config.economy.currency}!`;
     }
 
-    // Add experience to both players
-    const winnerExpGain = database.addExperience(winner.id, 50);
-    const loserExpGain = database.addExperience(loser.id, 25);
+    const winnerExpGain = await database.addExperience(winner.id, 50);
+    const loserExpGain = await database.addExperience(loser.id, 25);
 
     const resultEmbed = new EmbedBuilder()
         .setColor(colors.success)
@@ -438,18 +381,12 @@ async function startDuel(message, challenger, defender, challengerStats, defende
                 name: '📊 Final Stats',
                 value: [
                     `**Rounds:** ${round - 1}`,
-                    `**Duration:** ${(round - 1) * 2} seconds`,
                     `**Final HP:** ${challenger.username}: ${challengerHP}, ${defender.username}: ${defenderHP}`
                 ].join('\n'),
                 inline: false
             }
         )
-        .setThumbnail(winner.displayAvatarURL())
-        
-        
+        .setThumbnail(winner.displayAvatarURL());
 
     await message.edit({ embeds: [resultEmbed] });
 }
-
-
-
