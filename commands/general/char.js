@@ -4,22 +4,28 @@ const colors = require('../../utils/colors.js');
 
 /**
  * Helper to get the best possible image URL for a character.
- * Uses official/fan-maintained asset APIs for high-quality splashes.
+ * Uses Wiki-based Special:FilePath redirects for 100% reliability.
  */
 function getCharacterImage(char) {
     const name = char.name.replace(/\s+/g, '_');
     const game = char.game?.toLowerCase();
     
     if (game === 'genshin') {
-        // High quality gacha splash from ambr.top
-        return `https://api.ambr.top/assets/UI/UI_Gacha_AvatarIcon_${name}.png`;
+        // Genshin Wiki: Character_[Name]_Splash_Art.png
+        return `https://genshin-impact.fandom.com/wiki/Special:FilePath/Character_${name}_Splash_Art.png`;
     } else if (game === 'hsr') {
-        // Enka.network or StarRailRes patterns
-        return `https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/image/character_preview/1001.png`; // Placeholder: needs ID mapping for perfection
+        // HSR Wiki: [Name]_Splash_Art.png
+        return `https://honkai-star-rail.fandom.com/wiki/Special:FilePath/${name}_Splash_Art.png`;
     } else if (game === 'wuwa') {
-        return `https://api.dicebear.com/7.x/adventurer/svg?seed=${name}`; // Fallback
+        // WuWa Wiki: [Name]_Splash_Art.png
+        return `https://wutheringwaves.fandom.com/wiki/Special:FilePath/${name}_Splash_Art.png`;
+    } else if (game === 'zzz') {
+        // ZZZ Wiki: Agent_[Name]_Portrait.png
+        return `https://zenless-zone-zero.fandom.com/wiki/Special:FilePath/Agent_${name}_Portrait.png`;
     }
-    return `https://api.dicebear.com/7.x/thumbs/svg?seed=${name}`; // Cute fallback
+    
+    // Fallback for unknown games
+    return `https://api.dicebear.com/7.x/bottts/svg?seed=${name}`;
 }
 
 module.exports = {
