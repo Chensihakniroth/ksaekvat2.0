@@ -87,7 +87,7 @@ async function connectDB() {
   logger.section('Database');
   const prog = logger.loader('Connecting to MongoDB');
   try {
-    const uri = process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/ksae_bot';
+    const uri = process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.MONGO_URI || process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/ksae_bot';
     await mongoose.connect(uri);
     prog.done();
     logger.item('Status', 'Connected', '\x1b[32m');

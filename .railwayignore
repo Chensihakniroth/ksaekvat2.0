@@ -1,0 +1,8 @@
+node_modules/
+.env
+logs/
+*.log
+bot.pid
+zipFile.rar
+.local/
+.git/
