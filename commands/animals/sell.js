@@ -13,8 +13,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
-                    description: 'Please specify what to sell!\n\n**Usage:**\n`Ksell <animal_name>` - Sell a specific animal\n`Ksell all` - Sell all animals'
+                    title: '(◕‸ ◕✿) Sweetie, you forgot something!',
+                    description: 'Please tell Mommy what you want to sell! (｡•́︿•̀｡)\n\n**Usage:**\n`Ksell <animal_name>` - Sell a specific animal\n`Ksell all` - Sell all animals'
                 }]
             });
         }
@@ -36,8 +36,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ No Animals',
-                    description: 'You don\'t have any animals to sell! Use `Khunt` to catch some animals first.'
+                    title: '(｡•́︿•̀｡) No friends to sell...',
+                    description: 'You don\'t have any animals to sell, darling! (っ˘ω˘ς) Try using `Khunt` to find some!'
                 }]
             });
         }
@@ -69,8 +69,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ No Animals to Sell',
-                        description: 'You don\'t have any valid animals to sell.'
+                        title: '(｡•́︿•̀｡) Nothing to sell, sweetie',
+                        description: 'You don\'t have any valid animals for Mommy to sell. (っ˘ω˘ς)'
                     }]
                 });
             }
@@ -82,15 +82,15 @@ module.exports = {
 
             const embed = new EmbedBuilder()
                 .setColor(colors.success)
-                .setTitle('💰 Sold All Animals!')
-                .setDescription(`You sold **${animalsSold}** animals for **${totalValue.toLocaleString()}** ${config.economy.currency}!`)
+                .setTitle('ヽ(>∀<☆)ノ All Sold!')
+                .setDescription(`Mommy helped you sell **${animalsSold}** of your friends for **${totalValue.toLocaleString()}** ${config.economy.currency}! (｡♥‿♥｡)`)
                 .addFields({
-                    name: '🏪 Animals Sold',
+                    name: '(◕‿◕✿) Animals Sold',
                     value: soldAnimals.slice(0, 10).join('\n') + (soldAnimals.length > 10 ? `\n*...and ${soldAnimals.length - 10} more*` : ''),
                     inline: false
                 })
                 .addFields({
-                    name: '💳 New Balance',
+                    name: '(｡♥‿♥｡) New Balance',
                     value: `${userData.balance.toLocaleString()} ${config.economy.currency}`,
                     inline: true
                 });
@@ -129,8 +129,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ Animal Not Found',
-                        description: `You don't have an animal named "${args.join(' ')}" in your collection.\n\nUse \`Kzoo\` to see your animals.`
+                        title: '(｡•́︿•̀｡) Animal Not Found',
+                        description: `You don't have an animal named "${args.join(' ')}" for Mommy to sell. (っ˘ω˘ς)\n\nUse \`Kzoo\` to see your friends!`
                     }]
                 });
             }
@@ -163,15 +163,15 @@ module.exports = {
             const rarityInfo = config.hunting.rarities[foundRarity];
             const embed = new EmbedBuilder()
                 .setColor(rarityInfo.color)
-                .setTitle('💰 Animal Sold!')
-                .setDescription(`You sold ${foundAnimal.emoji} **${foundAnimal.name}** for **${sellValue.toLocaleString()}** ${config.economy.currency}!`)
+                .setTitle('ヽ(>∀<☆)ノ Sold!')
+                .setDescription(`Mommy helped you sell ${foundAnimal.emoji} **${foundAnimal.name}** for **${sellValue.toLocaleString()}** ${config.economy.currency}! (｡♥‿♥｡)`)
                 .addFields({
-                    name: '🏪 Sale Details',
+                    name: '(◕‿◕✿) Sale Details',
                     value: `**Animal:** ${foundAnimal.emoji} ${foundAnimal.name}\n**Rarity:** ${rarityInfo.name}\n**Price:** ${sellValue.toLocaleString()} ${config.economy.currency}\n**Remaining:** ${currentCount - 1}`,
                     inline: true
                 })
                 .addFields({
-                    name: '💳 New Balance',
+                    name: '(｡♥‿♥｡) New Balance',
                     value: `${userData.balance.toLocaleString()} ${config.economy.currency}`,
                     inline: true
                 });

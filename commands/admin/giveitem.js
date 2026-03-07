@@ -15,9 +15,9 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
+                    title: '(◕‸ ◕✿) Sweetie, you forgot something!',
                     description: [
-                        'Please provide a user and item type.',
+                        'Please tell Mommy who to give what to. (｡•́︿•̀｡)',
                         '**Usage:** `Kgiveitem @user <item_type> [amount/duration]`',
                         '',
                         '**Available Items:**',
@@ -48,8 +48,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.'
+                    title: '(｡•́︿•̀｡) I can\'t find them, darling',
+                    description: 'Please mention a valid user or provide their user ID so Mommy can find them. (◕‿◕✿)'
                 }]
             });
         }
@@ -71,8 +71,8 @@ module.exports = {
                     return message.reply({
                         embeds: [{
                             color: colors.error,
-                            title: '❌ Invalid Amount',
-                            description: 'Please provide a valid positive amount for money.'
+                            title: '(｡•́︿•̀｡) That\'s not right, darling',
+                            description: 'Please provide a valid positive amount for Mommy. (っ˘ω˘ς)'
                         }]
                     });
                 }
@@ -82,11 +82,11 @@ module.exports = {
                 
                 resultEmbed = new EmbedBuilder()
                     .setColor(colors.success)
-                    .setTitle('💰 Money Given')
-                    .setDescription(`Successfully gave **${amount.toLocaleString()}** ${config.economy.currency} to **${target.username}**!`)
+                    .setTitle('(｡♥‿♥｡) Mommy\'s Generous Gift!')
+                    .setDescription(`Mommy successfully gave **${amount.toLocaleString()}** ${config.economy.currency} to **${target.username}**! ヽ(>∀<☆)ノ`)
                     .addFields(
                         {
-                            name: '💳 Balance Update',
+                            name: '(◕‿◕✿) Balance Update',
                             value: [
                                 `**Previous:** ${(newBalance - amount).toLocaleString()} ${config.economy.currency}`,
                                 `**Added:** +${amount.toLocaleString()} ${config.economy.currency}`,
@@ -105,8 +105,8 @@ module.exports = {
                     return message.reply({
                         embeds: [{
                             color: colors.error,
-                            title: '❌ Invalid Amount',
-                            description: 'Please provide a valid positive amount for experience.'
+                            title: '(｡•́︿•̀｡) That\'s not right, darling',
+                            description: 'Please provide a valid positive amount for Mommy. (っ˘ω˘ς)'
                         }]
                     });
                 }
@@ -117,15 +117,15 @@ module.exports = {
                 
                 resultEmbed = new EmbedBuilder()
                     .setColor(colors.success)
-                    .setTitle('⭐ Experience Given')
-                    .setDescription(`Successfully gave **${amount}** XP to **${target.username}**!`)
+                    .setTitle('(｡♥‿♥｡) Mommy\'s Knowledge Gift!')
+                    .setDescription(`Mommy successfully gave **${amount}** XP to **${target.username}**! ヽ(>∀<☆)ノ`)
                     .addFields(
                         {
-                            name: '📊 Experience Update',
+                            name: '(◕‿◕✿) Experience Update',
                             value: [
                                 `**Added:** +${amount} XP`,
                                 `**New Total:** ${updatedUser.experience} XP`,
-                                expGain.leveledUp ? `🎉 **Level Up!** ${previousLevel} → ${expGain.newLevel}` : `**Current Level:** ${updatedUser.level}`
+                                expGain.leveledUp ? `ヽ(>∀<☆)ノ **Level Up!** ${previousLevel} → ${expGain.newLevel}` : `**Current Level:** ${updatedUser.level}`
                             ].join('\n'),
                             inline: true
                         }
@@ -140,8 +140,8 @@ module.exports = {
                     return message.reply({
                         embeds: [{
                             color: colors.error,
-                            title: '❌ Invalid Duration',
-                            description: 'Duration must be between 1 and 1440 minutes (24 hours).'
+                            title: '(｡•́︿•̀｡) That\'s too long, darling',
+                            description: 'Duration must be between 1 and 1440 minutes for Mommy. (っ˘ω˘ς)'
                         }]
                     });
                 }
@@ -150,11 +150,11 @@ module.exports = {
                 
                 resultEmbed = new EmbedBuilder()
                     .setColor(colors.success)
-                    .setTitle('🚀 Money Booster Given')
-                    .setDescription(`Successfully gave a **Money Booster x2** to **${target.username}**!`)
+                    .setTitle('(｡♥‿♥｡) Mommy\'s Lucky Boost!')
+                    .setDescription(`Mommy successfully gave a **Money Booster x2** to **${target.username}**! ヽ(>∀<☆)ノ`)
                     .addFields(
                         {
-                            name: '⚡ Booster Details',
+                            name: '(◕‿◕✿) Booster Details',
                             value: [
                                 `**Type:** Money Booster`,
                                 `**Multiplier:** x2`,
@@ -175,8 +175,8 @@ module.exports = {
                     return message.reply({
                         embeds: [{
                             color: colors.error,
-                            title: '❌ Invalid Duration',
-                            description: 'Duration must be between 1 and 1440 minutes (24 hours).'
+                            title: '(｡•́︿•̀｡) That\'s too long, darling',
+                            description: 'Duration must be between 1 and 1440 minutes for Mommy. (っ˘ω˘ς)'
                         }]
                     });
                 }
@@ -185,11 +185,11 @@ module.exports = {
                 
                 resultEmbed = new EmbedBuilder()
                     .setColor(colors.success)
-                    .setTitle('⭐ Experience Booster Given')
-                    .setDescription(`Successfully gave an **Experience Booster x2** to **${target.username}**!`)
+                    .setTitle('(｡♥‿♥｡) Mommy\'s Growth Boost!')
+                    .setDescription(`Mommy successfully gave an **Experience Booster x2** to **${target.username}**! ヽ(>∀<☆)ノ`)
                     .addFields(
                         {
-                            name: '⚡ Booster Details',
+                            name: '(◕‿◕✿) Booster Details',
                             value: [
                                 `**Type:** Experience Booster`,
                                 `**Multiplier:** x2`,
@@ -206,9 +206,9 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ Invalid Item Type',
+                        title: '(｡•́︿•̀｡) I don\'t have that, darling',
                         description: [
-                            'Available item types:',
+                            'Available item types for Mommy:',
                             '• `money` - Give money',
                             '• `exp` - Give experience',
                             '• `money_booster` - Give money booster',
@@ -222,7 +222,7 @@ module.exports = {
             // Add admin info to embed
             resultEmbed.addFields(
                 {
-                    name: '🔧 Admin Action',
+                    name: '(｡♥‿♥｡) Admin Action',
                     value: [
                         `**Admin:** ${message.author.username}`,
                         `**Target:** ${target.username}`,
@@ -245,8 +245,8 @@ module.exports = {
             try {
                 const dmEmbed = new EmbedBuilder()
                     .setColor(colors.primary)
-                    .setTitle('🎁 You Received a Gift!')
-                    .setDescription(`An administrator gave you a ${itemType}!`)
+                    .setTitle('(｡♥‿♥｡) A Gift from Mommy!')
+                    .setDescription(`An administrator gave you a **${itemType}**, sweetie! ヽ(>∀<☆)ノ`)
                     
                     
 
@@ -259,7 +259,3 @@ module.exports = {
         }
     }
 };
-
-
-
-

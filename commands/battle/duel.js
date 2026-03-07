@@ -15,8 +15,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
-                    description: 'Please mention a user to duel!\n**Usage:** `Kduel @user [bet_amount]`\n**Example:** `Kduel @friend 1000`'
+                    title: '(｡•́︿•̀｡) Missing someone?',
+                    description: 'Sweetie, you need to mention a friend to play with!\n**Usage:** `Kduel @user [bet_amount]`\n**Example:** `Kduel @friend 1000` (◕‿◕✿)'
                 }]
             });
         }
@@ -34,8 +34,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ User Not Found',
-                    description: 'Please mention a valid user to duel.'
+                    title: '(っ˘ω˘ς) Where are they?',
+                    description: 'I couldn\'t find that person, darling. Are you sure they are here? (◕‿◕✿)'
                 }]
             });
         }
@@ -45,8 +45,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '🤺 Self Duel',
-                    description: 'You cannot duel yourself! Find someone else to challenge.'
+                    title: 'ヽ(>∀<☆)ノ Silly little one!',
+                    description: 'You can\'t fight yourself, sweetie! Find a friend to play with instead. (◕‿◕✿)'
                 }]
             });
         }
@@ -56,8 +56,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '🤖 Bot Duel',
-                    description: 'You cannot duel bots! Challenge a real person instead.'
+                    title: '(｡♥‿♥｡) Oh darling...',
+                    description: 'The bots are too busy helping me! Please find a real friend to challenge. (◕‿◕✿)'
                 }]
             });
         }
@@ -80,8 +80,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '💸 Insufficient Funds',
-                        description: `You don't have enough ${config.economy.currency} to bet!\n**Your Balance:** ${challengerData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`
+                        title: '(｡•́︿•̀｡) Not enough coins...',
+                        description: `Sweetie, you don't have enough ${config.economy.currency} for this bet... (っ˘ω˘ς)\n**Your Balance:** ${challengerData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`
                     }]
                 });
             }
@@ -90,8 +90,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.warning,
-                        title: '💸 Target Insufficient Funds',
-                        description: `${target.username} doesn't have enough ${config.economy.currency} to accept this bet!\n**Their Balance:** ${targetData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`
+                        title: '(｡•́︿•̀｡) Friend is short on coins...',
+                        description: `${target.username} doesn't have enough ${config.economy.currency} to play this high stakes game, darling. (っ˘ω˘ς)\n**Their Balance:** ${targetData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`
                     }]
                 });
             }
@@ -120,11 +120,11 @@ module.exports = {
         // Create duel invitation embed
         const inviteEmbed = new EmbedBuilder()
             .setColor(colors.warning)
-            .setTitle('⚔️ Duel Challenge!')
-            .setDescription(`${message.author} has challenged ${target} to a duel!`)
+            .setTitle('(◕‿◕✿) A Friendly Duel!')
+            .setDescription(`${message.author}, darling, wants to play with ${target}!`)
             .addFields(
                 {
-                    name: '🥊 Challenger Stats',
+                    name: '🥊 Your Strength, sweetie',
                     value: [
                         `**Level:** ${challengerData.level}`,
                         `**Attack:** ${challengerStats.attack}`,
@@ -134,7 +134,7 @@ module.exports = {
                     inline: true
                 },
                 {
-                    name: '🛡️ Defender Stats',
+                    name: '🛡️ Their Strength, darling',
                     value: [
                         `**Level:** ${targetData.level}`,
                         `**Attack:** ${targetStats.attack}`,
@@ -147,15 +147,15 @@ module.exports = {
 
         if (betAmount > 0) {
             inviteEmbed.addFields({
-                name: '💰 Duel Stakes',
-                value: `**Bet Amount:** ${betAmount.toLocaleString()} ${config.economy.currency}\n**Winner Takes:** ${(betAmount * 2).toLocaleString()} ${config.economy.currency}`,
+                name: '💰 Little Treasures at Stake',
+                value: `**Bet Amount:** ${betAmount.toLocaleString()} ${config.economy.currency}\n**Winner Takes:** ${(betAmount * 2).toLocaleString()} ${config.economy.currency} (｡♥‿♥｡)`,
                 inline: false
             });
         }
 
         inviteEmbed.addFields({
-            name: '📋 How to Respond',
-            value: `${target}, react with ⚔️ to accept or ❌ to decline\n**Time Limit:** 60 seconds`,
+            name: '📋 Will you play?',
+            value: `${target}, darling, react with ⚔️ to play or ❌ to stay safe (◕‿◕✿)\n**Time Limit:** 60 seconds`,
             inline: false
         });
 
@@ -189,8 +189,8 @@ module.exports = {
                 if (reaction.emoji.name === '⚔️') {
                     const acceptEmbed = new EmbedBuilder()
                         .setColor(colors.success)
-                        .setTitle('⚔️ Duel Accepted!')
-                        .setDescription(`${target} accepted the challenge! Preparing for battle...`);
+                        .setTitle('(ﾉ´ヮ`)ﾉ*:･ﾟ✧ Let the games begin!')
+                        .setDescription(`${target} is ready to play, sweetie! Let's see who is stronger! (◕‿◕✿)`);
 
                     await sentMessage.edit({ embeds: [acceptEmbed] });
                     await sentMessage.reactions.removeAll().catch(() => {});
@@ -201,8 +201,8 @@ module.exports = {
                 } else if (reaction.emoji.name === '❌') {
                     const declineEmbed = new EmbedBuilder()
                         .setColor(colors.error)
-                        .setTitle('❌ Duel Declined')
-                        .setDescription(`${target} declined the duel challenge.`);
+                        .setTitle('(っ˘ω˘ς) Maybe next time')
+                        .setDescription(`${target} doesn't want to play right now, darling. (◕‿◕✿)`);
 
                     await sentMessage.edit({ embeds: [declineEmbed] });
                     await sentMessage.reactions.removeAll().catch(() => {});
@@ -215,8 +215,8 @@ module.exports = {
                 if (collected.size === 0) {
                     const timeoutEmbed = new EmbedBuilder()
                         .setColor(colors.warning)
-                        .setTitle('⏰ Duel Timeout')
-                        .setDescription(`${target} didn't respond to the duel challenge in time.`);
+                        .setTitle('(｡•́︿•̀｡) No response...')
+                        .setDescription(`${target} must be busy, sweetie. Let's try again later! (◕‿◕✿)`);
 
                     await sentMessage.edit({ embeds: [timeoutEmbed] });
                     await sentMessage.reactions.removeAll().catch(() => {});
@@ -249,8 +249,8 @@ async function startDuel(message, challenger, defender, challengerStats, defende
 
     const battleEmbed = new EmbedBuilder()
         .setColor(colors.primary)
-        .setTitle('⚔️ Duel in Progress!')
-        .setDescription(`**${challenger.username}** vs **${defender.username}**\n\nLet the battle begin!`)
+        .setTitle('(◕‿◕✿) Having Fun!')
+        .setDescription(`**${challenger.username}** and **${defender.username}** are playing together!`)
         .addFields(
             {
                 name: `🥊 ${challenger.username}`,
@@ -303,7 +303,7 @@ async function startDuel(message, challenger, defender, challengerStats, defende
         const roundEmbed = new EmbedBuilder()
             .setColor(colors.primary)
             .setTitle(`⚔️ Duel - Round ${round}`)
-            .setDescription(`**${challenger.username}** vs **${defender.username}**`)
+            .setDescription(`**${challenger.username}** and **${defender.username}** are playing together!`)
             .addFields(
                 {
                     name: `🥊 ${challenger.username}`,
@@ -316,8 +316,8 @@ async function startDuel(message, challenger, defender, challengerStats, defende
                     inline: true
                 },
                 {
-                    name: '📜 Battle Log',
-                    value: battleLog.slice(-4).join('\n') || 'Battle begins...',
+                    name: '📜 Play Log',
+                    value: battleLog.slice(-4).join('\n') || 'The fun begins... (◕‿◕✿)',
                     inline: false
                 }
             );
@@ -356,7 +356,7 @@ async function startDuel(message, challenger, defender, challengerStats, defende
         await database.addBalance(winner.id, winAmount);
         await database.updateStats(winner.id, 'won', betAmount);
         await database.updateStats(loser.id, 'lost', betAmount);
-        rewardText = `\n\n💰 **${winner.username}** wins **${winAmount.toLocaleString()}** ${config.economy.currency}!`;
+        rewardText = `\n\n💰 **${winner.username}** gets a little treat of **${winAmount.toLocaleString()}** ${config.economy.currency}! (◕‿◕✿)`;
     }
 
     const winnerExpGain = await database.addExperience(winner.id, 50);
@@ -364,16 +364,16 @@ async function startDuel(message, challenger, defender, challengerStats, defende
 
     const resultEmbed = new EmbedBuilder()
         .setColor(colors.success)
-        .setTitle('🏆 Duel Complete!')
-        .setDescription(`**${winner.username}** defeats **${loser.username}**!${rewardText}`)
+        .setTitle('(｡♥‿♥｡) We have a winner!')
+        .setDescription(`**${winner.username}** was just a little stronger today, darling! ${rewardText}`)
         .addFields(
             {
-                name: '🥇 Winner',
+                name: '🥇 Proud Champion',
                 value: `${winner.username}\n+50 XP${winnerExpGain.leveledUp ? `\n🎉 Level Up! (${winnerExpGain.newLevel})` : ''}`,
                 inline: true
             },
             {
-                name: '🥈 Defeated',
+                name: '🥈 Brave Effort',
                 value: `${loser.username}\n+25 XP${loserExpGain.leveledUp ? `\n🎉 Level Up! (${loserExpGain.newLevel})` : ''}`,
                 inline: true
             },

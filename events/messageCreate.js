@@ -16,32 +16,34 @@ const CHARACTER_FILE = path.join(__dirname, '../data/character.json');
 const conversationMemory = new Map();
 const MAX_MEMORY = 20; // Increased to 20 messages (10 turns) for much better context retention
 
-function loadCharacterCard() {
+// --- OPTIMIZATION: Load data once at startup ---
+const CHARACTER_CARD = (() => {
     try {
-        if (!fs.existsSync(CHARACTER_FILE)) return null;
-        return JSON.parse(fs.readFileSync(CHARACTER_FILE, 'utf8'));
+        return fs.existsSync(CHARACTER_FILE) ? JSON.parse(fs.readFileSync(CHARACTER_FILE, 'utf8')) : null;
     } catch (error) {
+        logger.error("Failed to load character.json", error);
         return null;
     }
-}
+})();
 
-function loadListeners() {
+const LISTENERS = (() => {
     try {
-        if (!fs.existsSync(LISTENERS_FILE)) return {};
-        return JSON.parse(fs.readFileSync(LISTENERS_FILE, 'utf8'));
+        return fs.existsSync(LISTENERS_FILE) ? JSON.parse(fs.readFileSync(LISTENERS_FILE, 'utf8')) : {};
     } catch (error) {
+        logger.error("Failed to load listeners.json", error);
         return {};
     }
-}
+})();
 
-function loadTalkTargets() {
+const TALK_TARGETS = (() => {
     try {
-        if (!fs.existsSync(TALK_TARGETS_FILE)) return {};
-        return JSON.parse(fs.readFileSync(TALK_TARGETS_FILE, 'utf8'));
+        return fs.existsSync(TALK_TARGETS_FILE) ? JSON.parse(fs.readFileSync(TALK_TARGETS_FILE, 'utf8')) : {};
     } catch (error) {
+        logger.error("Failed to load talktargets.json", error);
         return {};
     }
-}
+})();
+// --- END OPTIMIZATION ---
 
 module.exports = {
     name: 'messageCreate',
@@ -182,14 +184,21 @@ module.exports = {
 
 // Handle message listening functionality
 async function handleMessageListening(message, client) {
-    const listeners = loadListeners();
+    // OPTIMIZATION: Use the in-memory constant
+    const listeners = LISTENERS;
     
     // Check if any admin is listening to this user
     for (const [adminId, targetUserId] of Object.entries(listeners)) {
         if (message.author.id === targetUserId) {
             try {
-                const admin = await client.users.fetch(adminId);
+                // OPTIMIZATION: Check cache first before fetching
+                const admin = client.users.cache.get(adminId) || await client.users.fetch(adminId);
                 
+                if (!admin) {
+                    logger.warn(`Could not find admin user ${adminId} for listening.`);
+                    continue; // Skip if admin user not found
+                }
+
                 const serverName = message.guild ? message.guild.name : 'Direct Message';
                 const channelName = message.channel.name || 'DM';
                 
@@ -224,15 +233,20 @@ async function handleMessageListening(message, client) {
 
 // Handle DM forwarding functionality
 async function handleDMForwarding(message, client) {
-    const talkTargets = loadTalkTargets();
+    // OPTIMIZATION: Use the in-memory constant
+    const talkTargets = TALK_TARGETS;
     const adminTarget = talkTargets[message.author.id];
     
     if (!adminTarget) return;
     
     try {
-        const channel = await client.channels.fetch(adminTarget.channelId);
+        // OPTIMIZATION: Check cache first before fetching
+        const channel = client.channels.cache.get(adminTarget.channelId) || await client.channels.fetch(adminTarget.channelId);
         
-        if (!channel) return;
+        if (!channel) {
+            logger.warn(`Could not find channel ${adminTarget.channelId} for DM forwarding.`);
+            return;
+        }
 
         // Send the message content directly as the bot
         if (message.content) {
@@ -279,7 +293,7 @@ async function handleChatbot(message) {
 
     try {
         const { baseUrl, model, systemPrompt: configPrompt } = config.aiConfig;
-        const charCard = loadCharacterCard();
+        const charCard = CHARACTER_CARD;
 
         // --- STEP 1: Understanding with Gemini ---
         let processedUserMessage = text;

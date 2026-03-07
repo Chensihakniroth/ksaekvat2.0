@@ -15,8 +15,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
-                    description: 'Please provide a user and amount.\n**Usage:** `Ksetbal @user <amount>`\n**Example:** `Ksetbal @user 10000`'
+                    title: '(◕‸ ◕✿) Sweetie, you forgot something!',
+                    description: 'Please tell Mommy who to give money to and how much. (｡•́︿•̀｡)\n**Usage:** `Ksetbal @user <amount>`\n**Example:** `Ksetbal @user 10000`'
                 }]
             });
         }
@@ -34,8 +34,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.'
+                    title: '(｡•́︿•̀｡) I can\'t find them, darling',
+                    description: 'Please mention a valid user or provide their user ID so Mommy can find them. (◕‿◕✿)'
                 }]
             });
         }
@@ -46,8 +46,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Amount',
-                    description: 'Please provide a valid positive number.'
+                    title: '(｡•́︿•̀｡) That\'s not right, darling',
+                    description: 'Please provide a valid positive number for Mommy. (っ˘ω˘ς)'
                 }]
             });
         }
@@ -58,8 +58,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '⚠️ Amount Too High',
-                    description: `Maximum allowed balance is ${maxAmount.toLocaleString()} ${config.economy.currency}.`
+                    title: '(◕‸ ◕✿) That\'s too much, darling!',
+                    description: `Mommy can't handle more than ${maxAmount.toLocaleString()} ${config.economy.currency}. (っ˘ω˘ς)`
                 }]
             });
         }
@@ -74,11 +74,11 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.success)
-            .setTitle('💰 Balance Updated')
-            .setDescription(`Successfully updated **${target.username}**'s balance!`)
+            .setTitle('(｡♥‿♥｡) Balance Updated!')
+            .setDescription(`Mommy successfully adjusted **${target.username}**'s balance! ヽ(>∀<☆)ノ`)
             .addFields(
                 {
-                    name: '👤 Target User',
+                    name: '(◕‿◕✿) Target User',
                     value: [
                         `**Username:** ${target.username}`,
                         `**User ID:** ${target.id}`,
@@ -87,7 +87,7 @@ module.exports = {
                     inline: true
                 },
                 {
-                    name: '💳 Balance Changes',
+                    name: '(っ˘ω˘ς) Balance Changes',
                     value: [
                         `**Previous:** ${previousBalance.toLocaleString()} ${config.economy.currency}`,
                         `**New:** ${amount.toLocaleString()} ${config.economy.currency}`,
@@ -96,7 +96,7 @@ module.exports = {
                     inline: true
                 },
                 {
-                    name: '🔧 Admin Action',
+                    name: '(｡♥‿♥｡) Admin Action',
                     value: [
                         `**Admin:** ${message.author.username}`,
                         `**Action:** Set Balance`,
@@ -113,6 +113,3 @@ module.exports = {
         console.log(`[ADMIN] ${message.author.tag} set ${target.tag}'s balance to ${amount} (was ${previousBalance})`);
     }
 };
-
-
-

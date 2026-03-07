@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
-const config = require('../../config/config.js'); // Added missing import
+const config = require('../../config/config.js');
 
 module.exports = {
     name: 'givepet',
@@ -9,18 +9,18 @@ module.exports = {
     description: 'Give a pet to a user (Admin only)',
     usage: 'givepet <@user> <rarity> <animal_name> [amount]',
     adminOnly: true,
-    async execute(message, args, client) { // Made async for DM functionality
+    async execute(message, args, client) {
         // Check arguments
         if (args.length < 3) {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
+                    title: '(◕‸ ◕✿) Sweetie, you forgot something!',
                     description: [
-                        'Please provide a user, rarity, and animal name.',
+                        'Please tell Mommy who to give which animal to. (｡•́︿•̀｡)',
                         '**Usage:** `Kgivepet @user <rarity> <animal_name> [amount]`',
                         '',
-                        '**Available Rarities:**',
+                        '**Available Rarities for Mommy:**',
                         '• `common` • `uncommon` • `rare` • `epic`',
                         '• `legendary` • `mythical` • `priceless`',
                         '',
@@ -46,8 +46,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.'
+                    title: '(｡•́︿•̀｡) I can\'t find them, darling',
+                    description: 'Please mention a valid user or provide their user ID so Mommy can find them. (◕‿◕✿)'
                 }]
             });
         }
@@ -57,8 +57,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '🤖 Bot Target',
-                    description: 'You cannot give pets to bots!'
+                    title: '(｡♥‿♥｡) Silly little one!',
+                    description: 'Mommy cannot give pets to bots! (っ˘ω˘ς)'
                 }]
             });
         }
@@ -72,8 +72,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Amount',
-                    description: 'Amount must be a valid number between 1 and 100.'
+                    title: '(｡•́︿•̀｡) That\'s not right, darling',
+                    description: 'Please provide a number between 1 and 100 for Mommy. (◕‿◕✿)'
                 }]
             });
         }
@@ -87,9 +87,9 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ Invalid Rarity',
+                        title: '(｡•́︿•̀｡) That rarity doesn\'t exist',
                         description: [
-                            'Available rarities:',
+                            'Available rarities for Mommy:',
                             Object.keys(animalsData).map(r => `• \`${r}\``).join('\n')
                         ].join('\n')
                     }]
@@ -102,9 +102,9 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ Invalid Animal',
+                        title: '(｡•́︿•̀｡) I don\'t have that animal',
                         description: [
-                            `Available ${rarity} animals:`,
+                            `Available ${rarity} animals for Mommy:`,
                             availableAnimals.map(animal => `• \`${animal}\``).join('\n')
                         ].join('\n')
                     }]
@@ -137,11 +137,11 @@ module.exports = {
 
             const embed = new EmbedBuilder()
                 .setColor(rarityColor)
-                .setTitle('🎁 Pet Given Successfully!')
-                .setDescription(`Successfully gave **${amount}x ${animal.name}** to **${target.username}**!`)
+                .setTitle('(｡♥‿♥｡) A New Friend from Mommy!')
+                .setDescription(`Mommy successfully gave **${amount}x ${animal.name}** to **${target.username}**! ヽ(>∀<☆)ノ`)
                 .addFields(
                     {
-                        name: '🦊 Pet Details',
+                        name: '(◕‿◕✿) Pet Details',
                         value: [
                             `**Animal:** ${animal.emoji} ${animal.name}`,
                             `**Rarity:** ${rarityName}`,
@@ -152,7 +152,7 @@ module.exports = {
                         inline: true
                     },
                     {
-                        name: '👤 Recipient',
+                        name: '(っ˘ω˘ς) Recipient',
                         value: [
                             `**Username:** ${target.username}`,
                             `**User ID:** ${target.id}`,
@@ -161,7 +161,7 @@ module.exports = {
                         inline: true
                     },
                     {
-                        name: '🔧 Admin Action',
+                        name: '(｡♥‿♥｡) Admin Action',
                         value: [
                             `**Admin:** ${message.author.username}`,
                             `**Action:** Give Pet`,
@@ -180,10 +180,10 @@ module.exports = {
             try {
                 const dmEmbed = new EmbedBuilder()
                     .setColor(rarityColor)
-                    .setTitle('🎁 You Received a Pet!')
-                    .setDescription(`An administrator gave you **${amount}x ${animal.name}**!`)
+                    .setTitle('(｡♥‿♥｡) A Pet from Mommy!')
+                    .setDescription(`An administrator gave you **${amount}x ${animal.name}**, sweetie! ヽ(>∀<☆)ノ`)
                     .addFields({
-                        name: 'Pet Details',
+                        name: '(◕‿◕✿) Pet Details',
                         value: [
                             `${animal.emoji} **${animal.name}**`,
                             `**Rarity:** ${rarityName}`,
@@ -207,13 +207,10 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Command Error',
-                    description: 'An error occurred while giving the pet. Please check the console for details.'
+                    title: '(｡•́︿•̀｡) Something went wrong...',
+                    description: 'Mommy couldn\'t give the pet. Check the console, darling. (っ˘ω˘ς)'
                 }]
             });
         }
     }
 };
-
-
-

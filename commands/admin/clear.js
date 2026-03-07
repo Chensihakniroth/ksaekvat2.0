@@ -13,8 +13,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Missing Permissions',
-                    description: 'I don\'t have permission to manage messages in this server.'
+                    title: '(｡•́︿•̀｡) Oh no, darling...',
+                    description: 'Mommy doesn\'t have permission to manage messages in this server. (っ˘ω˘ς)'
                 }]
             });
         }
@@ -24,8 +24,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
-                    description: 'Please provide the number of messages to clear.\n**Usage:** `Kclear <amount> [@user]`\n**Examples:**\n`Kclear 10` - Clear 10 messages\n`Kclear 5 @user` - Clear 5 messages from specific user'
+                    title: '(◕‸ ◕✿) Sweetie, you forgot something!',
+                    description: 'Please tell Mommy how many messages to clear. (｡•́︿•̀｡)\n**Usage:** `Kclear <amount> [@user]`\n**Examples:**\n`Kclear 10` - Clear 10 messages\n`Kclear 5 @user` - Clear 5 messages from specific user'
                 }]
             });
         }
@@ -36,8 +36,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Amount',
-                    description: 'Please provide a number between 1 and 100.'
+                    title: '(｡•́︿•̀｡) That\'s not right, darling',
+                    description: 'Please provide a number between 1 and 100 so Mommy can help you. (◕‿◕✿)'
                 }]
             });
         }
@@ -69,8 +69,8 @@ module.exports = {
                         return message.channel.send({
                             embeds: [{
                                 color: colors.warning,
-                                title: '⚠️ No Messages Found',
-                                description: `No messages from ${targetUser.username} found in the recent messages.`
+                                title: '(っ˘ω˘ς) I couldn\'t find anything...',
+                                description: `No messages from **${targetUser.username}** found in the recent messages, sweetie. (◕‿◕✿)`
                             }]
                         }).then(msg => {
                             setTimeout(() => msg.delete().catch(() => {}), 5000);
@@ -90,8 +90,8 @@ module.exports = {
                     return message.channel.send({
                         embeds: [{
                             color: colors.warning,
-                            title: '⚠️ Messages Too Old',
-                            description: 'All targeted messages are older than 14 days and cannot be bulk deleted.'
+                            title: '(｡•́︿•̀｡) These are too old, darling',
+                            description: 'All targeted messages are older than 14 days and Mommy can\'t bulk delete them. (っ˘ω˘ς)'
                         }]
                     }).then(msg => {
                         setTimeout(() => msg.delete().catch(() => {}), 5000);
@@ -102,23 +102,23 @@ module.exports = {
                 message.channel.bulkDelete(recentMessages, true)
                     .then(deletedMessages => {
                         const deletedCount = deletedMessages.size;
-                        let description = `Successfully deleted **${deletedCount}** messages.`;
+                        let description = `Mommy successfully cleaned up **${deletedCount}** messages for you! ヽ(>∀<☆)ノ`;
                         
                         if (targetUser) {
-                            description = `Successfully deleted **${deletedCount}** messages from **${targetUser.username}**.`;
+                            description = `Mommy successfully cleaned up **${deletedCount}** messages from **${targetUser.username}**! (｡♥‿♥｡)`;
                         }
                         
                         if (oldMessages.size > 0) {
-                            description += `\n\n⚠️ **${oldMessages.size}** messages were too old to delete (older than 14 days).`;
+                            description += `\n\n(っ˘ω˘ς) **${oldMessages.size}** messages were too old for Mommy to delete (older than 14 days).`;
                         }
 
                         const successEmbed = new EmbedBuilder()
                             .setColor(colors.success)
-                            .setTitle('🗑️ Messages Cleared')
+                            .setTitle('ヽ(>∀<☆)ノ All Cleaned Up!')
                             .setDescription(description)
                             .addFields(
                                 {
-                                    name: '📊 Clear Summary',
+                                    name: '(◕‿◕✿) Summary',
                                     value: [
                                         `**Requested:** ${amount} messages`,
                                         `**Deleted:** ${deletedCount} messages`,
@@ -129,7 +129,7 @@ module.exports = {
                                     inline: true
                                 },
                                 {
-                                    name: '🔧 Admin Action',
+                                    name: '(｡♥‿♥｡) Admin Action',
                                     value: [
                                         `**Admin:** ${message.author.username}`,
                                         `**Action:** Clear Messages`,
@@ -166,8 +166,8 @@ module.exports = {
                         message.channel.send({
                             embeds: [{
                                 color: colors.error,
-                                title: '❌ Clear Failed',
-                                description: `Failed to clear messages: ${error.message}`
+                                title: '(｡•́︿•̀｡) Mommy failed you...',
+                                description: `Failed to clear messages: ${error.message} (っ˘ω˘ς)`
                             }]
                         }).then(msg => {
                             setTimeout(() => msg.delete().catch(() => {}), 10000);
@@ -180,8 +180,8 @@ module.exports = {
                 message.channel.send({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ Fetch Failed',
-                        description: `Failed to fetch messages: ${error.message}`
+                        title: '(｡•́︿•̀｡) Something went wrong...',
+                        description: `Failed to fetch messages: ${error.message} (っ˘ω˘ς)`
                     }]
                 }).then(msg => {
                     setTimeout(() => msg.delete().catch(() => {}), 10000);
@@ -189,7 +189,3 @@ module.exports = {
             });
     }
 };
-
-
-
-

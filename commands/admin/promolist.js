@@ -17,14 +17,14 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary || '#5865F2')
-            .setTitle('🎁 Active Promo Codes')
+            .setTitle('(｡♥‿♥｡) Mommy\'s Special Codes!')
             .setTimestamp();
 
-        let description = '';
+        let description = 'Here are all the active promo codes, darling! (◕‿◕✿)\n\n';
         codes.forEach(data => {
             const code = data.code;
             const remaining = data.maxUses - data.usedBy.length;
-            const rewardType = data.type === 'riel' ? 'riel 💸' : '10-pulls ✨';
+            const rewardType = data.type === 'riel' ? 'riel (｡♥‿♥｡)' : '10-pulls ヽ(>∀<☆)ノ';
             const rewardAmount = data.type === 'riel' ? data.amount.toLocaleString() : data.amount;
             
             description += `**\`${code}\`**\n`;
@@ -38,7 +38,7 @@ module.exports = {
             description = description.substring(0, 4090) + '...';
         }
 
-        embed.setDescription(description || 'No codes found.');
+        embed.setDescription(description || 'No codes found, darling. (っ˘ω˘ς)');
 
         return message.reply({ embeds: [embed] });
     }

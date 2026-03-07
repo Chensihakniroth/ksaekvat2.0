@@ -22,12 +22,12 @@ module.exports = {
             const nextWorld = userData.worldLevel + 1;
             const cost = nextWorld * 50000;
             if (!(await database.hasBalance(message.author.id, cost))) {
-                return message.reply(`💸 hg ot luy krub heh! Jong upgrade tov WL ${nextWorld} trov luy **${EconomyService.format(cost)}** riel.`);
+                return message.reply(`Oh darling, you don't have enough coins... (｡•́︿•̀｡) To reach World Level ${nextWorld}, you need **${EconomyService.format(cost)}** riel. (っ˘ω˘ς)`);
             }
             await database.removeBalance(message.author.id, cost);
             userData.worldLevel++;
             await database.saveUser(userData);
-            return message.reply({ embeds: [new EmbedBuilder().setColor(colors.success).setTitle("✨ WORLD LEVEL ASCENDED!").setDescription(`hg lerng tov **World Level ${userData.worldLevel}** hz!`)] });
+            return message.reply({ embeds: [new EmbedBuilder().setColor(colors.success).setTitle("✨ PROUD OF YOU!").setDescription(`Sweetie, you've reached **World Level ${userData.worldLevel}**! You're growing so fast!`)] });
         }
 
         // --- PREPARE TEAM ---
@@ -39,12 +39,12 @@ module.exports = {
             return CombatService.calculateCharStats(char, userData, bonuses);
         }).filter(Boolean);
 
-        if (team.length === 0) return message.reply("🚫 hg ot mean team heh! Use `kteam add` first!");
+        if (team.length === 0) return message.reply("Sweetie, you don't have a team yet! (｡•́︿•̀｡) Use `kteam add` to find some friends to help you! (◕‿◕✿)");
 
         // --- HANDLE BET ---
         const betAmount = EconomyService.parseBet(args[0], userData.balance);
         if (betAmount > 0) {
-            if (!(await database.hasBalance(message.author.id, betAmount))) return message.reply("💸 hg ot luy krub heh!");
+            if (!(await database.hasBalance(message.author.id, betAmount))) return message.reply("Darling, you don't have enough coins for that... (っ˘ω˘ς)");
             await database.removeBalance(message.author.id, betAmount);
         }
 
@@ -73,7 +73,7 @@ module.exports = {
         const collector = battleMsg.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300000 });
 
         collector.on('collect', async i => {
-            if (i.user.id !== message.author.id) return i.reply({ content: "hg ot torm battle heh!", ephemeral: true });
+            if (i.user.id !== message.author.id) return i.reply({ content: "Wait your turn, little one! (◕‿◕✿)", ephemeral: true });
             await i.deferUpdate();
             const active = team.find(c => c.hp > 0);
             if (!active) return collector.stop('lost');
@@ -117,10 +117,10 @@ module.exports = {
             
             const final = new EmbedBuilder()
                 .setColor(won ? colors.success : colors.error)
-                .setTitle(won ? '🏆 Victory!' : '💀 Defeat')
+                .setTitle(won ? '(｡♥‿♥｡) You did it!' : '(｡•́︿•̀｡) It\'s okay...')
                 .addFields(
-                    { name: '💰 Loot', value: `+${EconomyService.format(rewards.money)} riel`, inline: true }, 
-                    { name: '⭐ XP', value: `+${rewards.exp} XP`, inline: true }
+                    { name: '💰 Treasures Found', value: `+${EconomyService.format(rewards.money)} riel`, inline: true }, 
+                    { name: '⭐ Lessons Learned', value: `+${rewards.exp} XP`, inline: true }
                 );
 
             if (expRes.leveledUp) final.addFields({ name: '🎉 Level Up!', value: `Rank **${expRes.newLevel}**!` });

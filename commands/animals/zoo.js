@@ -28,9 +28,9 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle(`🌿 ${target.username}'s Sanctuary`)
+            .setTitle(`(◕‿◕✿) ${target.username}'s Cozy Sanctuary`)
             .setThumbnail(target.displayAvatarURL())
-            .setDescription(`**Owner:** ${target.username}\n**Net Worth:** ${EconomyService.format(totalValue)} ${config.economy.currency}\n**Population:** ${totalAnimals} animals`)
+            .setDescription(`**Owner:** ${target.username}\n**Total Value, sweetie:** ${EconomyService.format(totalValue)} ${config.economy.currency}\n**Little Friends:** ${totalAnimals} animals`)
             .addFields({ name: '\u200b', value: '\u200b' });
 
         if (totalAnimals > 0) {
@@ -55,7 +55,7 @@ module.exports = {
                 }).join('\n\n');
                 
                 embed.addFields(
-                    { name: '💎 **Crown Jewels**', value: rareList, inline: false },
+                    { name: '✨ **Our Rarest Treasures**', value: rareList, inline: false },
                     { name: '\u200b', value: '\u200b' }
                 );
             }
@@ -68,19 +68,19 @@ module.exports = {
                     return `\`${info.name.padEnd(10)}\` : **${d.count}**`;
                 }).join('\n');
 
-            embed.addFields({ name: '📊 **Census Data**', value: breakdown, inline: true });
+            embed.addFields({ name: '📊 **Sanctuary Report**', value: breakdown, inline: true });
 
             // 3. Badges (Using Service)
             const badges = AnimalService.calculateBadges(userData.stats?.totalAnimalsFound || 0, totalValue, userAnimals);
 
             if (badges.length > 0) {
-                embed.addFields({ name: '🏅 **Honors**', value: badges.join('\n'), inline: true });
+                embed.addFields({ name: '🏅 **Your Achievements**', value: badges.join('\n'), inline: true });
             }
         } else {
-            embed.setDescription("This sanctuary is empty! Use `Khunt` to start your collection.");
+            embed.setDescription("Oh no, darling! (｡•́︿•̀｡) Your sanctuary is empty... Why not use `Khunt` to find some little friends for us?");
         }
 
-        embed.setFooter({ text: `Total Hunts: ${userData.stats?.totalAnimalsFound || 0}` });
+        embed.setFooter({ text: `Little ones found: ${userData.stats?.totalAnimalsFound || 0}` });
         
         await database.updateStats(message.author.id, 'command');
         message.reply({ embeds: [embed] });

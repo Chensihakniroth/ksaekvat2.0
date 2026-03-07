@@ -10,6 +10,8 @@
     "discord.js": "^14.25.1",
     "dotenv": "^16.6.1",
     "express": "^4.18.2",
+    "jimp": "^0.22.10",
+    "minio": "^8.0.7",
     "mongoose": "^9.2.3",
     "node-cron": "^3.0.2",
     "node-fetch": "^2.7.0"

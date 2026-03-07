@@ -14,8 +14,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
-                    description: 'Please provide a user and level.\n**Usage:** `Ksetlvl @user <level>`\n**Example:** `Ksetlvl @user 25`'
+                    title: '(◕‸ ◕✿) Sweetie, you forgot something!',
+                    description: 'Please tell Mommy who to level up and what level they should be. (｡•́︿•̀｡)\n**Usage:** `Ksetlvl @user <level>`\n**Example:** `Ksetlvl @user 25`'
                 }]
             });
         }
@@ -33,8 +33,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.'
+                    title: '(｡•́︿•̀｡) I can\'t find them, darling',
+                    description: 'Please mention a valid user or provide their user ID so Mommy can find them. (◕‿◕✿)'
                 }]
             });
         }
@@ -45,8 +45,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Level',
-                    description: 'Please provide a valid level (minimum 1).'
+                    title: '(｡•́︿•̀｡) That\'s not right, darling',
+                    description: 'Please provide a valid level for Mommy (minimum 1). (っ˘ω˘ς)'
                 }]
             });
         }
@@ -57,8 +57,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '⚠️ Level Too High',
-                    description: `Maximum allowed level is ${maxLevel}.`
+                    title: '(◕‸ ◕✿) That\'s too high, darling!',
+                    description: `Mommy can't handle a level higher than ${maxLevel}. (っ˘ω˘ς)`
                 }]
             });
         }
@@ -75,11 +75,11 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(colors.success)
-            .setTitle('⭐ Level Updated')
-            .setDescription(`Successfully updated **${target.username}**'s level!`)
+            .setTitle('(｡♥‿♥｡) Level Updated!')
+            .setDescription(`Mommy successfully adjusted **${target.username}**'s level! ヽ(>∀<☆)ノ`)
             .addFields(
                 {
-                    name: '👤 Target User',
+                    name: '(◕‿◕✿) Target User',
                     value: [
                         `**Username:** ${target.username}`,
                         `**User ID:** ${target.id}`,
@@ -88,7 +88,7 @@ module.exports = {
                     inline: true
                 },
                 {
-                    name: '📊 Level Changes',
+                    name: '(っ˘ω˘ς) Level Changes',
                     value: [
                         `**Previous Level:** ${previousLevel}`,
                         `**New Level:** ${level}`,
@@ -98,7 +98,7 @@ module.exports = {
                     inline: true
                 },
                 {
-                    name: '🔧 Admin Action',
+                    name: '(｡♥‿♥｡) Admin Action',
                     value: [
                         `**Admin:** ${message.author.username}`,
                         `**Action:** Set Level`,
@@ -109,7 +109,7 @@ module.exports = {
 
         // Add level benefits information
         embed.addFields({
-            name: '🎯 Level Benefits',
+            name: '(◕‿◕✿) Level Benefits',
             value: [
                 `**Work Bonus:** +${level * 2} per work`,
                 `**Daily Bonus:** +${level * 10} per daily`,
@@ -133,16 +133,16 @@ module.exports = {
         try {
             const dmEmbed = new EmbedBuilder()
                 .setColor(colors.primary)
-                .setTitle('⭐ Level Updated')
-                .setDescription(`An administrator has updated your level.`)
+                .setTitle('(｡♥‿♥｡) You\'ve Grown So Much!')
+                .setDescription(`An administrator has updated your level, sweetie! ヽ(>∀<☆)ノ`)
                 .addFields(
                     {
-                        name: 'New Level',
+                        name: '(◕‿◕✿) New Level',
                         value: `Level ${level}`,
                         inline: true
                     },
                     {
-                        name: 'Experience',
+                        name: '(っ˘ω˘ς) Experience',
                         value: `${userData.experience} XP`,
                         inline: true
                     }
@@ -158,7 +158,3 @@ module.exports = {
         }
     }
 };
-
-
-
-

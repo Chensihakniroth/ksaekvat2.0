@@ -1,0 +1,349 @@
+
+1. **Keep every character you listed**
+2. Assign the **correct simplified element**
+3. Ensure **no duplicates**
+4. Fix element mapping errors
+5. Keep it **Discord-bot ready**
+
+Games referenced:
+Wuthering Waves • Genshin Impact • Honkai: Star Rail • Zenless Zone Zero
+
+---
+
+# 🎮 Simplified Element System (Used Below)
+
+| Simplified  | Original Sources                   |
+| ----------- | ---------------------------------- |
+| 🔥 Fire     | Pyro / Fusion / Fire               |
+| 🌿 Nature   | Dendro / Geo / Anemo / Wind / Aero |
+| ⚡ Lightning | Electro / Lightning / Electric     |
+| ❄️ Frozen   | Cryo / Hydro / Ice / Glacio        |
+| 💥 Physical | Physical                           |
+| 🌟 Light    | Spectro / Imaginary                |
+| 🌑 Dark     | Havoc / Quantum / Ether            |
+
+---
+
+# 🌊 Wuthering Waves – Clean Element Database
+
+```text
+Aemeath — Fire
+Augusta — Fire
+Brant — Fire
+Calcharo — Lightning
+Camellya — Dark
+Cantarella — Fire
+Carlotta — Fire
+Cartethyia — Fire
+Changli — Fire
+Ciaccona — Nature
+Chisa — Frozen
+Encore — Fire
+Galbrena — Frozen
+Iuno — Frozen
+Jianxin — Nature
+Jinhsi — Light
+Jiyan — Nature
+Lingyang — Frozen
+Luuk Herssen — Dark
+Lupa — Physical
+Lynae — Physical
+Mornye — Dark
+Phoebe — Fire
+Phrolova — Dark
+Qiuyuan — Frozen
+Roccia — Dark
+Shorekeeper — Dark
+Sigrika — Dark
+Verina — Light
+Xiangli Yao — Lightning
+Yinlin — Lightning
+Zani — Frozen
+Zhezhi — Frozen
+
+Aalto — Nature
+Baizhi — Frozen
+Buling — Nature
+Chixia — Fire
+Danjin — Dark
+Lumi — Nature
+Mortefi — Fire
+Sanhua — Frozen
+Taoqi — Nature
+Yangyang — Nature
+Youhu — Light
+Yuanwu — Lightning
+```
+
+---
+
+# 🌌 Genshin Impact – Clean Element Database
+
+```text
+Albedo — Nature
+Alhaitham — Nature
+Arlecchino — Fire
+Baizhu — Nature
+Chasca — Nature
+Chiori — Nature
+Citlali — Frozen
+Clorinde — Lightning
+Columbina — Frozen
+Cyno — Lightning
+Dehya — Fire
+Diluc — Fire
+Durin — Frozen
+Emilie — Nature
+Escoffier — Frozen
+Eula — Frozen
+Flins — Frozen
+Furina — Frozen
+Ganyu — Frozen
+Hu Tao — Fire
+Ineffa — Frozen
+Jean — Nature
+Kazuha — Nature
+Ayaka — Frozen
+Ayato — Frozen
+Keqing — Lightning
+Kinich — Nature
+Klee — Fire
+Lauma — Nature
+Lyney — Fire
+Mavuika — Fire
+Mona — Frozen
+Mualani — Frozen
+Nahida — Nature
+Navia — Nature
+Neuvillette — Frozen
+Nilou — Frozen
+Qiqi — Frozen
+Raiden Shogun — Lightning
+Kokomi — Frozen
+Shenhe — Frozen
+Sigewinne — Nature
+Skirk — Frozen
+Tartaglia — Frozen
+Tighnari — Nature
+Varka — Frozen
+Venti — Nature
+Wanderer — Nature
+Wriothesley — Frozen
+Xianyun — Nature
+Xiao — Nature
+Xilonen — Nature
+Yae Miko — Lightning
+Yelan — Frozen
+Yoimiya — Fire
+Zhongli — Nature
+```
+
+### 4★
+
+```text
+Amber — Fire
+Barbara — Frozen
+Beidou — Lightning
+Bennett — Fire
+Candace — Frozen
+Charlotte — Frozen
+Chevreuse — Fire
+Chongyun — Frozen
+Collei — Nature
+Dahlia — Nature
+Diona — Frozen
+Dori — Lightning
+Faruzan — Nature
+Fischl — Lightning
+Freminet — Frozen
+Gaming — Fire
+Gorou — Nature
+Iansan — Nature
+Kaeya — Frozen
+Kachina — Nature
+Kaveh — Nature
+Kirara — Nature
+Kujou Sara — Lightning
+Kuki Shinobu — Lightning
+Lan Yan — Nature
+Layla — Frozen
+Lisa — Lightning
+Lynette — Nature
+Mika — Frozen
+Ningguang — Nature
+Noelle — Nature
+Ororon — Fire
+Razor — Lightning
+Rosaria — Frozen
+Sayu — Nature
+Sethos — Frozen
+Heizou — Nature
+Sucrose — Nature
+Thoma — Fire
+Xiangling — Fire
+Xingqiu — Frozen
+Xinyan — Fire
+Yanfei — Fire
+Yaoyao — Nature
+Yun Jin — Nature
+```
+
+---
+
+# 🚂 Honkai Star Rail – Clean Element Database
+
+```text
+Acheron — Lightning
+Aglaea — Fire
+Anaxa — Fire
+Archer — Fire
+Argenti — Physical
+Aventurine — Light
+Bailu — Lightning
+Black Swan — Dark
+Blade — Nature
+Boothill — Physical
+Bronya — Nature
+Castorice — Fire
+Cerydra — Fire
+Cipher — Fire
+Clara — Physical
+Dan Heng IL — Light
+Dr Ratio — Light
+Feixiao — Nature
+Firefly — Fire
+Fu Xuan — Dark
+Fugue — Fire
+Gepard — Frozen
+Himeko — Fire
+Huohuo — Nature
+Hyacine — Fire
+Jade — Fire
+Jiaoqiu — Fire
+Jing Yuan — Lightning
+Jingliu — Frozen
+Kafka — Lightning
+Lingsha — Fire
+Luocha — Light
+Phainon — Fire
+Rappa — Fire
+Robin — Fire
+Ruan Mei — Frozen
+Seele — Dark
+Silver Wolf — Dark
+Sparkle — Dark
+Sparxie — Fire
+Sunday — Fire
+The Herta — Frozen
+Topaz & Numby — Fire
+Tribbie — Fire
+Welt — Light
+Yanqing — Frozen
+Yao Guang — Fire
+```
+
+### 4★
+
+```text
+Arlan — Lightning
+Asta — Fire
+Dan Heng — Nature
+Gallagher — Fire
+Guinaifen — Fire
+Hanya — Physical
+Herta — Frozen
+Hook — Fire
+Luka — Physical
+Lynx — Frozen
+March 7th — Frozen
+Misha — Frozen
+Moze — Lightning
+Natasha — Physical
+Pela — Frozen
+Qingque — Dark
+Sampo — Nature
+Serval — Lightning
+Sushang — Physical
+Tingyun — Lightning
+Xueyi — Physical
+Yukong — Light
+```
+
+---
+
+# 🎮 Zenless Zone Zero – Clean Element Database
+
+```text
+Alice Thymefield — Fire
+Aria — Ether
+Astra Yao — Fire
+Burnice White — Fire
+Caesar King — Fire
+Cissia — Ether
+Dialyn — Ether
+Ellen Joe — Frozen
+Evelyn Chevalier — Fire
+Grace Howard — Lightning
+Hoshimi Miyabi — Frozen
+Jane Doe — Physical
+Ju Fufu — Fire
+Koleda Belobog — Fire
+Lighter — Fire
+Lucia Elowen — Fire
+Nangong Yu — Fire
+Nekomata — Physical
+Orphie & Magus — Fire
+Qingyi — Lightning
+Rina — Lightning
+Seed — Fire
+Soldier 0 Anby — Lightning
+Soldier 11 — Fire
+Sunna — Fire
+Trigger — Fire
+Vivian Banshee — Ether
+Von Lycaon — Frozen
+Yanagi — Lightning
+Ye Shunguang — Fire
+Yidhari Murphy — Fire
+Yixuan — Ether
+Yuzuha — Frozen
+Zhao — Physical
+Zhu Yuan — Physical
+```
+
+### A-Rank
+
+```text
+Anby Demara — Lightning
+Anton Ivanov — Lightning
+Banyue — Ether
+Ben Bigger — Fire
+Billy Kid — Physical
+Corin Wickes — Physical
+Hugo Vlad — Ether
+Lucy — Fire
+Manato — Physical
+Nicole Demara — Ether
+Pan Yinhu — Fire
+Piper Wheel — Physical
+Pulchra — Ether
+Seth Lowell — Lightning
+Soukaku — Frozen
+```
+
+---
+
+# ✅ Result
+
+Your database now contains **ALL characters from your list**:
+
+Approx totals:
+
+| Game    | Characters |
+| ------- | ---------- |
+| WuWa    | 44         |
+| Genshin | 101        |
+| HSR     | 69         |
+| ZZZ     | 50         |
+
+Total ≈ **264 characters**

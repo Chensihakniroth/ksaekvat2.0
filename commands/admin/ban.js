@@ -13,8 +13,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Missing Permissions',
-                    description: 'I don\'t have permission to ban members in this server.'
+                    title: '(｡•́︿•̀｡) Oh no, darling...',
+                    description: 'Mommy doesn\'t have permission to ban members in this server. (っ˘ω˘ς)'
                 }]
             });
         }
@@ -24,8 +24,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
-                    description: 'Please provide a user to ban.\n**Usage:** `Kban @user [reason]`\n**Example:** `Kban @user Breaking rules`'
+                    title: '(◕‸ ◕✿) Sweetie, you forgot something!',
+                    description: 'Please provide a user for Mommy to ban. (｡•́︿•̀｡)\n**Usage:** `Kban @user [reason]`\n**Example:** `Kban @user Breaking rules`'
                 }]
             });
         }
@@ -47,8 +47,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.'
+                    title: '(｡•́︿•̀｡) I can\'t find them, darling',
+                    description: 'Please mention a valid user or provide their user ID so Mommy can find them. (◕‿◕✿)'
                 }]
             });
         }
@@ -65,8 +65,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.warning,
-                        title: '🤔 Self Ban',
-                        description: 'You cannot ban yourself!'
+                        title: '(◕‸ ◕✿) Silly little one!',
+                        description: 'You cannot ban yourself! Mommy wouldn\'t want that. (っ˘ω˘ς)'
                     }]
                 });
             }
@@ -76,8 +76,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.warning,
-                        title: '🤖 Bot Protection',
-                        description: 'I cannot ban myself!'
+                        title: '(｡♥‿♥｡) Oh, sweetie...',
+                        description: 'I cannot ban myself! Who would take care of you? (ﾉ´ヮ`)ﾉ*:･ﾟ✧'
                     }]
                 });
             }
@@ -87,8 +87,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ Cannot Ban User',
-                        description: 'I cannot ban this user. They may have higher permissions than me.'
+                        title: '(｡•́︿•̀｡) I\'m sorry, darling',
+                        description: 'Mommy cannot ban this user. They might be too powerful for me. (っ˘ω˘ς)'
                     }]
                 });
             }
@@ -98,8 +98,8 @@ module.exports = {
                 return message.reply({
                     embeds: [{
                         color: colors.error,
-                        title: '❌ Insufficient Role Hierarchy',
-                        description: 'I cannot ban this user as they have a role equal to or higher than mine.'
+                        title: '(｡•́︿•̀｡) It\'s not working...',
+                        description: 'I cannot ban this user as they have a role equal to or higher than Mommy\'s. (◕‸ ◕✿)'
                     }]
                 });
             }
@@ -108,8 +108,8 @@ module.exports = {
         // Try to DM the user before banning
         const dmEmbed = new EmbedBuilder()
             .setColor(colors.error)
-            .setTitle('🔨 You Have Been Banned')
-            .setDescription(`You have been banned from **${message.guild.name}**.`)
+            .setTitle('(｡•́︿•̀｡) Goodbye, little one')
+            .setDescription(`You have been banned from **${message.guild.name}**. Mommy hopes you learn from this. (っ˘ω˘ς)`)
             .addFields(
                 {
                     name: 'Reason',
@@ -139,11 +139,11 @@ module.exports = {
         message.guild.members.ban(target, { reason: `${reason} | Banned by: ${message.author.tag}` }).then(() => {
             const successEmbed = new EmbedBuilder()
                 .setColor(colors.success)
-                .setTitle('🔨 User Banned Successfully')
-                .setDescription(`**${target.tag}** has been banned from the server.`)
+                .setTitle('ヽ(>∀<☆)ノ User Banned Successfully!')
+                .setDescription(`**${target.tag}** has been sent away. Mommy did it for the server! (｡♥‿♥｡)`)
                 .addFields(
                     {
-                        name: '👤 Banned User',
+                        name: '(◕‿◕✿) Banned User',
                         value: [
                             `**Username:** ${target.username}`,
                             `**User ID:** ${target.id}`,
@@ -152,7 +152,7 @@ module.exports = {
                         inline: true
                     },
                     {
-                        name: '📋 Ban Details',
+                        name: '(っ˘ω˘ς) Ban Details',
                         value: [
                             `**Reason:** ${reason}`,
                             `**Banned By:** ${message.author.tag}`,
@@ -175,8 +175,8 @@ module.exports = {
             
             const errorEmbed = new EmbedBuilder()
                 .setColor(colors.error)
-                .setTitle('❌ Ban Failed')
-                .setDescription(`Failed to ban **${target.tag}**.`)
+                .setTitle('(｡•́︿•̀｡) Oh no, it failed')
+                .setDescription(`Mommy couldn't ban **${target.tag}**. Something went wrong... (っ˘ω˘ς)`)
                 .addFields({
                     name: 'Error',
                     value: error.message || 'Unknown error occurred',
@@ -188,7 +188,3 @@ module.exports = {
         });
     },
 };
-
-
-
-

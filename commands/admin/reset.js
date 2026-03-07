@@ -17,8 +17,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
-                    description: 'Please provide a user to reset.\n**Usage:** `Kreset @user`\n**Warning:** This will delete ALL user data!'
+                    title: '(◕‸ ◕✿) Sweetie, you forgot something!',
+                    description: 'Please tell Mommy who to reset. (｡•́︿•̀｡)\n**Usage:** `Kreset @user`\n**Warning:** This will delete ALL their progress, darling!'
                 }]
             });
         }
@@ -36,8 +36,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.'
+                    title: '(｡•́︿•̀｡) I can\'t find them, darling',
+                    description: 'Please mention a valid user or provide their user ID so Mommy can find them. (◕‿◕✿)'
                 }]
             });
         }
@@ -47,8 +47,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '🛡️ Cannot Reset Admin',
-                    description: 'You cannot reset another admin\'s account for security reasons.'
+                    title: '(｡♥‿♥｡) Oh, sweetie...',
+                    description: 'Mommy cannot reset another admin\'s account! That would be very bad. (っ˘ω˘ς)'
                 }]
             });
         }
@@ -68,11 +68,11 @@ module.exports = {
         // Create confirmation embed
         const confirmEmbed = new EmbedBuilder()
             .setColor(colors.warning)
-            .setTitle('⚠️ CONFIRM USER RESET')
-            .setDescription(`Are you sure you want to **COMPLETELY RESET** ${target.username}'s account?\n\n**THIS ACTION CANNOT BE UNDONE!**`)
+            .setTitle('(◕‸ ◕✿) ARE YOU SURE, DARLING?')
+            .setDescription(`Are you really sure you want Mommy to **COMPLETELY RESET** ${target.username}'s account?\n\n**MOMMY CAN\'T UNDO THIS! (｡•́︿•̀｡)**`)
             .addFields(
                 {
-                    name: '👤 Target User',
+                    name: '(◕‿◕✿) Target User',
                     value: [
                         `**Username:** ${target.username}`,
                         `**User ID:** ${target.id}`,
@@ -81,7 +81,7 @@ module.exports = {
                     inline: true
                 },
                 {
-                    name: '📊 Current Data (WILL BE LOST)',
+                    name: '(っ˘ω˘ς) Data to be Lost',
                     value: [
                         `**Balance:** ${EconomyService.format(backupData.balance)} ${config.economy.currency}`,
                         `**Level:** ${backupData.level} (${backupData.experience} XP)`,
@@ -92,20 +92,20 @@ module.exports = {
                     inline: true
                 },
                 {
-                    name: '🚨 WARNING',
+                    name: '(｡•́︿•̀｡) MOMMY\'S WARNING',
                     value: [
                         '• All progress will be deleted',
                         '• All animals will be lost',
                         '• All statistics will be reset',
                         '• Balance will reset to 1000',
                         '• Level will reset to 1',
-                        '• This action is IRREVERSIBLE'
+                        '• Mommy can\'t get it back!'
                     ].join('\n'),
                     inline: false
                 },
                 {
-                    name: '📋 How to Confirm',
-                    value: '✅ React with ✅ to confirm reset\n❌ React with ❌ to cancel',
+                    name: '(◕‿◕✿) How to Confirm',
+                    value: 'React with (◕‿◕✿) to confirm reset\nReact with (っ˘ω˘ς) to cancel',
                     inline: false
                 }
             );
@@ -130,11 +130,11 @@ module.exports = {
 
                     const resetEmbed = new EmbedBuilder()
                         .setColor(colors.success)
-                        .setTitle('✅ User Reset Complete')
-                        .setDescription(`**${target.username}**'s account has been completely reset.`)
+                        .setTitle('ヽ(>∀<☆)ノ Reset Complete!')
+                        .setDescription(`**${target.username}**'s account has been completely reset by Mommy. (｡♥‿♥｡)`)
                         .addFields(
                             {
-                                name: '🔄 Reset Summary',
+                                name: '(◕‿◕✿) Reset Summary',
                                 value: [
                                     `**User:** ${target.username} (${target.id})`,
                                     `**Reset by:** ${message.author.username}`,
@@ -145,7 +145,7 @@ module.exports = {
                                 inline: false
                             },
                             {
-                                name: '📊 New Account State',
+                                name: '(っ˘ω˘ς) New Account State',
                                 value: [
                                     `**Balance:** 1,000 ${config.economy.currency}`,
                                     `**Level:** 1 (0 XP)`,
@@ -167,8 +167,8 @@ module.exports = {
                     try {
                         const dmEmbed = new EmbedBuilder()
                             .setColor(colors.warning)
-                            .setTitle('🔄 Account Reset')
-                            .setDescription('Your account has been reset by an administrator.')
+                            .setTitle('(っ˘ω˘ς) Fresh Start, Little One')
+                            .setDescription('Your account has been reset by an administrator. Mommy is here for your new journey! (｡♥‿♥｡)')
                             .addFields({
                                 name: 'What happened?',
                                 value: 'All your progress, animals, and statistics have been reset to default values.',
@@ -182,8 +182,8 @@ module.exports = {
                     // Reset cancelled
                     const cancelEmbed = new EmbedBuilder()
                         .setColor(colors.secondary)
-                        .setTitle('❌ Reset Cancelled')
-                        .setDescription(`Reset operation for **${target.username}** has been cancelled.\n\nNo data was modified.`);
+                        .setTitle('(っ˘ω˘ς) Reset Cancelled')
+                        .setDescription(`Mommy cancelled the reset for **${target.username}**. Everything is safe! (◕‿◕✿)`);
 
                     await sentMessage.edit({ embeds: [cancelEmbed] });
                     await sentMessage.reactions.removeAll();
@@ -194,8 +194,8 @@ module.exports = {
                 if (collected.size === 0) {
                     const timeoutEmbed = new EmbedBuilder()
                         .setColor(colors.warning)
-                        .setTitle('⏰ Reset Timeout')
-                        .setDescription(`Reset confirmation timed out for **${target.username}**.\n\nNo action was taken.`);
+                        .setTitle('(｡•́︿•̀｡) Mommy Timed Out')
+                        .setDescription(`Reset confirmation timed out for **${target.username}**. Mommy didn't do anything. (っ˘ω˘ς)`);
 
                     await sentMessage.edit({ embeds: [timeoutEmbed] });
                     await sentMessage.reactions.removeAll();

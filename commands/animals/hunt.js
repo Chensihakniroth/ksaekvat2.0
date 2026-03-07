@@ -17,8 +17,8 @@ module.exports = {
             return message.reply({
                 embeds: [new EmbedBuilder()
                     .setColor(colors.warning)
-                    .setTitle('😅 Distracted!')
-                    .setDescription('hg got distracted and found nothing!')]
+                    .setTitle('(っ˘ω˘ς) Oh no, little one...')
+                    .setDescription('You got a little distracted and didn\'t find any friends this time. Mommy\'s here to comfort you! (っ˘ω˘ς)')]
             });
         }
 
@@ -48,7 +48,7 @@ module.exports = {
 
         const available = animalsData[selectedRarity];
         if (!available || Object.keys(available).length === 0) {
-            return message.reply("❌ Error: No animals found for this rarity. Please check the animal data.");
+            return message.reply("(｡•́︿•̀｡) Mommy can't find any animals right now. Something is wrong... (っ˘ω˘ς)");
         }
         const animalKey = Object.keys(available)[Math.floor(Math.random() * Object.keys(available).length)];
         const animal = available[animalKey];
@@ -73,18 +73,18 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setColor(parseInt(rarities[selectedRarity].color.slice(1), 16))
-            .setTitle(`${animal.emoji} Hunt Success!`)
-            .setDescription(`hg khernh **${animal.name}**!\n*${rarities[selectedRarity].name} Rarity*`)
+            .setTitle('ヽ(>∀<☆)ノ You found a friend!')
+            .setDescription(`Look, sweetie! You found a cute **${animal.name}**! (｡♥‿♥｡)\n*${rarities[selectedRarity].name} Rarity*`)
             .addFields(
-                { name: '⭐ Rank Exp', value: `+${expReward} XP`, inline: true },
-                { name: '✨ Status', value: isBoosted ? `🔥 **BOOSTED** (${userData.hunt_boost} left)` : 'Normal', inline: true }
+                { name: '(◕‿◕✿) Rank Exp', value: `+${expReward} XP`, inline: true },
+                { name: '(｡♥‿♥｡) Status', value: isBoosted ? `🔥 **BOOSTED** (${userData.hunt_boost} left)` : 'Normal', inline: true }
             );
 
         if (gotLootBox) {
-            embed.addFields({ name: '🎁 Special Find!', value: 'hg khernh **Loot Box** 1! Open it in `Krpginv`!' });
+            embed.addFields({ name: '(｡♥‿♥｡) Special Find!', value: 'You also found a **Loot Box**, darling! Check your bags! (◕‿◕✿)' });
         }
 
-        if (expRes.leveledUp) embed.setFooter({ text: `🎉 Level Up! You are now Rank ${expRes.newLevel}` });
+        if (expRes.leveledUp) embed.setFooter({ text: `ヽ(>∀<☆)ノ Level Up! You are now Rank ${expRes.newLevel}, sweetie!` });
 
         await database.updateStats(message.author.id, 'command');
         await database.updateStats(message.author.id, 'hunt_success', 1);

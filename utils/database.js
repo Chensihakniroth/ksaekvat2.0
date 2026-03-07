@@ -62,7 +62,7 @@ async function addBalance(userId, amount) {
     return await User.findOneAndUpdate(
         { id: userId },
         { $inc: { balance: amount } },
-        { new: true, upsert: true }
+        { returnDocument: 'after', upsert: true }
     );
 }
 
@@ -70,7 +70,7 @@ async function removeBalance(userId, amount) {
     return await User.findOneAndUpdate(
         { id: userId },
         { $inc: { balance: -amount } },
-        { new: true }
+        { returnDocument: 'after' }
     );
 }
 

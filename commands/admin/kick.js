@@ -13,8 +13,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Missing Permissions',
-                    description: 'I don\'t have permission to kick members in this server.'
+                    title: '(｡•́︿•̀｡) Oh no, darling...',
+                    description: 'Mommy doesn\'t have permission to kick members in this server. (っ˘ω˘ς)'
                 }]
             });
         }
@@ -24,8 +24,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Invalid Usage',
-                    description: 'Please provide a user to kick.\n**Usage:** `Kkick @user [reason]`\n**Example:** `Kkick @user Breaking rules`'
+                    title: '(◕‸ ◕✿) Sweetie, you forgot something!',
+                    description: 'Please tell Mommy who to kick. (｡•́︿•̀｡)\n**Usage:** `Kkick @user [reason]`\n**Example:** `Kkick @user Breaking rules`'
                 }]
             });
         }
@@ -43,8 +43,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ User Not Found',
-                    description: 'Please mention a valid user or provide their user ID.'
+                    title: '(｡•́︿•̀｡) I can\'t find them, darling',
+                    description: 'Please mention a valid user or provide their user ID so Mommy can find them. (◕‿◕✿)'
                 }]
             });
         }
@@ -59,8 +59,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '⚠️ User Not in Server',
-                    description: 'This user is not a member of this server.'
+                    title: '(っ˘ω˘ς) They aren\'t here, sweetie',
+                    description: 'This user is not a member of this server. (◕‿◕✿)'
                 }]
             });
         }
@@ -70,8 +70,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '🤔 Self Kick',
-                    description: 'You cannot kick yourself!'
+                    title: '(◕‸ ◕✿) Silly little one!',
+                    description: 'You cannot kick yourself! Mommy wouldn\'t want that. (っ˘ω˘ς)'
                 }]
             });
         }
@@ -81,8 +81,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.warning,
-                    title: '🤖 Bot Protection',
-                    description: 'I cannot kick myself!'
+                    title: '(｡♥‿♥｡) Oh, sweetie...',
+                    description: 'I cannot kick myself! Who would take care of you? (ﾉ´ヮ`)ﾉ*:･ﾟ✧'
                 }]
             });
         }
@@ -92,8 +92,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Cannot Kick User',
-                    description: 'I cannot kick this user. They may have higher permissions than me.'
+                    title: '(｡•́︿•̀｡) I\'m sorry, darling',
+                    description: 'Mommy cannot kick this user. They might be too powerful for me. (っ˘ω˘ς)'
                 }]
             });
         }
@@ -103,8 +103,8 @@ module.exports = {
             return message.reply({
                 embeds: [{
                     color: colors.error,
-                    title: '❌ Insufficient Role Hierarchy',
-                    description: 'I cannot kick this user as they have a role equal to or higher than mine.'
+                    title: '(｡•́︿•̀｡) It\'s not working...',
+                    description: 'I cannot kick this user as they have a role equal to or higher than Mommy\'s. (◕‸ ◕✿)'
                 }]
             });
         }
@@ -116,8 +116,8 @@ module.exports = {
         // Try to DM the user before kicking
         const dmEmbed = new EmbedBuilder()
             .setColor(colors.warning)
-            .setTitle('👢 You Have Been Kicked')
-            .setDescription(`You have been kicked from **${message.guild.name}**.`)
+            .setTitle('(｡•́︿•̀｡) Time to go, little one')
+            .setDescription(`You have been kicked from **${message.guild.name}**. Mommy hopes you'll be better next time. (っ˘ω˘ς)`)
             .addFields(
                 {
                     name: 'Reason',
@@ -147,11 +147,11 @@ module.exports = {
         member.kick(`${reason} | Kicked by: ${message.author.tag}`).then(() => {
             const successEmbed = new EmbedBuilder()
                 .setColor(colors.success)
-                .setTitle('👢 User Kicked Successfully')
-                .setDescription(`**${target.tag}** has been kicked from the server.`)
+                .setTitle('ヽ(>∀<☆)ノ User Kicked Successfully!')
+                .setDescription(`**${target.tag}** has been sent away for a bit. Mommy hopes they learn. (｡♥‿♥｡)`)
                 .addFields(
                     {
-                        name: '👤 Kicked User',
+                        name: '(◕‿◕✿) Kicked User',
                         value: [
                             `**Username:** ${target.username}`,
                             `**User ID:** ${target.id}`,
@@ -161,7 +161,7 @@ module.exports = {
                         inline: true
                     },
                     {
-                        name: '📋 Kick Details',
+                        name: '(っ˘ω˘ς) Kick Details',
                         value: [
                             `**Reason:** ${reason}`,
                             `**Kicked By:** ${message.author.tag}`,
@@ -173,7 +173,7 @@ module.exports = {
 
             if (roles.length > 0) {
                 successEmbed.addFields({
-                    name: '🎭 Previous Roles',
+                    name: '(◕‿◕✿) Previous Roles',
                     value: roles.join(', ') + (member.roles.cache.size > 6 ? `, +${member.roles.cache.size - 6} more` : ''),
                     inline: false
                 });
@@ -193,8 +193,8 @@ module.exports = {
             
             const errorEmbed = new EmbedBuilder()
                 .setColor(colors.error)
-                .setTitle('❌ Kick Failed')
-                .setDescription(`Failed to kick **${target.tag}**.`)
+                .setTitle('(｡•́︿•̀｡) Oh no, it failed')
+                .setDescription(`Mommy couldn't kick **${target.tag}**. Something went wrong... (っ˘ω˘ς)`)
                 .addFields({
                     name: 'Error',
                     value: error.message || 'Unknown error occurred',
@@ -206,7 +206,3 @@ module.exports = {
         });
     }
 };
-
-
-
-
