@@ -1,44 +1,6 @@
-const { SlashCommandBuilder, EmbedBuilder, ChannelType } = require('discord.js');
-const fs = require('fs');
-const path = require('path');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const isAdmin = require('../../utils/adminCheck');
-
-const TALK_TARGETS_FILE = path.join(__dirname, '../../data/talktargets.json');
-
-// Initialize data files
-function initDataFiles() {
-    const dataDir = path.dirname(TALK_TARGETS_FILE);
-    if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
-    }
-    if (!fs.existsSync(TALK_TARGETS_FILE)) {
-        fs.writeFileSync(TALK_TARGETS_FILE, '{}', 'utf8');
-    }
-}
-
-// Data handling functions
-function loadTalkTargets() {
-    try {
-        if (!fs.existsSync(TALK_TARGETS_FILE)) return {};
-        const data = fs.readFileSync(TALK_TARGETS_FILE, 'utf8');
-        return JSON.parse(data) || {};
-    } catch (error) {
-        console.error('Error loading talk targets:', error);
-        return {};
-    }
-}
-
-function saveTalkTargets(data) {
-    try {
-        const dataDir = path.dirname(TALK_TARGETS_FILE);
-        if (!fs.existsSync(dataDir)) {
-            fs.mkdirSync(dataDir, { recursive: true });
-        }
-        fs.writeFileSync(TALK_TARGETS_FILE, JSON.stringify(data, null, 2), 'utf8');
-    } catch (error) {
-        console.error('Error saving talk targets:', error);
-    }
-}
+const database = require('../../utils/database.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -51,8 +13,6 @@ module.exports = {
         .setDefaultMemberPermissions('0'),
 
     async execute(interaction) {
-        initDataFiles();
-
         if (typeof isAdmin !== 'function' || !isAdmin(interaction.user.id)) {
             return interaction.reply({
                 content: '⛔ This command is restricted to bot administrators.',
@@ -87,13 +47,7 @@ module.exports = {
                 });
             }
 
-            const talkTargets = loadTalkTargets();
-            talkTargets[interaction.user.id] = {
-                channelId: channelId,
-                serverId: channel.guild?.id || 'DM',
-                setAt: new Date().toISOString()
-            };
-            saveTalkTargets(talkTargets);
+            await database.saveTalkTarget(interaction.user.id, channelId, channel.guild?.id || 'DM');
 
             const embed = new EmbedBuilder()
                 .setColor(0x00FF00)
@@ -103,9 +57,7 @@ module.exports = {
                     { name: 'Server', value: channel.guild?.name || 'Direct Messages', inline: true },
                     { name: 'Channel', value: channel.name || 'Unknown', inline: true },
                     { name: 'Channel ID', value: channelId, inline: false }
-                )
-                
-                
+                );
 
             await interaction.reply({ embeds: [embed], flags: [4096] });
             
@@ -123,6 +75,3 @@ module.exports = {
         }
     }
 };
-
-
-

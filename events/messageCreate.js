@@ -3,47 +3,11 @@ const logger = require('../utils/logger.js');
 const cooldowns = require('../utils/cooldowns.js');
 const database = require('../utils/database.js');
 const { EmbedBuilder } = require('discord.js');
-const fs = require('fs');
-const path = require('path');
 const axios = require('axios');
-
-// File paths for persistent storage
-const LISTENERS_FILE = path.join(__dirname, '../data/listeners.json');
-const TALK_TARGETS_FILE = path.join(__dirname, '../data/talktargets.json');
-const CHARACTER_FILE = path.join(__dirname, '../data/character.json');
 
 // Memory storage for conversation history (Channel-based)
 const conversationMemory = new Map();
-const MAX_MEMORY = 20; // Increased to 20 messages (10 turns) for much better context retention
-
-// --- OPTIMIZATION: Load data once at startup ---
-const CHARACTER_CARD = (() => {
-    try {
-        return fs.existsSync(CHARACTER_FILE) ? JSON.parse(fs.readFileSync(CHARACTER_FILE, 'utf8')) : null;
-    } catch (error) {
-        logger.error("Failed to load character.json", error);
-        return null;
-    }
-})();
-
-const LISTENERS = (() => {
-    try {
-        return fs.existsSync(LISTENERS_FILE) ? JSON.parse(fs.readFileSync(LISTENERS_FILE, 'utf8')) : {};
-    } catch (error) {
-        logger.error("Failed to load listeners.json", error);
-        return {};
-    }
-})();
-
-const TALK_TARGETS = (() => {
-    try {
-        return fs.existsSync(TALK_TARGETS_FILE) ? JSON.parse(fs.readFileSync(TALK_TARGETS_FILE, 'utf8')) : {};
-    } catch (error) {
-        logger.error("Failed to load talktargets.json", error);
-        return {};
-    }
-})();
-// --- END OPTIMIZATION ---
+const MAX_MEMORY = 20;
 
 module.exports = {
     name: 'messageCreate',
@@ -51,23 +15,7 @@ module.exports = {
         // Ignore messages from bots
         if (message.author.bot) return;
 
-        // === LISTEN FUNCTIONALITY ===
-        await handleMessageListening(message, client);
-
-        // === CHATBOT FUNCTIONALITY ===
-        if (message.mentions.has(client.user) && !message.mentions.everyone) {
-            await handleChatbot(message);
-            return;
-        }
-
-        // === DM FORWARDING FUNCTIONALITY ===
-        if (message.channel.type === 1) { // DM Channel
-            await handleDMForwarding(message, client);
-            return; // Don't process DMs as regular commands
-        }
-
-        // === REGULAR COMMAND PROCESSING ===
-        // Check if message starts with any valid prefix
+        // === 1. FAST COMMAND DETECTION (PRIORITY) ===
         let prefix = null;
         let commandName = null;
         let args = [];
@@ -78,7 +26,6 @@ module.exports = {
                 const tempArgs = message.content.slice(p.length).trim().split(/ +/);
                 const tempName = tempArgs.shift().toLowerCase();
                 
-                // Only accept if the command actually exists
                 if (client.commands.has(tempName)) {
                     prefix = p;
                     commandName = tempName;
@@ -88,31 +35,31 @@ module.exports = {
             }
         }
 
-        // Check short prefixes if no main prefix found OR command not found in main check
+        // Check short prefixes (Optimized)
         if (!commandName) {
             const contentLower = message.content.toLowerCase();
             for (const [shortPrefix, fullCommand] of Object.entries(config.shortPrefixes)) {
                 const spLower = shortPrefix.toLowerCase();
-                // Check for standalone short prefix (e.g., 'rps') OR short prefix attached to main prefix (e.g., 'Krps')
                 let found = false;
+                
                 if (contentLower.startsWith(spLower + ' ') || contentLower === spLower) {
                     prefix = message.content.slice(0, shortPrefix.length);
                     found = true;
                 } else {
-                    // Check if it starts with any main prefix followed by the short prefix (e.g., 'Krps')
                     for (const p of config.prefix) {
                         const pLower = p.toLowerCase();
-                        const pattern = new RegExp(`^${pLower}${spLower}(\\s|$)`, 'i');
-                        if (pattern.test(contentLower)) {
-                            prefix = message.content.slice(0, p.length + shortPrefix.length);
-                            found = true;
-                            break;
+                        if (contentLower.startsWith(pLower + spLower)) {
+                            const nextChar = contentLower.charAt(pLower.length + spLower.length);
+                            if (nextChar === '' || nextChar === ' ') {
+                                prefix = message.content.slice(0, p.length + shortPrefix.length);
+                                found = true;
+                                break;
+                            }
                         }
                     }
                 }
 
                 if (found) {
-                    // Handle special cases for head/tail
                     if (fullCommand.includes(' ')) {
                         const commandParts = fullCommand.split(' ');
                         commandName = commandParts[0];
@@ -128,75 +75,95 @@ module.exports = {
             }
         }
 
-        // If no valid prefix found, return
-        if (!prefix || !commandName) return;
+        // If it's a valid command, process it IMMEDIATELY
+        if (commandName) {
+            const command = client.commands.get(commandName);
+            if (command) {
+                // Check if user is admin for admin-only commands
+                if (command.adminOnly && !config.adminIds.includes(message.author.id)) {
+                    return message.reply({
+                        embeds: [{
+                            color: parseInt(config.colors.error.slice(1), 16),
+                            title: '🚫 Access Denied, sweetie (｡•́︿•̀｡)',
+                            description: 'I\'m sorry, darling, but this command is only for Mommy\'s special helpers! (◕‿◕✿)',
+                            timestamp: new Date()
+                        }]
+                    });
+                }
 
-        // Get the command
-        const command = client.commands.get(commandName);
-        if (!command) return;
+                // Check cooldowns
+                if (command.cooldown) {
+                    const cooldownKey = `${message.author.id}-${commandName}`;
+                    if (cooldowns.isOnCooldown(cooldownKey, command.cooldown)) {
+                        const timeLeft = cooldowns.getTimeLeft(cooldownKey, command.cooldown);
+                        return message.reply({
+                            embeds: [{
+                                color: parseInt(config.colors.warning.slice(1), 16),
+                                title: '⏳ Wait a moment, darling (｡♥‿♥｡)',
+                                description: `You're going a bit too fast, sweetie! Please wait **${Math.ceil(timeLeft / 1000)}s** more. Mommy needs a little break too! (っ˘ω˘ς)`,
+                                timestamp: new Date()
+                            }]
+                        });
+                    }
+                    cooldowns.setCooldown(cooldownKey);
+                }
 
-        // Check if user is admin for admin-only commands
-        if (command.adminOnly && !config.adminIds.includes(message.author.id)) {
-            return message.reply({
-                embeds: [{
-                    color: parseInt(config.colors.error.slice(1), 16),
-                    title: '🚫 Access Denied, sweetie (｡•́︿•̀｡)',
-                    description: 'I\'m sorry, darling, but this command is only for Mommy\'s special helpers! (◕‿◕✿)',
-                    timestamp: new Date()
-                }]
-            });
-        }
-
-        // Check cooldowns
-        if (command.cooldown) {
-            const cooldownKey = `${message.author.id}-${commandName}`;
-            if (cooldowns.isOnCooldown(cooldownKey, command.cooldown)) {
-                const timeLeft = cooldowns.getTimeLeft(cooldownKey, command.cooldown);
-                return message.reply({
-                    embeds: [{
-                        color: parseInt(config.colors.warning.slice(1), 16),
-                        title: '⏳ Wait a moment, darling (｡♥‿♥｡)',
-                        description: `You're going a bit too fast, sweetie! Please wait **${Math.ceil(timeLeft / 1000)}s** more. Mommy needs a little break too! (っ˘ω˘ς)`,
-                        timestamp: new Date()
-                    }]
-                });
+                // Execute the command
+                try {
+                    await command.execute(message, args, client);
+                    logger.info(`${message.author.tag} used command: ${commandName} in ${message.guild ? message.guild.name : 'DM'}`);
+                    
+                    // After command, run listeners in background (don't await)
+                    handleMessageListening(message, client).catch(e => logger.error("Background listener error", e));
+                    return; 
+                } catch (error) {
+                    logger.error(`Error executing command ${commandName}:`, error);
+                    return message.reply({
+                        embeds: [{
+                            color: parseInt(config.colors.error.slice(1), 16),
+                            title: '❌ Oh no, an error! (｡•́︿•̀｡)',
+                            description: 'Something went wrong, sweetie. Mommy will try to fix it soon! (っ˘ω˘ς)',
+                            timestamp: new Date()
+                        }]
+                    });
+                }
             }
-            cooldowns.setCooldown(cooldownKey);
         }
 
-        // Execute the command
-        try {
-            await command.execute(message, args, client);
-            logger.info(`${message.author.tag} used command: ${commandName} in ${message.guild ? message.guild.name : 'DM'}`);
-        } catch (error) {
-            logger.error(`Error executing command ${commandName}:`, error);
-            message.reply({
-                embeds: [{
-                    color: parseInt(config.colors.error.slice(1), 16),
-                    title: '❌ Oh no, an error! (｡•́︿•̀｡)',
-                    description: 'Something went wrong, sweetie. Mommy will try to fix it soon! (っ˘ω˘ς)',
-                    timestamp: new Date()
-                }]
-            });
+        // === 2. BACKGROUND/SECONDARY FUNCTIONALITY ===
+        // Only run these if NO command was detected
+        
+        // Listen functionality (Background)
+        handleMessageListening(message, client).catch(e => logger.error("Background listener error", e));
+
+        // Chatbot functionality
+        if (message.mentions.has(client.user) && !message.mentions.everyone) {
+            await handleChatbot(message);
+            return;
+        }
+
+        // DM Forwarding functionality
+        if (message.channel.type === 1) { // DM Channel
+            await handleDMForwarding(message, client);
+            return;
         }
     }
 };
 
 // Handle message listening functionality
 async function handleMessageListening(message, client) {
-    // OPTIMIZATION: Use the in-memory constant
-    const listeners = LISTENERS;
+    // Fetch listeners from DB
+    const listeners = await database.getListeners();
     
     // Check if any admin is listening to this user
     for (const [adminId, targetUserId] of Object.entries(listeners)) {
         if (message.author.id === targetUserId) {
             try {
-                // OPTIMIZATION: Check cache first before fetching
                 const admin = client.users.cache.get(adminId) || await client.users.fetch(adminId);
                 
                 if (!admin) {
                     logger.warn(`Could not find admin user ${adminId} for listening.`);
-                    continue; // Skip if admin user not found
+                    continue; 
                 }
 
                 const serverName = message.guild ? message.guild.name : 'Direct Message';
@@ -214,7 +181,6 @@ async function handleMessageListening(message, client) {
                     .setTimestamp()
                     .setThumbnail(message.author.displayAvatarURL());
                 
-                // Include attachments if any
                 if (message.attachments.size > 0) {
                     const attachments = message.attachments.map(att => att.url).join('\n');
                     embed.addFields([
@@ -233,14 +199,12 @@ async function handleMessageListening(message, client) {
 
 // Handle DM forwarding functionality
 async function handleDMForwarding(message, client) {
-    // OPTIMIZATION: Use the in-memory constant
-    const talkTargets = TALK_TARGETS;
+    const talkTargets = await database.getTalkTargets();
     const adminTarget = talkTargets[message.author.id];
     
     if (!adminTarget) return;
     
     try {
-        // OPTIMIZATION: Check cache first before fetching
         const channel = client.channels.cache.get(adminTarget.channelId) || await client.channels.fetch(adminTarget.channelId);
         
         if (!channel) {
@@ -248,12 +212,10 @@ async function handleDMForwarding(message, client) {
             return;
         }
 
-        // Send the message content directly as the bot
         if (message.content) {
             await channel.send(message.content);
         }
         
-        // Forward attachments if any
         if (message.attachments.size > 0) {
             for (const attachment of message.attachments.values()) {
                 await channel.send({ files: [attachment.url] });
@@ -276,7 +238,6 @@ async function handleChatbot(message) {
 
     const channelId = message.channel.id;
     
-    // Initialize or get history for this channel
     if (!conversationMemory.has(channelId)) {
         conversationMemory.set(channelId, []);
     }
@@ -284,7 +245,6 @@ async function handleChatbot(message) {
 
     logger.info(`AI Chatbot input from ${message.author.tag}: "${text}"`);
     
-    // Show typing indicator, but don't crash if it fails
     try {
         await message.channel.sendTyping();
     } catch (e) {
@@ -293,9 +253,10 @@ async function handleChatbot(message) {
 
     try {
         const { baseUrl, model, systemPrompt: configPrompt } = config.aiConfig;
-        const charCard = CHARACTER_CARD;
+        
+        // Fetch character card from DB
+        const charCard = await database.getCharacterCard();
 
-        // --- STEP 1: Understanding with Gemini ---
         let processedUserMessage = text;
         
         async function callGemini(retryCount = 0, useFlash = false) {
@@ -318,13 +279,11 @@ async function handleChatbot(message) {
                     return geminiResponse.data.candidates[0].content.parts[0].text.trim();
                 }
             } catch (error) {
-                // If 429 and we haven't tried Flash yet, try Flash immediately
                 if (error.response?.status === 429 && !useFlash) {
                     logger.warn(`Gemini 2.5 Pro Limited. Falling back to 2.5 Flash...`);
                     return callGemini(0, true);
                 }
                 
-                // If still 429, perform standard backoff
                 if (error.response?.status === 429 && retryCount < 2) {
                     const delay = Math.pow(2, retryCount) * 1000;
                     logger.warn(`Gemini ${modelName} Rate Limited. Retrying in ${delay}ms...`);
@@ -342,23 +301,19 @@ async function handleChatbot(message) {
                 logger.info(`Gemini Understood: "${text}" -> "${processedUserMessage}"`);
             }
         } catch (geminiError) {
-            // Silently fall back to original text without heavy error logging if it's just a rate limit
             if (geminiError.response?.status !== 429) {
                 logger.error(`Gemini processing failed: ${geminiError.message}`);
             }
             processedUserMessage = text;
         }
 
-        // --- STEP 2: Response generation with Sea Lion ---
         const url = `${baseUrl}/chat/completions`;
         
-        // Compact System Prompt for faster processing and better caching
         let finalSystemPrompt = configPrompt;
         if (charCard) {
-            finalSystemPrompt = `Name: ${charCard.name}. Style: ${charCard.style}. Personality: ${charCard.personality}. Rules: Respond ONLY in English. No Khmer script. Keep it short, sweet, and nurturing like a mommy anime waifu. Use kaomojis (ﾉ´ヮ\`)ﾉ*:･ﾟ✧.`;
+            finalSystemPrompt = `Name: ${charCard.name}. Style: ${charCard.style}. Personality: ${charCard.personality}. Rules: Respond ONLY in English. No Khmer script. Keep it short, sweet, and nurturing like a mommy anime waifu. Use kaomojis (ﾉ´ヮ\`)ﾉ*:･ﾟ✧. ${charCard.rules || ''}`;
         }
 
-        // Prepare messages array
         const messages = [
             { role: 'system', content: finalSystemPrompt },
             ...history,
@@ -375,7 +330,7 @@ async function handleChatbot(message) {
             top_p: 0.9,
             presence_penalty: 0.6
         }, {
-            timeout: 60000, // 1 minute is usually enough for cloud APIs
+            timeout: 60000,
             headers: { 
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${config.seaLionApiKey}`
@@ -385,14 +340,12 @@ async function handleChatbot(message) {
         if (response.data && response.data.choices && response.data.choices[0]) {
             let botMsg = response.data.choices[0].message.content;
             
-            // Post-process cleanup
             if (charCard) {
                 const namePrefix = new RegExp(`^${charCard.name}:\\s*`, 'i');
                 botMsg = botMsg.replace(namePrefix, '').replace(/^<BOT>:\s*/i, '').replace(/^<USER>:\s*.*/s, '').trim();
             }
             const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
             
-            // Save to memory (Channel history)
             history.push({ role: 'user', content: processedUserMessage });
             history.push({ role: 'assistant', content: botMsg });
             

@@ -80,7 +80,7 @@ module.exports = {
 
         try {
             // Load animals data
-            const animalsData = database.loadAnimals();
+            const animalsData = await database.loadAnimals();
 
             // Validate rarity
             if (!animalsData[rarity]) {

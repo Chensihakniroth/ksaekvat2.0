@@ -1,8 +1,11 @@
 const User = require('../models/User');
+const Listener = require('../models/Listener');
+const TalkTarget = require('../models/TalkTarget');
+const CharacterCard = require('../models/CharacterCard');
+const AnimalRegistry = require('../models/AnimalRegistry');
+const Character = require('../models/Character'); // Changed from GachaItem
 const registry = require('./registry.js');
 const logger = require('./logger.js');
-const fs = require('fs');
-const path = require('path');
 
 /**
  * DATABASE UTILITY (Gold Standard - MongoDB Edition)
@@ -127,13 +130,21 @@ async function getHydratedInventory(userId) {
 
 // --- ANIMAL FUNCTIONS ---
 
-function loadAnimals() {
+async function loadAnimals() {
     try {
-        const animalsDataPath = path.join(__dirname, '..', 'data', 'animals.json');
-        const data = fs.readFileSync(animalsDataPath, 'utf8');
-        return JSON.parse(data);
+        const animals = await AnimalRegistry.find({});
+        const animalsData = {};
+        animals.forEach(a => {
+            if (!animalsData[a.rarity]) animalsData[a.rarity] = {};
+            animalsData[a.rarity][a.key] = {
+                name: a.name,
+                emoji: a.emoji,
+                value: a.value
+            };
+        });
+        return animalsData;
     } catch (error) {
-        logger.error('Error loading animals data:', error);
+        logger.error('Error loading animals data from MongoDB:', error);
         return {};
     }
 }
@@ -186,8 +197,85 @@ async function getActiveBooster(userId, type) {
     return null;
 }
 
+// --- LISTENER & TALK FUNCTIONS ---
+
+async function getListeners() {
+    const listeners = await Listener.find({});
+    const map = {};
+    listeners.forEach(l => map[l.adminId] = l.targetUserId);
+    return map;
+}
+
+async function saveListener(adminId, targetUserId) {
+    if (!targetUserId) {
+        await Listener.deleteOne({ adminId });
+    } else {
+        await Listener.findOneAndUpdate({ adminId }, { adminId, targetUserId }, { upsert: true });
+    }
+}
+
+async function getTalkTargets() {
+    const targets = await TalkTarget.find({});
+    const map = {};
+    targets.forEach(t => {
+        map[t.adminId] = {
+            channelId: t.channelId,
+            serverId: t.serverId,
+            setAt: t.setAt
+        };
+    });
+    return map;
+}
+
+async function saveTalkTarget(adminId, channelId, serverId = 'DM') {
+    if (!channelId) {
+        await TalkTarget.deleteOne({ adminId });
+    } else {
+        await TalkTarget.findOneAndUpdate({ adminId }, { 
+            adminId, 
+            channelId, 
+            serverId,
+            setAt: new Date()
+        }, { upsert: true });
+    }
+}
+
+// --- CHARACTER CARD FUNCTIONS ---
+
+async function getCharacterCard() {
+    return await CharacterCard.findOne({ id: 'default' });
+}
+
+async function updateCharacterCard(data) {
+    return await CharacterCard.findOneAndUpdate({ id: 'default' }, { ...data, updatedAt: new Date() }, { upsert: true, new: true });
+}
+
+// --- GACHA POOL FUNCTIONS ---
+
+async function getGachaPool() {
+    const allChars = registry.getAllCharacters();
+    const allWeapons = registry.getAllWeapons();
+    const items = [...allChars, ...allWeapons];
+    
+    const pool = {};
+    items.forEach(item => {
+        if (!pool[item.game]) pool[item.game] = { '3': [], '4': [], '5': [] };
+        const rarityStr = item.rarity.toString();
+        if (pool[item.game][rarityStr]) {
+            pool[item.game][rarityStr].push({
+                name: item.name,
+                game: item.game,
+                emoji: item.emoji,
+                image_url: item.image_url
+            });
+        }
+    });
+    return pool;
+}
+
 module.exports = {
     getUser, saveUser, getAllUsers, addExperience, addBalance, removeBalance, hasBalance, 
     updateStats, addGachaItem, getHydratedInventory, loadAnimals, addAnimal, getUserAnimals,
-    addBooster, getActiveBooster
+    addBooster, getActiveBooster, getListeners, saveListener, getTalkTargets, saveTalkTarget,
+    getCharacterCard, updateCharacterCard, getGachaPool
 };

@@ -92,6 +92,10 @@ async function connectDB() {
     prog.done();
     logger.item('Status', 'Connected', '\x1b[32m');
     logger.item('Host', mongoose.connection.host);
+
+    // Initialize Registry after DB connection
+    const registry = require('./utils/registry.js');
+    await registry.initializeRegistry();
   } catch (err) {
     prog.fail(err.message);
     process.exit(1);

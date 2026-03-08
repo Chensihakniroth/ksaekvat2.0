@@ -20,7 +20,7 @@ module.exports = {
         }
 
         const userData = await database.getUser(target.id, target.username);
-        const animalsData = database.loadAnimals();
+        const animalsData = await database.loadAnimals();
 
         // Calculate essential stats
         const accountAge = Math.floor((Date.now() - userData.joinedAt) / (1000 * 60 * 60 * 24));

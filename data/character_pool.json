@@ -1,319 +1,1484 @@
 {
   "genshin": {
-    "5": [
-      { "name": "Albedo", "game": "Genshin", "emoji": "🧪" },
-      { "name": "Alhaitham", "game": "Genshin", "emoji": "🌱" },
-      { "name": "Arlecchino", "game": "Genshin", "emoji": "🔥" },
-      { "name": "Baizhu", "game": "Genshin", "emoji": "✨" },
-      { "name": "Chasca", "game": "Genshin", "emoji": "✨" },
-      { "name": "Chiori", "game": "Genshin", "emoji": "✨" },
-      { "name": "Citlali", "game": "Genshin", "emoji": "✨" },
-      { "name": "Clorinde", "game": "Genshin", "emoji": "⚔️" },
-      { "name": "Columbina", "game": "Genshin", "emoji": "✨" },
-      { "name": "Cyno", "game": "Genshin", "emoji": "⚖️" },
-      { "name": "Dehya", "game": "Genshin", "emoji": "✨" },
-      { "name": "Diluc", "game": "Genshin", "emoji": "🦅" },
-      { "name": "Durin", "game": "Genshin", "emoji": "✨" },
-      { "name": "Emilie", "game": "Genshin", "emoji": "✨" },
-      { "name": "Escoffier", "game": "Genshin", "emoji": "✨" },
-      { "name": "Eula", "game": "Genshin", "emoji": "❄️" },
-      { "name": "Flins", "game": "Genshin", "emoji": "✨" },
-      { "name": "Furina", "game": "Genshin", "emoji": "💧" },
-      { "name": "Ganyu", "game": "Genshin", "emoji": "🦌" },
-      { "name": "Hu Tao", "game": "Genshin", "emoji": "👻" },
-      { "name": "Ineffa", "game": "Genshin", "emoji": "✨" },
-      { "name": "Jean", "game": "Genshin", "emoji": "🗡️" },
-      { "name": "Kaedehara Kazuha", "game": "Genshin", "emoji": "🍁" },
-      { "name": "Kamisato Ayaka", "game": "Genshin", "emoji": "❄️" },
-      { "name": "Kamisato Ayato", "game": "Genshin", "emoji": "✨" },
-      { "name": "Keqing", "game": "Genshin", "emoji": "💜" },
-      { "name": "Kinich", "game": "Genshin", "emoji": "🦖" },
-      { "name": "Klee", "game": "Genshin", "emoji": "✨" },
-      { "name": "Lauma", "game": "Genshin", "emoji": "✨" },
-      { "name": "Lyney", "game": "Genshin", "emoji": "🎩" },
-      { "name": "Mavuika", "game": "Genshin", "emoji": "✨" },
-      { "name": "Mona", "game": "Genshin", "emoji": "🔮" },
-      { "name": "Mualani", "game": "Genshin", "emoji": "🏄" },
-      { "name": "Nahida", "game": "Genshin", "emoji": "🍀" },
-      { "name": "Navia", "game": "Genshin", "emoji": "☂️" },
-      { "name": "Neuvillette", "game": "Genshin", "emoji": "⚖️" },
-      { "name": "Nilou", "game": "Genshin", "emoji": "💃" },
-      { "name": "Qiqi", "game": "Genshin", "emoji": "✨" },
-      { "name": "Raiden Shogun", "game": "Genshin", "emoji": "⚡" },
-      { "name": "Sangonomiya Kokomi", "game": "Genshin", "emoji": "✨" },
-      { "name": "Shenhe", "game": "Genshin", "emoji": "✨" },
-      { "name": "Sigewinne", "game": "Genshin", "emoji": "💉" },
-      { "name": "Skirk", "game": "Genshin", "emoji": "✨" },
-      { "name": "Tartaglia", "game": "Genshin", "emoji": "✨" },
-      { "name": "Tighnari", "game": "Genshin", "emoji": "✨" },
-      { "name": "Varka", "game": "Genshin", "emoji": "✨" },
-      { "name": "Venti", "game": "Genshin", "emoji": "🍃" },
-      { "name": "Wanderer", "game": "Genshin", "emoji": "🌬️" },
-      { "name": "Wriothesley", "game": "Genshin", "emoji": "👊" },
-      { "name": "Xianyun", "game": "Genshin", "emoji": "✨" },
-      { "name": "Xiao", "game": "Genshin", "emoji": "👺" },
-      { "name": "Xilonen", "game": "Genshin", "emoji": "🐆" },
-      { "name": "Yae Miko", "game": "Genshin", "emoji": "✨" },
-      { "name": "Yelan", "game": "Genshin", "emoji": "🎲" },
-      { "name": "Yoimiya", "game": "Genshin", "emoji": "🎆" },
-      { "name": "Zhongli", "game": "Genshin", "emoji": "🪨" }
+    "3": [
+      {
+        "name": "Sword",
+        "game": "Genshin",
+        "emoji": "🗡️"
+      },
+      {
+        "name": "Claymore",
+        "game": "Genshin",
+        "emoji": "⚔️"
+      },
+      {
+        "name": "Bow",
+        "game": "Genshin",
+        "emoji": "🏹"
+      },
+      {
+        "name": "Polearm",
+        "game": "Genshin",
+        "emoji": "🔱"
+      },
+      {
+        "name": "Gun",
+        "game": "Genshin",
+        "emoji": "🔫"
+      },
+      {
+        "name": "Catalyst",
+        "game": "Genshin",
+        "emoji": "🔮"
+      }
     ],
     "4": [
-      { "name": "Amber", "game": "Genshin", "emoji": "✨" },
-      { "name": "Barbara", "game": "Genshin", "emoji": "✨" },
-      { "name": "Beidou", "game": "Genshin", "emoji": "🚢" },
-      { "name": "Bennett", "game": "Genshin", "emoji": "👍" },
-      { "name": "Candace", "game": "Genshin", "emoji": "🛡️" },
-      { "name": "Charlotte", "game": "Genshin", "emoji": "📸" },
-      { "name": "Chevreuse", "game": "Genshin", "emoji": "🔫" },
-      { "name": "Chongyun", "game": "Genshin", "emoji": "❄️" },
-      { "name": "Collei", "game": "Genshin", "emoji": "🌿" },
-      { "name": "Dahlia", "game": "Genshin", "emoji": "✨" },
-      { "name": "Diona", "game": "Genshin", "emoji": "✨" },
-      { "name": "Dori", "game": "Genshin", "emoji": "💰" },
-      { "name": "Faruzan", "game": "Genshin", "emoji": "📐" },
-      { "name": "Fischl", "game": "Genshin", "emoji": "🦅" },
-      { "name": "Freminet", "game": "Genshin", "emoji": "🐧" },
-      { "name": "Gaming", "game": "Genshin", "emoji": "🦁" },
-      { "name": "Gorou", "game": "Genshin", "emoji": "🐕" },
-      { "name": "Iansan", "game": "Genshin", "emoji": "✨" },
-      { "name": "Kaeya", "game": "Genshin", "emoji": "✨" },
-      { "name": "Kachina", "game": "Genshin", "emoji": "🐹" },
-      { "name": "Kaveh", "game": "Genshin", "emoji": "🏛️" },
-      { "name": "Kirara", "game": "Genshin", "emoji": "✨" },
-      { "name": "Kujou Sara", "game": "Genshin", "emoji": "✨" },
-      { "name": "Kuki Shinobu", "game": "Genshin", "emoji": "🎭" },
-      { "name": "Lan Yan", "game": "Genshin", "emoji": "✨" },
-      { "name": "Layla", "game": "Genshin", "emoji": "⭐" },
-      { "name": "Lisa", "game": "Genshin", "emoji": "✨" },
-      { "name": "Lynette", "game": "Genshin", "emoji": "🐱" },
-      { "name": "Mika", "game": "Genshin", "emoji": "🐥" },
-      { "name": "Ningguang", "game": "Genshin", "emoji": "💎" },
-      { "name": "Noelle", "game": "Genshin", "emoji": "✨" },
-      { "name": "Ororon", "game": "Genshin", "emoji": "✨" },
-      { "name": "Razor", "game": "Genshin", "emoji": "✨" },
-      { "name": "Rosaria", "game": "Genshin", "emoji": "✨" },
-      { "name": "Sayu", "game": "Genshin", "emoji": "🍃" },
-      { "name": "Sethos", "game": "Genshin", "emoji": "🏹" },
-      { "name": "Shikanoin Heizou", "game": "Genshin", "emoji": "✨" },
-      { "name": "Sucrose", "game": "Genshin", "emoji": "🧪" },
-      { "name": "Thoma", "game": "Genshin", "emoji": "🍢" },
-      { "name": "Xiangling", "game": "Genshin", "emoji": "🥘" },
-      { "name": "Xingqiu", "game": "Genshin", "emoji": "📖" },
-      { "name": "Xinyan", "game": "Genshin", "emoji": "🎸" },
-      { "name": "Yanfei", "game": "Genshin", "emoji": "⚖️" },
-      { "name": "Yaoyao", "game": "Genshin", "emoji": "🐰" },
-      { "name": "Yun Jin", "game": "Genshin", "emoji": "✨" }
+      {
+        "name": "Amber",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Barbara",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Beidou",
+        "game": "Genshin",
+        "emoji": "🚢"
+      },
+      {
+        "name": "Bennett",
+        "game": "Genshin",
+        "emoji": "👍"
+      },
+      {
+        "name": "Candace",
+        "game": "Genshin",
+        "emoji": "🛡️"
+      },
+      {
+        "name": "Charlotte",
+        "game": "Genshin",
+        "emoji": "📸"
+      },
+      {
+        "name": "Chevreuse",
+        "game": "Genshin",
+        "emoji": "🔫"
+      },
+      {
+        "name": "Chongyun",
+        "game": "Genshin",
+        "emoji": "❄️"
+      },
+      {
+        "name": "Collei",
+        "game": "Genshin",
+        "emoji": "🌿"
+      },
+      {
+        "name": "Dahlia",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Diona",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Dori",
+        "game": "Genshin",
+        "emoji": "💰"
+      },
+      {
+        "name": "Faruzan",
+        "game": "Genshin",
+        "emoji": "📐"
+      },
+      {
+        "name": "Fischl",
+        "game": "Genshin",
+        "emoji": "🦅"
+      },
+      {
+        "name": "Freminet",
+        "game": "Genshin",
+        "emoji": "🐧"
+      },
+      {
+        "name": "Gaming",
+        "game": "Genshin",
+        "emoji": "🦁"
+      },
+      {
+        "name": "Gorou",
+        "game": "Genshin",
+        "emoji": "🐕"
+      },
+      {
+        "name": "Iansan",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Kaeya",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Kachina",
+        "game": "Genshin",
+        "emoji": "🐹"
+      },
+      {
+        "name": "Kaveh",
+        "game": "Genshin",
+        "emoji": "🏛️"
+      },
+      {
+        "name": "Kirara",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Kujou Sara",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Kuki Shinobu",
+        "game": "Genshin",
+        "emoji": "🎭"
+      },
+      {
+        "name": "Lan Yan",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Layla",
+        "game": "Genshin",
+        "emoji": "⭐"
+      },
+      {
+        "name": "Lisa",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Lynette",
+        "game": "Genshin",
+        "emoji": "🐱"
+      },
+      {
+        "name": "Mika",
+        "game": "Genshin",
+        "emoji": "🐥"
+      },
+      {
+        "name": "Ningguang",
+        "game": "Genshin",
+        "emoji": "💎"
+      },
+      {
+        "name": "Noelle",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Ororon",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Razor",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Rosaria",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Sayu",
+        "game": "Genshin",
+        "emoji": "🍃"
+      },
+      {
+        "name": "Sethos",
+        "game": "Genshin",
+        "emoji": "🏹"
+      },
+      {
+        "name": "Shikanoin Heizou",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Sucrose",
+        "game": "Genshin",
+        "emoji": "🧪"
+      },
+      {
+        "name": "Thoma",
+        "game": "Genshin",
+        "emoji": "🍢"
+      },
+      {
+        "name": "Xiangling",
+        "game": "Genshin",
+        "emoji": "🥘"
+      },
+      {
+        "name": "Xingqiu",
+        "game": "Genshin",
+        "emoji": "📖"
+      },
+      {
+        "name": "Xinyan",
+        "game": "Genshin",
+        "emoji": "🎸"
+      },
+      {
+        "name": "Yanfei",
+        "game": "Genshin",
+        "emoji": "⚖️"
+      },
+      {
+        "name": "Yaoyao",
+        "game": "Genshin",
+        "emoji": "🐰"
+      },
+      {
+        "name": "Yun Jin",
+        "game": "Genshin",
+        "emoji": "✨"
+      }
     ],
-    "3": [
-      { "name": "Cool Steel", "game": "Genshin", "emoji": "🗡️" },
-      { "name": "Debate Club", "game": "Genshin", "emoji": "🏏" },
-      { "name": "Black Tassel", "game": "Genshin", "emoji": "🔱" },
-      { "name": "Skyrider Sword", "game": "Genshin", "emoji": "⚔️" },
-      { "name": "Raven Bow", "game": "Genshin", "emoji": "🏹" }
+    "5": [
+      {
+        "name": "Albedo",
+        "game": "Genshin",
+        "emoji": "🧪"
+      },
+      {
+        "name": "Alhaitham",
+        "game": "Genshin",
+        "emoji": "🌱"
+      },
+      {
+        "name": "Arlecchino",
+        "game": "Genshin",
+        "emoji": "🔥"
+      },
+      {
+        "name": "Baizhu",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Chasca",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Chiori",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Citlali",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Clorinde",
+        "game": "Genshin",
+        "emoji": "⚔️"
+      },
+      {
+        "name": "Columbina",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Cyno",
+        "game": "Genshin",
+        "emoji": "⚖️"
+      },
+      {
+        "name": "Dehya",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Diluc",
+        "game": "Genshin",
+        "emoji": "🦅"
+      },
+      {
+        "name": "Durin",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Emilie",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Escoffier",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Eula",
+        "game": "Genshin",
+        "emoji": "❄️"
+      },
+      {
+        "name": "Flins",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Furina",
+        "game": "Genshin",
+        "emoji": "💧"
+      },
+      {
+        "name": "Ganyu",
+        "game": "Genshin",
+        "emoji": "🦌"
+      },
+      {
+        "name": "Hu Tao",
+        "game": "Genshin",
+        "emoji": "👻"
+      },
+      {
+        "name": "Ineffa",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Jean",
+        "game": "Genshin",
+        "emoji": "🗡️"
+      },
+      {
+        "name": "Kaedehara Kazuha",
+        "game": "Genshin",
+        "emoji": "🍁"
+      },
+      {
+        "name": "Kamisato Ayaka",
+        "game": "Genshin",
+        "emoji": "❄️"
+      },
+      {
+        "name": "Kamisato Ayato",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Keqing",
+        "game": "Genshin",
+        "emoji": "💜"
+      },
+      {
+        "name": "Kinich",
+        "game": "Genshin",
+        "emoji": "🦖"
+      },
+      {
+        "name": "Klee",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Lauma",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Lyney",
+        "game": "Genshin",
+        "emoji": "🎩"
+      },
+      {
+        "name": "Mavuika",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Mona",
+        "game": "Genshin",
+        "emoji": "🔮"
+      },
+      {
+        "name": "Mualani",
+        "game": "Genshin",
+        "emoji": "🏄"
+      },
+      {
+        "name": "Nahida",
+        "game": "Genshin",
+        "emoji": "🍀"
+      },
+      {
+        "name": "Navia",
+        "game": "Genshin",
+        "emoji": "☂️"
+      },
+      {
+        "name": "Neuvillette",
+        "game": "Genshin",
+        "emoji": "⚖️"
+      },
+      {
+        "name": "Nilou",
+        "game": "Genshin",
+        "emoji": "💃"
+      },
+      {
+        "name": "Qiqi",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Raiden Shogun",
+        "game": "Genshin",
+        "emoji": "⚡"
+      },
+      {
+        "name": "Sangonomiya Kokomi",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Shenhe",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Sigewinne",
+        "game": "Genshin",
+        "emoji": "💉"
+      },
+      {
+        "name": "Skirk",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Tartaglia",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Tighnari",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Varka",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Venti",
+        "game": "Genshin",
+        "emoji": "🍃"
+      },
+      {
+        "name": "Wanderer",
+        "game": "Genshin",
+        "emoji": "🌬️"
+      },
+      {
+        "name": "Wriothesley",
+        "game": "Genshin",
+        "emoji": "👊"
+      },
+      {
+        "name": "Xianyun",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Xiao",
+        "game": "Genshin",
+        "emoji": "👺"
+      },
+      {
+        "name": "Xilonen",
+        "game": "Genshin",
+        "emoji": "🐆"
+      },
+      {
+        "name": "Yae Miko",
+        "game": "Genshin",
+        "emoji": "✨"
+      },
+      {
+        "name": "Yelan",
+        "game": "Genshin",
+        "emoji": "🎲"
+      },
+      {
+        "name": "Yoimiya",
+        "game": "Genshin",
+        "emoji": "🎆"
+      },
+      {
+        "name": "Zhongli",
+        "game": "Genshin",
+        "emoji": "🪨"
+      }
     ]
   },
   "hsr": {
-    "5": [
-      { "name": "Acheron", "game": "HSR", "emoji": "🌌" },
-      { "name": "Aglaea", "game": "HSR", "emoji": "✨" },
-      { "name": "Anaxa", "game": "HSR", "emoji": "✨" },
-      { "name": "Archer", "game": "HSR", "emoji": "✨" },
-      { "name": "Argenti", "game": "HSR", "emoji": "🌹" },
-      { "name": "Aventurine", "game": "HSR", "emoji": "🎲" },
-      { "name": "Bailu", "game": "HSR", "emoji": "🐉" },
-      { "name": "Black Swan", "game": "HSR", "emoji": "🃏" },
-      { "name": "Blade", "game": "HSR", "emoji": "🗡️" },
-      { "name": "Boothill", "game": "HSR", "emoji": "🤠" },
-      { "name": "Bronya", "game": "HSR", "emoji": "🚩" },
-      { "name": "Castorice", "game": "HSR", "emoji": "✨" },
-      { "name": "Cerydra", "game": "HSR", "emoji": "✨" },
-      { "name": "Cipher", "game": "HSR", "emoji": "✨" },
-      { "name": "Clara", "game": "HSR", "emoji": "✨" },
-      { "name": "Dan Heng • IL", "game": "HSR", "emoji": "🐉" },
-      { "name": "Dr. Ratio", "game": "HSR", "emoji": "📖" },
-      { "name": "Feixiao", "game": "HSR", "emoji": "🦅" },
-      { "name": "Firefly", "game": "HSR", "emoji": "🔥" },
-      { "name": "Fu Xuan", "game": "HSR", "emoji": "🔮" },
-      { "name": "Fugue", "game": "HSR", "emoji": "✨" },
-      { "name": "Gepard", "game": "HSR", "emoji": "✨" },
-      { "name": "Himeko", "game": "HSR", "emoji": "✨" },
-      { "name": "Huohuo", "game": "HSR", "emoji": "👻" },
-      { "name": "Hyacine", "game": "HSR", "emoji": "✨" },
-      { "name": "Jade", "game": "HSR", "emoji": "💎" },
-      { "name": "Jiaoqiu", "game": "HSR", "emoji": "🌶️" },
-      { "name": "Jing Yuan", "game": "HSR", "emoji": "🦁" },
-      { "name": "Jingliu", "game": "HSR", "emoji": "❄️" },
-      { "name": "Kafka", "game": "HSR", "emoji": "🕷️" },
-      { "name": "Lingsha", "game": "HSR", "emoji": "🍵" },
-      { "name": "Luocha", "game": "HSR", "emoji": "⚰️" },
-      { "name": "Phainon", "game": "HSR", "emoji": "✨" },
-      { "name": "Rappa", "game": "HSR", "emoji": "🎨" },
-      { "name": "Robin", "game": "HSR", "emoji": "🎤" },
-      { "name": "Ruan Mei", "game": "HSR", "emoji": "🧪" },
-      { "name": "Seele", "game": "HSR", "emoji": "🦋" },
-      { "name": "Silver Wolf", "game": "HSR", "emoji": "👾" },
-      { "name": "Sparkle", "game": "HSR", "emoji": "🎭" },
-      { "name": "Sparxie", "game": "HSR", "emoji": "✨" },
-      { "name": "Sunday", "game": "HSR", "emoji": "✨" },
-      { "name": "The Herta", "game": "HSR", "emoji": "✨" },
-      { "name": "Topaz & Numby", "game": "HSR", "emoji": "🐖" },
-      { "name": "Tribbie", "game": "HSR", "emoji": "✨" },
-      { "name": "Welt", "game": "HSR", "emoji": "✨" },
-      { "name": "Yanqing", "game": "HSR", "emoji": "✨" },
-      { "name": "Yao Guang", "game": "HSR", "emoji": "✨" }
+    "3": [
+      {
+        "name": "Sword",
+        "game": "Hsr",
+        "emoji": "🗡️"
+      },
+      {
+        "name": "Claymore",
+        "game": "Hsr",
+        "emoji": "⚔️"
+      },
+      {
+        "name": "Bow",
+        "game": "Hsr",
+        "emoji": "🏹"
+      },
+      {
+        "name": "Polearm",
+        "game": "Hsr",
+        "emoji": "🔱"
+      },
+      {
+        "name": "Gun",
+        "game": "Hsr",
+        "emoji": "🔫"
+      },
+      {
+        "name": "Catalyst",
+        "game": "Hsr",
+        "emoji": "🔮"
+      }
     ],
     "4": [
-      { "name": "Arlan", "game": "HSR", "emoji": "✨" },
-      { "name": "Asta", "game": "HSR", "emoji": "🔭" },
-      { "name": "Dan Heng", "game": "HSR", "emoji": "✨" },
-      { "name": "Gallagher", "game": "HSR", "emoji": "🍷" },
-      { "name": "Guinaifen", "game": "HSR", "emoji": "🧨" },
-      { "name": "Hanya", "game": "HSR", "emoji": "📜" },
-      { "name": "Herta", "game": "HSR", "emoji": "💎" },
-      { "name": "Hook", "game": "HSR", "emoji": "🧸" },
-      { "name": "Luka", "game": "HSR", "emoji": "✨" },
-      { "name": "Lynx", "game": "HSR", "emoji": "🐱" },
-      { "name": "March 7th", "game": "HSR", "emoji": "📸" },
-      { "name": "Misha", "game": "HSR", "emoji": "🧹" },
-      { "name": "Moze", "game": "HSR", "emoji": "🗡️" },
-      { "name": "Natasha", "game": "HSR", "emoji": "💉" },
-      { "name": "Pela", "game": "HSR", "emoji": "👓" },
-      { "name": "Qingque", "game": "HSR", "emoji": "🀄" },
-      { "name": "Sampo", "game": "HSR", "emoji": "🎭" },
-      { "name": "Serval", "game": "HSR", "emoji": "🎸" },
-      { "name": "Sushang", "game": "HSR", "emoji": "🐥" },
-      { "name": "Tingyun", "game": "HSR", "emoji": "🦊" },
-      { "name": "Xueyi", "game": "HSR", "emoji": "⛓️" },
-      { "name": "Yukong", "game": "HSR", "emoji": "🏹" }
+      {
+        "name": "Arlan",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Asta",
+        "game": "HSR",
+        "emoji": "🔭"
+      },
+      {
+        "name": "Dan Heng",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Gallagher",
+        "game": "HSR",
+        "emoji": "🍷"
+      },
+      {
+        "name": "Guinaifen",
+        "game": "HSR",
+        "emoji": "🧨"
+      },
+      {
+        "name": "Hanya",
+        "game": "HSR",
+        "emoji": "📜"
+      },
+      {
+        "name": "Herta",
+        "game": "HSR",
+        "emoji": "💎"
+      },
+      {
+        "name": "Hook",
+        "game": "HSR",
+        "emoji": "🧸"
+      },
+      {
+        "name": "Luka",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Lynx",
+        "game": "HSR",
+        "emoji": "🐱"
+      },
+      {
+        "name": "March 7th",
+        "game": "HSR",
+        "emoji": "📸"
+      },
+      {
+        "name": "Misha",
+        "game": "HSR",
+        "emoji": "🧹"
+      },
+      {
+        "name": "Moze",
+        "game": "HSR",
+        "emoji": "🗡️"
+      },
+      {
+        "name": "Natasha",
+        "game": "HSR",
+        "emoji": "💉"
+      },
+      {
+        "name": "Pela",
+        "game": "HSR",
+        "emoji": "👓"
+      },
+      {
+        "name": "Qingque",
+        "game": "HSR",
+        "emoji": "🀄"
+      },
+      {
+        "name": "Sampo",
+        "game": "HSR",
+        "emoji": "🎭"
+      },
+      {
+        "name": "Serval",
+        "game": "HSR",
+        "emoji": "🎸"
+      },
+      {
+        "name": "Sushang",
+        "game": "HSR",
+        "emoji": "🐥"
+      },
+      {
+        "name": "Tingyun",
+        "game": "HSR",
+        "emoji": "🦊"
+      },
+      {
+        "name": "Xueyi",
+        "game": "HSR",
+        "emoji": "⛓️"
+      },
+      {
+        "name": "Yukong",
+        "game": "HSR",
+        "emoji": "🏹"
+      }
     ],
-    "3": [
-      { "name": "Arrows", "game": "HSR", "emoji": "🏹" },
-      { "name": "Cornucopia", "game": "HSR", "emoji": "🏺" },
-      { "name": "Data Bank", "game": "HSR", "emoji": "💾" },
-      { "name": "Loop", "game": "HSR", "emoji": "➰" },
-      { "name": "Passkey", "game": "HSR", "emoji": "🔑" }
+    "5": [
+      {
+        "name": "Acheron",
+        "game": "HSR",
+        "emoji": "🌌"
+      },
+      {
+        "name": "Aglaea",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Anaxa",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Archer",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Argenti",
+        "game": "HSR",
+        "emoji": "🌹"
+      },
+      {
+        "name": "Aventurine",
+        "game": "HSR",
+        "emoji": "🎲"
+      },
+      {
+        "name": "Bailu",
+        "game": "HSR",
+        "emoji": "🐉"
+      },
+      {
+        "name": "Black Swan",
+        "game": "HSR",
+        "emoji": "🃏"
+      },
+      {
+        "name": "Blade",
+        "game": "HSR",
+        "emoji": "🗡️"
+      },
+      {
+        "name": "Boothill",
+        "game": "HSR",
+        "emoji": "🤠"
+      },
+      {
+        "name": "Bronya",
+        "game": "HSR",
+        "emoji": "🚩"
+      },
+      {
+        "name": "Castorice",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Cerydra",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Cipher",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Clara",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Dan Heng • IL",
+        "game": "HSR",
+        "emoji": "🐉"
+      },
+      {
+        "name": "Dr. Ratio",
+        "game": "HSR",
+        "emoji": "📖"
+      },
+      {
+        "name": "Feixiao",
+        "game": "HSR",
+        "emoji": "🦅"
+      },
+      {
+        "name": "Firefly",
+        "game": "HSR",
+        "emoji": "🔥"
+      },
+      {
+        "name": "Fu Xuan",
+        "game": "HSR",
+        "emoji": "🔮"
+      },
+      {
+        "name": "Fugue",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Gepard",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Himeko",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Huohuo",
+        "game": "HSR",
+        "emoji": "👻"
+      },
+      {
+        "name": "Hyacine",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Jade",
+        "game": "HSR",
+        "emoji": "💎"
+      },
+      {
+        "name": "Jiaoqiu",
+        "game": "HSR",
+        "emoji": "🌶️"
+      },
+      {
+        "name": "Jing Yuan",
+        "game": "HSR",
+        "emoji": "🦁"
+      },
+      {
+        "name": "Jingliu",
+        "game": "HSR",
+        "emoji": "❄️"
+      },
+      {
+        "name": "Kafka",
+        "game": "HSR",
+        "emoji": "🕷️"
+      },
+      {
+        "name": "Lingsha",
+        "game": "HSR",
+        "emoji": "🍵"
+      },
+      {
+        "name": "Luocha",
+        "game": "HSR",
+        "emoji": "⚰️"
+      },
+      {
+        "name": "Phainon",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Rappa",
+        "game": "HSR",
+        "emoji": "🎨"
+      },
+      {
+        "name": "Robin",
+        "game": "HSR",
+        "emoji": "🎤"
+      },
+      {
+        "name": "Ruan Mei",
+        "game": "HSR",
+        "emoji": "🧪"
+      },
+      {
+        "name": "Seele",
+        "game": "HSR",
+        "emoji": "🦋"
+      },
+      {
+        "name": "Silver Wolf",
+        "game": "HSR",
+        "emoji": "👾"
+      },
+      {
+        "name": "Sparkle",
+        "game": "HSR",
+        "emoji": "🎭"
+      },
+      {
+        "name": "Sparxie",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Sunday",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "The Herta",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Topaz & Numby",
+        "game": "HSR",
+        "emoji": "🐖"
+      },
+      {
+        "name": "Tribbie",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Welt",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Yanqing",
+        "game": "HSR",
+        "emoji": "✨"
+      },
+      {
+        "name": "Yao Guang",
+        "game": "HSR",
+        "emoji": "✨"
+      }
     ]
   },
   "wuwa": {
-    "5": [
-      { "name": "Aemeath", "game": "WuWa", "emoji": "✨" },
-      { "name": "Augusta", "game": "WuWa", "emoji": "✨" },
-      { "name": "Brant", "game": "WuWa", "emoji": "✨" },
-      { "name": "Calcharo", "game": "WuWa", "emoji": "⚔️" },
-      { "name": "Camellya", "game": "WuWa", "emoji": "🥀" },
-      { "name": "Cantarella", "game": "WuWa", "emoji": "✨" },
-      { "name": "Carlotta", "game": "WuWa", "emoji": "✨" },
-      { "name": "Cartethyia", "game": "WuWa", "emoji": "✨" },
-      { "name": "Changli", "game": "WuWa", "emoji": "🔥" },
-      { "name": "Ciaccona", "game": "WuWa", "emoji": "✨" },
-      { "name": "Chisa", "game": "WuWa", "emoji": "✨" },
-      { "name": "Encore", "game": "WuWa", "emoji": "🧸" },
-      { "name": "Galbrena", "game": "WuWa", "emoji": "✨" },
-      { "name": "Iuno", "game": "WuWa", "emoji": "✨" },
-      { "name": "Jianxin", "game": "WuWa", "emoji": "☯️" },
-      { "name": "Jinhsi", "game": "WuWa", "emoji": "🐉" },
-      { "name": "Jiyan", "game": "WuWa", "emoji": "🐲" },
-      { "name": "Lingyang", "game": "WuWa", "emoji": "🦁" },
-      { "name": "Luuk Herssen", "game": "WuWa", "emoji": "✨" },
-      { "name": "Lupa", "game": "WuWa", "emoji": "✨" },
-      { "name": "Lynae", "game": "WuWa", "emoji": "✨" },
-      { "name": "Mornye", "game": "WuWa", "emoji": "✨" },
-      { "name": "Phoebe", "game": "WuWa", "emoji": "✨" },
-      { "name": "Phrolova", "game": "WuWa", "emoji": "✨" },
-      { "name": "Qiuyuan", "game": "WuWa", "emoji": "✨" },
-      { "name": "Roccia", "game": "WuWa", "emoji": "✨" },
-      { "name": "Rover (Spectro/Havoc/Aero)", "game": "WuWa", "emoji": "✨" },
-      { "name": "Shorekeeper", "game": "WuWa", "emoji": "🦋" },
-      { "name": "Sigrika", "game": "WuWa", "emoji": "✨" },
-      { "name": "Verina", "game": "WuWa", "emoji": "🌱" },
-      { "name": "Xiangli Yao", "game": "WuWa", "emoji": "🤖" },
-      { "name": "Yinlin", "game": "WuWa", "emoji": "⚡" },
-      { "name": "Zani", "game": "WuWa", "emoji": "✨" },
-      { "name": "Zhezhi", "game": "WuWa", "emoji": "🎨" }
+    "3": [
+      {
+        "name": "Sword",
+        "game": "Wuwa",
+        "emoji": "🗡️"
+      },
+      {
+        "name": "Claymore",
+        "game": "Wuwa",
+        "emoji": "⚔️"
+      },
+      {
+        "name": "Bow",
+        "game": "Wuwa",
+        "emoji": "🏹"
+      },
+      {
+        "name": "Polearm",
+        "game": "Wuwa",
+        "emoji": "🔱"
+      },
+      {
+        "name": "Gun",
+        "game": "Wuwa",
+        "emoji": "🔫"
+      },
+      {
+        "name": "Catalyst",
+        "game": "Wuwa",
+        "emoji": "🔮"
+      }
     ],
     "4": [
-      { "name": "Aalto", "game": "WuWa", "emoji": "🌫️" },
-      { "name": "Baizhi", "game": "WuWa", "emoji": "❄️" },
-      { "name": "Buling", "game": "WuWa", "emoji": "✨" },
-      { "name": "Chixia", "game": "WuWa", "emoji": "🔫" },
-      { "name": "Danjin", "game": "WuWa", "emoji": "🩸" },
-      { "name": "Lumi", "game": "WuWa", "emoji": "💡" },
-      { "name": "Mortefi", "game": "WuWa", "emoji": "🐉" },
-      { "name": "Sanhua", "game": "WuWa", "emoji": "🗡️" },
-      { "name": "Taoqi", "game": "WuWa", "emoji": "🛡️" },
-      { "name": "Yangyang", "game": "WuWa", "emoji": "🌪️" },
-      { "name": "Youhu", "game": "WuWa", "emoji": "📦" },
-      { "name": "Yuanwu", "game": "WuWa", "emoji": "⚡" }
+      {
+        "name": "Aalto",
+        "game": "WuWa",
+        "emoji": "🌫️"
+      },
+      {
+        "name": "Baizhi",
+        "game": "WuWa",
+        "emoji": "❄️"
+      },
+      {
+        "name": "Buling",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Chixia",
+        "game": "WuWa",
+        "emoji": "🔫"
+      },
+      {
+        "name": "Danjin",
+        "game": "WuWa",
+        "emoji": "🩸"
+      },
+      {
+        "name": "Lumi",
+        "game": "WuWa",
+        "emoji": "💡"
+      },
+      {
+        "name": "Mortefi",
+        "game": "WuWa",
+        "emoji": "🐉"
+      },
+      {
+        "name": "Sanhua",
+        "game": "WuWa",
+        "emoji": "🗡️"
+      },
+      {
+        "name": "Taoqi",
+        "game": "WuWa",
+        "emoji": "🛡️"
+      },
+      {
+        "name": "Yangyang",
+        "game": "WuWa",
+        "emoji": "🌪️"
+      },
+      {
+        "name": "Youhu",
+        "game": "WuWa",
+        "emoji": "📦"
+      },
+      {
+        "name": "Yuanwu",
+        "game": "WuWa",
+        "emoji": "⚡"
+      }
     ],
-    "3": [
-      { "name": "TD Echo", "game": "WuWa", "emoji": "👻" },
-      { "name": "Basic Sword", "game": "WuWa", "emoji": "🗡️" },
-      { "name": "Basic Rectifier", "game": "WuWa", "emoji": "🔮" },
-      { "name": "Basic Broadblade", "game": "WuWa", "emoji": "⚔️" },
-      { "name": "Basic Gauntlets", "game": "WuWa", "emoji": "🥊" }
+    "5": [
+      {
+        "name": "Aemeath",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Augusta",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Brant",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Calcharo",
+        "game": "WuWa",
+        "emoji": "⚔️"
+      },
+      {
+        "name": "Camellya",
+        "game": "WuWa",
+        "emoji": "🥀"
+      },
+      {
+        "name": "Cantarella",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Carlotta",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Cartethyia",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Changli",
+        "game": "WuWa",
+        "emoji": "🔥"
+      },
+      {
+        "name": "Ciaccona",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Chisa",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Encore",
+        "game": "WuWa",
+        "emoji": "🧸"
+      },
+      {
+        "name": "Galbrena",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Iuno",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Jianxin",
+        "game": "WuWa",
+        "emoji": "☯️"
+      },
+      {
+        "name": "Jinhsi",
+        "game": "WuWa",
+        "emoji": "🐉"
+      },
+      {
+        "name": "Jiyan",
+        "game": "WuWa",
+        "emoji": "🐲"
+      },
+      {
+        "name": "Lingyang",
+        "game": "WuWa",
+        "emoji": "🦁"
+      },
+      {
+        "name": "Luuk Herssen",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Lupa",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Lynae",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Mornye",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Phoebe",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Phrolova",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Qiuyuan",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Roccia",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Rover (Spectro/Havoc/Aero)",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Shorekeeper",
+        "game": "WuWa",
+        "emoji": "🦋"
+      },
+      {
+        "name": "Sigrika",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Verina",
+        "game": "WuWa",
+        "emoji": "🌱"
+      },
+      {
+        "name": "Xiangli Yao",
+        "game": "WuWa",
+        "emoji": "🤖"
+      },
+      {
+        "name": "Yinlin",
+        "game": "WuWa",
+        "emoji": "⚡"
+      },
+      {
+        "name": "Zani",
+        "game": "WuWa",
+        "emoji": "✨"
+      },
+      {
+        "name": "Zhezhi",
+        "game": "WuWa",
+        "emoji": "🎨"
+      }
     ]
   },
   "zzz": {
-    "5": [
-      { "name": "Alice Thymefield", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Aria", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Astra Yao", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Burnice White", "game": "ZZZ", "emoji": "🔥" },
-      { "name": "Caesar King", "game": "ZZZ", "emoji": "🛡️" },
-      { "name": "Cissia", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Dialyn", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Ellen Joe", "game": "ZZZ", "emoji": "🦈" },
-      { "name": "Evelyn Chevalier", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Grace Howard", "game": "ZZZ", "emoji": "🔧" },
-      { "name": "Hoshimi Miyabi", "game": "ZZZ", "emoji": "❄️" },
-      { "name": "Jane Doe", "game": "ZZZ", "emoji": "🐭" },
-      { "name": "Ju Fufu", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Koleda Belobog", "game": "ZZZ", "emoji": "🔨" },
-      { "name": "Lighter", "game": "ZZZ", "emoji": "🥊" },
-      { "name": "Lucia Elowen", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Nangong Yu", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Nekomata", "game": "ZZZ", "emoji": "🐱" },
-      { "name": "Orphie & Magus", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Qingyi", "game": "ZZZ", "emoji": "🍵" },
-      { "name": "Rina", "game": "ZZZ", "emoji": "👗" },
-      { "name": "Seed", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Soldier 0 - Anby", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Soldier 11", "game": "ZZZ", "emoji": "⚔️" },
-      { "name": "Sunna", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Trigger", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Vivian Banshee", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Von Lycaon", "game": "ZZZ", "emoji": "🐺" },
-      { "name": "Yanagi", "game": "ZZZ", "emoji": "🐍" },
-      { "name": "Ye Shunguang", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Yidhari Murphy", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Yixuan", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Yuzuha", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Zhao", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Zhu Yuan", "game": "ZZZ", "emoji": "🔫" }
+    "3": [
+      {
+        "name": "Sword",
+        "game": "Zzz",
+        "emoji": "🗡️"
+      },
+      {
+        "name": "Claymore",
+        "game": "Zzz",
+        "emoji": "⚔️"
+      },
+      {
+        "name": "Bow",
+        "game": "Zzz",
+        "emoji": "🏹"
+      },
+      {
+        "name": "Polearm",
+        "game": "Zzz",
+        "emoji": "🔱"
+      },
+      {
+        "name": "Gun",
+        "game": "Zzz",
+        "emoji": "🔫"
+      },
+      {
+        "name": "Catalyst",
+        "game": "Zzz",
+        "emoji": "🔮"
+      }
     ],
     "4": [
-      { "name": "Anby Demara", "game": "ZZZ", "emoji": "⚡" },
-      { "name": "Anton Ivanov", "game": "ZZZ", "emoji": "⚡" },
-      { "name": "Banyue", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Ben Bigger", "game": "ZZZ", "emoji": "🐻" },
-      { "name": "Billy Kid", "game": "ZZZ", "emoji": "🔫" },
-      { "name": "Corin Wickes", "game": "ZZZ", "emoji": "🪚" },
-      { "name": "Hugo Vlad", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Lucy", "game": "ZZZ", "emoji": "🐗" },
-      { "name": "Manato", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Nicole Demara", "game": "ZZZ", "emoji": "💼" },
-      { "name": "Pan Yinhu", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Piper Wheel", "game": "ZZZ", "emoji": "🚜" },
-      { "name": "Pulchra", "game": "ZZZ", "emoji": "✨" },
-      { "name": "Seth Lowell", "game": "ZZZ", "emoji": "🐱" },
-      { "name": "Soukaku", "game": "ZZZ", "emoji": "👹" }
+      {
+        "name": "Anby Demara",
+        "game": "ZZZ",
+        "emoji": "⚡"
+      },
+      {
+        "name": "Anton Ivanov",
+        "game": "ZZZ",
+        "emoji": "⚡"
+      },
+      {
+        "name": "Banyue",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Ben Bigger",
+        "game": "ZZZ",
+        "emoji": "🐻"
+      },
+      {
+        "name": "Billy Kid",
+        "game": "ZZZ",
+        "emoji": "🔫"
+      },
+      {
+        "name": "Corin Wickes",
+        "game": "ZZZ",
+        "emoji": "🪚"
+      },
+      {
+        "name": "Hugo Vlad",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Lucy",
+        "game": "ZZZ",
+        "emoji": "🐗"
+      },
+      {
+        "name": "Manato",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Nicole Demara",
+        "game": "ZZZ",
+        "emoji": "💼"
+      },
+      {
+        "name": "Pan Yinhu",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Piper Wheel",
+        "game": "ZZZ",
+        "emoji": "🚜"
+      },
+      {
+        "name": "Pulchra",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Seth Lowell",
+        "game": "ZZZ",
+        "emoji": "🐱"
+      },
+      {
+        "name": "Soukaku",
+        "game": "ZZZ",
+        "emoji": "👹"
+      }
     ],
-    "3": [
-      { "name": "Bangboo", "game": "ZZZ", "emoji": "🐰" },
-      { "name": "W-Engine", "game": "ZZZ", "emoji": "💿" },
-      { "name": "Disc Drive", "game": "ZZZ", "emoji": "📻" },
-      { "name": "Plating Agent", "game": "ZZZ", "emoji": "🧪" }
+    "5": [
+      {
+        "name": "Alice Thymefield",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Aria",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Astra Yao",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Burnice White",
+        "game": "ZZZ",
+        "emoji": "🔥"
+      },
+      {
+        "name": "Caesar King",
+        "game": "ZZZ",
+        "emoji": "🛡️"
+      },
+      {
+        "name": "Cissia",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Dialyn",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Ellen Joe",
+        "game": "ZZZ",
+        "emoji": "🦈"
+      },
+      {
+        "name": "Evelyn Chevalier",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Grace Howard",
+        "game": "ZZZ",
+        "emoji": "🔧"
+      },
+      {
+        "name": "Hoshimi Miyabi",
+        "game": "ZZZ",
+        "emoji": "❄️"
+      },
+      {
+        "name": "Jane Doe",
+        "game": "ZZZ",
+        "emoji": "🐭"
+      },
+      {
+        "name": "Ju Fufu",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Koleda Belobog",
+        "game": "ZZZ",
+        "emoji": "🔨"
+      },
+      {
+        "name": "Lighter",
+        "game": "ZZZ",
+        "emoji": "🥊"
+      },
+      {
+        "name": "Lucia Elowen",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Nangong Yu",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Nekomata",
+        "game": "ZZZ",
+        "emoji": "🐱"
+      },
+      {
+        "name": "Orphie & Magus",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Qingyi",
+        "game": "ZZZ",
+        "emoji": "🍵"
+      },
+      {
+        "name": "Rina",
+        "game": "ZZZ",
+        "emoji": "👗"
+      },
+      {
+        "name": "Seed",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Soldier 0 - Anby",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Soldier 11",
+        "game": "ZZZ",
+        "emoji": "⚔️"
+      },
+      {
+        "name": "Sunna",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Trigger",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Vivian Banshee",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Von Lycaon",
+        "game": "ZZZ",
+        "emoji": "🐺"
+      },
+      {
+        "name": "Yanagi",
+        "game": "ZZZ",
+        "emoji": "🐍"
+      },
+      {
+        "name": "Ye Shunguang",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Yidhari Murphy",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Yixuan",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Yuzuha",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Zhao",
+        "game": "ZZZ",
+        "emoji": "✨"
+      },
+      {
+        "name": "Zhu Yuan",
+        "game": "ZZZ",
+        "emoji": "🔫"
+      }
     ]
   }
 }

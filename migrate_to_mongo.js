@@ -3,11 +3,17 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
+// Load Models
 const User = require('./models/User');
 const Promo = require('./models/Promo');
+const Listener = require('./models/Listener');
+const TalkTarget = require('./models/TalkTarget');
+const CharacterCard = require('./models/CharacterCard');
+const AnimalRegistry = require('./models/AnimalRegistry');
+const GachaItem = require('./models/GachaItem');
 
 async function migrate() {
-    const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/ksae_bot';
+    const mongoURI = process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.MONGO_URI || process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/ksae_bot';
     
     console.log('Connecting to MongoDB...');
     await mongoose.connect(mongoURI);
@@ -25,7 +31,8 @@ async function migrate() {
             
             // Map Raw JSON to Schema
             const mapped = {
-                id: raw.id,
+                id: raw.id || id,
+                username: raw.username || 'Unknown Traveler',
                 balance: raw.balance || 0,
                 level: raw.level || 1,
                 worldLevel: raw.worldLevel || 1,
@@ -35,8 +42,12 @@ async function migrate() {
                 lastGachaReset: raw.lastGachaReset || null,
                 dailyPulls: raw.dailyPulls || 0,
                 extraPulls: raw.extraPulls || 0,
+                pity: raw.pity || 0,
+                pity4: raw.pity4 || 0,
                 gacha_inventory: raw.gacha_inventory || [],
                 team: raw.team || [],
+                animals: raw.animals || {},
+                boosters: raw.boosters || {},
                 inventory: raw.inventory || [],
                 equipped: raw.equipped || {},
                 lootbox: raw.lootbox || 0,
@@ -45,8 +56,8 @@ async function migrate() {
                     totalWon: raw.totalWon || 0,
                     totalLost: raw.totalLost || 0,
                     commandsUsed: raw.commandsUsed || 0,
-                    won_riel: (raw.stats && raw.stats.won) || 0,
-                    lost_riel: (raw.stats && raw.stats.lost) || 0
+                    won_riel: (raw.stats && raw.stats.won_riel) || (raw.stats && raw.stats.won) || 0,
+                    lost_riel: (raw.stats && raw.stats.lost_riel) || (raw.stats && raw.stats.lost) || 0
                 },
                 joinedAt: raw.joinedAt ? new Date(raw.joinedAt) : new Date()
             };
@@ -78,6 +89,100 @@ async function migrate() {
             await Promo.findOneAndUpdate({ code: mapped.code }, mapped, { upsert: true });
         }
         console.log('Promo migration complete! ✅');
+    }
+
+    // --- MIGRATE LISTENERS ---
+    const listenersPath = path.join(__dirname, 'data', 'listeners.json');
+    if (fs.existsSync(listenersPath)) {
+        const listenersData = JSON.parse(fs.readFileSync(listenersPath, 'utf8'));
+        const adminIds = Object.keys(listenersData);
+        console.log(`Found ${adminIds.length} listeners to migrate.`);
+
+        for (const adminId of adminIds) {
+            const targetUserId = listenersData[adminId];
+            if (targetUserId) {
+                await Listener.findOneAndUpdate({ adminId }, { adminId, targetUserId }, { upsert: true });
+            }
+        }
+        console.log('Listener migration complete! ✅');
+    }
+
+    // --- MIGRATE TALK TARGETS ---
+    const talkTargetsPath = path.join(__dirname, 'data', 'talktargets.json');
+    if (fs.existsSync(talkTargetsPath)) {
+        const talkTargetsData = JSON.parse(fs.readFileSync(talkTargetsPath, 'utf8'));
+        const adminIds = Object.keys(talkTargetsData);
+        console.log(`Found ${adminIds.length} talk targets to migrate.`);
+
+        for (const adminId of adminIds) {
+            const data = talkTargetsData[adminId];
+            await TalkTarget.findOneAndUpdate({ adminId }, { 
+                adminId, 
+                channelId: data.channelId, 
+                serverId: data.serverId || 'DM',
+                setAt: data.setAt ? new Date(data.setAt) : new Date()
+            }, { upsert: true });
+        }
+        console.log('Talk Target migration complete! ✅');
+    }
+
+    // --- MIGRATE CHARACTER CARD ---
+    const characterPath = path.join(__dirname, 'data', 'character.json');
+    if (fs.existsSync(characterPath)) {
+        const charData = JSON.parse(fs.readFileSync(characterPath, 'utf8'));
+        console.log('Migrating character card...');
+        await CharacterCard.findOneAndUpdate({ id: 'default' }, { 
+            id: 'default',
+            name: charData.name,
+            style: charData.style,
+            personality: charData.personality,
+            rules: charData.rules || ''
+        }, { upsert: true });
+        console.log('Character Card migration complete! ✅');
+    }
+
+    // --- MIGRATE ANIMALS REGISTRY ---
+    const animalsPath = path.join(__dirname, 'data', 'animals.json');
+    if (fs.existsSync(animalsPath)) {
+        const animalsData = JSON.parse(fs.readFileSync(animalsPath, 'utf8'));
+        console.log('Migrating animals registry...');
+        let animalCount = 0;
+        for (const [rarity, animals] of Object.entries(animalsData)) {
+            for (const [key, animal] of Object.entries(animals)) {
+                await AnimalRegistry.findOneAndUpdate({ rarity, key }, {
+                    rarity,
+                    key,
+                    name: animal.name,
+                    emoji: animal.emoji,
+                    value: animal.value
+                }, { upsert: true });
+                animalCount++;
+            }
+        }
+        console.log(`Animal Registry migration complete (${animalCount} animals)! ✅`);
+    }
+
+    // --- MIGRATE GACHA POOL ---
+    const poolPath = path.join(__dirname, 'data', 'character_pool.json');
+    if (fs.existsSync(poolPath)) {
+        const poolData = JSON.parse(fs.readFileSync(poolPath, 'utf8'));
+        console.log('Migrating gacha pool...');
+        let itemCount = 0;
+        for (const [game, rarities] of Object.entries(poolData)) {
+            for (const [rarity, items] of Object.entries(rarities)) {
+                for (const item of items) {
+                    await GachaItem.findOneAndUpdate({ name: item.name }, {
+                        name: item.name,
+                        game: game,
+                        rarity: rarity,
+                        emoji: item.emoji || '✨',
+                        type: rarity === '3' ? 'weapon' : 'character'
+                    }, { upsert: true });
+                    itemCount++;
+                }
+            }
+        }
+        console.log(`Gacha Pool migration complete (${itemCount} items)! ✅`);
     }
 
     console.log('All migrations finished! You can now safely delete the .json files after verifying the bot works.');

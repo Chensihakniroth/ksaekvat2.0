@@ -1,44 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const fs = require('fs');
-const path = require('path');
 const isAdmin = require('../../utils/adminCheck');
-
-const LISTENERS_FILE = path.join(__dirname, '../../data/listeners.json');
-
-// Initialize data directory and file
-function initDataFiles() {
-    const dataDir = path.dirname(LISTENERS_FILE);
-    if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
-    }
-    if (!fs.existsSync(LISTENERS_FILE)) {
-        fs.writeFileSync(LISTENERS_FILE, '{}', 'utf8');
-    }
-}
-
-// Data handling functions
-function loadListeners() {
-    try {
-        if (!fs.existsSync(LISTENERS_FILE)) return {};
-        const data = fs.readFileSync(LISTENERS_FILE, 'utf8');
-        return JSON.parse(data) || {};
-    } catch (error) {
-        console.error('Error loading listeners:', error);
-        return {};
-    }
-}
-
-function saveListeners(data) {
-    try {
-        const dataDir = path.dirname(LISTENERS_FILE);
-        if (!fs.existsSync(dataDir)) {
-            fs.mkdirSync(dataDir, { recursive: true });
-        }
-        fs.writeFileSync(LISTENERS_FILE, JSON.stringify(data, null, 2), 'utf8');
-    } catch (error) {
-        console.error('Error saving listeners:', error);
-    }
-}
+const database = require('../../utils/database.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -51,8 +13,6 @@ module.exports = {
         .setDefaultMemberPermissions('0'),
 
     async execute(interaction) {
-        initDataFiles();
-
         if (typeof isAdmin !== 'function' || !isAdmin(interaction.user.id)) {
             return interaction.reply({
                 content: '⛔ This command is restricted to bot administrators.',
@@ -72,9 +32,7 @@ module.exports = {
         try {
             const targetUser = await interaction.client.users.fetch(targetUserId);
             
-            const listeners = loadListeners();
-            listeners[interaction.user.id] = targetUserId;
-            saveListeners(listeners);
+            await database.saveListener(interaction.user.id, targetUserId);
 
             const embed = new EmbedBuilder()
                 .setColor(0x00FF00)
@@ -83,8 +41,7 @@ module.exports = {
                 .addFields(
                     { name: 'User ID', value: targetUserId, inline: true },
                     { name: 'Notifications', value: 'You will receive DMs when this user sends messages', inline: true }
-                )
-                
+                );
 
             await interaction.reply({ embeds: [embed], flags: [4096] });
             
@@ -105,6 +62,3 @@ module.exports = {
         }
     }
 };
-
-
-

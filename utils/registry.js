@@ -1,43 +1,49 @@
-const fs = require('fs');
-const path = require('path');
+const Character = require('../models/Character');
+const logger = require('./logger.js');
 
 /**
  * REGISTRY UTILITY (Gold Standard)
  * Acts as the Single Source of Truth for all Gacha items.
  * Prevents data redundancy and ensures consistent stats across the bot.
+ * Now loads from MongoDB on startup (Collection: characters).
  */
 
-const POOL_PATH = path.join(__dirname, '../data/character_pool.json');
 let characterRegistry = {};
 let weaponRegistry = {};
 
-// Load and index the registry once on startup
-function initializeRegistry() {
-    const data = JSON.parse(fs.readFileSync(POOL_PATH, 'utf8'));
-    
-    for (const [game, rarities] of Object.entries(data)) {
-        for (const [rarity, items] of Object.entries(rarities)) {
-            items.forEach(item => {
-                const itemData = {
-                    ...item,
-                    rarity: parseInt(rarity),
-                    game: game,
-                    type: rarity === "3" ? "weapon" : "character"
-                };
+// Load and index the registry once on startup (Async)
+async function initializeRegistry() {
+    try {
+        const items = await Character.find({});
+        
+        // Reset registries
+        characterRegistry = {};
+        weaponRegistry = {};
 
-                if (itemData.type === "character") {
-                    characterRegistry[item.name] = itemData;
-                } else {
-                    weaponRegistry[item.name] = itemData;
-                }
-            });
-        }
+        items.forEach(item => {
+            const itemData = {
+                name: item.name,
+                game: item.game,
+                rarity: parseInt(item.rarity),
+                emoji: item.emoji,
+                type: item.type,
+                image_url: item.image_url
+            };
+
+            if (itemData.type === "character") {
+                characterRegistry[item.name] = itemData;
+            } else {
+                weaponRegistry[item.name] = itemData;
+            }
+        });
+        logger.debug(`Registry initialized with ${items.length} items from MongoDB (characters collection).`);
+    } catch (error) {
+        logger.error('Failed to initialize registry from MongoDB:', error);
     }
 }
 
-initializeRegistry();
-
 module.exports = {
+    initializeRegistry,
     getItem: (name) => characterRegistry[name] || weaponRegistry[name],
     getCharacter: (name) => characterRegistry[name],
     getWeapon: (name) => weaponRegistry[name],
