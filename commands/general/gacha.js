@@ -206,8 +206,7 @@ module.exports = {
         // --- STEP 3: Wait for GIF to play, then edit the message ---
         let waitTime = 1000;
         if (bannerGifUrl) { // Only wait if a GIF was shown
-            if (gameKey === 'genshin') waitTime = 2500;
-            else if (gameKey === 'hsr') waitTime = hasFiveStar ? 4500 : 3500;
+            if (gameKey === 'genshin') waitTime = 4500;            else if (gameKey === 'hsr') waitTime = hasFiveStar ? 4500 : 3500;
             else if (gameKey === 'wuwa') waitTime = hasFiveStar ? 3500 : 3000;
             else if (gameKey === 'zzz') waitTime = hasFiveStar ? 3200 : 3000;
         }
