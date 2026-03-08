@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, ComponentType } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder, ComponentType, MessageFlags } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
@@ -163,7 +163,7 @@ async function showInventory(message, args, existingMsg = null) {
             if (i.deferred || i.replied) {} else await i.deferUpdate();
             return showInventory(message, [page], msg);
         } else {
-            if (i.deferred || i.replied) {} else await i.reply({ content: result.message || 'Error', ephemeral: true });
+            if (i.deferred || i.replied) {} else await i.reply({ content: result.message || 'Error', flags: [MessageFlags.Ephemeral] });
         }
     });
 }

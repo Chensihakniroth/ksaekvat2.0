@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, MessageFlags } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
@@ -73,7 +73,7 @@ module.exports = {
         const collector = msg.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300000 });
 
         collector.on('collect', async i => {
-            if (i.user.id !== userId) return i.reply({ content: "hg ot torm armory heh!", ephemeral: true });
+            if (i.user.id !== userId) return i.reply({ content: "hg ot torm armory heh!", flags: [MessageFlags.Ephemeral] });
 
             const userData = await database.getUser(userId, message.author.username);
             const gachaInv = userData.gacha_inventory;
@@ -81,7 +81,7 @@ module.exports = {
             if (i.customId === 'auto_ascend') {
                 const ascendedCount = ItemService.autoRefineWeapons(gachaInv);
                 await database.saveUser(userData);
-                await i.reply({ content: `✅ Successfully performed **${ascendedCount}** refinements! (ﾉ´ヮ\` )ﾉ*:･ﾟ✧`, ephemeral: true });
+                await i.reply({ content: `✅ Successfully performed **${ascendedCount}** refinements! (ﾉ´ヮ\` )ﾉ*:･ﾟ✧`, flags: [MessageFlags.Ephemeral] });
             } 
             
             else if (i.customId === 'sell_excess') {
@@ -90,7 +90,7 @@ module.exports = {
                 if (soldCount > 0) {
                     await database.addBalance(userId, totalGold);
                     await database.saveUser(userData);
-                    await i.reply({ content: `💰 Sold **${soldCount}** excess weapons for **${EconomyService.format(totalGold)}** ${config.economy.currency}! (｡♥‿♥｡)`, ephemeral: true });
+                    await i.reply({ content: `💰 Sold **${soldCount}** excess weapons for **${EconomyService.format(totalGold)}** ${config.economy.currency}! (｡♥‿♥｡)`, flags: [MessageFlags.Ephemeral] });
                 }
             }
 

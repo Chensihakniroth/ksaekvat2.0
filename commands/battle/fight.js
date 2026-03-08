@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require("discord.js");
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, MessageFlags } = require("discord.js");
 const database = require("../../utils/database.js");
 const colors = require("../../utils/colors.js");
 const itemUtils = require("./item.js");
@@ -73,7 +73,7 @@ module.exports = {
         const collector = battleMsg.createMessageComponentCollector({ componentType: ComponentType.Button, time: 300000 });
 
         collector.on('collect', async i => {
-            if (i.user.id !== message.author.id) return i.reply({ content: "Wait your turn, little one! (◕‿◕✿)", ephemeral: true });
+            if (i.user.id !== message.author.id) return i.reply({ content: "Wait your turn, little one! (◕‿◕✿)", flags: [MessageFlags.Ephemeral] });
             await i.deferUpdate();
             const active = team.find(c => c.hp > 0);
             if (!active) return collector.stop('lost');

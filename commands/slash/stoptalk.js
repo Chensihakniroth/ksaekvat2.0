@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, MessageFlags } = require('discord.js');
 const isAdmin = require('../../utils/adminCheck');
 const database = require('../../utils/database.js');
 
@@ -12,7 +12,7 @@ module.exports = {
         if (!isAdmin(interaction.user.id)) {
             return interaction.reply({
                 content: '⛔ This command is restricted to bot administrators.',
-                ephemeral: true
+                flags: [MessageFlags.Ephemeral]
             });
         }
 
@@ -31,11 +31,11 @@ module.exports = {
                         { name: 'Previous Channel ID', value: removedTarget.channelId, inline: true }
                     );
 
-                await interaction.reply({ embeds: [embed], ephemeral: true });
+                await interaction.reply({ embeds: [embed], flags: [MessageFlags.Ephemeral] });
             } else {
                 await interaction.reply({
                     content: 'ℹ️ You did not have DM forwarding enabled.',
-                    ephemeral: true
+                    flags: [MessageFlags.Ephemeral]
                 });
             }
         } catch (error) {
@@ -44,7 +44,7 @@ module.exports = {
 
             await interaction.reply({
                 content: errorMessage,
-                ephemeral: true
+                flags: [MessageFlags.Ephemeral]
             });
         }
     }

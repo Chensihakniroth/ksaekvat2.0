@@ -1,4 +1,4 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const { getCharacterIcon } = require('../../utils/images.js');
@@ -109,7 +109,7 @@ module.exports = {
         const collector = msg.createMessageComponentCollector({ time: 300000 });
 
         collector.on('collect', async i => {
-            if (i.user.id !== message.author.id) return i.reply({ content: "This isn't your collection, darling! (っ˘ω˘ς)", ephemeral: true });
+            if (i.user.id !== message.author.id) return i.reply({ content: "This isn't your collection, darling! (っ˘ω˘ς)", flags: [MessageFlags.Ephemeral] });
 
             if (i.customId.startsWith('sort_')) {
                 currentSort = i.customId.replace('sort_', '');

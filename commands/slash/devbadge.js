@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, MessageFlags } = require('discord.js');
 const isAdmin = require('../../utils/adminCheck');
 
 module.exports = {
@@ -15,14 +15,14 @@ module.exports = {
         if (!isAdmin(interaction.user.id)) {
             return interaction.reply({
                 content: '⛔ This command is restricted to bot administrators.',
-                ephemeral: true
+                flags: [MessageFlags.Ephemeral]
             });
         }
 
         // Your existing logic
         await interaction.reply({
             content: '✅ Slash command executed! You’ve pinged Discord for the Active Developer Badge renewal.',
-            ephemeral: true
+            flags: [MessageFlags.Ephemeral]
         });
     }
 };
