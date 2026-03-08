@@ -4,7 +4,7 @@
 📊 DETAILED CHARACTER COLLECTION SUMMARY
 ================================================================================
 
-📁 Checking path: gacha-iamge/wuwa_char
+📁 Checking path: gacha-images/wuwa_char
 ============================================================
 
 ✅ Found (44):
@@ -56,7 +56,7 @@
 
 📊 Completion: 45/45 (100%)
 
-📁 Checking path: gacha-iamge/gs
+📁 Checking path: gacha-images/gs
 ============================================================
 
 ✅ Found (101):
@@ -164,7 +164,7 @@
 
 📊 Completion: 101/101 (100.0%)
 
-📁 Checking path : gacha-iamge/hsr
+📁 Checking path : gacha-images/hsr
 ============================================================
 
 ✅ Found (69):
@@ -240,7 +240,7 @@
 
 📊 Completion: 69/69 (100.0%)
 
-📁 Checking path : gacha-iamge/zzz
+📁 Checking path : gacha-images/zzz
 ============================================================
 
 ✅ Found (49):

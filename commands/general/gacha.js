@@ -9,21 +9,20 @@ const axios = require('axios');
 const sharp = require('sharp');
 
 const PULL_COST = 10000;
-const TEMP_DIR = 'C:\\Users\\Niroth\\.gemini\\tmp\\ksaekvat-revamp';
+const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
 
 // Ensure temp directory exists
 if (!fs.existsSync(TEMP_DIR)) {
     fs.mkdirSync(TEMP_DIR, { recursive: true });
 }
 
-async function createGachaResultImage(results, gameKey) {
-    if (results.length === 0) return null;
+async function createGachaResultImage(results) {
+    if (!results || results.length === 0) return null;
 
     const cardWidth = 360;
     const cardHeight = 520;
     const padding = 20;
     
-    // Calculate dynamic grid
     const cols = Math.min(results.length, 5);
     const rows = Math.ceil(results.length / cols);
     
@@ -37,60 +36,47 @@ async function createGachaResultImage(results, gameKey) {
         const y = padding + row * (cardHeight + padding);
 
         let processedCard;
+        const isSpecialAspectRatio = ['hsr', 'zzz'].includes(item.game?.toLowerCase());
 
-        if (item.image_url) {
-            try {
-                const response = await axios.get(item.image_url, { responseType: 'arraybuffer' });
-                const imageBuffer = Buffer.from(response.data);
+        try {
+            const response = await axios.get(item.image_url, { responseType: 'arraybuffer' });
+            const imageBuffer = Buffer.from(response.data);
+            const game = item.game?.toLowerCase();
+            const useCover = ['genshin', 'wuwa'].includes(game);
+            
+            let cardImage = sharp(imageBuffer)
+                .resize(cardWidth, cardHeight, {
+                    fit: useCover ? 'cover' : 'contain',
+                    background: { r: 0, g: 0, b: 0, alpha: 0 }
+                });
 
-                const isTransparentGame = ['hsr', 'zzz'].includes(item.game?.toLowerCase());
-                
-                let baseCard = sharp(imageBuffer)
-                    .resize(cardWidth, cardHeight, {
-                        fit: 'cover',
-                        position: 'center'
-                    });
-
-                if (!isTransparentGame) {
-                    baseCard = baseCard.flatten({ background: { r: 0, g: 0, b: 0 } });
-                }
-
-                processedCard = await baseCard.toBuffer();
-            } catch (error) {
-                console.error(`Failed to load/process image for ${item.name}: ${error.message}`);
+            if (useCover) {
+                // For Genshin/WuWa, just flatten and return
+                processedCard = await cardImage.flatten({ background: { r: 0, g: 0, b: 0 } }).png().toBuffer();
+            } else {
+                // For others (HSR/ZZZ), place the contained image onto a solid background card
                 processedCard = await sharp({
                     create: {
                         width: cardWidth,
                         height: cardHeight,
                         channels: 4,
-                        background: { r: 88, g: 101, b: 242, alpha: 1 }
+                        background: '#1c1d21'
                     }
                 })
-                .composite([{
-                    input: Buffer.from(
-                        `<svg width="${cardWidth}" height="${cardHeight}">
-                            <text x="50%" y="50%" font-family="sans-serif" font-size="30" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">${item.name}</text>
-                        </svg>`
-                    ),
-                    blend: 'over'
-                }])
+                .composite([{ input: await cardImage.toBuffer() }])
                 .png()
                 .toBuffer();
             }
-        } else {
+        } catch (error) {
+            console.error(`Failed to load/process image for ${item.name} from URL ${item.image_url}: ${error.message}`);
+            // Create a fallback placeholder card
             processedCard = await sharp({
-                create: {
-                    width: cardWidth,
-                    height: cardHeight,
-                    channels: 4,
-                    background: { r: 54, g: 57, b: 63, alpha: 1 }
-                }
+                create: { width: cardWidth, height: cardHeight, channels: 4, background: '#1c1d21' }
             })
             .composite([{
                 input: Buffer.from(
                     `<svg width="${cardWidth}" height="${cardHeight}">
-                        <text x="50%" y="45%" font-family="sans-serif" font-size="30" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">${item.name}</text>
-                        <text x="50%" y="55%" font-family="sans-serif" font-size="24" fill="#ccc" text-anchor="middle" dominant-baseline="middle">${item.rarity}-star</text>
+                        <text x="50%" y="50%" font-family="sans-serif" font-size="30" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">${item.name || 'Unknown'}</text>
                     </svg>`
                 ),
                 blend: 'over'
@@ -99,11 +85,7 @@ async function createGachaResultImage(results, gameKey) {
             .toBuffer();
         }
 
-        return {
-            input: processedCard,
-            top: y,
-            left: x
-        };
+        return { input: processedCard, top: y, left: x };
     });
 
     const composites = await Promise.all(compositePromises);
@@ -118,12 +100,11 @@ async function createGachaResultImage(results, gameKey) {
         }
     })
     .composite(composites)
-    .png({ compressionLevel: 0, quality: 100 })
+    .png()
     .toFile(outputPath);
 
     return outputPath;
 }
-
 
 module.exports = {
     name: 'gacha',
@@ -144,7 +125,6 @@ module.exports = {
             return message.reply('✨ Please specify a game! Example: `kwish gs`, `kwish hsr`, `kwish wuwa`, or `kwish zzz` (ﾉ´ヮ`)ﾉ*:･ﾟ✧');
         }
         
-        const gameData = gachaConfig.games[gameKey];
         const userData = await database.getUser(message.author.id, message.author.username);
         const now = new Date();
         const lastReset = userData.lastGachaReset ? new Date(userData.lastGachaReset) : null;
@@ -182,39 +162,27 @@ module.exports = {
         
         const hasFiveStar = results.some(r => r.rarity === 5);
         const hasFourStar = results.some(r => r.rarity === 4);
-        
+
+        // --- STEP 1: Send the GIF message ---
+        const gameData = gachaConfig.games[gameKey];
         let bannerGifUrl = hasFiveStar ? gameData.animation['5'] : (hasFourStar ? gameData.animation['4'] : null);
-        
-        // --- STEP 2: Send the GIF EMBED immediately ---
         let mainMessage = null;
+
         if (bannerGifUrl) {
             const cachedGifUrl = `${bannerGifUrl}?v=mommy_v1`;
-            const gifEmbed = new EmbedBuilder()
-                .setColor(hasFiveStar ? '#FFB13F' : '#A256FF')
-                .setImage(cachedGifUrl);
-
+            const gifEmbed = new EmbedBuilder().setColor(hasFiveStar ? '#FFB13F' : '#A256FF').setImage(cachedGifUrl);
             mainMessage = await message.reply({ embeds: [gifEmbed] });
         }
 
-        // --- STEP 3: Generate image for all results ---
-        const startTime = Date.now();
-        const imageGenPromise = createGachaResultImage(results, gameKey);
+        // --- STEP 2: Prepare final result data (Text for all, Image for high-rarity) ---
+        const highRarityResults = results.filter(r => r.rarity >= 4 && r.image_url);
+        const imagePath = await createGachaResultImage(highRarityResults);
         
-        let waitTime = 1000;
-        if (gameKey === 'genshin') waitTime = 4000;
-        else if (gameKey === 'hsr') waitTime = hasFiveStar ? 6500 : 5000;
-        else if (gameKey === 'wuwa') waitTime = hasFiveStar ? 5000 : 4000;
-        else if (gameKey === 'zzz') waitTime = hasFiveStar ? 4700 : 4500;
-
-        // --- STEP 4: Prepare final result data (Text for all, Image for characters) ---
-        const imagePath = await imageGenPromise;
-        const elapsed = Date.now() - startTime;
-        if (elapsed < waitTime) await new Promise(r => setTimeout(r, waitTime - elapsed));
-
-        // Create text list for results
         const description = results.map((item) => {
             const rarityIcon = item.rarity === 5 ? '🟡' : (item.rarity === 4 ? '🟣' : '🔵');
-            return `${item.emoji} **${item.name}** ${rarityIcon}`;
+            const name = item.name || 'Unknown Item';
+            const emoji = item.emoji || '❓';
+            return `${emoji} **${name}** ${rarityIcon}`;
         }).join('\n');
 
         let footerParts = [];
@@ -234,19 +202,25 @@ module.exports = {
             finalEmbed.setImage('attachment://gacha-result.png');
             files.push(resultImageAttachment);
         }
+        
+        // --- STEP 3: Wait for GIF to play, then edit the message ---
+        let waitTime = 1000;
+        if (bannerGifUrl) { // Only wait if a GIF was shown
+            if (gameKey === 'genshin') waitTime = 2500;
+            else if (gameKey === 'hsr') waitTime = hasFiveStar ? 4500 : 3500;
+            else if (gameKey === 'wuwa') waitTime = hasFiveStar ? 3500 : 3000;
+            else if (gameKey === 'zzz') waitTime = hasFiveStar ? 3200 : 3000;
+        }
+        await new Promise(r => setTimeout(r, waitTime));
 
-        // --- STEP 5: Final transformation (Edit the message!) ---
+        const messagePayload = { embeds: [finalEmbed], files: files };
         if (mainMessage) {
-            try {
-                await mainMessage.edit({ embeds: [finalEmbed], files: files });
-            } catch (editError) {
-                console.error('Failed to edit gacha message:', editError);
-                await message.channel.send({ embeds: [finalEmbed], files: files });
-            }
+            await mainMessage.edit(messagePayload);
         } else {
-            await message.channel.send({ embeds: [finalEmbed], files: files });
+            await message.reply(messagePayload);
         }
         
+        // --- STEP 4: Cleanup and save ---
         if (imagePath) {
             fs.unlink(imagePath, (err) => {
                 if (err) console.error(`Failed to delete temp image: ${imagePath}`, err);

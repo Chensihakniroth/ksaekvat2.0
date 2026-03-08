@@ -6,7 +6,7 @@ import argparse
 
 # === CONFIGURATION ===
 ENDPOINT = "http://bucket-production-4ca0.up.railway.app"
-BUCKET = "gacha-iamges"  # Using exactly as provided in your .env
+BUCKET = "gacha-images"  # Using exactly as provided in your .env
 DB_NAME = "ksae_bot"
 COLLECTION_NAME = "characters"
 REPORT_PATH = "markdown/character_collection_report.txt"
@@ -20,7 +20,7 @@ def parse_report(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    sections = re.split(r'📁 Checking path\s*:?\s*gacha-iamge/', content)
+    sections = re.split(r'📁 Checking path\s*:?\s*gacha-images/', content)
     
     data = []
     for section in sections[1:]:

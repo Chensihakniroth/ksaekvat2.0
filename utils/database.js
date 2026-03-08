@@ -270,6 +270,40 @@ async function getGachaPool() {
             });
         }
     });
+
+    // --- Mommy's Temporary Fix: Manually add 3-star generic weapons ---
+    // This is to compensate for missing data in the database.
+    const genericWeapons = [
+        { name: 'Sword', emoji: '⚔️', image_name: 'sword.webp' },
+        { name: 'Claymore', emoji: '⚔️', image_name: 'claymore.webp' },
+        { name: 'Bow', emoji: '🏹', image_name: 'bow.webp' },
+        { name: 'Catalyst', emoji: '🔮', image_name: 'Catalyst.webp' },
+        { name: 'Polearm', emoji: '⚔️', image_name: 'polearm.webp' }
+    ];
+    const gamesToAdd = ['genshin', 'hsr', 'wuwa'];
+    // NOTE: The base URL is a guess based on the existing asset structure.
+    const weaponBaseUrl = 'http://bucket-production-4ca0.up.railway.app/gacha-images/common';
+
+    gamesToAdd.forEach(game => {
+        if (!pool[game]) {
+            pool[game] = { '3': [], '4': [], '5': [] };
+        }
+        genericWeapons.forEach(weapon => {
+            // Avoid adding duplicates if they are ever added to the DB
+            const exists = pool[game]['3'].some(w => w.name === weapon.name);
+            if (!exists) {
+                pool[game]['3'].push({
+                    name: weapon.name,
+                    game: game,
+                    rarity: 3,
+                    emoji: weapon.emoji,
+                    image_url: `${weaponBaseUrl}/${weapon.image_name}`
+                });
+            }
+        });
+    });
+    // --- End of Mommy's Fix ---
+
     return pool;
 }
 
