@@ -1,11 +1,12 @@
 import re
 import pymongo
 import os
+import datetime
+import argparse
 
 # === CONFIGURATION ===
 ENDPOINT = "http://bucket-production-4ca0.up.railway.app"
 BUCKET = "gacha-iamges"  # Using exactly as provided in your .env
-MONGO_URI = "mongodb://127.0.0.1:27017/"
 DB_NAME = "ksae_bot"
 COLLECTION_NAME = "characters"
 REPORT_PATH = "markdown/character_collection_report.txt"
@@ -19,29 +20,22 @@ def parse_report(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
-    # Split the report into sections based on the 'Checking path' header
-    # The report uses 'gacha-iamge/' (no 's') in the path text, we'll handle that.
     sections = re.split(r'📁 Checking path\s*:?\s*gacha-iamge/', content)
     
     data = []
-    # Skip the first split as it's the header/intro
     for section in sections[1:]:
         lines = section.strip().split('\n')
         if not lines:
             continue
         
-        # The first line of the section contains the folder (e.g., 'wuwa_char' or 'gs')
         folder = lines[0].strip().split(' ')[0]
         
-        # Extract character name and webp filename using regex
-        # Pattern: • Name → Filename.webp
         for line in lines:
             match = re.search(r'•\s+(.+?)\s+→\s+(.+?\.webp)', line)
             if match:
                 char_name = match.group(1).strip()
                 file_name = match.group(2).strip()
                 
-                # Construct the full Minio URL
                 image_url = f"{ENDPOINT}/{BUCKET}/{folder}/{file_name}"
                 data.append({
                     "name": char_name,
@@ -50,38 +44,76 @@ def parse_report(file_path):
     
     return data
 
-def update_mongodb(char_list):
-    """Updates or inserts character image links into MongoDB."""
+def update_mongodb(char_list, mongo_uri):
+    """Updates or inserts character image links into MongoDB, avoiding redundant updates."""
+    print(f"ℹ️ Connecting to MongoDB with URI: {mongo_uri}")
+    client = None  # Initialize client to None
     try:
-        client = pymongo.MongoClient(MONGO_URI)
+        client = pymongo.MongoClient(mongo_uri)
         db = client[DB_NAME]
         collection = db[COLLECTION_NAME]
         
-        print(f"🚀 Updating {len(char_list)} characters in collection '{COLLECTION_NAME}'...")
+        # Test connection
+        client.server_info()
+        print("✅ Successfully connected to MongoDB.")
+
+        print(f"🚀 Checking {len(char_list)} characters in collection '{COLLECTION_NAME}'...")
+        
+        updated_count = 0
+        added_count = 0
+        skipped_count = 0
         
         for char in char_list:
-            # We use 'upsert=True' so it creates the character if it doesn't exist
-            collection.update_one(
-                {"name": char["name"]},
-                {"$set": {"image_url": char["image_url"]}},
-                upsert=True
-            )
+            existing_char = collection.find_one({"name": char["name"]})
             
-        print(f"✅ Successfully updated MongoDB! (ﾉ´ヮ`)ﾉ*:･ﾟ✧")
-        
+            if existing_char:
+                if existing_char.get("image_url") != char["image_url"]:
+                    collection.update_one(
+                        {"_id": existing_char["_id"]},
+                        {"$set": {"image_url": char["image_url"], "updatedAt": datetime.datetime.utcnow()}}
+                    )
+                    updated_count += 1
+                else:
+                    skipped_count += 1
+            else:
+                collection.insert_one({
+                    "name": char["name"],
+                    "image_url": char["image_url"],
+                    "createdAt": datetime.datetime.utcnow(),
+                    "updatedAt": datetime.datetime.utcnow()
+                })
+                added_count += 1
+
+        print(f"✅ MongoDB update complete! (ﾉ´ヮ`)ﾉ*:･ﾟ✧")
+        print(f"   - ✨ Added: {added_count}")
+        print(f"   - 🔄 Updated: {updated_count}")
+        print(f"   - ⏭️ Skipped: {skipped_count}")
+
+    except pymongo.errors.ConnectionFailure as e:
+        print(f"❌ MongoDB Connection Error: Could not connect to the server at {mongo_uri}. Please check the URI and network settings.")
+        print(f"   Details: {e}")
     except Exception as e:
-        print(f"❌ Error updating MongoDB: {e}")
+        print(f"❌ An error occurred: {e}")
     finally:
-        client.close()
+        if client:
+            client.close()
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Mommy's Character Link Generator and Updater.")
+    parser.add_argument(
+        '--uri', 
+        type=str, 
+        default="mongodb://127.0.0.1:27017/",
+        help="The MongoDB connection URI. Defaults to local MongoDB instance."
+    )
+    args = parser.parse_args()
+
     print("✨ Mommy's Character Link Generator starting... (｡♥‿♥｡)")
     
-    # 1. Parse the report
     characters = parse_report(REPORT_PATH)
     
     if characters:
-        # 2. Update the database
-        update_mongodb(characters)
+        update_mongodb(characters, args.uri)
     else:
         print("❓ No character data found in the report. Please check the file format!")
+

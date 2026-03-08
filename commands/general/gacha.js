@@ -196,10 +196,9 @@ module.exports = {
             mainMessage = await message.reply({ embeds: [gifEmbed] });
         }
 
-        // --- STEP 3: Filter characters only for image & background generation ---
+        // --- STEP 3: Generate image for all results ---
         const startTime = Date.now();
-        const characterResults = results.filter(r => r.rarity >= 4);
-        const imageGenPromise = createGachaResultImage(characterResults, gameKey);
+        const imageGenPromise = createGachaResultImage(results, gameKey);
         
         let waitTime = 1000;
         if (gameKey === 'genshin') waitTime = 4000;
