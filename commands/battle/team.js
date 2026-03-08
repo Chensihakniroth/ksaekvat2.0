@@ -1,7 +1,85 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require("discord.js");
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, AttachmentBuilder } = require("discord.js");
 const database = require("../../utils/database.js");
 const colors = require("../../utils/colors.js");
 const { getCharacterIcon } = require("../../utils/images.js");
+const path = require('path');
+const fs = require('fs');
+const axios = require('axios');
+const sharp = require('sharp');
+
+const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
+
+// Ensure temp directory exists
+if (!fs.existsSync(TEMP_DIR)) {
+    fs.mkdirSync(TEMP_DIR, { recursive: true });
+}
+
+async function createTeamImage(teamCharacters) {
+    if (!teamCharacters || teamCharacters.length === 0) return null;
+
+    const cardWidth = 360;
+    const cardHeight = 520;
+    const padding = 15;
+    
+    const cols = teamCharacters.length;
+    const canvasWidth = padding + cols * (cardWidth + padding);
+    const canvasHeight = padding * 2 + cardHeight;
+
+    const compositePromises = teamCharacters.map(async (item, index) => {
+        const x = padding + index * (cardWidth + padding);
+        const y = padding;
+
+        let processedCard;
+        try {
+            const response = await axios.get(item.image_url, { responseType: 'arraybuffer' });
+            const imageBuffer = Buffer.from(response.data);
+            const game = item.game?.toLowerCase();
+            const useCover = ['genshin', 'wuwa'].includes(game);
+            
+            let cardImage = sharp(imageBuffer)
+                .resize(cardWidth, cardHeight, {
+                    fit: useCover ? 'cover' : 'contain',
+                    background: { r: 0, g: 0, b: 0, alpha: 0 }
+                });
+
+            if (useCover) {
+                processedCard = await cardImage.flatten({ background: { r: 0, g: 0, b: 0 } }).png().toBuffer();
+            } else {
+                processedCard = await sharp({
+                    create: { width: cardWidth, height: cardHeight, channels: 4, background: '#1c1d21' }
+                })
+                .composite([{ input: await cardImage.toBuffer() }])
+                .png()
+                .toBuffer();
+            }
+        } catch (error) {
+            console.error(`Failed to load team image for ${item.name}: ${error.message}`);
+            processedCard = await sharp({
+                create: { width: cardWidth, height: cardHeight, channels: 4, background: '#1c1d21' }
+            })
+            .composite([{
+                input: Buffer.from(`<svg width="${cardWidth}" height="${cardHeight}"><text x="50%" y="50%" font-family="sans-serif" font-size="30" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">${item.name || 'Unknown'}</text></svg>`),
+                blend: 'over'
+            }])
+            .png()
+            .toBuffer();
+        }
+
+        return { input: processedCard, top: y, left: x };
+    });
+
+    const composites = await Promise.all(compositePromises);
+    const outputPath = path.join(TEMP_DIR, `team-${Date.now()}.png`);
+    
+    await sharp({
+        create: { width: canvasWidth, height: canvasHeight, channels: 4, background: { r: 47, g: 49, b: 54, alpha: 1 } }
+    })
+    .composite(composites)
+    .png()
+    .toFile(outputPath);
+
+    return outputPath;
+}
 
 module.exports = {
     name: "team",
@@ -50,6 +128,9 @@ module.exports = {
         // --- DEFAULT: INTERACTIVE DISPLAY ---
         const inventory = await database.getHydratedInventory(message.author.id);
         const characters = inventory.filter(i => i.type === 'character' || !i.type);
+        const teamCharacters = userData.team.map(name => characters.find(c => c.name === name)).filter(Boolean);
+
+        const imagePath = await createTeamImage(teamCharacters);
 
         const createEmbed = () => {
             const embed = new EmbedBuilder()
@@ -69,7 +150,9 @@ module.exports = {
                 });
             }
 
-            if (userData.team.length > 0) {
+            if (imagePath) {
+                embed.setImage('attachment://team-display.png');
+            } else if (userData.team.length > 0) {
                 const firstChar = characters.find(c => c.name === userData.team[0]);
                 if (firstChar) embed.setThumbnail(getCharacterIcon(firstChar));
             }
@@ -91,8 +174,19 @@ module.exports = {
             return [row];
         };
 
-        const msg = await message.reply({ embeds: [createEmbed()], components: userData.team.length > 0 ? createButtons() : [] });
+        const files = [];
+        if (imagePath) {
+            files.push(new AttachmentBuilder(imagePath, { name: 'team-display.png' }));
+        }
+
+        const msg = await message.reply({ embeds: [createEmbed()], components: userData.team.length > 0 ? createButtons() : [], files: files });
         
+        if (imagePath) {
+            fs.unlink(imagePath, (err) => {
+                if (err) console.error(`Failed to delete temp image: ${imagePath}`, err);
+            });
+        }
+
         if (userData.team.length > 0) {
             const collector = msg.createMessageComponentCollector({ time: 60000 });
 
@@ -103,7 +197,20 @@ module.exports = {
                 userData.team.splice(slot - 1, 1);
                 await database.saveUser(userData);
 
-                await i.update({ embeds: [createEmbed()], components: userData.team.length > 0 ? createButtons() : [] });
+                const newTeamChars = userData.team.map(name => characters.find(c => c.name === name)).filter(Boolean);
+                const newImagePath = await createTeamImage(newTeamChars);
+                const newFiles = [];
+                if (newImagePath) {
+                    newFiles.push(new AttachmentBuilder(newImagePath, { name: 'team-display.png' }));
+                }
+
+                await i.update({ embeds: [createEmbed()], components: userData.team.length > 0 ? createButtons() : [], files: newFiles });
+
+                if (newImagePath) {
+                    fs.unlink(newImagePath, (err) => {
+                        if (err) console.error(`Failed to delete temp image: ${newImagePath}`, err);
+                    });
+                }
             });
 
             collector.on('end', () => {
