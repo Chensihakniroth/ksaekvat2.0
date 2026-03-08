@@ -33,7 +33,7 @@ module.exports = {
 
             userData.team.push(found.name);
             await database.saveUser(userData);
-            return message.reply(`✅ Added **${found.name}** to Slot ${userData.team.length}! (ﾉ´ヮ`)ﾉ*:･ﾟ✧`);
+            return message.reply(`✅ Added **${found.name}** to Slot ${userData.team.length}! (ﾉ´ヮ\`)ﾉ*:･ﾟ✧`);
         }
 
         // --- SUBCOMMAND: REMOVE ---
