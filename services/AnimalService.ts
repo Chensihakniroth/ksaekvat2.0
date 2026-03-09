@@ -4,7 +4,7 @@
  * (｡♥‿♥｡) Now with type-safety to ensure every animal is perfectly counted!
  */
 
-const config = require('../config/config.js');
+import config from '../config/config.js';
 
 interface ZooStats {
   totalAnimals: number;

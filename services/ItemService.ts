@@ -1,5 +1,5 @@
-import { IGachaInventoryItem } from '../models/User';
-const registry = require('../utils/registry.js');
+import { IGachaInventoryItem } from '../models/User.js';
+import registry from '../utils/registry.js';
 
 /**
  * ITEM SERVICE (Professional TypeScript Edition)
