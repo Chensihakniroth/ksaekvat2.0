@@ -1,4 +1,4 @@
-import { IGachaInventoryItem } from '../models/User.js';
+import { IGachaInventoryItem } from '../models/User.ts';
 import registry from '../utils/registry.js';
 
 /**
