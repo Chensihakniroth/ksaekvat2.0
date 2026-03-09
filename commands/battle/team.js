@@ -44,9 +44,35 @@ async function createTeamImage(teamCharacters) {
 
       // Mommy's special touch for Genshin icons! (｡♥‿♥｡)
       if (game === 'genshin') {
-        const apiId = item.name.toLowerCase().replace(/ /g, '-');
-        imageUrl = `https://genshin.jmp.blue/characters/${apiId}/icon-big`;
-        useCover = false; // We want to contain the icon, not cover with it
+        try {
+          const apiId = item.name.toLowerCase().replace(/ /g, '-');
+          imageUrl = `https://genshin.jmp.blue/characters/${apiId}/icon-big`;
+
+          // Test if jmp.blue image exists
+          await axios.get(imageUrl, { responseType: 'arraybuffer', timeout: 5000 });
+        } catch (apiError) {
+          console.log(`jmp.blue failed for ${item.name}, trying Fandom fallback...`);
+          try {
+            const fileName = `${item.name} Icon.png`;
+            const apiUrl = `https://genshin-impact.fandom.com/api.php?action=query&titles=${encodeURIComponent(
+              fileName
+            )}&prop=imageinfo&iiprop=url&format=json`;
+
+            const wikiResponse = await axios.get(apiUrl);
+            const pages = wikiResponse.data.query.pages;
+            const pageId = Object.keys(pages)[0];
+
+            if (pageId !== '-1' && pages[pageId].imageinfo) {
+              imageUrl = pages[pageId].imageinfo[0].url;
+            } else {
+              throw new Error(`Could not find Genshin Wiki icon for ${item.name}`);
+            }
+          } catch (wikiError) {
+            console.error(`Genshin Wiki fallback failed for ${item.name}: ${wikiError.message}`);
+            throw wikiError;
+          }
+        }
+        useCover = false;
       } else if (game === 'hsr') {
         try {
           const formattedName = item.name;

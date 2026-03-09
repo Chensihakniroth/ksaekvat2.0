@@ -1,0 +1,1332 @@
+[
+  {
+    "name": "Aalto",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Aemeath",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Augusta",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Baizhi",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Brant",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Buling",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Changli",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Calcharo",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Camellya",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Cantarella",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Carlotta",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Cartethyia",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Chisa",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Chixia",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Ciaccona",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Danjin",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Encore",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Galbrena",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Iuno",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Jianxin",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Jinhsi",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Jiyan",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Lingyang",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Lumi",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Lupa",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Luuk Herssen",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Lynae",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Mornye",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Mortefi",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Phoebe",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Phrolova",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Qiuyuan",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Roccia",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Sanhua",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Shorekeeper",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Sigrika",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Taoqi",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Verina",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Xiangli Yao",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Yangyang",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Yinlin",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Youhu",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Yuanwu",
+    "game": "wuwa",
+    "rarity": 4
+  },
+  {
+    "name": "Zani",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Zhezhi",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Albedo",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Alhaitham",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Amber",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Arlecchino",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Baizhu",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Barbara",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Beidou",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Bennett",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Candace",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Charlotte",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Chasca",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Chevreuse",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Chiori",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Chongyun",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Citlali",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Clorinde",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Collei",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Columbina",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Cyno",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Dahlia",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Dehya",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Diluc",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Diona",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Dori",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Durin",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Emilie",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Escoffier",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Eula",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Faruzan",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Fischl",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Flins",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Freminet",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Furina",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Gaming",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Ganyu",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Gorou",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Hu Tao",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Iansan",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Ineffa",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Jean",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Kachina",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Kaedehara Kazuha",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Kaeya",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Kamisato Ayaka",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Kamisato Ayato",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Kaveh",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Keqing",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Kinich",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Kirara",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Klee",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Kujou Sara",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Kuki Shinobu",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Lan Yan",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Lauma",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Layla",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Lisa",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Lynette",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Lyney",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Mavuika",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Mika",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Mona",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Mualani",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Nahida",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Navia",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Neuvillette",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Nilou",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Ningguang",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Noelle",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Ororon",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Qiqi",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Raiden Shogun",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Razor",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Rosaria",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Sangonomiya Kokomi",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Sayu",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Sethos",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Shenhe",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Shikanoin Heizou",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Sigewinne",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Skirk",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Sucrose",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Tartaglia",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Thoma",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Tighnari",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Varka",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Venti",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Wanderer",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Wriothesley",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Xiangling",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Xianyun",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Xiao",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Xilonen",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Xingqiu",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Xinyan",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Yae Miko",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Yanfei",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Yaoyao",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Yelan",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Yoimiya",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Yun Jin",
+    "game": "genshin",
+    "rarity": 4
+  },
+  {
+    "name": "Zhongli",
+    "game": "genshin",
+    "rarity": 5
+  },
+  {
+    "name": "Acheron",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Aglaea",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Anaxa",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Archer",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Argenti",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Arlan",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Asta",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Aventurine",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Bailu",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Black Swan",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Blade",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Boothill",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Bronya",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Castorice",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Cerydra",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Cipher",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Clara",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Dan Heng • IL",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Dan Heng",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Dr. Ratio",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Feixiao",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Firefly",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Fu Xuan",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Fugue",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Gallagher",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Gepard",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Guinaifen",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Hanya",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Herta",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Himeko",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Hook",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Huohuo",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Hyacine",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Jade",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Jiaoqiu",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Jing Yuan",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Jingliu",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Kafka",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Lingsha",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Luka",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Luocha",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Lynx",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "March 7th",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Misha",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Moze",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Natasha",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Pela",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Phainon",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Qingque",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Rappa",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Robin",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Ruan Mei",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Sampo",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Seele",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Serval",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Silver Wolf",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Sparkle",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Sparxie",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Sunday",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Sushang",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "The Herta",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Tingyun",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Topaz & Numby",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Tribbie",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Welt",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Xueyi",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Yanqing",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Yao Guang",
+    "game": "hsr",
+    "rarity": 5
+  },
+  {
+    "name": "Yukong",
+    "game": "hsr",
+    "rarity": 4
+  },
+  {
+    "name": "Rina",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Alice Thymefield",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Anby Demara",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Anton Ivanov",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Aria",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Astra Yao",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Banyue",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Ben Bigger",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Billy Kid",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Burnice White",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Caesar King",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Cissia",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Corin Wickes",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Dialyn",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Ellen Joe",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Evelyn Chevalier",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Grace Howard",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Hoshimi Miyabi",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Hugo Vlad",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Jane Doe",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Ju Fufu",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Koleda Belobog",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Manato",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Lighter",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Lucia Elowen",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Lucy",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Nangong Yu",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Nekomata",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Nicole Demara",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Orphie & Magus",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Pan Yinhu",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Piper Wheel",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Pulchra",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Qingyi",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Seed",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Seth Lowell",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Soldier 11",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Soukaku",
+    "game": "zzz",
+    "rarity": 4
+  },
+  {
+    "name": "Sunna",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Trigger",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Yanagi",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Yuzuha",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Vivian Banshee",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Von Lycaon",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Ye Shunguang",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Yidhari Murphy",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Yixuan",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Zhao",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Zhu Yuan",
+    "game": "zzz",
+    "rarity": 5
+  },
+  {
+    "name": "Rover (Spectro/Havoc/Aero)",
+    "game": "wuwa",
+    "rarity": 5
+  },
+  {
+    "name": "Soldier 0 - Anby",
+    "game": "zzz",
+    "rarity": 5
+  }
+]

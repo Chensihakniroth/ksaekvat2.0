@@ -43,6 +43,14 @@ async function createGachaResultImage(results) {
       const imageBuffer = Buffer.from(response.data);
       const game = item.game?.toLowerCase();
       const useCover = ['genshin', 'wuwa', 'hsr'].includes(game);
+      
+      // Mommy's rarity colors! (｡♥‿♥｡)
+      const rarityColors = {
+        5: '#FFB13F', // Gold
+        4: '#A256FF', // Purple
+        3: '#51A0FF'  // Blue
+      };
+      const bgColor = rarityColors[item.rarity] || '#1c1d21';
 
       let cardImage = sharp(imageBuffer).resize(cardWidth, cardHeight, {
         fit: useCover ? 'cover' : 'contain',
@@ -50,19 +58,19 @@ async function createGachaResultImage(results) {
       });
 
       if (useCover) {
-        // For Genshin/WuWa, just flatten and return
+        // For Genshin/WuWa/HSR, flatten with rarity background
         processedCard = await cardImage
-          .flatten({ background: { r: 0, g: 0, b: 0 } })
+          .flatten({ background: bgColor })
           .png()
           .toBuffer();
       } else {
-        // For others (HSR/ZZZ), place the contained image onto a solid background card
+        // For others (ZZZ), place the image onto a card with rarity background
         processedCard = await sharp({
           create: {
             width: cardWidth,
             height: cardHeight,
             channels: 4,
-            background: '#1c1d21',
+            background: bgColor,
           },
         })
           .composite([{ input: await cardImage.toBuffer() }])
