@@ -1,4 +1,5 @@
-import User, { IUser } from '../models/User.ts';
+import User from '../models/User';
+import type { IUser } from '../models/User';
 
 /**
  * USER REPOSITORY (Professional Librarian)

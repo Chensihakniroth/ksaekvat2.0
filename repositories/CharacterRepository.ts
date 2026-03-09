@@ -1,4 +1,5 @@
-import Character, { ICharacter } from '../models/Character.ts';
+import Character from '../models/Character';
+import type { ICharacter } from '../models/Character';
 
 /**
  * CHARACTER REPOSITORY (Professional Librarian)

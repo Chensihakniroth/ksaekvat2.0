@@ -1,4 +1,5 @@
-import { IUser } from '../models/User.ts';
+import User from '../models/User';
+import type { IUser } from '../models/User';
 
 /**
  * ADMIN SERVICE (Professional TypeScript Edition)

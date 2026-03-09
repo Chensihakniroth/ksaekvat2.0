@@ -1,4 +1,5 @@
-import AnimalRegistry, { IAnimalRegistry } from '../models/AnimalRegistry.ts';
+import AnimalRegistry from '../models/AnimalRegistry';
+import type { IAnimalRegistry } from '../models/AnimalRegistry';
 
 /**
  * ANIMAL REPOSITORY (Professional Librarian)
