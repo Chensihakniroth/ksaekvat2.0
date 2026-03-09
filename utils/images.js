@@ -136,7 +136,37 @@ function getCharacterIcon(char) {
   return `https://api.dicebear.com/7.x/bottts/svg?seed=${name}`;
 }
 
+function getCharacterEmoji(char, client) {
+  if (!char || !client) return '✨';
+
+  // Derive emoji name: replace non-alphanumeric with underscores
+  // (e.g., "Dan Heng • Imbibitor Lunae" -> "Dan_Heng_Imbibitor_Lunae")
+  const emojiName = char.name.replace(/[^a-zA-Z0-9]/g, '_').replace(/^_+|_+$/g, '');
+  
+  // 1. Search in Application Emojis (uploaded to the bot itself)
+  let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);
+
+  // 2. Fallback to Guild Emojis (if uploaded to a server)
+  if (!customEmoji) {
+    customEmoji = client.emojis.cache.find(e => e.name === emojiName);
+  }
+  
+  if (customEmoji) {
+    return customEmoji.toString();
+  }
+
+  // Fallback to original game-based emojis if custom one isn't found
+  const game = char.game?.toLowerCase();
+  if (game === 'genshin') return '🍃';
+  if (game === 'hsr') return '🚂';
+  if (game === 'wuwa') return '🌊';
+  if (game === 'zzz') return '🎮';
+  
+  return '✨';
+}
+
 module.exports = {
   getCharacterImage,
   getCharacterIcon,
+  getCharacterEmoji,
 };
