@@ -165,8 +165,30 @@ function getCharacterEmoji(char, client) {
   return '✨';
 }
 
+function getRarityEmoji(rarity, client) {
+  if (!client) return rarity === 5 ? '🟡' : rarity === 4 ? '🟣' : '🔵';
+
+  const emojiName = `${rarity}_star`;
+  
+  // 1. Search in Application Emojis
+  let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);
+
+  // 2. Fallback to Guild Emojis
+  if (!customEmoji) {
+    customEmoji = client.emojis.cache.find(e => e.name === emojiName);
+  }
+
+  if (customEmoji) {
+    return customEmoji.toString();
+  }
+
+  // Fallback to standard stars
+  return rarity === 5 ? '🟡' : rarity === 4 ? '🟣' : '🔵';
+}
+
 module.exports = {
   getCharacterImage,
   getCharacterIcon,
   getCharacterEmoji,
+  getRarityEmoji,
 };

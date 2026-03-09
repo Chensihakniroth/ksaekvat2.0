@@ -7,7 +7,7 @@ const {
 } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
-const { getCharacterIcon, getCharacterEmoji } = require('../../utils/images.js');
+const { getCharacterIcon, getCharacterEmoji, getRarityEmoji } = require('../../utils/images.js');
 
 module.exports = {
   name: 'char',
@@ -61,8 +61,8 @@ module.exports = {
       const description = pageItems
         .map((c) => {
           const charEmoji = getCharacterEmoji(c, client);
-          const star = c.rarity === 5 ? '🟡' : c.rarity === 4 ? '🟣' : '🔵';
-          return `${star} ${charEmoji} **${c.name}** x${c.count}`;
+          const rarityEmoji = getRarityEmoji(c.rarity, client);
+          return `${rarityEmoji} ${charEmoji} **${c.name}** x${c.count}`;
         })
         .join('\n');
 
