@@ -11,6 +11,7 @@ const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 const ItemService = require('../../services/ItemService.js');
 const EconomyService = require('../../services/EconomyService');
+const { getItemEmoji, getRarityEmoji } = require('../../utils/images.js');
 
 module.exports = {
   name: 'item',
@@ -39,16 +40,16 @@ module.exports = {
       const list = weapons
         .sort((a, b) => b.rarity - a.rarity)
         .map((w) => {
-          const star = w.rarity === 5 ? '🔶' : w.rarity === 4 ? '🔷' : '⚪';
+          const rarityEmoji = getRarityEmoji(w.rarity, client);
           const rank = `[R${w.refinement || 1}]`;
-          return `${star} **${w.name}** ${rank} x${w.count || 1}`;
+          return `${rarityEmoji} **${w.name}** ${rank} x${w.count || 1}`;
         });
 
       const embed = new EmbedBuilder()
         .setColor(colors.primary)
         .setTitle(`⚔️ ${message.author.username}'s Armory`)
         .setDescription(`**Total Weapons:** ${weapons.length}\n\n${list.join('\n')}`)
-        .setFooter({ text: 'Use the buttons below to manage your collection! (◕‿◕✿)' });
+        .setFooter({ text: 'Use the buttons below to manage your collection! (◕‿✿)' });
 
       return { embed, weapons };
     };
