@@ -8,7 +8,7 @@ const {
 } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
-const { getCharacterIcon } = require('../../utils/images.js');
+const { getCharacterIcon, getCharacterEmoji, getRarityEmoji } = require('../../utils/images.js');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
@@ -41,6 +41,14 @@ async function createTeamImage(teamCharacters) {
       let imageUrl = item.image_url;
       const game = item.game?.toLowerCase();
       let useCover = ['genshin', 'wuwa'].includes(game);
+
+      // Rarity backgrounds (｡♥‿♥｡)
+      const rarityColors = {
+        5: '#FFB13F', // Gold
+        4: '#A256FF', // Purple
+        3: '#51A0FF'  // Blue
+      };
+      const bgColor = rarityColors[item.rarity] || '#1c1d21';
 
       // Mommy's special touch for Genshin icons! (｡♥‿♥｡)
       if (game === 'genshin') {
@@ -151,12 +159,12 @@ async function createTeamImage(teamCharacters) {
 
       if (useCover) {
         processedCard = await cardImage
-          .flatten({ background: { r: 0, g: 0, b: 0 } })
+          .flatten({ background: bgColor })
           .png()
           .toBuffer();
       } else {
         processedCard = await sharp({
-          create: { width: cardWidth, height: cardHeight, channels: 4, background: '#1c1d21' },
+          create: { width: cardWidth, height: cardHeight, channels: 4, background: bgColor },
         })
           .composite([{ input: await cardImage.toBuffer() }])
           .png()
@@ -271,11 +279,17 @@ module.exports = {
       for (let i = 0; i < 4; i++) {
         const charName = userData.team[i];
         const charData = charName ? characters.find((c) => c.name === charName) : null;
-        const star = charData ? (charData.rarity === 5 ? '🟡' : '🟣') : '';
+        
+        let slotValue = '*Empty Slot*';
+        if (charData) {
+          const rarityEmoji = getRarityEmoji(charData.rarity, client);
+          const charEmoji = getCharacterEmoji(charData, client);
+          slotValue = `${rarityEmoji} ${charEmoji} **${charName}**`;
+        }
 
         embed.addFields({
           name: `Slot ${i + 1}`,
-          value: charName ? `${star} **${charName}**` : '*Empty Slot*',
+          value: slotValue,
           inline: true,
         });
       }

@@ -136,17 +136,16 @@ function getCharacterIcon(char) {
   return `https://api.dicebear.com/7.x/bottts/svg?seed=${name}`;
 }
 
-function getCharacterEmoji(char, client) {
-  if (!char || !client) return '✨';
+function getItemEmoji(item, client) {
+  if (!item || !client) return '✨';
 
   // Derive emoji name: replace one or more non-alphanumeric with a single underscore
-  // (Matches Python script's logic for perfect insurance! ｡♥‿♥｡)
-  const emojiName = char.name.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  const emojiName = item.name.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
   
-  // 1. Search in Application Emojis (uploaded to the bot itself)
+  // 1. Search in Application Emojis
   let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);
 
-  // 2. Fallback to Guild Emojis (if uploaded to a server)
+  // 2. Fallback to Guild Emojis
   if (!customEmoji) {
     customEmoji = client.emojis.cache.find(e => e.name === emojiName);
   }
@@ -156,7 +155,7 @@ function getCharacterEmoji(char, client) {
   }
 
   // Fallback to original game-based emojis if custom one isn't found
-  const game = char.game?.toLowerCase();
+  const game = item.game?.toLowerCase();
   if (game === 'genshin') return '🍃';
   if (game === 'hsr') return '🚂';
   if (game === 'wuwa') return '🌊';
@@ -189,6 +188,6 @@ function getRarityEmoji(rarity, client) {
 module.exports = {
   getCharacterImage,
   getCharacterIcon,
-  getCharacterEmoji,
+  getItemEmoji,
   getRarityEmoji,
 };
