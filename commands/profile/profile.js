@@ -2,11 +2,12 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
+const EconomyService = require('../../services/EconomyService');
 
 module.exports = {
   name: 'profile',
-  aliases: ['p', 'stats', 'me'],
-  description: "View your or another user's profile",
+  aliases: ['p', 'stats', 'me', 'trainer'],
+  description: "View your or another user's Trainer profile!",
   usage: 'profile [@user]',
   async execute(message, args, client) {
     let target = message.author;
@@ -26,9 +27,9 @@ module.exports = {
     const accountAge = Math.floor((Date.now() - userData.joinedAt) / (1000 * 60 * 60 * 24));
     const expToNextLevel = userData.level * 100 - userData.experience;
 
-    // Calculate animal collection
-    let totalAnimalValue = 0;
-    let totalAnimalsOwned = 0;
+    // Calculate pokemon collection
+    let totalPokemonValue = 0;
+    let totalPokemonOwned = 0;
     let rarityCount = {};
 
     for (const rarity of Object.keys(config.hunting.rarities)) {
@@ -38,10 +39,11 @@ module.exports = {
     if (userData.animals) {
       for (const [rarity, animals] of Object.entries(userData.animals)) {
         if (animalsData[rarity]) {
-          for (const [animalKey, count] of Object.entries(animals)) {
+          const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
+          for (const [animalKey, count] of animalEntries) {
             if (animalsData[rarity][animalKey]) {
-              totalAnimalValue += animalsData[rarity][animalKey].value * count;
-              totalAnimalsOwned += count;
+              totalPokemonValue += animalsData[rarity][animalKey].value * count;
+              totalPokemonOwned += count;
               rarityCount[rarity] += count;
             }
           }
@@ -58,40 +60,43 @@ module.exports = {
     // Create compact embed
     const embed = new EmbedBuilder()
       .setColor(colors.primary)
-      .setTitle(`${target.username}'s Profile`)
+      .setTitle(`(◕‿◕✿) ${target.username}'s Trainer Card`)
       .setThumbnail(target.displayAvatarURL({ size: 256 }))
+      .setDescription(`Welcome back, sweetie! Here is your progress so far. (｡♥‿♥｡)`)
       .addFields(
         {
-          name: '📊 Stats',
+          name: '📊 Training Progress',
           value: [
             `**Level:** ${userData.level}`,
             `**XP:** ${userData.experience}/${userData.level * 100}`,
-            `**Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`,
-            `**Pokémon:** ${totalAnimalsOwned} (${totalAnimalValue.toLocaleString()} ${config.economy.currency})`,
+            `**Balance:** ${EconomyService.format(userData.balance)} ${config.economy.currency}`,
+            `**Pokémon:** ${totalPokemonOwned} (${EconomyService.format(totalPokemonValue)} worth)`,
           ].join('\n'),
           inline: true,
         },
         {
-          name: '🎯 Activity',
+          name: '🎯 Activity Log',
           value: [
-            `**Gambled:** ${totalGambled.toLocaleString()}`,
-            `**Net:** ${netProfit >= 0 ? '+' : ''}${netProfit.toLocaleString()}`,
+            `**Gambled:** ${EconomyService.format(totalGambled)}`,
+            `**Net:** ${netProfit >= 0 ? '+' : ''}${EconomyService.format(netProfit)}`,
             `**Win Rate:** ${winRate}%`,
-            `**Account Age:** ${accountAge}d`,
+            `**Days Active:** ${accountAge}d`,
           ].join('\n'),
           inline: true,
         }
       );
 
-    // Add rarest animal if available
-    const rarest = getRarestAnimal(rarityCount);
+    // Add rarest pokemon if available
+    const rarest = getRarestPokemon(rarityCount);
     if (rarest !== 'None') {
       embed.addFields({
-        name: '🌟 Rarest',
+        name: '🌟 Peak Rarity',
         value: rarest,
         inline: true,
       });
     }
+
+    embed.setFooter({ text: "Mommy's so proud of you! ヽ(>∀<☆)ノ" });
 
     message.reply({ embeds: [embed] });
 
@@ -100,7 +105,7 @@ module.exports = {
   },
 };
 
-function getRarestAnimal(rarityCount) {
+function getRarestPokemon(rarityCount) {
   const rarityOrder = ['priceless', 'mythical', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
   for (const rarity of rarityOrder) {
     if (rarityCount[rarity] > 0) {

@@ -18,7 +18,7 @@ module.exports = {
       // Category Mapping with Mommy flavor
       const categoryNames = {
         admin: "🔨 Mommy's Tools (Admin)",
-        animals: '🦊 Our Little Pets (Animals)',
+        animals: '🦊 Our Catchable Friends (Pokémon)',
         battle: '⚔️ Protect Mommy (Battle)',
         economy: '💰 Your Allowance (Economy)',
         expressions: '😄 Expressions',
@@ -86,11 +86,11 @@ module.exports = {
         if (categories[cat] && categories[cat].length > 0) {
           const commandList = categories[cat]
             .sort((a, b) => a.name.localeCompare(b.name))
-            .map((cmd) => \`\\\`\${cmd.name}\\\`\`)
+            .map((cmd) => `\`${cmd.name}\``)
             .join(', ');
 
           embed.addFields({
-            name: categoryNames[cat] || \`📦 \${cat.charAt(0).toUpperCase() + cat.slice(1)}\`,
+            name: categoryNames[cat] || `📦 ${cat.charAt(0).toUpperCase() + cat.slice(1)}`,
             value: commandList,
             inline: false,
           });
@@ -100,7 +100,7 @@ module.exports = {
       // Add Short Prefixes field
       if (config.shortPrefixes) {
         const shortPrefixList = Object.entries(config.shortPrefixes)
-          .map(([short, full]) => \`\\\`\${short}\\\` → \\\`\${full}\\\`\`)
+          .map(([short, full]) => `\`${short}\` → \`${full}\``)
           .join(' | ');
 
         embed.addFields({
@@ -126,32 +126,32 @@ module.exports = {
             .setColor(colors.error || '#f04747')
             .setTitle('❌ Oh no, darling...')
             .setDescription(
-              `Mommy couldn't find the \\\`\${search}\\\` command. (｡•́︿•̀｡)\nUse \\\`\${prefix}help\\\` to see everything Mommy can do!`
+              `Mommy couldn't find the \`${search}\` command. (｡•́︿•̀｡)\nUse \`${prefix}help\` to see everything Mommy can do!`
             ),
         ],
-        });
+      });
     }
 
     const embed = new EmbedBuilder()
       .setColor(colors.primary || '#7289da')
-      .setTitle(`📖 Let Mommy explain: \${command.name}`)
+      .setTitle(`📖 Let Mommy explain: ${command.name}`)
       .setDescription(command.description || "Mommy hasn't written a description for this yet! (っ˘ω˘ς)")
       .addFields({
         name: 'How to play',
-        value: \`\\\`\${prefix}\${command.usage || command.name}\\\`\`,
+        value: `\`${prefix}${command.usage || command.name}\``,
         inline: true,
       });
 
     if (command.aliases && command.aliases.length > 0) {
       embed.addFields({
         name: 'Nicknames',
-        value: command.aliases.map((a) => \`\\\`\${a}\\\`\`).join(', '),
+        value: command.aliases.map((a) => `\`${a}\``).join(', '),
         inline: true,
       });
     }
 
     if (command.cooldown) {
-      embed.addFields({ name: 'Rest Time', value: \`\${command.cooldown / 1000}s\`, inline: true });
+      embed.addFields({ name: 'Rest Time', value: `${command.cooldown / 1000}s`, inline: true });
     }
 
     if (command.adminOnly) {
