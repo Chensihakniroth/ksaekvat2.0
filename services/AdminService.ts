@@ -1,15 +1,11 @@
-import User from '../models/User';
-import type { IUser } from '../models/User';
+import User from '../models/User.ts';
+import type { IUser } from '../models/User.ts';
 
 /**
  * ADMIN SERVICE (Professional TypeScript Edition)
  * Centralized logic for administrative actions like user resets and data manipulation.
- * (｡♥‿♥｡) Now with type-safety to ensure every reset is perfect!
  */
 class AdminService {
-  /**
-   * Reset a user object to its default starting values.
-   */
   public resetUser(userData: IUser): IUser {
     userData.balance = 1000;
     userData.level = 1;
