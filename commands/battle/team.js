@@ -90,6 +90,7 @@ async function createTeamImage(userData, teamCharacters) {
         try {
           let imageUrl = item.image_url;
           const game = item.game?.toLowerCase();
+          let imageBuffer = null;
           let useCover = ['genshin', 'wuwa'].includes(game);
 
           if (game === 'genshin') {
@@ -111,14 +112,24 @@ async function createTeamImage(userData, teamCharacters) {
 
             imageUrl = `https://genshin.jmp.blue/characters/${apiId}/icon-big`;
             try {
-              await axios.get(imageUrl, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }, responseType: 'arraybuffer', timeout: 5000 });
+              const jmpRes = await axios.get(imageUrl, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }, responseType: 'arraybuffer', timeout: 5000 });
+              if (jmpRes.headers['content-type']?.includes('image/')) {
+                imageBuffer = Buffer.from(jmpRes.data);
+              } else {
+                throw new Error("jmp.blue returned non-image");
+              }
             } catch (e) {
               const fileName = `File:${item.name.trim()} Icon.png`;
               const apiUrl = `https://genshin-impact.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
               const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
               const pages = res.data.query.pages;
               const pageId = Object.keys(pages)[0];
-              if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
+              if (pageId !== '-1' && pages[pageId].imageinfo) {
+                const wikiRes = await axios.get(pages[pageId].imageinfo[0].url, { responseType: 'arraybuffer' });
+                imageBuffer = Buffer.from(wikiRes.data);
+              } else {
+                throw new Error("Fallback failed");
+              }
             }
             useCover = false;
           } else if (game === 'hsr') {
@@ -127,7 +138,10 @@ async function createTeamImage(userData, teamCharacters) {
             const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
             const pages = res.data.query.pages;
             const pageId = Object.keys(pages)[0];
-            if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
+            if (pageId !== '-1' && pages[pageId].imageinfo) {
+              const wikiRes = await axios.get(pages[pageId].imageinfo[0].url, { responseType: 'arraybuffer' });
+              imageBuffer = Buffer.from(wikiRes.data);
+            }
             useCover = false;
           } else if (game === 'wuwa') {
             const fileName = `File:Resonator ${item.name.trim()}.png`;
@@ -135,7 +149,10 @@ async function createTeamImage(userData, teamCharacters) {
             const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
             const pages = res.data.query.pages;
             const pageId = Object.keys(pages)[0];
-            if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
+            if (pageId !== '-1' && pages[pageId].imageinfo) {
+              const wikiRes = await axios.get(pages[pageId].imageinfo[0].url, { responseType: 'arraybuffer' });
+              imageBuffer = Buffer.from(wikiRes.data);
+            }
             useCover = false;
           } else if (game === 'zzz') {
             const fileName = `File:Agent ${item.name.trim()} Icon.png`;
@@ -143,20 +160,17 @@ async function createTeamImage(userData, teamCharacters) {
             const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
             const pages = res.data.query.pages;
             const pageId = Object.keys(pages)[0];
-            if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
+            if (pageId !== '-1' && pages[pageId].imageinfo) {
+              const wikiRes = await axios.get(pages[pageId].imageinfo[0].url, { responseType: 'arraybuffer' });
+              imageBuffer = Buffer.from(wikiRes.data);
+            }
             useCover = false;
           }
 
-          const response = await axios.get(imageUrl, {
-            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
-            responseType: 'arraybuffer'
-          });
-
-          if (!response.headers['content-type']?.includes('image')) {
-            throw new Error('Downloaded file is not a valid image');
+          if (!imageBuffer && imageUrl) {
+            const fallbackRes = await axios.get(imageUrl, { headers: { 'User-Agent': 'Mozilla/5.0' }, responseType: 'arraybuffer' });
+            imageBuffer = Buffer.from(fallbackRes.data);
           }
-
-          const imageBuffer = Buffer.from(response.data);
 
           const rColor = rarityColors[item.rarity] || '#ffffff';
           const rGrad = rarityGradients[item.rarity] || ['#777', '#444'];
