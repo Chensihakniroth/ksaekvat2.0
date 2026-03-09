@@ -121,11 +121,11 @@ async function createTeamImage(userData, teamCharacters) {
 
           imageUrl = `https://genshin.jmp.blue/characters/${apiId}/icon-big`;
           try {
-            await axios.get(imageUrl, { responseType: 'arraybuffer', timeout: 5000 });
+            await axios.get(imageUrl, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }, responseType: 'arraybuffer', timeout: 5000 });
           } catch (e) {
             const fileName = `File:${item.name.trim()} Icon.png`;
             const apiUrl = `https://genshin-impact.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
-            const res = await axios.get(apiUrl);
+            const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
             const pages = res.data.query.pages;
             const pageId = Object.keys(pages)[0];
             if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
@@ -134,7 +134,7 @@ async function createTeamImage(userData, teamCharacters) {
         } else if (game === 'hsr') {
           const fileName = `File:Character ${item.name.trim()} Icon.png`;
           const apiUrl = `https://honkai-star-rail.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
-          const res = await axios.get(apiUrl);
+          const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
           const pages = res.data.query.pages;
           const pageId = Object.keys(pages)[0];
           if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
@@ -142,7 +142,7 @@ async function createTeamImage(userData, teamCharacters) {
         } else if (game === 'wuwa') {
           const fileName = `File:Resonator ${item.name.trim()}.png`;
           const apiUrl = `https://wutheringwaves.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
-          const res = await axios.get(apiUrl);
+          const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
           const pages = res.data.query.pages;
           const pageId = Object.keys(pages)[0];
           if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
@@ -150,14 +150,22 @@ async function createTeamImage(userData, teamCharacters) {
         } else if (game === 'zzz') {
           const fileName = `File:Agent ${item.name.trim()} Icon.png`;
           const apiUrl = `https://zenless-zone-zero.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
-          const res = await axios.get(apiUrl);
+          const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
           const pages = res.data.query.pages;
           const pageId = Object.keys(pages)[0];
           if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
           useCover = false;
         }
 
-        const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+        const response = await axios.get(imageUrl, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
+          responseType: 'arraybuffer'
+        });
+
+        if (!response.headers['content-type']?.includes('image')) {
+          throw new Error('Downloaded file is not a valid image');
+        }
+
         const imageBuffer = Buffer.from(response.data);
 
         const rColor = rarityColors[item.rarity] || '#ffffff';

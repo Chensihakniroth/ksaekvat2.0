@@ -7,10 +7,13 @@ FROM node:22-alpine
 # 2. Set working directory
 WORKDIR /app
 
-# 3. Copy dependency definitions
+# 3. Install necessary system fonts for Sharp SVG text rendering
+RUN apk add --no-cache fontconfig ttf-dejavu
+
+# 4. Copy dependency definitions
 COPY package*.json ./
 
-# 4. Install dependencies (including devDeps for ts-node)
+# 5. Install dependencies (including devDeps for ts-node)
 RUN npm install
 
 # 5. Copy the rest of the application code
