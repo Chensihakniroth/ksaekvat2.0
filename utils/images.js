@@ -139,9 +139,9 @@ function getCharacterIcon(char) {
 function getCharacterEmoji(char, client) {
   if (!char || !client) return '✨';
 
-  // Derive emoji name: replace non-alphanumeric with underscores
-  // (e.g., "Dan Heng • Imbibitor Lunae" -> "Dan_Heng_Imbibitor_Lunae")
-  const emojiName = char.name.replace(/[^a-zA-Z0-9]/g, '_').replace(/^_+|_+$/g, '');
+  // Derive emoji name: replace one or more non-alphanumeric with a single underscore
+  // (Matches Python script's logic for perfect insurance! ｡♥‿♥｡)
+  const emojiName = char.name.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
   
   // 1. Search in Application Emojis (uploaded to the bot itself)
   let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);

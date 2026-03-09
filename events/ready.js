@@ -21,6 +21,16 @@ module.exports = {
       logger.error('Failed to set activity', error);
     }
 
+    // Fetch Application Emojis (｡♥‿♥｡)
+    client.application.emojis
+      .fetch()
+      .then((emojis) => {
+        logger.item('App Emojis', emojis.size, '\x1b[33m');
+      })
+      .catch((err) => {
+        logger.error('Failed to fetch application emojis', err);
+      });
+
     logger.blank();
     logger.box(
       `🚀 MOMMY IS READY TO TAKE CARE OF YOU! ヽ(>∀<☆)ノ\nRunning version: ${require('../package.json').version}`,
