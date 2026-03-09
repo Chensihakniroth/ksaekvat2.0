@@ -47,6 +47,28 @@ async function createTeamImage(teamCharacters) {
         const apiId = item.name.toLowerCase().replace(/ /g, '-');
         imageUrl = `https://genshin.jmp.blue/characters/${apiId}/icon-big`;
         useCover = false; // We want to contain the icon, not cover with it
+      } else if (game === 'hsr') {
+        try {
+          const formattedName = item.name;
+          const fileName = `File:Character ${formattedName} Icon.png`;
+          const apiUrl = `https://honkai-star-rail.fandom.com/api.php?action=query&titles=${encodeURIComponent(
+            fileName
+          )}&prop=imageinfo&iiprop=url&format=json`;
+
+          const wikiResponse = await axios.get(apiUrl);
+          const pages = wikiResponse.data.query.pages;
+          const pageId = Object.keys(pages)[0];
+
+          if (pageId !== '-1' && pages[pageId].imageinfo) {
+            imageUrl = pages[pageId].imageinfo[0].url;
+          } else {
+            throw new Error(`Could not find wiki image URL for ${item.name}`);
+          }
+          useCover = false;
+        } catch (wikiError) {
+          console.error(`HSR Wiki API error for ${item.name}: ${wikiError.message}`);
+          throw wikiError; // Re-throw to be caught by the outer block
+        }
       }
 
       const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
