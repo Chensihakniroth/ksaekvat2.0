@@ -27,6 +27,8 @@ async function initializeRegistry() {
         rarity: parseInt(item.rarity),
         emoji: item.emoji,
         type: item.type,
+        element: item.element,
+        role: item.role,
         image_url: item.image_url,
       };
 

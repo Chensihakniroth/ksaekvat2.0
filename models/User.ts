@@ -44,6 +44,8 @@ export interface IUser extends Document {
   lootbox: number;
   stats: IUserStats;
   joinedAt: Date;
+  customPrefix?: string;   // User's personal main prefix (e.g. 'K', '!')
+  customSubPrefix?: string; // User's personal short/sub prefix override
 }
 
 /**
@@ -95,6 +97,10 @@ const UserSchema: Schema = new Schema({
     won_riel: { type: Number, default: 0 },
     lost_riel: { type: Number, default: 0 },
   },
+
+  // Custom per-user prefix settings
+  customPrefix: { type: String, default: null },
+  customSubPrefix: { type: String, default: null },
 
   joinedAt: { type: Date, default: Date.now },
 });

@@ -199,9 +199,28 @@ function getElementEmoji(item, client) {
     return elementEmoji.toString();
   }
 
-  if (elementName === 'Ether') return '🔮';
+  // Fallback Unicode emojis by element name
+  const fallbacks = {
+    Fire: '🔥',
+    Frozen: '❄️',
+    Nature: '🌿',
+    Lightning: '⚡',
+    Dark: '🌑',
+    Light: '✨',
+    Physical: '💢',
+    Ether: '🔮',
+    Ice: '❄️',
+    Wind: '🌬️',
+    Geo: '🪨',
+    Electro: '⚡',
+    Hydro: '💧',
+    Pyro: '🔥',
+    Cryo: '❄️',
+    Anemo: '🌬️',
+    Dendro: '🌿',
+  };
 
-  return '';
+  return fallbacks[elementName] || '';
 }
 
 module.exports = {

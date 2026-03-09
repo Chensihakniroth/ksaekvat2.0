@@ -1,6 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const config = require('../../config/config.js');
 const colors = require('../../utils/colors.js');
+const database = require('../../utils/database.js');
 
 module.exports = {
   name: 'help',
@@ -8,7 +9,7 @@ module.exports = {
   description: "Mommy's guide to all the fun things we can do together! (◕‿◕✿)",
   usage: 'help [command]',
   category: 'general',
-  execute(message, args, client) {
+  execute: async (message, args, client) => {
     const prefix = (config.prefix && config.prefix[0]) || 'K';
 
     if (args.length === 0) {
@@ -73,11 +74,18 @@ module.exports = {
         'slash',
       ];
 
+      // Load user's custom prefix to show them
+      let userPrefix = config.prefix[1]; // default 'K'
+      try {
+        const ud = await database.getUser(message.author.id, message.author.username);
+        if (ud?.customPrefix) userPrefix = ud.customPrefix;
+      } catch (_) { }
+
       const embed = new EmbedBuilder()
         .setColor(colors.primary || '#7289da')
         .setTitle(`(｡♥‿♥｡) Mommy's Little Helper ~ ${config.botInfo.name}`)
         .setDescription(
-          `Welcome sweetie! Here is everything we can do together. (ﾉ´ヮ\`)ﾉ*:･ﾟ✧\n\nIf you want Mommy to explain a specific command, just type \`${prefix}help [command]\`! (◕‿◕✿)`
+          `Welcome sweetie! Here is everything we can do together. (ﾉ´ヮ\`)ﾉ*:･ﾟ✧\n\nYour current prefix: \`${userPrefix}\` — type \`${userPrefix}help [command]\` to learn more!\nChange your prefix anytime with \`${userPrefix}prefix\`! (◕‿◕✿)`
         )
         .setThumbnail(client.user.displayAvatarURL());
 

@@ -20,8 +20,22 @@ module.exports = {
     let commandName = null;
     let args = [];
 
-    // Check main prefixes (K, k)
-    for (const p of config.prefix) {
+    // Load user's custom prefix (if set)
+    let userMainPrefixes = [...config.prefix]; // default: ['k','K']
+    let userSubPrefixes = config.shortPrefixes;  // default global short prefixes
+
+    try {
+      const userData = await database.getUser(message.author.id, message.author.username);
+      if (userData?.customPrefix) {
+        // Replace global prefix with user's personal one
+        userMainPrefixes = [userData.customPrefix, userData.customPrefix.toLowerCase(), userData.customPrefix.toUpperCase()]
+          .filter((v, i, a) => a.indexOf(v) === i); // deduplicate
+      }
+      // subprefix override is applied globally; per-user sub handled via customSubPrefix field (for display only for now)
+    } catch (_) { }
+
+    // Check main prefixes (user or global)
+    for (const p of userMainPrefixes) {
       if (message.content.startsWith(p)) {
         const tempArgs = message.content.slice(p.length).trim().split(/ +/);
         const tempName = tempArgs.shift().toLowerCase();
@@ -38,7 +52,7 @@ module.exports = {
     // Check short prefixes (Optimized)
     if (!commandName) {
       const contentLower = message.content.toLowerCase();
-      for (const [shortPrefix, fullCommand] of Object.entries(config.shortPrefixes)) {
+      for (const [shortPrefix, fullCommand] of Object.entries(userSubPrefixes)) {
         const spLower = shortPrefix.toLowerCase();
         let found = false;
 
@@ -46,7 +60,7 @@ module.exports = {
           prefix = message.content.slice(0, shortPrefix.length);
           found = true;
         } else {
-          for (const p of config.prefix) {
+          for (const p of userMainPrefixes) {
             const pLower = p.toLowerCase();
             if (contentLower.startsWith(pLower + spLower)) {
               const nextChar = contentLower.charAt(pLower.length + spLower.length);

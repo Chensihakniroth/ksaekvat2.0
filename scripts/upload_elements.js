@@ -16,20 +16,25 @@ client.once('ready', async () => {
         const filePath = path.join(assetsDir, file);
 
         try {
-            // Check if emoji exists
+            // Check if emoji exists - fetch first to be sure
+            await client.application.emojis.fetch();
             const existing = client.application.emojis.cache.find(e => e.name === name);
             if (existing) {
                 console.log(`Emoji ${name} already exists: ${existing.toString()}`);
             } else {
                 console.log(`Uploading ${name}...`);
+                const imageBuffer = fs.readFileSync(filePath);
+                const base64 = imageBuffer.toString('base64');
+                const dataURI = `data:image/png;base64,${base64}`;
+
                 const emoji = await client.application.emojis.create({
-                    attachment: filePath,
+                    attachment: dataURI,
                     name: name
                 });
                 console.log(`Created custom emoji: ${emoji.name} ${emoji.toString()}`);
             }
         } catch (error) {
-            console.error(`Error uploading ${name}:`, error);
+            console.error(`Error uploading ${name}:`, error.message);
         }
     }
 
