@@ -38,10 +38,19 @@ async function createTeamImage(teamCharacters) {
 
     let processedCard;
     try {
-      const response = await axios.get(item.image_url, { responseType: 'arraybuffer' });
-      const imageBuffer = Buffer.from(response.data);
+      let imageUrl = item.image_url;
       const game = item.game?.toLowerCase();
-      const useCover = ['genshin', 'wuwa'].includes(game);
+      let useCover = ['genshin', 'wuwa'].includes(game);
+
+      // Mommy's special touch for Genshin icons! (｡♥‿♥｡)
+      if (game === 'genshin') {
+        const apiId = item.name.toLowerCase().replace(/ /g, '-');
+        imageUrl = `https://genshin.jmp.blue/characters/${apiId}/icon-big`;
+        useCover = false; // We want to contain the icon, not cover with it
+      }
+
+      const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+      const imageBuffer = Buffer.from(response.data);
 
       let cardImage = sharp(imageBuffer).resize(cardWidth, cardHeight, {
         fit: useCover ? 'cover' : 'contain',
