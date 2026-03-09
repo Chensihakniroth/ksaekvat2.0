@@ -11,7 +11,8 @@ require('dotenv').config();
 
 // === LOGGING BANNER ===
 logger.blank();
-logger.ascii(`
+logger.ascii(
+  `
  ██╗  ██╗███████╗ █████╗ ███████╗██╗  ██╗██╗   ██╗ █████╗ ████████╗
  ██║ ██╔╝██╔════╝██╔══██╗██╔════╝██║ ██╔╝██║   ██║██╔══██╗╚══██╔══╝
  █████╔╝ ███████╗███████║█████╗  █████╔╝ ██║   ██║███████║   ██║   
@@ -19,7 +20,9 @@ logger.ascii(`
  ██║  ██╗███████║██║  ██║███████╗██║  ██╗ ╚████╔╝ ██║  ██║   ██║   
  ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝  ╚═╝   ╚═╝   
                                             REVAMP EDITION v2.0
-`, '\x1b[36m');
+`,
+  '\x1b[36m'
+);
 
 logger.header('System Boot Sequence');
 
@@ -30,9 +33,9 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.DirectMessages,
-    GatewayIntentBits.GuildMessageReactions
+    GatewayIntentBits.GuildMessageReactions,
   ],
-  partials: [Partials.Message, Partials.Channel, Partials.Reaction]
+  partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
 client.commands = new Collection();
@@ -40,20 +43,20 @@ client.slashCommands = new Collection();
 
 // Auto-deploy slash commands
 async function deployCommands() {
-  const { REST, Routes } = require("discord.js");
+  const { REST, Routes } = require('discord.js');
   logger.section('Slash Deployment');
   const prog = logger.loader('Preparing slash commands');
 
   try {
     const commands = [];
-    const commandsPath = path.join(__dirname, "commands/slash");
-    
+    const commandsPath = path.join(__dirname, 'commands/slash');
+
     if (!fs.existsSync(commandsPath)) {
       prog.fail('Folder missing');
       return;
     }
-    
-    const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
+
+    const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
 
     for (const file of commandFiles) {
       try {
@@ -72,11 +75,10 @@ async function deployCommands() {
       return;
     }
 
-    const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN);
+    const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
     await rest.put(Routes.applicationCommands(config.clientId), { body: commands });
     prog.done();
     logger.item('Deployed', commands.length, '\x1b[32m');
-
   } catch (error) {
     prog.fail(error.message);
   }
@@ -87,7 +89,12 @@ async function connectDB() {
   logger.section('Database');
   const prog = logger.loader('Connecting to MongoDB');
   try {
-    const uri = process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.MONGO_URI || process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/ksae_bot';
+    const uri =
+      process.env.MONGODB_URI ||
+      process.env.MONGODB_URL ||
+      process.env.MONGO_URI ||
+      process.env.MONGO_URL ||
+      'mongodb://127.0.0.1:27017/ksae_bot';
     await mongoose.connect(uri);
     prog.done();
     logger.item('Status', 'Connected', '\x1b[32m');

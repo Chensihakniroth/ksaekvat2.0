@@ -13,40 +13,42 @@ let weaponRegistry = {};
 
 // Load and index the registry once on startup (Async)
 async function initializeRegistry() {
-    try {
-        const items = await Character.find({});
-        
-        // Reset registries
-        characterRegistry = {};
-        weaponRegistry = {};
+  try {
+    const items = await Character.find({});
 
-        items.forEach(item => {
-            const itemData = {
-                name: item.name,
-                game: item.game,
-                rarity: parseInt(item.rarity),
-                emoji: item.emoji,
-                type: item.type,
-                image_url: item.image_url
-            };
+    // Reset registries
+    characterRegistry = {};
+    weaponRegistry = {};
 
-            if (itemData.type === "character") {
-                characterRegistry[item.name] = itemData;
-            } else {
-                weaponRegistry[item.name] = itemData;
-            }
-        });
-        logger.debug(`Registry initialized with ${items.length} items from MongoDB (characters collection).`);
-    } catch (error) {
-        logger.error('Failed to initialize registry from MongoDB:', error);
-    }
+    items.forEach((item) => {
+      const itemData = {
+        name: item.name,
+        game: item.game,
+        rarity: parseInt(item.rarity),
+        emoji: item.emoji,
+        type: item.type,
+        image_url: item.image_url,
+      };
+
+      if (itemData.type === 'character') {
+        characterRegistry[item.name] = itemData;
+      } else {
+        weaponRegistry[item.name] = itemData;
+      }
+    });
+    logger.debug(
+      `Registry initialized with ${items.length} items from MongoDB (characters collection).`
+    );
+  } catch (error) {
+    logger.error('Failed to initialize registry from MongoDB:', error);
+  }
 }
 
 module.exports = {
-    initializeRegistry,
-    getItem: (name) => characterRegistry[name] || weaponRegistry[name],
-    getCharacter: (name) => characterRegistry[name],
-    getWeapon: (name) => weaponRegistry[name],
-    getAllCharacters: () => Object.values(characterRegistry),
-    getAllWeapons: () => Object.values(weaponRegistry)
+  initializeRegistry,
+  getItem: (name) => characterRegistry[name] || weaponRegistry[name],
+  getCharacter: (name) => characterRegistry[name],
+  getWeapon: (name) => weaponRegistry[name],
+  getAllCharacters: () => Object.values(characterRegistry),
+  getAllWeapons: () => Object.values(weaponRegistry),
 };

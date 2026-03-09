@@ -9,6 +9,7 @@ node migrate_to_mongo.js
 ```
 
 **Before you run this, please make sure:**
+
 1.  The `migrate_to_mongo.js` file is in the root of your project directory.
 2.  Your `data/*.json` files (like `data/users.json`, `data/promo_codes.json`, etc.) are present in the `data/` subdirectory and contain all the local data you wish to migrate. These files are the source of truth for the migration!
 
