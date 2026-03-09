@@ -7,7 +7,10 @@
 import config from '../config/config.js';
 import Pokedex from 'pokedex-promise-v2';
 
-const P = new Pokedex(); // Includes built-in auto-caching
+// Due to how some TS/node environments resolve default exports from commonjs
+// packages, we might need `.default` if it's nested.
+const PokedexClass = (Pokedex as any).default || Pokedex;
+const P = new PokedexClass(); // Includes built-in auto-caching
 
 
 interface ZooStats {
@@ -105,6 +108,81 @@ class AnimalService {
     } catch (error: any) {
       console.error(`Pokedex Promise v2 error for ${key}:`, error.message);
       return null;
+    }
+  }
+
+  private spriteCache: Map<string, string> = new Map();
+
+  /**
+   * Fetch Pokémon tiny pixel sprite for PC Box style UI (Auto-cached)
+   */
+  public async getPokemonSprite(key: string): Promise<string | null> {
+    if (this.spriteCache.has(key)) return this.spriteCache.get(key) || null;
+
+    try {
+      let lookup = key.toLowerCase();
+      let isShiny = false;
+
+      if (lookup === 'shinycharizard') {
+        lookup = 'charizard';
+        isShiny = true;
+      }
+      if (lookup === 'missingno') {
+         return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png'; // tiny placeholder
+      }
+
+      const pokemon = await P.getPokemonByName(lookup as any);
+      
+      let spriteUrl: string | null = null;
+      if (isShiny) {
+         spriteUrl = pokemon.sprites?.front_shiny as string | undefined || null;
+      } else {
+         // Prefer gen8 icons for the literal perfectly sized PC Box icons, fallback to standard front_default 
+         const gen8icons = pokemon.sprites?.versions?.['generation-viii']?.icons;
+         spriteUrl = (gen8icons?.front_default as string | undefined) || (pokemon.sprites?.front_default as string | undefined) || null;
+      }
+
+      if (spriteUrl) {
+        this.spriteCache.set(key, spriteUrl);
+      }
+      return spriteUrl;
+    } catch (error: any) {
+      console.error(`Pokedex Promise v2 sprite error for ${key}:`, error.message);
+      return null;
+    }
+  }
+
+  private kantoDexCache: Set<string> | null = null;
+
+  /**
+   * Fetch Kanto (Red/Blue Version) Pokedex entries.
+   * Caches results so it only hits the API once.
+   */
+  public async getKantoPokedexEntries(): Promise<Set<string>> {
+    if (this.kantoDexCache) return this.kantoDexCache;
+
+    try {
+      // id 2 is the classic Kanto pokedex used in Red/Blue
+      const dex = await P.getPokedexByName('kanto');
+      const kantoNames = new Set<string>();
+      
+      if (dex && dex.pokemon_entries) {
+        for (const entry of dex.pokemon_entries) {
+          if (entry.pokemon_species && entry.pokemon_species.name) {
+            kantoNames.add(entry.pokemon_species.name.toLowerCase());
+          }
+        }
+      }
+      
+      // Also add known manual overrides just in case (e.g. charizard being shiny)
+      kantoNames.add('shinycharizard');
+      kantoNames.add('missingno');
+
+      this.kantoDexCache = kantoNames;
+      return kantoNames;
+    } catch (error: any) {
+      console.error('Failed to load Kanto Pokedex:', error.message);
+      return new Set();
     }
   }
 }
