@@ -61,7 +61,8 @@ module.exports = {
       const description = pageItems
         .map((c) => {
           const charEmoji = getCharacterEmoji(c, client);
-          return `${charEmoji} **${c.name}** x${c.count}`;
+          const star = c.rarity === 5 ? '🟡' : c.rarity === 4 ? '🟣' : '🔵';
+          return `${star} ${charEmoji} **${c.name}** x${c.count}`;
         })
         .join('\n');
 
