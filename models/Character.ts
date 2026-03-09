@@ -9,6 +9,8 @@ export interface ICharacter extends Document {
   game: string;
   rarity: '3' | '4' | '5';
   emoji: string;
+  element?: string;
+  role?: string;
   type: 'character' | 'weapon';
   image_url: string;
   updatedAt: Date;
@@ -24,6 +26,8 @@ const CharacterSchema: Schema = new Schema(
     game: { type: String, required: true },
     rarity: { type: String, enum: ['3', '4', '5'], required: true },
     emoji: { type: String, default: '✨' },
+    element: { type: String },
+    role: { type: String },
     type: { type: String, enum: ['character', 'weapon'], required: true },
     image_url: { type: String, default: '' }, // Unified image storage
     updatedAt: { type: Date, default: Date.now },
