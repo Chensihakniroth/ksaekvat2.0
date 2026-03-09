@@ -87,9 +87,14 @@ module.exports = {
             `${c.hp > 0 ? c.emoji : '💀'} **${c.name}**\n\`[${'■'.repeat(Math.max(0, Math.ceil((c.hp / c.maxHp) * 10)))}${'-'.repeat(Math.max(0, 10 - Math.ceil((c.hp / c.maxHp) * 10)))}]\` ${Math.max(0, c.hp)}/${c.maxHp}`
         )
         .join('\n');
-      const eDisp = `${enemy.emoji} **${enemy.name}** (Lv.${enemy.level})\n\`[${'■'.repeat(Math.max(0, Math.ceil((enemy.hp / enemy.maxHp) * 10)))}${'-'.repeat(Math.max(0, 10 - Math.ceil((enemy.hp / enemy.maxHp) * 10)))}]\` ${Math.max(0, enemy.hp)}/${enemy.maxHp}`;
+      
+      const shieldStr = enemy.shield > 0 ? ` 🛡️ (+${enemy.shield})` : '';
+      const eDisp = `${enemy.emoji} **${enemy.name}** (Lv.${enemy.level})\n` +
+                    `**Class:** ${enemy.class} | **Rarity:** ${enemy.rarity}\n` +
+                    `\`[${'■'.repeat(Math.max(0, Math.ceil((enemy.hp / enemy.maxHp) * 10)))}${'-'.repeat(Math.max(0, 10 - Math.ceil((enemy.hp / enemy.maxHp) * 10)))}]\` ${Math.max(0, enemy.hp)}/${enemy.maxHp}${shieldStr}`;
+
       return new EmbedBuilder()
-        .setColor(colors.primary)
+        .setColor(enemy.rarity === 'LEGENDARY' ? 0xffd700 : colors.primary)
         .setTitle(`⚔️ Turn ${turn}`)
         .setDescription(`**Combo:** ${'🔶'.repeat(comboPoints)}${'⚪'.repeat(4 - comboPoints)}`)
         .addFields(
@@ -128,23 +133,44 @@ module.exports = {
       // Player Turn
       if (i.customId === 'attack') {
         const dmg = CombatService.calculateAttackDamage(active.atk, enemy.def);
-        enemy.hp -= dmg;
+        
+        // Handle Shield
+        if (enemy.shield > 0) {
+          const absorbed = Math.min(enemy.shield, dmg);
+          enemy.shield -= absorbed;
+          const overkill = dmg - absorbed;
+          if (overkill > 0) enemy.hp -= overkill;
+          battleLog.push(`⚔️ ${active.name} hit for ${dmg} (${absorbed} absorbed by shield)!`);
+        } else {
+          enemy.hp -= dmg;
+          battleLog.push(`⚔️ ${active.name} hit for ${dmg}!`);
+        }
+        
         comboPoints = Math.min(4, comboPoints + 1);
-        battleLog.push(`⚔️ ${active.name} hit for ${dmg}!`);
       } else if (i.customId === 'combo') {
         const dmg = CombatService.calculateComboDamage(team);
         enemy.hp -= dmg;
+        enemy.shield = 0; // Combo breaks shield!
         comboPoints = 0;
         battleLog.push(`🔥 TEAM COMBO! Dealt ${dmg} MASSIVE dmg!`);
       }
 
       // Enemy Turn
       if (enemy.hp > 0) {
-        const aliveMembers = team.filter((c) => c.hp > 0);
-        const target = aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
-        const eDmg = CombatService.calculateAttackDamage(enemy.atk, target.def);
-        target.hp -= eDmg;
-        battleLog.push(`👾 ${enemy.name} hit ${target.name} for ${eDmg}!`);
+        const action = CombatService.getEnemyAction(enemy, team);
+        battleLog.push(action.log);
+
+        if (action.damage > 0) {
+          if (action.metadata?.aoe) {
+            team.forEach(member => {
+              if (member.hp > 0) member.hp -= Math.floor(action.damage * 0.6); // Reduced AOE damage
+            });
+          } else {
+            // Find target member
+            const target = team.find(c => c.name === action.metadata?.target);
+            if (target) target.hp -= action.damage;
+          }
+        }
       }
 
       turn++;
@@ -156,7 +182,7 @@ module.exports = {
 
     collector.on('end', async (c, r) => {
       const won = r === 'win';
-      const rewards = CombatService.calculateRewards(enemy.level, betAmount, won);
+      const rewards = CombatService.calculateRewards(enemy, betAmount, won);
 
       if (won) await database.addBalance(message.author.id, rewards.money);
       const expRes = await database.addExperience(message.author.id, rewards.exp);

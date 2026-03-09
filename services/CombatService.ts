@@ -38,6 +38,9 @@ interface Enemy {
   hp: number;
   atk: number;
   def: number;
+  class: 'TANK' | 'STRIKER' | 'SUPPORT' | 'BOSS';
+  shield: number;
+  rarity: string;
 }
 
 interface BattleRewards {
@@ -51,7 +54,7 @@ class CombatService {
    */
   public calculateCharStats(char: any, userData: any, bonuses: any = {}): CombatStats {
     const asc = char.ascension || 0;
-    const rarity = char.rarity || 3;
+    const rarity = parseInt(char.rarity) || 3;
     const userLevel = userData.level || 1;
 
     const hp = Math.floor(rarity * 50 + asc * 100 + userLevel * 10 + 200);
@@ -90,19 +93,51 @@ class CombatService {
   }
 
   /**
-   * Generate a random enemy scaled to the user's world level.
+   * Generate a sophisticated enemy scaled to the user's world level.
    */
   public generateEnemy(userLevel: number, worldLevel: number): Enemy {
-    const enemyLevel = Math.floor(Math.random() * (worldLevel * 10 - userLevel + 1)) + userLevel;
-    const enemies = [
-      { name: 'Hillichurl Warrior', emoji: '👹' },
-      { name: 'Ruin Guard', emoji: '🤖' },
-      { name: 'Voidranger', emoji: '👾' },
-      { name: 'Crownless', emoji: '👑' },
-    ];
+    const enemyLevel = Math.floor(Math.random() * (worldLevel * 10)) + worldLevel * 5;
+    const isBoss = Math.random() < 0.1 || (worldLevel > 1 && enemyLevel % 10 === 0);
+    
+    const classes: ('TANK' | 'STRIKER' | 'SUPPORT' | 'BOSS')[] = isBoss ? ['BOSS'] : ['TANK', 'STRIKER', 'SUPPORT'];
+    const enemyClass = classes[Math.floor(Math.random() * classes.length)];
 
-    const base = enemies[Math.floor(Math.random() * enemies.length)];
-    const hp = enemyLevel * 100 + 200;
+    const enemies = {
+      TANK: [
+        { name: 'Gilded Guardian', emoji: '🛡️' },
+        { name: 'Stone Shell Tortoise', emoji: '🐢' },
+        { name: 'Ruin Guard', emoji: '🤖' }
+      ],
+      STRIKER: [
+        { name: 'Shadow Stalker', emoji: '👤' },
+        { name: 'Crimson Wyvern', emoji: '🐲' },
+        { name: 'Voidranger: Eliminator', emoji: '👾' }
+      ],
+      SUPPORT: [
+        { name: 'Life-Bloom Fairy', emoji: '🧚' },
+        { name: 'Whirlpool Wisp', emoji: '🌀' },
+        { name: 'Mechanical Healer', emoji: '🩺' }
+      ],
+      BOSS: [
+        { name: 'Calamity Dragon', emoji: '🐉' },
+        { name: 'Crownless King', emoji: '👑' },
+        { name: 'Interstellar Colossus', emoji: '🪐' }
+      ]
+    };
+
+    const baseList = enemies[enemyClass];
+    const base = baseList[Math.floor(Math.random() * baseList.length)];
+    
+    let hpMod = 1.0, atkMod = 1.0, defMod = 1.0;
+
+    switch(enemyClass) {
+      case 'TANK': hpMod = 1.8; defMod = 1.5; atkMod = 0.7; break;
+      case 'STRIKER': hpMod = 0.8; defMod = 0.6; atkMod = 1.6; break;
+      case 'SUPPORT': hpMod = 1.2; defMod = 1.0; atkMod = 0.8; break;
+      case 'BOSS': hpMod = 3.5; defMod = 1.3; atkMod = 1.4; break;
+    }
+
+    const hp = Math.floor((enemyLevel * 120 + 300) * hpMod);
 
     return {
       name: base.name,
@@ -110,17 +145,55 @@ class CombatService {
       level: enemyLevel,
       maxHp: hp,
       hp: hp,
-      atk: enemyLevel * 15 + 40,
-      def: enemyLevel * 10 + 30,
+      atk: Math.floor((enemyLevel * 18 + 50) * atkMod),
+      def: Math.floor((enemyLevel * 12 + 40) * defMod),
+      class: enemyClass,
+      shield: 0,
+      rarity: isBoss ? 'LEGENDARY' : (enemyLevel > 50 ? 'EPIC' : 'RARE')
     };
+  }
+
+  /**
+   * Determine Enemy Action for a turn.
+   */
+  public getEnemyAction(enemy: Enemy, team: any[]): { type: 'ATTACK' | 'SKILL', damage: number, log: string, metadata?: any } {
+    const chance = Math.random();
+    
+    // 30% chance for a skill
+    if (chance < 0.3) {
+      if (enemy.class === 'TANK') {
+        const shieldVal = Math.floor(enemy.maxHp * 0.15);
+        enemy.shield += shieldVal;
+        return { type: 'SKILL', damage: 0, log: `🛡️ ${enemy.name} activated Stone Skin, gaining ${shieldVal} shield!` };
+      }
+      if (enemy.class === 'SUPPORT') {
+        const healVal = Math.floor(enemy.maxHp * 0.1);
+        enemy.hp = Math.min(enemy.maxHp, enemy.hp + healVal);
+        return { type: 'SKILL', damage: 0, log: `💚 ${enemy.name} used Rejuvenation, healing ${healVal} HP!` };
+      }
+      if (enemy.class === 'STRIKER') {
+        const dmg = this.calculateAttackDamage(enemy.atk * 1.5, team[0].def); 
+        return { type: 'SKILL', damage: dmg, log: `⚡ ${enemy.name} used Precision Strike! Dealt ${dmg} CRITICAL damage!`, metadata: { critical: true } };
+      }
+      if (enemy.class === 'BOSS') {
+        const dmg = this.calculateAttackDamage(enemy.atk * 0.8, team[0].def);
+        return { type: 'SKILL', damage: dmg, log: `💥 ${enemy.name} unleashed a Calamity Nova! AOE Damage dealt!`, metadata: { aoe: true } };
+      }
+    }
+
+    // Normal Attack
+    const aliveMembers = team.filter(c => c.hp > 0);
+    const target = aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
+    const dmg = this.calculateAttackDamage(enemy.atk, target.def);
+    return { type: 'ATTACK', damage: dmg, log: `👾 ${enemy.name} hit ${target.name} for ${dmg}!`, metadata: { target: target.name } };
   }
 
   /**
    * Calculate damage for a standard attack.
    */
   public calculateAttackDamage(attackerAtk: number, targetDef: number): number {
-    const variance = 0.8 + Math.random() * 0.4; // 80% to 120%
-    return Math.max(20, Math.floor(attackerAtk * variance - targetDef * 0.5));
+    const variance = 0.9 + Math.random() * 0.2; // 90% to 110%
+    return Math.max(30, Math.floor(attackerAtk * variance - targetDef * 0.4));
   }
 
   /**
@@ -134,12 +207,17 @@ class CombatService {
   /**
    * Calculate battle rewards (Loot and XP).
    */
-  public calculateRewards(enemyLevel: number, betAmount: number, won: boolean): BattleRewards {
+  public calculateRewards(enemy: Enemy, betAmount: number, won: boolean): BattleRewards {
     if (!won) return { money: 0, exp: 10 };
 
+    let multiplier = 1.0;
+    if (enemy.class === 'BOSS') multiplier *= 3.0;
+    if (enemy.rarity === 'LEGENDARY') multiplier *= 2.0;
+    else if (enemy.rarity === 'EPIC') multiplier *= 1.5;
+
     return {
-      money: Math.floor(enemyLevel * 100 + 200 + betAmount * 2),
-      exp: Math.floor(enemyLevel * 15 + 30),
+      money: Math.floor((enemy.level * 150 + 300 + betAmount * 2) * multiplier),
+      exp: Math.floor((enemy.level * 20 + 50) * multiplier),
     };
   }
 }
