@@ -25,17 +25,14 @@ async function createPCBoxImage(boxName, boxPokemons) {
   const canvasHeight = headerHeight + padding + rows * cellSize;
 
   // Colors for a modern sleek PC Box style
-  const bgSvg = Buffer.from(`
-    <svg width="${canvasWidth}" height="${canvasHeight}">
+  const bgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
       <!-- Background -->
       <rect width="${canvasWidth}" height="${canvasHeight}" rx="15" ry="15" fill="#f0ebd8" />
       <rect x="10" y="10" width="${canvasWidth - 20}" height="${canvasHeight - 20}" rx="10" ry="10" fill="none" stroke="#77aaff" stroke-width="4" />
       
       <!-- Header -->
       <rect x="20" y="20" width="${canvasWidth - 40}" height="45" rx="5" ry="5" fill="#4fa4ff" />
-      <text x="${canvasWidth / 2}" y="50" font-family="sans-serif" font-size="24" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">
-        ${boxName}
-      </text>
+      <text x="${canvasWidth / 2}" y="50" font-family="sans-serif" font-size="24" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="2">${boxName}</text>
       
       <!-- Grid -->
       ${Array.from({ length: rows }).map((_, r) =>
@@ -43,8 +40,7 @@ async function createPCBoxImage(boxName, boxPokemons) {
       `<rect x="${padding + c * cellSize + 5}" y="${headerHeight + r * cellSize + 5}" width="${cellSize - 10}" height="${cellSize - 10}" rx="10" ry="10" fill="#ffffff" stroke="#c9e0ff" stroke-width="2"/>`
     ).join('')
   ).join('')}
-    </svg>
-  `);
+    </svg>`);
 
   const composites = [{ input: bgSvg, top: 0, left: 0 }];
 
@@ -76,12 +72,10 @@ async function createPCBoxImage(boxName, boxPokemons) {
 
       // Render count badge if they have > 1
       if (pkmn.count > 1) {
-        const badgeSvg = Buffer.from(`
-          <svg width="${cellSize - 10}" height="${cellSize - 10}">
+        const badgeSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cellSize - 10}" height="${cellSize - 10}">
              <rect x="${cellSize - 38}" y="${cellSize - 30}" width="26" height="18" rx="5" ry="5" fill="#e63946"/>
              <text x="${cellSize - 25}" y="${cellSize - 18}" font-family="sans-serif" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">x${pkmn.count}</text>
-          </svg>
-        `);
+          </svg>`);
         composites.push({ input: badgeSvg, top: y, left: x });
       }
 

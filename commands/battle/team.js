@@ -41,8 +41,7 @@ async function createTeamImage(userData, teamCharacters) {
     const composites = [];
 
     // 1. Sleek Background for the canvas (Text removed to prevent Fontconfig crashes)
-    const bgSvg = Buffer.from(`
-      <svg width="${canvasWidth}" height="${canvasHeight}">
+    const bgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
         <defs>
           <radialGradient id="grad1" cx="50%" cy="50%" r="70%" fx="50%" fy="50%">
             <stop offset="0%" stop-color="#2a2d3ab3" />
@@ -57,8 +56,7 @@ async function createTeamImage(userData, teamCharacters) {
         
         <path d="M 0 60 L 200 60 L 250 80 L ${canvasWidth - 250} 80 L ${canvasWidth - 200} 60 L ${canvasWidth} 60" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="2"/>
         <path d="M 230 80 L 280 100 L ${canvasWidth - 280} 100 L ${canvasWidth - 230} 80" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1"/>
-      </svg>
-    `);
+      </svg>`);
 
     composites.push({ input: bgSvg, top: 0, left: 0 });
 
@@ -86,9 +84,7 @@ async function createTeamImage(userData, teamCharacters) {
 
       let slotBuffer;
 
-      const cardMask = Buffer.from(`
-      <svg><rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="#fff" /></svg>
-    `);
+      const cardMask = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}"><rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="#fff" /></svg>`);
 
       if (item) {
         try {
@@ -177,8 +173,7 @@ async function createTeamImage(userData, teamCharacters) {
             background: { r: 0, g: 0, b: 0, alpha: 0 }
           });
 
-          const overlaySvg = Buffer.from(`
-          <svg width="${cardWidth}" height="${cardHeight}">
+          const overlaySvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}">
             <defs>
               <linearGradient id="fade" x1="0" y1="0.4" x2="0" y2="1">
                 <stop offset="0%" stop-color="#000" stop-opacity="0" />
@@ -203,13 +198,11 @@ async function createTeamImage(userData, teamCharacters) {
         </defs>
         <rect width="${cardWidth}" height="${cardHeight}" fill="url(#fade)" />
         
-        <!-- Sleek Role/Element Badge top left (Text removed) -->
         <polygon points="0,0 120,0 90,30 0,30" fill="url(#roleGrad)" />
         
         <!-- Frame border inside the mask -->
         <rect x="2" y="2" width="${cardWidth - 4}" height="${cardHeight - 4}" rx="22" ry="22" fill="none" stroke="url(#borderGrad)" stroke-width="4" stroke-opacity="0.8" />
-      </svg>
-    `);
+      </svg>`);
 
           slotBuffer = await sharp(cardBg)
             .composite([
@@ -230,7 +223,7 @@ async function createTeamImage(userData, teamCharacters) {
           try {
             slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#20222b' } })
               .composite([
-                { input: Buffer.from(`<svg width="${cardWidth}" height="${cardHeight}"><rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="none" stroke="#555" stroke-width="4"/></svg>`), blend: 'over' },
+                { input: Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}"><rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="none" stroke="#555" stroke-width="4"/></svg>`), blend: 'over' },
                 { input: cardMask, blend: 'dest-in' }
               ])
               .png()
@@ -244,16 +237,14 @@ async function createTeamImage(userData, teamCharacters) {
         slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: { r: 255, g: 255, b: 255, alpha: 0 } } })
           .composite([
             {
-              input: Buffer.from(`
-            <svg width="${cardWidth}" height="${cardHeight}">
+              input: Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}">
               <rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="#181a20" fill-opacity="0.5"/>
               <rect x="4" y="4" width="${cardWidth - 8}" height="${cardHeight - 8}" rx="20" ry="20" fill="none" stroke="#333745" stroke-width="4" stroke-dasharray="12 12"/>
               
               <!-- Crosshair graphic -->
               <path d="M ${cardWidth / 2 - 25} ${cardHeight / 2} L ${cardWidth / 2 + 25} ${cardHeight / 2} M ${cardWidth / 2} ${cardHeight / 2 - 25} L ${cardWidth / 2} ${cardHeight / 2 + 25}" stroke="#4f5469" stroke-width="6" stroke-linecap="round"/>
               <circle cx="${cardWidth / 2}" cy="${cardHeight / 2}" r="15" fill="none" stroke="#4f5469" stroke-width="4"/>
-            </svg>
-            `),
+            </svg>`),
               blend: 'over'
             }
           ])
