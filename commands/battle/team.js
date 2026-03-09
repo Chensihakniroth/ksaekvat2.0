@@ -118,23 +118,38 @@ async function createTeamImage(teamCharacters) {
       const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
       const imageBuffer = Buffer.from(response.data);
 
-      let cardImage = sharp(imageBuffer).resize(cardWidth, cardHeight, {
-        fit: useCover ? 'cover' : 'contain',
-        background: { r: 0, g: 0, b: 0, alpha: 0 },
-      });
-
-      if (useCover) {
-        processedCard = await cardImage
-          .flatten({ background: { r: 0, g: 0, b: 0 } })
-          .png()
+      // Mommy's special HSR zoom! (｡♥‿♥｡)
+      if (game === 'hsr') {
+        const zoomedSize = Math.floor(cardWidth * 1.3);
+        const icon = await sharp(imageBuffer)
+          .resize(zoomedSize, zoomedSize, { fit: 'inside' })
           .toBuffer();
-      } else {
+
         processedCard = await sharp({
           create: { width: cardWidth, height: cardHeight, channels: 4, background: '#1c1d21' },
         })
-          .composite([{ input: await cardImage.toBuffer() }])
+          .composite([{ input: icon, gravity: 'center' }])
           .png()
           .toBuffer();
+      } else {
+        let cardImage = sharp(imageBuffer).resize(cardWidth, cardHeight, {
+          fit: useCover ? 'cover' : 'contain',
+          background: { r: 0, g: 0, b: 0, alpha: 0 },
+        });
+
+        if (useCover) {
+          processedCard = await cardImage
+            .flatten({ background: { r: 0, g: 0, b: 0 } })
+            .png()
+            .toBuffer();
+        } else {
+          processedCard = await sharp({
+            create: { width: cardWidth, height: cardHeight, channels: 4, background: '#1c1d21' },
+          })
+            .composite([{ input: await cardImage.toBuffer() }])
+            .png()
+            .toBuffer();
+        }
       }
     } catch (error) {
       console.error(`Failed to load team image for ${item.name}: ${error.message}`);
