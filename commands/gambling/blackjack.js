@@ -150,7 +150,7 @@ module.exports = {
           }
         )
         .setFooter({
-          text: `Bet: ${betAmount.toLocaleString()} riel`,
+          text: `Bet: ${betAmount.toLocaleString()} <:coin:1480551418464305163>`,
           iconURL: message.author.displayAvatarURL(),
         });
 

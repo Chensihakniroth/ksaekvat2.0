@@ -52,7 +52,7 @@ module.exports = {
 
   // Economy Configuration
   economy: {
-    currency: 'riel',
+    currency: '<:coin:1480551418464305163>',
     currencySymbol: '💲',
     maxBet: 250000,
     dailyReward: {

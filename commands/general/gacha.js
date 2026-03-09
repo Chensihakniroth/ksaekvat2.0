@@ -7,7 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 const sharp = require('sharp');
-const { getItemEmoji, getRarityEmoji } = require('../../utils/images.js');
+const { getItemEmoji, getRarityEmoji, getElementEmoji } = require('../../utils/images.js');
 
 const PULL_COST = 10000;
 const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
@@ -44,7 +44,7 @@ async function createGachaResultImage(results) {
       const imageBuffer = Buffer.from(response.data);
       const game = item.game?.toLowerCase();
       const useCover = ['genshin', 'wuwa', 'hsr'].includes(game);
-      
+
       // Mommy's rarity colors! (｡♥‿♥｡)
       const rarityColors = {
         5: '#FFB13F', // Gold
@@ -124,7 +124,7 @@ async function createGachaResultImage(results) {
 module.exports = {
   name: 'gacha',
   aliases: ['pull', 'wish', 'roll'],
-  description: 'Daily free 10-pull, or buy more for 10k riel! ✨',
+  description: 'Daily free 10-pull, or buy more for 10k <:coin:1480551418464305163>! ✨',
   usage: 'gacha <gs/hsr/wuwa/zzz>',
   cooldown: 5000,
   async execute(message, args, client) {
@@ -171,7 +171,7 @@ module.exports = {
     if (!isFree) {
       if (!(await database.hasBalance(message.author.id, PULL_COST))) {
         return message.reply(
-          `💸 Oh no, sweetie! Your free pull is already used, and you need **${EconomyService.format(PULL_COST)}** riel to wish again. (｡•́︿•̀｡)`
+          `💸 Oh no, sweetie! Your free pull is already used, and you need **${EconomyService.format(PULL_COST)}** <:coin:1480551418464305163> to wish again. (｡•́︿•̀｡)`
         );
       }
       await database.removeBalance(message.author.id, PULL_COST);
@@ -214,15 +214,16 @@ module.exports = {
       .map((item) => {
         const rarityEmoji = getRarityEmoji(item.rarity, client);
         const charEmoji = getItemEmoji(item, client);
+        const elementEmoji = getElementEmoji(item, client);
         const name = item.name || 'Unknown Item';
-        return `${charEmoji} **${name}** ${rarityEmoji}`;
+        return `${elementEmoji} ${charEmoji} **${name}** ${rarityEmoji}`;
       })
       .join('\n');
 
     let footerParts = [];
     if (usedExtra) footerParts.push(`Used Promo Pull (${userData.extraPulls} left)`);
     else if (isFree) footerParts.push('Daily Free Pull used!');
-    else footerParts.push(`Paid Pull (${EconomyService.format(PULL_COST)} riel)`);
+    else footerParts.push(`Paid Pull (${EconomyService.format(PULL_COST)} <:coin:1480551418464305163>)`);
     footerParts.push(`Pity: ${userData.pity}/90`);
 
     const finalEmbed = new EmbedBuilder()

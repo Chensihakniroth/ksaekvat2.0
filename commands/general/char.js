@@ -7,7 +7,7 @@ const {
 } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
-const { getCharacterIcon, getItemEmoji, getRarityEmoji } = require('../../utils/images.js');
+const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji } = require('../../utils/images.js');
 
 module.exports = {
   name: 'char',
@@ -62,7 +62,8 @@ module.exports = {
         .map((c) => {
           const charEmoji = getItemEmoji(c, client);
           const rarityEmoji = getRarityEmoji(c.rarity, client);
-          return `${rarityEmoji} ${charEmoji} **${c.name}** x${c.count}`;
+          const elementEmoji = getElementEmoji(c, client);
+          return `${rarityEmoji} ${elementEmoji} ${charEmoji} **${c.name}** x${c.count}`;
         })
         .join('\n');
 
@@ -140,7 +141,7 @@ module.exports = {
     });
 
     collector.on('end', () => {
-      msg.edit({ components: [] }).catch(() => {});
+      msg.edit({ components: [] }).catch(() => { });
     });
   },
 };

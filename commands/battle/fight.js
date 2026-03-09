@@ -30,7 +30,7 @@ module.exports = {
       const cost = nextWorld * 50000;
       if (!(await database.hasBalance(message.author.id, cost))) {
         return message.reply(
-          `Oh darling, you don't have enough coins... (｡•́︿•̀｡) To reach World Level ${nextWorld}, you need **${EconomyService.format(cost)}** riel. (っ˘ω˘ς)`
+          `Oh darling, you don't have enough coins... (｡•́︿•̀｡) To reach World Level ${nextWorld}, you need **${EconomyService.format(cost)}** <:coin:1480551418464305163>. (っ˘ω˘ς)`
         );
       }
       await database.removeBalance(message.author.id, cost);
@@ -194,7 +194,7 @@ module.exports = {
         .addFields(
           {
             name: '💰 Treasures Found',
-            value: `+${EconomyService.format(rewards.money)} riel`,
+            value: `+${EconomyService.format(rewards.money)} <:coin:1480551418464305163>`,
             inline: true,
           },
           { name: '⭐ Lessons Learned', value: `+${rewards.exp} XP`, inline: true }

@@ -55,7 +55,7 @@ module.exports = {
           name: '🌟 Features Bek Bek',
           value: [
             "• leng l'beng (coinflip, slots, dice)",
-            '• Luy Riel (Economy)',
+            '• Luy <:coin:1480551418464305163> (Economy)',
             '• der banh sat (Hunting)',
             '• soun sat (Collection)',
             '• Expressions GIF bek bek (Fun)',

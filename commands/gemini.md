@@ -39,7 +39,7 @@ Root:
 ## 💎 CORE SYSTEMS
 
 1. Economy System
-   - Currency: Riel
+   - Currency: <:coin:1480551418464305163>
    - XP & leveling system
    - Daily, weekly, work, pay
    - Leaderboards

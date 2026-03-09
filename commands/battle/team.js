@@ -8,7 +8,7 @@ const {
 } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
-const { getCharacterIcon, getItemEmoji, getRarityEmoji } = require('../../utils/images.js');
+const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji } = require('../../utils/images.js');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
@@ -279,12 +279,13 @@ module.exports = {
       for (let i = 0; i < 4; i++) {
         const charName = userData.team[i];
         const charData = charName ? characters.find((c) => c.name === charName) : null;
-        
+
         let slotValue = '*Empty Slot*';
         if (charData) {
           const rarityEmoji = getRarityEmoji(charData.rarity, client);
           const charEmoji = getItemEmoji(charData, client);
-          slotValue = `${rarityEmoji} ${charEmoji} **${charName}**`;
+          const elementEmoji = getElementEmoji(charData, client);
+          slotValue = `${rarityEmoji} ${elementEmoji} ${charEmoji} **${charName}**`;
         }
 
         embed.addFields({
@@ -372,7 +373,7 @@ module.exports = {
       });
 
       collector.on('end', () => {
-        msg.edit({ components: [] }).catch(() => {});
+        msg.edit({ components: [] }).catch(() => { });
       });
     }
   },

@@ -24,7 +24,7 @@ module.exports = {
     codes.forEach((data) => {
       const code = data.code;
       const remaining = data.maxUses - data.usedBy.length;
-      const rewardType = data.type === 'riel' ? 'riel (｡♥‿♥｡)' : '10-pulls ヽ(>∀<☆)ノ';
+      const rewardType = data.type === 'riel' ? '<:coin:1480551418464305163> (｡♥‿♥｡)' : '10-pulls ヽ(>∀<☆)ノ';
       const rewardAmount = data.type === 'riel' ? data.amount.toLocaleString() : data.amount;
 
       description += `**\`${code}\`**\n`;

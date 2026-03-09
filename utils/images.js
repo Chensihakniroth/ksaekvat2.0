@@ -141,7 +141,7 @@ function getItemEmoji(item, client) {
 
   // Derive emoji name: replace one or more non-alphanumeric with a single underscore
   const emojiName = item.name.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
-  
+
   // 1. Search in Application Emojis
   let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);
 
@@ -149,7 +149,7 @@ function getItemEmoji(item, client) {
   if (!customEmoji) {
     customEmoji = client.emojis.cache.find(e => e.name === emojiName);
   }
-  
+
   if (customEmoji) {
     return customEmoji.toString();
   }
@@ -160,7 +160,7 @@ function getItemEmoji(item, client) {
   if (game === 'hsr') return '🚂';
   if (game === 'wuwa') return '🌊';
   if (game === 'zzz') return '🎮';
-  
+
   return '✨';
 }
 
@@ -168,7 +168,7 @@ function getRarityEmoji(rarity, client) {
   if (!client) return rarity === 5 ? '🟡' : rarity === 4 ? '🟣' : '🔵';
 
   const emojiName = `${rarity}_star`;
-  
+
   // 1. Search in Application Emojis
   let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);
 
@@ -185,9 +185,29 @@ function getRarityEmoji(rarity, client) {
   return rarity === 5 ? '🟡' : rarity === 4 ? '🟣' : '🔵';
 }
 
+function getElementEmoji(item, client) {
+  if (!item || !client || !item.element) return '';
+
+  const elementName = item.element.trim().replace(/[^a-zA-Z0-9]+/g, '');
+
+  let elementEmoji = client.application?.emojis.cache.find(e => e.name === elementName);
+  if (!elementEmoji) {
+    elementEmoji = client.emojis.cache.find(e => e.name === elementName);
+  }
+
+  if (elementEmoji) {
+    return elementEmoji.toString();
+  }
+
+  if (elementName === 'Ether') return '🔮';
+
+  return '';
+}
+
 module.exports = {
   getCharacterImage,
   getCharacterIcon,
   getItemEmoji,
   getRarityEmoji,
+  getElementEmoji,
 };

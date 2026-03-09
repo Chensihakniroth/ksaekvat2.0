@@ -6,7 +6,7 @@ const config = require('../../config/config.js');
 module.exports = {
   name: 'pay',
   aliases: ['give', 'send'],
-  description: 'Send riel to another user',
+  description: 'Send <:coin:1480551418464305163> to another user',
   usage: 'pay <@user> <amount>',
   async execute(message, args, client) {
     // Check for target user

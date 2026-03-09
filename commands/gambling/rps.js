@@ -161,10 +161,10 @@ module.exports = {
           name: 'Loot',
           value:
             winMultiplier > 1
-              ? `+${betAmount.toLocaleString()} riel`
+              ? `+${betAmount.toLocaleString()} <:coin:1480551418464305163>`
               : winMultiplier === 1
-                ? '0 riel (Refunded)'
-                : `-${betAmount.toLocaleString()} riel`,
+                ? '0 <:coin:1480551418464305163> (Refunded)'
+                : `-${betAmount.toLocaleString()} <:coin:1480551418464305163>`,
         });
 
       await i.update({ embeds: [finalEmbed], components: [] });

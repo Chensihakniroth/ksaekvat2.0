@@ -26,7 +26,7 @@ module.exports = {
 
     if (reward.type === 'riel') {
       await database.addBalance(message.author.id, reward.amount);
-      rewardText = `**${reward.amount.toLocaleString()}** riel! 💸`;
+      rewardText = `**${reward.amount.toLocaleString()}** <:coin:1480551418464305163>! 💸`;
     } else if (reward.type === 'pulls') {
       userData.extraPulls = (userData.extraPulls || 0) + reward.amount;
       await database.saveUser(userData);
