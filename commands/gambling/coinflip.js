@@ -2,6 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
+const EconomyService = require('../../services/EconomyService.js');
 
 module.exports = {
   name: 'coinflip',
@@ -24,58 +25,21 @@ module.exports = {
       });
     }
 
-    let betAmount;
-    let isAllBet = false;
     const userData = await database.getUser(message.author.id, message.author.username);
-
-    // Check if user wants to bet "all"
-    if (args[0].toLowerCase() === 'all') {
-      isAllBet = true;
-      const { maxBet } = config.gambling.coinflip;
-      betAmount = Math.min(userData.balance, maxBet);
-
-      if (betAmount <= 0) {
-        return message.reply({
-          embeds: [
-            {
-              color: colors.error,
-              title: '💸 No funds found!',
-              description: `You don't have any money to play with Mommy right now. (◕‿◕✿)`,
-            },
-          ],
-        });
-      }
-    } else {
-      betAmount = parseInt(args[0]);
-      if (isNaN(betAmount) || betAmount <= 0) {
-        return message.reply({
-          embeds: [
-            {
-              color: colors.error,
-              title: '❌ Invalid amount',
-              description: 'Please use a proper number, darling. (｡•́︿•̀｡)',
-            },
-          ],
-        });
-      }
-    }
-
     const { minBet, maxBet } = config.gambling.coinflip;
-    if (betAmount < minBet) {
-      return message.reply({
-        embeds: [
-          {
-            color: colors.warning,
-            title: '💸 Bet too low',
-            description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)`,
-            timestamp: new Date(),
-          },
-        ],
-      });
+    const betAmount = EconomyService.parseBet(args[0], userData.balance, minBet, maxBet);
+
+    let isAllBet = args[0]?.toLowerCase() === 'all';
+
+    if (betAmount <= 0) {
+      if (args[0]?.toLowerCase() === 'all' && userData.balance <= 0) {
+        return message.reply({ embeds: [{ color: colors.error, title: '💸 No funds found!', description: `You don't have any money to play right now, sweetie. (◕‿◕✿)`}] });
+      }
+      return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid amount', description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)'}] });
     }
 
-    if (isAllBet && betAmount > maxBet) {
-      betAmount = maxBet;
+    if (betAmount < minBet) {
+      return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet too low', description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)`}] });
     }
 
     if (!(await database.hasBalance(message.author.id, betAmount))) {

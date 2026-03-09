@@ -5,8 +5,9 @@ const colors = require('../../utils/colors.js');
 module.exports = {
   name: 'help',
   aliases: ['hp', 'commands'],
-  description: 'Shows all available commands or detailed info about a specific command',
+  description: "Mommy's guide to all the fun things we can do together! (◕‿◕✿)",
   usage: 'help [command]',
+  category: 'general',
   execute(message, args, client) {
     const prefix = (config.prefix && config.prefix[0]) || 'K';
 
@@ -14,18 +15,20 @@ module.exports = {
       // Get all unique commands (filter out aliases)
       const commands = [...new Set(client.commands.values())];
 
-      // Category Mapping
+      // Category Mapping with Mommy flavor
       const categoryNames = {
-        admin: '🔨 Admin Only',
-        animals: '🦊 Animals',
-        battle: '⚔️ Battle',
-        economy: '💰 Economy',
+        admin: "🔨 Mommy's Tools (Admin)",
+        animals: '🦊 Our Little Pets (Animals)',
+        battle: '⚔️ Protect Mommy (Battle)',
+        economy: '💰 Your Allowance (Economy)',
         expressions: '😄 Expressions',
-        gambling: '🎰 Gambling',
-        general: '📁 General',
-        meme: '🎭 Meme',
-        profile: '👤 Profile',
+        gambling: "🎰 Let's Play (Gambling)",
+        general: '📁 General Fun',
+        meme: '🎭 Silliness (Meme)',
+        profile: '👤 Your Info (Profile)',
         slash: '⚡ Slash Commands',
+        nsfw: '🔞 Grown-up Stuff (NSFW)',
+        special: '✨ Special Expressions'
       };
 
       // Organize commands by category
@@ -34,26 +37,15 @@ module.exports = {
       commands.forEach((cmd) => {
         let category = cmd.category || 'general';
 
-        // Special case: NSFW commands in expressions
-        if (
-          category === 'expressions' &&
-          cmd.description &&
-          cmd.description.toLowerCase().includes('nsfw')
-        ) {
+        if (category === 'expressions' && cmd.description && cmd.description.toLowerCase().includes('nsfw')) {
           category = 'nsfw';
         }
 
-        // Special case: Special expressions
-        if (
-          category === 'expressions' &&
-          (cmd.name === 'amongustwerk' || cmd.name === 'beksloy' || cmd.name === 'ksaekvat')
-        ) {
+        if (category === 'expressions' && ['amongustwerk', 'beksloy', 'ksaekvat'].includes(cmd.name)) {
           category = 'special';
         }
 
-        if (!categories[category]) {
-          categories[category] = [];
-        }
+        if (!categories[category]) categories[category] = [];
         categories[category].push(cmd);
       });
 
@@ -80,17 +72,12 @@ module.exports = {
         'admin',
         'slash',
       ];
-      const prettyCategoryNames = {
-        ...categoryNames,
-        nsfw: '🔞 NSFW',
-        special: '✨ Special Expressions',
-      };
 
       const embed = new EmbedBuilder()
-        .setColor(colors.primary || 0x7289da)
-        .setTitle(`🎮 Ah pov ${config.botInfo.name} Commands (Bek Edition)`)
+        .setColor(colors.primary || '#7289da')
+        .setTitle(`(｡♥‿♥｡) Mommy's Little Helper ~ ${config.botInfo.name}`)
         .setDescription(
-          `hg hov vosh! use \`${prefix}help [command]\` mer detailed info.\n\n**Main Prefix:** \`${prefix.toUpperCase()}\` or \`${prefix.toLowerCase()}\``
+          `Welcome sweetie! Here is everything we can do together. (ﾉ´ヮ\`)ﾉ*:･ﾟ✧\n\nIf you want Mommy to explain a specific command, just type \`${prefix}help [command]\`! (◕‿◕✿)`
         )
         .setThumbnail(client.user.displayAvatarURL());
 
@@ -99,11 +86,11 @@ module.exports = {
         if (categories[cat] && categories[cat].length > 0) {
           const commandList = categories[cat]
             .sort((a, b) => a.name.localeCompare(b.name))
-            .map((cmd) => `\`${cmd.name}\``)
+            .map((cmd) => \`\\\`\${cmd.name}\\\`\`)
             .join(', ');
 
           embed.addFields({
-            name: prettyCategoryNames[cat] || `📦 ${cat.charAt(0).toUpperCase() + cat.slice(1)}`,
+            name: categoryNames[cat] || \`📦 \${cat.charAt(0).toUpperCase() + cat.slice(1)}\`,
             value: commandList,
             inline: false,
           });
@@ -113,61 +100,65 @@ module.exports = {
       // Add Short Prefixes field
       if (config.shortPrefixes) {
         const shortPrefixList = Object.entries(config.shortPrefixes)
-          .map(([short, full]) => `\`${short}\` → \`${full}\``)
+          .map(([short, full]) => \`\\\`\${short}\\\` → \\\`\${full}\\\`\`)
           .join(' | ');
 
         embed.addFields({
-          name: '⌨️ Short Prefixes',
+          name: "⌨️ Mommy's Shortcuts",
           value: shortPrefixList,
           inline: false,
         });
       }
+
+      embed.setFooter({ text: 'Mommy is always here for you, darling ~ (っ˘ω˘ς)' });
 
       return message.reply({ embeds: [embed] });
     }
 
     // Detailed info for a specific command
     const search = args[0].toLowerCase();
-    const command = client.commands.get(search);
+    const command = client.commands.get(search) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(search));
 
     if (!command) {
       return message.reply({
         embeds: [
           new EmbedBuilder()
-            .setColor(colors.error || 0xf04747)
-            .setTitle('❌ Command Not Found')
+            .setColor(colors.error || '#f04747')
+            .setTitle('❌ Oh no, darling...')
             .setDescription(
-              `Command \`${search}\` not found. Use \`${prefix}help\` to see all commands.`
+              `Mommy couldn't find the \\\`\${search}\\\` command. (｡•́︿•̀｡)\nUse \\\`\${prefix}help\\\` to see everything Mommy can do!`
             ),
         ],
-      });
+        });
     }
 
     const embed = new EmbedBuilder()
-      .setColor(colors.primary || 0x7289da)
-      .setTitle(`📖 Command: ${command.name}`)
-      .setDescription(command.description || 'No description available.')
+      .setColor(colors.primary || '#7289da')
+      .setTitle(`📖 Let Mommy explain: \${command.name}`)
+      .setDescription(command.description || "Mommy hasn't written a description for this yet! (っ˘ω˘ς)")
       .addFields({
-        name: 'Usage',
-        value: `\`${prefix}${command.usage || command.name}\``,
+        name: 'How to play',
+        value: \`\\\`\${prefix}\${command.usage || command.name}\\\`\`,
         inline: true,
       });
 
     if (command.aliases && command.aliases.length > 0) {
       embed.addFields({
-        name: 'Aliases',
-        value: command.aliases.map((a) => `\`${a}\``).join(', '),
+        name: 'Nicknames',
+        value: command.aliases.map((a) => \`\\\`\${a}\\\`\`).join(', '),
         inline: true,
       });
     }
 
     if (command.cooldown) {
-      embed.addFields({ name: 'Cooldown', value: `${command.cooldown / 1000}s`, inline: true });
+      embed.addFields({ name: 'Rest Time', value: \`\${command.cooldown / 1000}s\`, inline: true });
     }
 
     if (command.adminOnly) {
-      embed.addFields({ name: 'Permissions', value: '🛡️ Admin Only', inline: true });
+      embed.addFields({ name: 'Permissions', value: '🛡️ Just for Mommy (Admin)', inline: true });
     }
+
+    embed.setFooter({ text: "You're learning so fast, sweetie! ヽ(>∀<☆)ノ" });
 
     message.reply({ embeds: [embed] });
   },

@@ -7,8 +7,8 @@ const EconomyService = require('../../services/EconomyService');
 
 module.exports = {
   name: 'zoo',
-  aliases: ['collection', 'animals'],
-  description: 'View your animal collection with their rarity and values',
+  aliases: ['collection', 'animals', 'pokemon', 'pokedex'],
+  description: 'View your Pokémon collection with their rarity and values',
   usage: 'zoo [@user]',
   async execute(message, args, client) {
     let target = message.author;
@@ -31,10 +31,10 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(colors.primary)
-      .setTitle(`(◕‿◕✿) ${target.username}'s Cozy Sanctuary`)
+      .setTitle(`(◕‿◕✿) ${target.username}'s Pokédex`)
       .setThumbnail(target.displayAvatarURL())
       .setDescription(
-        `**Owner:** ${target.username}\n**Total Value, sweetie:** ${EconomyService.format(totalValue)} ${config.economy.currency}\n**Little Friends:** ${totalAnimals} animals`
+        `**Trainer:** ${target.username}\n**Total Value, sweetie:** ${EconomyService.format(totalValue)} ${config.economy.currency}\n**Pokémon Caught:** ${totalAnimals}`
       )
       .addFields({ name: '\u200b', value: '\u200b' });
 
@@ -66,7 +66,7 @@ module.exports = {
           .join('\n\n');
 
         embed.addFields(
-          { name: '✨ **Our Rarest Treasures**', value: rareList, inline: false },
+          { name: '✨ **Our Rarest Pokémon**', value: rareList, inline: false },
           { name: '\u200b', value: '\u200b' }
         );
       }
@@ -80,7 +80,7 @@ module.exports = {
         })
         .join('\n');
 
-      embed.addFields({ name: '📊 **Sanctuary Report**', value: breakdown, inline: true });
+      embed.addFields({ name: '📊 **Pokédex Report**', value: breakdown, inline: true });
 
       // 3. Badges (Using Service)
       const badges = AnimalService.calculateBadges(
@@ -98,11 +98,11 @@ module.exports = {
       }
     } else {
       embed.setDescription(
-        'Oh no, darling! (｡•́︿•̀｡) Your sanctuary is empty... Why not use `Khunt` to find some little friends for us?'
+        'Oh no, darling! (｡•́︿•̀｡) Your Pokédex is empty... Why not use `Khunt` to catch some Pokémon for us?'
       );
     }
 
-    embed.setFooter({ text: `Little ones found: ${userData.stats?.totalAnimalsFound || 0}` });
+    embed.setFooter({ text: `Pokémon caught: ${userData.stats?.totalAnimalsFound || 0}` });
 
     await database.updateStats(message.author.id, 'command');
     message.reply({ embeds: [embed] });

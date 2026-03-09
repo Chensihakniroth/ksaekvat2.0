@@ -2,11 +2,12 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
+const AnimalService = require('../../services/AnimalService.js');
 
 module.exports = {
   name: 'hunt',
-  aliases: ['hunting'],
-  description: 'Hunt for animals. Chance for Loot Boxes!',
+  aliases: ['hunting', 'catch'],
+  description: 'Hunt for Pokémon. Chance for Loot Boxes!',
   usage: 'hunt',
   cooldown: 10000,
   async execute(message, args, client) {
@@ -20,7 +21,7 @@ module.exports = {
             .setColor(colors.warning)
             .setTitle('(っ˘ω˘ς) Oh no, little one...')
             .setDescription(
-              "You got a little distracted and didn't find any friends this time. Mommy's here to comfort you! (っ˘ω˘ς)"
+              "You got a little distracted and didn't catch any Pokémon this time. Mommy's here to comfort you! (っ˘ω˘ς)"
             ),
         ],
       });
@@ -53,7 +54,7 @@ module.exports = {
     const available = animalsData[selectedRarity];
     if (!available || Object.keys(available).length === 0) {
       return message.reply(
-        "(｡•́︿•̀｡) Mommy can't find any animals right now. Something is wrong... (っ˘ω˘ς)"
+        "(｡•́︿•̀｡) Mommy can't find any Pokémon right now. Something is wrong... (っ˘ω˘ς)"
       );
     }
     const animalKey =
@@ -78,11 +79,13 @@ module.exports = {
     }
     await database.saveUser(userData);
 
+    const imageUrl = await AnimalService.getPokemonImage(animalKey);
+
     const embed = new EmbedBuilder()
       .setColor(parseInt(rarities[selectedRarity].color.slice(1), 16))
-      .setTitle('ヽ(>∀<☆)ノ You found a friend!')
+      .setTitle('ヽ(>∀<☆)ノ You caught a Pokémon!')
       .setDescription(
-        `Look, sweetie! You found a cute **${animal.name}**! (｡♥‿♥｡)\n*${rarities[selectedRarity].name} Rarity*`
+        `Look, sweetie! You caught a cute **${animal.name}**! (｡♥‿♥｡)\n*${rarities[selectedRarity].name} Rarity*`
       )
       .addFields(
         { name: '(◕‿◕✿) Rank Exp', value: `+${expReward} XP`, inline: true },
@@ -92,6 +95,8 @@ module.exports = {
           inline: true,
         }
       );
+
+    if (imageUrl) embed.setImage(imageUrl);
 
     if (gotLootBox) {
       embed.addFields({

@@ -8,6 +8,7 @@ const {
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
+const EconomyService = require('../../services/EconomyService.js');
 
 module.exports = {
   name: 'blackjack',
@@ -29,39 +30,21 @@ module.exports = {
       });
     }
 
-    let betAmount;
     const userData = await database.getUser(message.author.id, message.author.username);
-
-    if (args[0].toLowerCase() === 'all') {
-      const { maxBet } = config.gambling.blackjack;
-      betAmount = Math.min(userData.balance, maxBet);
-    } else {
-      betAmount = parseInt(args[0]);
-    }
-
-    if (isNaN(betAmount) || betAmount <= 0) {
-      return message.reply({
-        embeds: [
-          {
-            color: colors.error,
-            title: '❌ Invalid amount',
-            description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)',
-          },
-        ],
-      });
-    }
-
     const { minBet, maxBet } = config.gambling.blackjack;
-    if (betAmount < minBet || (maxBet && betAmount > maxBet)) {
-      return message.reply({
-        embeds: [
-          {
-            color: colors.warning,
-            title: '💸 Bet out of range',
-            description: `Your bet must be between **${minBet.toLocaleString()}** and **${(maxBet || 'unlimited').toLocaleString()}** ${config.economy.currency}. (｡♥‿♥｡)`,
-          },
-        ],
-      });
+    const betAmount = EconomyService.parseBet(args[0], userData.balance, minBet, maxBet);
+
+    let isAllBet = args[0]?.toLowerCase() === 'all';
+
+    if (betAmount <= 0) {
+      if (args[0]?.toLowerCase() === 'all' && userData.balance <= 0) {
+        return message.reply({ embeds: [{ color: colors.error, title: '💸 No funds found!', description: `You don't have any money to play right now, sweetie. (◕‿◕✿)`}] });
+      }
+      return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid amount', description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)'}] });
+    }
+
+    if (betAmount < minBet) {
+      return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet too low', description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)`}] });
     }
 
     if (!(await database.hasBalance(message.author.id, betAmount))) {

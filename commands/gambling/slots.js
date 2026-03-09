@@ -2,6 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
+const EconomyService = require('../../services/EconomyService.js');
 
 module.exports = {
   name: 'slots',
@@ -23,49 +24,21 @@ module.exports = {
       });
     }
 
+    const userData = await database.getUser(message.author.id, message.author.username);
     const { minBet, maxBet } = config.gambling.slots;
+    const betAmount = EconomyService.parseBet(args[0], userData.balance, minBet, maxBet);
 
-    let betAmount;
-    if (args[0].toLowerCase() === 'all') {
-      const userData = await database.getUser(message.author.id, message.author.username);
-      betAmount = Math.min(userData.balance, maxBet);
+    let isAllBet = args[0]?.toLowerCase() === 'all';
 
-      if (betAmount <= 0) {
-        return message.reply({
-          embeds: [
-            {
-              color: colors.error,
-              title: '💸 No funds found!',
-              description: `You don't have any money to play right now, sweetie. (◕‿◕✿)`,
-            },
-          ],
-        });
+    if (betAmount <= 0) {
+      if (args[0]?.toLowerCase() === 'all' && userData.balance <= 0) {
+        return message.reply({ embeds: [{ color: colors.error, title: '💸 No funds found!', description: `You don't have any money to play right now, sweetie. (◕‿◕✿)`}] });
       }
-    } else {
-      betAmount = parseInt(args[0]);
-      if (isNaN(betAmount) || betAmount <= 0) {
-        return message.reply({
-          embeds: [
-            {
-              color: colors.error,
-              title: '❌ Invalid amount',
-              description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)',
-            },
-          ],
-        });
-      }
+      return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid amount', description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)'}] });
     }
 
     if (betAmount < minBet) {
-      return message.reply({
-        embeds: [
-          {
-            color: colors.warning,
-            title: '💸 Bet too low',
-            description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)`,
-          },
-        ],
-      });
+      return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet too low', description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)`}] });
     }
 
     if (!(await database.hasBalance(message.author.id, betAmount))) {

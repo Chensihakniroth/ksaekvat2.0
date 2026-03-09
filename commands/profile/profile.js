@@ -67,7 +67,7 @@ module.exports = {
             `**Level:** ${userData.level}`,
             `**XP:** ${userData.experience}/${userData.level * 100}`,
             `**Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`,
-            `**Animals:** ${totalAnimalsOwned} (${totalAnimalValue.toLocaleString()} ${config.economy.currency})`,
+            `**Pokémon:** ${totalAnimalsOwned} (${totalAnimalValue.toLocaleString()} ${config.economy.currency})`,
           ].join('\n'),
           inline: true,
         },

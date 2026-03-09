@@ -64,6 +64,48 @@ class AnimalService {
 
     return badges;
   }
+  private imageCache: Map<string, string> = new Map();
+
+  /**
+   * Fetch Pokémon images from PokeAPI.
+   */
+  public async getPokemonImage(key: string): Promise<string | null> {
+    if (this.imageCache.has(key)) return this.imageCache.get(key) || null;
+
+    try {
+      let lookup = key.toLowerCase();
+      let isShiny = false;
+
+      if (lookup === 'shinycharizard') {
+        lookup = 'charizard';
+        isShiny = true;
+      }
+      if (lookup === 'missingno') {
+        const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png'; // Pikachu back as placeholder or keep null
+        return null; // Better to return null if no good MissingNo
+      }
+
+      // We have to use require('axios') inline or top-level. 
+      // Top level is safer, but we can do it here for brevity if it's imported.
+      const axios = require('axios');
+      const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${lookup}`);
+      
+      let imageUrl = null;
+      if (isShiny) {
+        imageUrl = res.data?.sprites?.other?.['official-artwork']?.front_shiny || res.data?.sprites?.front_shiny || null;
+      } else {
+        imageUrl = res.data?.sprites?.other?.['official-artwork']?.front_default || res.data?.sprites?.front_default || null;
+      }
+
+      if (imageUrl) {
+        this.imageCache.set(key, imageUrl);
+      }
+      return imageUrl;
+    } catch (error: any) {
+      console.error(`PokeAPI error for ${key}:`, error.message);
+      return null;
+    }
+  }
 }
 
 const instance = new AnimalService();

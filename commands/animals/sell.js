@@ -2,12 +2,14 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
+const AnimalService = require('../../services/AnimalService.js');
+const EconomyService = require('../../services/EconomyService');
 
 module.exports = {
   name: 'sell',
-  aliases: ['sellpet', 'sellanimals'],
-  description: 'Sell animals from your collection',
-  usage: 'sell <animal_name> or sell all',
+  aliases: ['sellpokemon', 'release'],
+  description: 'Release Pokémon from your collection for coins!',
+  usage: 'sell <pokemon_name> or sell all',
   async execute(message, args, client) {
     if (args.length === 0) {
       return message.reply({
@@ -16,7 +18,7 @@ module.exports = {
             color: colors.error,
             title: '(◕‸ ◕✿) Sweetie, you forgot something!',
             description:
-              'Please tell Mommy what you want to sell! (｡•́︿•̀｡)\n\n**Usage:**\n`Ksell <animal_name>` - Sell a specific animal\n`Ksell all` - Sell all animals',
+              'Please tell Mommy which Pokémon you want to release! (｡•́︿•̀｡)\n\n**Usage:**\n`Ksell <pokemon_name>` - Release a specific Pokémon\n`Ksell all` - Release all Pokémon',
           },
         ],
       });
@@ -27,23 +29,23 @@ module.exports = {
     const userAnimals = userData.animals || {};
 
     // Check if user has any animals
-    let totalAnimals = 0;
+    let totalPokemon = 0;
     for (const rarity of Object.keys(userAnimals)) {
       const rarityAnimals = userAnimals[rarity] || {};
       for (const animal of Object.keys(rarityAnimals)) {
-        totalAnimals +=
+        totalPokemon +=
           (rarityAnimals instanceof Map ? rarityAnimals.get(animal) : rarityAnimals[animal]) || 0;
       }
     }
 
-    if (totalAnimals === 0) {
+    if (totalPokemon === 0) {
       return message.reply({
         embeds: [
           {
             color: colors.error,
-            title: '(｡•́︿•̀｡) No friends to sell...',
+            title: '(｡•́︿•̀｡) No Pokémon to release...',
             description:
-              "You don't have any animals to sell, darling! (っ˘ω˘ς) Try using `Khunt` to find some!",
+              "You don't have any Pokémon to release, darling! (っ˘ω˘ς) Try using `Khunt` to catch some!",
           },
         ],
       });
@@ -54,8 +56,8 @@ module.exports = {
     if (sellAll) {
       // Sell all animals
       let totalValue = 0;
-      let animalsSold = 0;
-      const soldAnimals = [];
+      let pokemonSold = 0;
+      const soldPokemon = [];
 
       for (const [rarity, animals] of Object.entries(userAnimals)) {
         if (animalsData[rarity]) {
@@ -66,22 +68,22 @@ module.exports = {
               const animal = animalsData[rarity][animalKey];
               const value = animal.value * count;
               totalValue += value;
-              animalsSold += count;
-              soldAnimals.push(
-                `${animal.emoji} **${animal.name}** x${count} - ${value.toLocaleString()} ${config.economy.currency}`
+              pokemonSold += count;
+              soldPokemon.push(
+                `${animal.emoji} **${animal.name}** x${count} - ${EconomyService.format(value)} ${config.economy.currency}`
               );
             }
           }
         }
       }
 
-      if (animalsSold === 0) {
+      if (pokemonSold === 0) {
         return message.reply({
           embeds: [
             {
               color: colors.error,
-              title: '(｡•́︿•̀｡) Nothing to sell, sweetie',
-              description: "You don't have any valid animals for Mommy to sell. (っ˘ω˘ς)",
+              title: '(｡•́︿•̀｡) Nothing to release, sweetie',
+              description: "You don't have any valid Pokémon for Mommy to release. (っ˘ω˘ς)",
             },
           ],
         });
@@ -94,20 +96,20 @@ module.exports = {
 
       const embed = new EmbedBuilder()
         .setColor(colors.success)
-        .setTitle('ヽ(>∀<☆)ノ All Sold!')
+        .setTitle('ヽ(>∀<☆)ノ All Released!')
         .setDescription(
-          `Mommy helped you sell **${animalsSold}** of your friends for **${totalValue.toLocaleString()}** ${config.economy.currency}! (｡♥‿♥｡)`
+          `Mommy helped you release **${pokemonSold}** Pokémon for **${EconomyService.format(totalValue)}** ${config.economy.currency}! (｡♥‿♥｡)`
         )
         .addFields({
-          name: '(◕‿◕✿) Animals Sold',
+          name: '(◕‿◕✿) Pokémon Released',
           value:
-            soldAnimals.slice(0, 10).join('\n') +
-            (soldAnimals.length > 10 ? `\n*...and ${soldAnimals.length - 10} more*` : ''),
+            soldPokemon.slice(0, 10).join('\n') +
+            (soldPokemon.length > 10 ? `\n*...and ${soldPokemon.length - 10} more*` : ''),
           inline: false,
         })
         .addFields({
           name: '(｡♥‿♥｡) New Balance',
-          value: `${userData.balance.toLocaleString()} ${config.economy.currency}`,
+          value: `${EconomyService.format(userData.balance)} ${config.economy.currency}`,
           inline: true,
         });
 
@@ -150,8 +152,8 @@ module.exports = {
           embeds: [
             {
               color: colors.error,
-              title: '(｡•́︿•̀｡) Animal Not Found',
-              description: `You don't have an animal named "${args.join(' ')}" for Mommy to sell. (っ˘ω˘ς)\n\nUse \`Kzoo\` to see your friends!`,
+              title: '(｡•́︿•̀｡) Pokémon Not Found',
+              description: `You don't have a Pokémon named "${args.join(' ')}" for Mommy to release. (っ˘ω˘ς)\n\nUse \`Kzoo\` to check your Pokédex!`,
             },
           ],
         });
@@ -182,23 +184,27 @@ module.exports = {
       userData.balance += sellValue;
       await database.saveUser(userData);
 
+      const imageUrl = await AnimalService.getPokemonImage(foundKey);
       const rarityInfo = config.hunting.rarities[foundRarity];
+
       const embed = new EmbedBuilder()
-        .setColor(rarityInfo.color)
-        .setTitle('ヽ(>∀<☆)ノ Sold!')
+        .setColor(parseInt(rarityInfo.color.slice(1), 16))
+        .setTitle('ヽ(>∀<☆)ノ Released!')
         .setDescription(
-          `Mommy helped you sell ${foundAnimal.emoji} **${foundAnimal.name}** for **${sellValue.toLocaleString()}** ${config.economy.currency}! (｡♥‿♥｡)`
+          `Mommy helped you release your ${foundAnimal.emoji} **${foundAnimal.name}** for **${EconomyService.format(sellValue)}** ${config.economy.currency}! (｡♥‿♥｡)`
         )
         .addFields({
-          name: '(◕‿◕✿) Sale Details',
-          value: `**Animal:** ${foundAnimal.emoji} ${foundAnimal.name}\n**Rarity:** ${rarityInfo.name}\n**Price:** ${sellValue.toLocaleString()} ${config.economy.currency}\n**Remaining:** ${currentCount - 1}`,
+          name: '(◕‿◕✿) Release Details',
+          value: `**Pokémon:** ${foundAnimal.emoji} ${foundAnimal.name}\n**Rarity:** ${rarityInfo.name}\n**Credit:** ${EconomyService.format(sellValue)} ${config.economy.currency}\n**Remaining:** ${currentCount - 1}`,
           inline: true,
         })
         .addFields({
           name: '(｡♥‿♥｡) New Balance',
-          value: `${userData.balance.toLocaleString()} ${config.economy.currency}`,
+          value: `${EconomyService.format(userData.balance)} ${config.economy.currency}`,
           inline: true,
         });
+
+      if (imageUrl) embed.setThumbnail(imageUrl);
 
       // Update command usage statistics
       await database.updateStats(message.author.id, 'command');
