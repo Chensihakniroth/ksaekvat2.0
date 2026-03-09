@@ -58,25 +58,11 @@ async function createTeamImage(userData, teamCharacters) {
   try {
     const composites = [];
 
-    // 1. Sleek Background for the canvas (Text removed to prevent Fontconfig crashes)
-    const bgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
-        <defs>
-          <radialGradient id="grad1" cx="50%" cy="50%" r="70%" fx="50%" fy="50%">
-            <stop offset="0%" stop-color="#2a2d3ab3" />
-            <stop offset="100%" stop-color="#121318" />
-          </radialGradient>
-        </defs>
-        <rect x="0" y="0" width="${canvasWidth}" height="${canvasHeight}" fill="url(#grad1)" rx="30" ry="30"/>
-        <pattern id="pattern-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-          <rect width="40" height="40" fill="none" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
-        </pattern>
-        <rect width="${canvasWidth}" height="${canvasHeight}" fill="url(#pattern-grid)" rx="30" ry="30" />
-        
-        <path d="M 0 60 L 200 60 L 250 80 L ${canvasWidth - 250} 80 L ${canvasWidth - 200} 60 L ${canvasWidth} 60" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="2"/>
-        <path d="M 230 80 L 280 100 L ${canvasWidth - 280} 100 L ${canvasWidth - 230} 80" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1"/>
-      </svg>`);
+    const bgBuffer = await sharp({
+      create: { width: canvasWidth, height: canvasHeight, channels: 4, background: '#121318' }
+    }).toBuffer();
 
-    composites.push({ input: bgSvg, top: 0, left: 0 });
+    composites.push({ input: bgBuffer, top: 0, left: 0 });
 
     const rarityColors = {
       5: '#FFD700', // Gold
@@ -101,8 +87,6 @@ async function createTeamImage(userData, teamCharacters) {
       const item = charName && teamCharacters ? teamCharacters.find(c => c.name === charName) : null;
 
       let slotBuffer;
-
-      const cardMask = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}"><rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="#fff" /></svg>`);
 
       if (item) {
         try {
@@ -244,48 +228,16 @@ async function createTeamImage(userData, teamCharacters) {
             background: { r: 0, g: 0, b: 0, alpha: 0 }
           });
 
-          const overlaySvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}">
-            <defs>
-              <linearGradient id="fade" x1="0" y1="0.4" x2="0" y2="1">
-                <stop offset="0%" stop-color="#000" stop-opacity="0" />
-                <stop offset="60%" stop-color="#000" stop-opacity="0.85" />
-                <stop offset="100%" stop-color="#000" stop-opacity="1" />
-              </linearGradient>
-              <linearGradient id="borderGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="${rGrad[0]}" />
-                <stop offset="100%" stop-color="${rGrad[1]}" />
-              </linearGradient>
-              <linearGradient id="roleGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="${rGrad[1]}" stop-opacity="0.8" />
-                <stop offset="100%" stop-color="#000" stop-opacity="0" />
-              </linearGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-        <rect width="${cardWidth}" height="${cardHeight}" fill="url(#fade)" />
-        
-        <polygon points="0,0 120,0 90,30 0,30" fill="url(#roleGrad)" />
-        
-        <!-- Frame border inside the mask -->
-        <rect x="2" y="2" width="${cardWidth - 4}" height="${cardHeight - 4}" rx="22" ry="22" fill="none" stroke="url(#borderGrad)" stroke-width="4" stroke-opacity="0.8" />
-      </svg>`);
+          // Simple gradient overlay alternative using solid background compositing
+          const gradientBg = await sharp({
+            create: { width: cardWidth, height: Math.floor(cardHeight / 3), channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0.7 } }
+          }).toBuffer();
 
           slotBuffer = await sharp(cardBg)
             .composite([
               { input: await charLayer.toBuffer(), blend: 'over' },
-              { input: overlaySvg, blend: 'over' }
+              { input: gradientBg, top: cardHeight - Math.floor(cardHeight / 3), left: 0, blend: 'over' }
             ])
-            .png()
-            .toBuffer();
-
-          // Mask the final card to give rounded corners
-          slotBuffer = await sharp(slotBuffer)
-            .composite([{ input: cardMask, blend: 'dest-in' }])
             .png()
             .toBuffer();
 
@@ -293,10 +245,6 @@ async function createTeamImage(userData, teamCharacters) {
           console.error(`Error generating card for ${item?.name || 'Unknown'}:`, err.message);
           try {
             slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#20222b' } })
-              .composite([
-                { input: Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}"><rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="none" stroke="#555" stroke-width="4"/></svg>`), blend: 'over' },
-                { input: cardMask, blend: 'dest-in' }
-              ])
               .png()
               .toBuffer();
           } catch (fallbackErr) {
@@ -305,20 +253,7 @@ async function createTeamImage(userData, teamCharacters) {
         }
       } else {
         // Empty Slot
-        slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: { r: 255, g: 255, b: 255, alpha: 0 } } })
-          .composite([
-            {
-              input: Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}">
-              <rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="#181a20" fill-opacity="0.5"/>
-              <rect x="4" y="4" width="${cardWidth - 8}" height="${cardHeight - 8}" rx="20" ry="20" fill="none" stroke="#333745" stroke-width="4" stroke-dasharray="12 12"/>
-              
-              <!-- Crosshair graphic -->
-              <path d="M ${cardWidth / 2 - 25} ${cardHeight / 2} L ${cardWidth / 2 + 25} ${cardHeight / 2} M ${cardWidth / 2} ${cardHeight / 2 - 25} L ${cardWidth / 2} ${cardHeight / 2 + 25}" stroke="#4f5469" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="${cardWidth / 2}" cy="${cardHeight / 2}" r="15" fill="none" stroke="#4f5469" stroke-width="4"/>
-            </svg>`),
-              blend: 'over'
-            }
-          ])
+        slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' } })
           .png()
           .toBuffer();
       }
