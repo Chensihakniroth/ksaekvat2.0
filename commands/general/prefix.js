@@ -22,19 +22,21 @@ module.exports = {
         const userData = await database.getUser(userId, message.author.username);
 
         const currentMain = userData.customPrefix || config.prefix[1]; // default 'K'
-        const currentSub = userData.customSubPrefix || '(uses global shortcuts)';
 
         // ── Step 1: Ask WHICH prefix to change ──────────────────────────────────
         const stepEmbed = new EmbedBuilder()
             .setColor(colors.primary)
             .setTitle(`(◕‿◕✿) Your Personal Prefix Settings`)
             .setDescription([
-                `Mommy can set a custom prefix just for you! Here are your current settings, sweetie~`,
+                `Mommy can set a **custom main prefix** just for you, sweetie~`,
                 ``,
-                `**Main Prefix:** \`${currentMain}\``,
-                `**Sub prefix:** \`${currentSub}\``,
+                `📌 **Your current prefix:** \`${currentMain}\``,
                 ``,
-                `Which one would you like to change? (｡♥‿♥｡)`,
+                `**What is the main prefix?**`,
+                `It's the letter/symbol you type before every command!`,
+                `Example: \`${currentMain}balance\` · \`${currentMain}help\` · \`${currentMain}gacha\``,
+                ``,
+                `What would you like to do? (｡♥‿♥｡)`,
             ].join('\n'))
             .setThumbnail(message.author.displayAvatarURL())
             .setFooter({ text: 'This only affects YOU, darling! Other users keep their own prefixes. (っ˘ω˘ς)' });
@@ -42,15 +44,11 @@ module.exports = {
         const row = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setCustomId('prefix_change_main')
-                .setLabel('🔧 Change Main Prefix')
+                .setLabel('🔧 Change My Prefix')
                 .setStyle(ButtonStyle.Primary),
             new ButtonBuilder()
-                .setCustomId('prefix_change_sub')
-                .setLabel('⚡ Change Sub Prefix')
-                .setStyle(ButtonStyle.Secondary),
-            new ButtonBuilder()
                 .setCustomId('prefix_reset')
-                .setLabel('♻️ Reset to Default')
+                .setLabel('♻️ Reset to Default (K)')
                 .setStyle(ButtonStyle.Danger),
             new ButtonBuilder()
                 .setCustomId('prefix_cancel')
@@ -92,20 +90,14 @@ module.exports = {
             }
 
             // ── Step 2: Ask user to type their new prefix ──────────────────────────
-            const isMain = interaction.customId === 'prefix_change_main';
-            const typeLabel = isMain ? 'Main Prefix' : 'Sub Prefix';
-            const currentVal = isMain ? currentMain : currentSub;
-
             const askEmbed = new EmbedBuilder()
                 .setColor(colors.primary)
-                .setTitle(`✏️ Set Your ${typeLabel}`)
+                .setTitle(`✏️ Set Your New Prefix`)
                 .setDescription([
-                    `Current **${typeLabel}**: \`${currentVal}\``,
+                    `Current prefix: \`${currentMain}\``,
                     ``,
-                    `Please type your new **${typeLabel}** in chat now!`,
-                    isMain
-                        ? `> ⚠️ Max **${MAX_PREFIX_LEN}** characters. Cannot use: ${FORBIDDEN_PREFIXES.map(p => `\`${p}\``).join(' ')}`
-                        : `> ⚠️ Max **${MAX_PREFIX_LEN}** characters. This replaces your personal shortcut prefix character.`,
+                    `Please **type your new prefix** in chat now!`,
+                    `> ⚠️ Max **${MAX_PREFIX_LEN}** characters. Cannot use: ${FORBIDDEN_PREFIXES.map(p => `\`${p}\``).join(' ')}`,
                     ``,
                     `*Type \`cancel\` to abort.*`,
                 ].join('\n'))
@@ -178,13 +170,12 @@ module.exports = {
             // ── Step 3: Confirm ──────────────────────────────────────────────────
             const confirmEmbed = new EmbedBuilder()
                 .setColor(colors.warning)
-                .setTitle(`✅ Confirm Your New ${typeLabel}`)
+                .setTitle(`✅ Confirm Your New Prefix`)
                 .setDescription([
-                    `**Old:** \`${currentVal}\``,
-                    `**New:** \`${input}\``,
+                    `**Old prefix:** \`${currentMain}\``,
+                    `**New prefix:** \`${input}\``,
                     ``,
-                    `Are you sure you want to set your **${typeLabel}** to \`${input}\`, sweetie? (｡♥‿♥｡)`,
-                    isMain ? `> You will use \`${input}help\`, \`${input}balance\`, etc.` : `> Your shortcut prefix will use \`${input}\`.`,
+                    `Are you sure, sweetie? After this you'll use \`${input}help\`, \`${input}balance\`, \`${input}gacha\`, etc. (｡♥‿♥｡)`,
                 ].join('\n'));
 
             const confirmRow = new ActionRowBuilder().addComponents(
@@ -221,11 +212,7 @@ module.exports = {
                 }
 
                 // Save to DB
-                if (isMain) {
-                    userData.customPrefix = input;
-                } else {
-                    userData.customSubPrefix = input;
-                }
+                userData.customPrefix = input;
                 await database.saveUser(userData);
 
                 await ci.update({
@@ -234,15 +221,13 @@ module.exports = {
                             .setColor(colors.success)
                             .setTitle('🎉 Prefix Changed!')
                             .setDescription([
-                                `Your **${typeLabel}** has been updated successfully! ヽ(>∀<☆)ノ`,
+                                `Your prefix has been updated to \`${input}\`! ヽ(>∀<☆)ノ`,
                                 ``,
-                                isMain
-                                    ? `✨ From now on, use \`${input}help\`, \`${input}balance\`, \`${input}gacha\`, etc.!`
-                                    : `✨ Your sub prefix is now \`${input}\`!`,
+                                `✨ From now on, use \`${input}help\`, \`${input}balance\`, \`${input}gacha\`, etc.!`,
                                 ``,
-                                `*(Only you see commands with this prefix, darling~ Each person has their own! ｡♥‿♥｡)*`,
+                                `*(Only you use this prefix, darling~ Each person has their own! ｡♥‿♥｡)*`,
                             ].join('\n'))
-                            .setFooter({ text: 'Use Kprefix anytime to see or change your prefix again! (◕‿◕✿)' })
+                            .setFooter({ text: `Use ${input}prefix anytime to change it again! (◕‿◕✿)` })
                     ],
                     components: [],
                 });

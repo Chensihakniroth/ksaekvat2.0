@@ -5,6 +5,10 @@
  */
 
 import config from '../config/config.js';
+import Pokedex from 'pokedex-promise-v2';
+
+const P = new Pokedex(); // Includes built-in auto-caching
+
 
 interface ZooStats {
   totalAnimals: number;
@@ -67,7 +71,7 @@ class AnimalService {
   private imageCache: Map<string, string> = new Map();
 
   /**
-   * Fetch Pokémon images from PokeAPI.
+   * Fetch Pokémon images using Pokedex Promise v2 (Auto-cached)
    */
   public async getPokemonImage(key: string): Promise<string | null> {
     if (this.imageCache.has(key)) return this.imageCache.get(key) || null;
@@ -81,20 +85,17 @@ class AnimalService {
         isShiny = true;
       }
       if (lookup === 'missingno') {
-        const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png'; // Pikachu back as placeholder or keep null
-        return null; // Better to return null if no good MissingNo
+        return null;
       }
 
-      // We have to use require('axios') inline or top-level. 
-      // Top level is safer, but we can do it here for brevity if it's imported.
-      const axios = require('axios');
-      const res = await axios.get(`https://pokeapi.co/api/v2/pokemon/${lookup}`);
+      // Automatically cached by pokedex-promise-v2!
+      const pokemon = await P.getPokemonByName(lookup as any);
       
-      let imageUrl = null;
+      let imageUrl: string | null = null;
       if (isShiny) {
-        imageUrl = res.data?.sprites?.other?.['official-artwork']?.front_shiny || res.data?.sprites?.front_shiny || null;
+        imageUrl = (pokemon.sprites?.other?.['official-artwork']?.front_shiny as string | undefined) || (pokemon.sprites?.front_shiny as string | undefined) || null;
       } else {
-        imageUrl = res.data?.sprites?.other?.['official-artwork']?.front_default || res.data?.sprites?.front_default || null;
+        imageUrl = (pokemon.sprites?.other?.['official-artwork']?.front_default as string | undefined) || (pokemon.sprites?.front_default as string | undefined) || null;
       }
 
       if (imageUrl) {
@@ -102,7 +103,7 @@ class AnimalService {
       }
       return imageUrl;
     } catch (error: any) {
-      console.error(`PokeAPI error for ${key}:`, error.message);
+      console.error(`Pokedex Promise v2 error for ${key}:`, error.message);
       return null;
     }
   }
