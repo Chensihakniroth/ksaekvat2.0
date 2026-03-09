@@ -5,6 +5,7 @@
   "scripts": {
     "start": "ts-node index.js",
     "dev": "nodemon --exec ts-node index.js",
+    "build": "tsc",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "jest"

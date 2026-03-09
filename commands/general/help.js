@@ -18,7 +18,7 @@ module.exports = {
       // Category Mapping with Mommy flavor
       const categoryNames = {
         admin: "🔨 Mommy's Tools (Admin)",
-        animals: '🦊 Our Catchable Friends (Pokémon)',
+        pokemon: '🦊 Our Catchable Friends (Pokémon)',
         battle: '⚔️ Protect Mommy (Battle)',
         economy: '💰 Your Allowance (Economy)',
         expressions: '😄 Expressions',
@@ -62,7 +62,7 @@ module.exports = {
         'general',
         'economy',
         'gambling',
-        'animals',
+        'pokemon',
         'battle',
         'profile',
         'expressions',
