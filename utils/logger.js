@@ -1,23 +1,14 @@
-const fs = require('fs');
+const winston = require('winston');
+const DailyRotateFile = require('winston-daily-rotate-file');
 const path = require('path');
 
-// Ensure logs directory exists
-const logsDir = path.join(__dirname, '..', 'logs');
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir, { recursive: true });
-}
-
-// Console colors
+// Console colors for our custom methods (keeping your beautiful palette!)
 const colors = {
   reset: '\x1b[0m',
   bright: '\x1b[1m',
   dim: '\x1b[2m',
   italic: '\x1b[3m',
   underscore: '\x1b[4m',
-  blink: '\x1b[5m',
-  reverse: '\x1b[7m',
-  hidden: '\x1b[8m',
-
   black: '\x1b[30m',
   red: '\x1b[31m',
   green: '\x1b[32m',
@@ -26,96 +17,64 @@ const colors = {
   magenta: '\x1b[35m',
   cyan: '\x1b[36m',
   white: '\x1b[37m',
-
-  bgBlack: '\x1b[40m',
-  bgRed: '\x1b[41m',
-  bgGreen: '\x1b[42m',
-  bgYellow: '\x1b[43m',
-  bgBlue: '\x1b[44m',
-  bgMagenta: '\x1b[45m',
-  bgCyan: '\x1b[46m',
-  bgWhite: '\x1b[47m',
 };
 
-// Gacha Themes
-const themes = {
-  genshin: colors.yellow,
-  hsr: colors.magenta,
-  wuwa: colors.cyan,
-  zzz: colors.red,
-  system: colors.blue,
-};
+// --- WINSTON CORE CONFIGURATION ---
 
-function getTimestamp() {
-  return new Date().toISOString();
-}
+const logFormat = winston.format.printf(({ level, message, timestamp, stack }) => {
+  return `[${timestamp}] [${level.toUpperCase()}]: ${stack || message}`;
+});
 
-function getConsoleTimestamp() {
-  const now = new Date();
-  return now.toLocaleTimeString('en-US', {
-    hour12: false,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-}
+const consoleFormat = winston.format.combine(
+  winston.format.timestamp({ format: 'HH:mm:ss' }),
+  winston.format.colorize(),
+  winston.format.printf(({ level, message, timestamp }) => {
+    return `${colors.dim}${timestamp}${colors.reset} ${level}: ${message}`;
+  })
+);
 
-function writeLog(level, message, error = null) {
-  const timestamp = getTimestamp();
-  const logFile = path.join(logsDir, `bot-${new Date().toISOString().split('T')[0]}.log`);
-  let logEntry = `[${timestamp}] [${level.toUpperCase()}] ${message}`;
-  if (error) {
-    logEntry += `\nError: ${error.message}${error.stack ? `\nStack: ${error.stack}` : ''}`;
-  }
-  fs.appendFileSync(logFile, logEntry + '\n');
-}
+const winstonLogger = winston.createLogger({
+  level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+  format: winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+  ),
+  transports: [
+    // 1. Error logs (Daily rotation)
+    new DailyRotateFile({
+      filename: 'logs/error-%DATE%.log',
+      datePattern: 'YYYY-MM-DD',
+      level: 'error',
+      maxFiles: '14d',
+      format: logFormat,
+    }),
+    // 2. All logs (Daily rotation)
+    new DailyRotateFile({
+      filename: 'logs/combined-%DATE%.log',
+      datePattern: 'YYYY-MM-DD',
+      maxFiles: '14d',
+      format: logFormat,
+    }),
+    // 3. Console output
+    new winston.transports.Console({
+      format: consoleFormat,
+    }),
+  ],
+});
+
+// --- CUSTOM WRAPPER (Keeping your beautiful aesthetic methods!) ---
 
 const logger = {
-  info: (message) => {
-    console.log(
-      `${colors.dim}${getConsoleTimestamp()}${colors.reset} ${colors.blue}ℹ${colors.reset} ${message}`
-    );
-    writeLog('info', message);
-  },
+  // Winston-powered methods
+  info: (msg) => winstonLogger.info(msg),
+  warn: (msg) => winstonLogger.warn(msg),
+  error: (msg, err) => winstonLogger.error(msg, { stack: err?.stack || err }),
+  debug: (msg) => winstonLogger.debug(msg),
+  success: (msg) => winstonLogger.info(`${colors.green}✓${colors.reset} ${msg}`),
 
-  warn: (message) => {
-    console.log(
-      `${colors.dim}${getConsoleTimestamp()}${colors.reset} ${colors.yellow}⚠${colors.reset} ${colors.bright}${message}${colors.reset}`
-    );
-    writeLog('warn', message);
-  },
-
-  error: (message, error = null) => {
-    console.log(
-      `${colors.dim}${getConsoleTimestamp()}${colors.reset} ${colors.red}✕ ${colors.bright}${message}${colors.reset}`
-    );
-    if (error) {
-      console.log(`${colors.red}${error.stack || error.message}${colors.reset}`);
-    }
-    writeLog('error', message, error);
-  },
-
-  success: (message) => {
-    console.log(
-      `${colors.dim}${getConsoleTimestamp()}${colors.reset} ${colors.green}✓${colors.reset} ${message}`
-    );
-    writeLog('success', message);
-  },
-
-  debug: (message) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(
-        `${colors.dim}${getConsoleTimestamp()}${colors.reset} ${colors.magenta}⚙${colors.reset} ${colors.italic}${message}${colors.reset}`
-      );
-      writeLog('debug', message);
-    }
-  },
-
-  // AESTHETIC METHODS
-
-  ascii: (text, color = colors.cyan) => {
-    console.log(`${color}${text}${colors.reset}`);
-  },
+  // Your original beautiful aesthetic methods (untouched but using colors!)
+  ascii: (text, color = colors.cyan) => console.log(`${color}${text}${colors.reset}`),
 
   header: (title) => {
     const line = '═'.repeat(60);
@@ -191,13 +150,11 @@ const logger = {
     console.log(`${color}${char.repeat(62)}${colors.reset}`);
   },
 
-  blank: () => {
-    console.log('');
-  },
+  blank: () => console.log(''),
 
   loader: (message) => {
     process.stdout.write(
-      `${colors.dim}${getConsoleTimestamp()}${colors.reset} ${colors.yellow}⏳${colors.reset} ${message}... `
+      `${colors.dim}${new Date().toLocaleTimeString()}${colors.reset} ${colors.yellow}⏳${colors.reset} ${message}... `
     );
     return {
       done: () => process.stdout.write(`${colors.green}DONE!${colors.reset}\n`),
