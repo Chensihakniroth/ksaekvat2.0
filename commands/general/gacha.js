@@ -42,47 +42,32 @@ async function createGachaResultImage(results) {
       const response = await axios.get(item.image_url, { responseType: 'arraybuffer' });
       const imageBuffer = Buffer.from(response.data);
       const game = item.game?.toLowerCase();
+      const useCover = ['genshin', 'wuwa', 'hsr'].includes(game);
 
-      // Mommy's special HSR zoom for gacha cards! (｡♥‿♥｡)
-      if (game === 'hsr') {
-        const zoomedSize = Math.floor(cardWidth * 1.3);
-        const image = await sharp(imageBuffer)
-          .resize(zoomedSize, zoomedSize, { fit: 'inside' })
-          .toBuffer();
+      let cardImage = sharp(imageBuffer).resize(cardWidth, cardHeight, {
+        fit: useCover ? 'cover' : 'contain',
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      });
 
-        processedCard = await sharp({
-          create: { width: cardWidth, height: cardHeight, channels: 4, background: '#1c1d21' },
-        })
-          .composite([{ input: image, gravity: 'center' }])
+      if (useCover) {
+        // For Genshin/WuWa, just flatten and return
+        processedCard = await cardImage
+          .flatten({ background: { r: 0, g: 0, b: 0 } })
           .png()
           .toBuffer();
       } else {
-        const useCover = ['genshin', 'wuwa'].includes(game);
-        let cardImage = sharp(imageBuffer).resize(cardWidth, cardHeight, {
-          fit: useCover ? 'cover' : 'contain',
-          background: { r: 0, g: 0, b: 0, alpha: 0 },
-        });
-
-        if (useCover) {
-          // For Genshin/WuWa, just flatten and return
-          processedCard = await cardImage
-            .flatten({ background: { r: 0, g: 0, b: 0 } })
-            .png()
-            .toBuffer();
-        } else {
-          // For others (ZZZ), place the contained image onto a solid background card
-          processedCard = await sharp({
-            create: {
-              width: cardWidth,
-              height: cardHeight,
-              channels: 4,
-              background: '#1c1d21',
-            },
-          })
-            .composite([{ input: await cardImage.toBuffer() }])
-            .png()
-            .toBuffer();
-        }
+        // For others (HSR/ZZZ), place the contained image onto a solid background card
+        processedCard = await sharp({
+          create: {
+            width: cardWidth,
+            height: cardHeight,
+            channels: 4,
+            background: '#1c1d21',
+          },
+        })
+          .composite([{ input: await cardImage.toBuffer() }])
+          .png()
+          .toBuffer();
       }
     } catch (error) {
       console.error(
