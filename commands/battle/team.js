@@ -37,153 +37,147 @@ async function createTeamImage(userData, teamCharacters) {
   const canvasWidth = padding + cols * (cardWidth + padding);
   const canvasHeight = headerHeight + cardHeight + padding * 2;
 
-  const composites = [];
+  try {
+    const composites = [];
 
-  // 1. Sleek Background for the canvas
-  const bgSvg = Buffer.from(`
-    <svg width="${canvasWidth}" height="${canvasHeight}">
-      <defs>
-        <radialGradient id="grad1" cx="50%" cy="50%" r="70%" fx="50%" fy="50%">
-          <stop offset="0%" stop-color="#2a2d3ab3" />
-          <stop offset="100%" stop-color="#121318" />
-        </radialGradient>
-      </defs>
-      <!-- Base fully rounded backplate -->
-      <rect x="0" y="0" width="${canvasWidth}" height="${canvasHeight}" fill="url(#grad1)" rx="30" ry="30"/>
-      <!-- Nice subtle grid overlay -->
-      <pattern id="pattern-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-        <rect width="40" height="40" fill="none" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
-      </pattern>
-      <rect width="${canvasWidth}" height="${canvasHeight}" fill="url(#pattern-grid)" rx="30" ry="30" />
-      
-      <!-- Cool futuristic top bar highlights -->
-      <path d="M 0 60 L 200 60 L 250 80 L ${canvasWidth - 250} 80 L ${canvasWidth - 200} 60 L ${canvasWidth} 60" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="2"/>
-      <path d="M 230 80 L 280 100 L ${canvasWidth - 280} 100 L ${canvasWidth - 230} 80" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1"/>
-      
-      <!-- Title -->
-      <text x="${canvasWidth / 2}" y="55" font-family="sans-serif" font-size="44" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="4">BATTLE SQUAD</text>
-      <text x="${canvasWidth / 2}" y="90" font-family="sans-serif" font-size="16" font-weight="normal" fill="#8892b0" text-anchor="middle" letter-spacing="3">SYNERGY READY // ONLINE CONFIGURATION</text>
-    </svg>
-  `);
+    // 1. Sleek Background for the canvas (Text removed to prevent Fontconfig crashes)
+    const bgSvg = Buffer.from(`
+      <svg width="${canvasWidth}" height="${canvasHeight}">
+        <defs>
+          <radialGradient id="grad1" cx="50%" cy="50%" r="70%" fx="50%" fy="50%">
+            <stop offset="0%" stop-color="#2a2d3ab3" />
+            <stop offset="100%" stop-color="#121318" />
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="${canvasWidth}" height="${canvasHeight}" fill="url(#grad1)" rx="30" ry="30"/>
+        <pattern id="pattern-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+          <rect width="40" height="40" fill="none" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
+        </pattern>
+        <rect width="${canvasWidth}" height="${canvasHeight}" fill="url(#pattern-grid)" rx="30" ry="30" />
+        
+        <path d="M 0 60 L 200 60 L 250 80 L ${canvasWidth - 250} 80 L ${canvasWidth - 200} 60 L ${canvasWidth} 60" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="2"/>
+        <path d="M 230 80 L 280 100 L ${canvasWidth - 280} 100 L ${canvasWidth - 230} 80" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1"/>
+      </svg>
+    `);
 
-  composites.push({ input: bgSvg, top: 0, left: 0 });
+    composites.push({ input: bgSvg, top: 0, left: 0 });
 
-  const rarityColors = {
-    5: '#FFD700', // Gold
-    4: '#B366FF', // Purple
-    3: '#4DA6FF'  // Blue
-  };
+    const rarityColors = {
+      5: '#FFD700', // Gold
+      4: '#B366FF', // Purple
+      3: '#4DA6FF'  // Blue
+    };
 
-  const rarityGradients = {
-    5: ['#FFF0B3', '#D4AF37'],
-    4: ['#D9B3FF', '#8A2BE2'],
-    3: ['#B3D9FF', '#1E90FF']
-  };
+    const rarityGradients = {
+      5: ['#FFF0B3', '#D4AF37'],
+      4: ['#D9B3FF', '#8A2BE2'],
+      3: ['#B3D9FF', '#1E90FF']
+    };
 
-  for (let i = 0; i < 4; i++) {
-    const x = padding + i * (cardWidth + padding);
-    const y = headerHeight + padding;
+    for (let i = 0; i < 4; i++) {
+      const x = padding + i * (cardWidth + padding);
+      const y = headerHeight + padding;
 
-    let charName = null;
-    if (userData && userData.team && userData.team.length > i) {
-      charName = userData.team[i];
-    }
-    const item = charName && teamCharacters ? teamCharacters.find(c => c.name === charName) : null;
+      let charName = null;
+      if (userData && userData.team && userData.team.length > i) {
+        charName = userData.team[i];
+      }
+      const item = charName && teamCharacters ? teamCharacters.find(c => c.name === charName) : null;
 
-    let slotBuffer;
+      let slotBuffer;
 
-    const cardMask = Buffer.from(`
+      const cardMask = Buffer.from(`
       <svg><rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="#fff" /></svg>
     `);
 
-    if (item) {
-      try {
-        let imageUrl = item.image_url;
-        const game = item.game?.toLowerCase();
-        let useCover = ['genshin', 'wuwa'].includes(game);
+      if (item) {
+        try {
+          let imageUrl = item.image_url;
+          const game = item.game?.toLowerCase();
+          let useCover = ['genshin', 'wuwa'].includes(game);
 
-        if (game === 'genshin') {
-          let apiId = item.name.toLowerCase().trim().replace(/ /g, '-');
+          if (game === 'genshin') {
+            let apiId = item.name.toLowerCase().trim().replace(/ /g, '-');
 
-          // Custom Overrides for jmp.blue Genshin API
-          const genshinOverrides = {
-            'kamisato-ayato': 'ayato',
-            'kamisato-ayaka': 'ayaka',
-            'sangonomiya-kokomi': 'kokomi',
-            'kaedehara-kazuha': 'kazuha',
-            'shikanoin-heizou': 'heizou',
-            'kuki-shinobu': 'shinobu',
-            'kujou-sara': 'sara',
-            'arataki-itto': 'itto',
-            'tartaglia': 'childe'
-          };
-          if (genshinOverrides[apiId]) apiId = genshinOverrides[apiId];
+            // Custom Overrides for jmp.blue Genshin API
+            const genshinOverrides = {
+              'kamisato-ayato': 'ayato',
+              'kamisato-ayaka': 'ayaka',
+              'sangonomiya-kokomi': 'kokomi',
+              'kaedehara-kazuha': 'kazuha',
+              'shikanoin-heizou': 'heizou',
+              'kuki-shinobu': 'shinobu',
+              'kujou-sara': 'sara',
+              'arataki-itto': 'itto',
+              'tartaglia': 'childe'
+            };
+            if (genshinOverrides[apiId]) apiId = genshinOverrides[apiId];
 
-          imageUrl = `https://genshin.jmp.blue/characters/${apiId}/icon-big`;
-          try {
-            await axios.get(imageUrl, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }, responseType: 'arraybuffer', timeout: 5000 });
-          } catch (e) {
-            const fileName = `File:${item.name.trim()} Icon.png`;
-            const apiUrl = `https://genshin-impact.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
+            imageUrl = `https://genshin.jmp.blue/characters/${apiId}/icon-big`;
+            try {
+              await axios.get(imageUrl, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }, responseType: 'arraybuffer', timeout: 5000 });
+            } catch (e) {
+              const fileName = `File:${item.name.trim()} Icon.png`;
+              const apiUrl = `https://genshin-impact.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
+              const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+              const pages = res.data.query.pages;
+              const pageId = Object.keys(pages)[0];
+              if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
+            }
+            useCover = false;
+          } else if (game === 'hsr') {
+            const fileName = `File:Character ${item.name.trim()} Icon.png`;
+            const apiUrl = `https://honkai-star-rail.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
             const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
             const pages = res.data.query.pages;
             const pageId = Object.keys(pages)[0];
             if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
+            useCover = false;
+          } else if (game === 'wuwa') {
+            const fileName = `File:Resonator ${item.name.trim()}.png`;
+            const apiUrl = `https://wutheringwaves.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
+            const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+            const pages = res.data.query.pages;
+            const pageId = Object.keys(pages)[0];
+            if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
+            useCover = false;
+          } else if (game === 'zzz') {
+            const fileName = `File:Agent ${item.name.trim()} Icon.png`;
+            const apiUrl = `https://zenless-zone-zero.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
+            const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+            const pages = res.data.query.pages;
+            const pageId = Object.keys(pages)[0];
+            if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
+            useCover = false;
           }
-          useCover = false;
-        } else if (game === 'hsr') {
-          const fileName = `File:Character ${item.name.trim()} Icon.png`;
-          const apiUrl = `https://honkai-star-rail.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
-          const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-          const pages = res.data.query.pages;
-          const pageId = Object.keys(pages)[0];
-          if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
-          useCover = false;
-        } else if (game === 'wuwa') {
-          const fileName = `File:Resonator ${item.name.trim()}.png`;
-          const apiUrl = `https://wutheringwaves.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
-          const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-          const pages = res.data.query.pages;
-          const pageId = Object.keys(pages)[0];
-          if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
-          useCover = false;
-        } else if (game === 'zzz') {
-          const fileName = `File:Agent ${item.name.trim()} Icon.png`;
-          const apiUrl = `https://zenless-zone-zero.fandom.com/api.php?action=query&titles=${encodeURIComponent(fileName)}&prop=imageinfo&iiprop=url&format=json`;
-          const res = await axios.get(apiUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-          const pages = res.data.query.pages;
-          const pageId = Object.keys(pages)[0];
-          if (pageId !== '-1' && pages[pageId].imageinfo) imageUrl = pages[pageId].imageinfo[0].url;
-          useCover = false;
-        }
 
-        const response = await axios.get(imageUrl, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
-          responseType: 'arraybuffer'
-        });
+          const response = await axios.get(imageUrl, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
+            responseType: 'arraybuffer'
+          });
 
-        if (!response.headers['content-type']?.includes('image')) {
-          throw new Error('Downloaded file is not a valid image');
-        }
+          if (!response.headers['content-type']?.includes('image')) {
+            throw new Error('Downloaded file is not a valid image');
+          }
 
-        const imageBuffer = Buffer.from(response.data);
+          const imageBuffer = Buffer.from(response.data);
 
-        const rColor = rarityColors[item.rarity] || '#ffffff';
-        const rGrad = rarityGradients[item.rarity] || ['#777', '#444'];
+          const rColor = rarityColors[item.rarity] || '#ffffff';
+          const rGrad = rarityGradients[item.rarity] || ['#777', '#444'];
 
-        const cardBg = await sharp({
-          create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' },
-        }).toBuffer();
+          const cardBg = await sharp({
+            create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' },
+          }).toBuffer();
 
-        let charLayer = sharp(imageBuffer).resize(cardWidth, cardHeight, {
-          fit: useCover ? 'cover' : 'contain',
-          background: { r: 0, g: 0, b: 0, alpha: 0 }
-        });
+          let charLayer = sharp(imageBuffer);
+          const metadata = await charLayer.metadata();
 
-        const elementLabel = item.element ? item.element : 'Normal';
-        const roleLabel = item.role ? item.role : 'DPS';
+          charLayer = charLayer.resize(cardWidth, cardHeight, {
+            fit: useCover ? 'cover' : 'contain',
+            background: { r: 0, g: 0, b: 0, alpha: 0 }
+          });
 
-        const overlaySvg = Buffer.from(`
+          const overlaySvg = Buffer.from(`
           <svg width="${cardWidth}" height="${cardHeight}">
             <defs>
               <linearGradient id="fade" x1="0" y1="0.4" x2="0" y2="1">
@@ -202,69 +196,55 @@ async function createTeamImage(userData, teamCharacters) {
               <filter id="glow">
                 <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
                 <feMerge>
-                    <feMergeNode in="coloredBlur"/>
-                    <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            <rect width="${cardWidth}" height="${cardHeight}" fill="url(#fade)" />
-            
-            <!-- Sleek Role/Element Badge top left -->
-            <polygon points="0,0 120,0 90,30 0,30" fill="url(#roleGrad)" />
-            <text x="10" y="20" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ffffff" letter-spacing="1">
-               ${elementLabel.toUpperCase()}
-            </text>
-            
-            <!-- Type badge bottom right -->
-             <text x="${cardWidth - 20}" y="${cardHeight - 65}" font-family="sans-serif" font-size="16" font-weight="900" fill="#a4a8b5" text-anchor="end" letter-spacing="1">
-               ${roleLabel.toUpperCase()}
-            </text>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <rect width="${cardWidth}" height="${cardHeight}" fill="url(#fade)" />
+        
+        <!-- Sleek Role/Element Badge top left (Text removed) -->
+        <polygon points="0,0 120,0 90,30 0,30" fill="url(#roleGrad)" />
+        
+        <!-- Frame border inside the mask -->
+        <rect x="2" y="2" width="${cardWidth - 4}" height="${cardHeight - 4}" rx="22" ry="22" fill="none" stroke="url(#borderGrad)" stroke-width="4" stroke-opacity="0.8" />
+      </svg>
+    `);
 
-            <!-- Stars -->
-            <text x="50%" y="${cardHeight - 65}" font-family="sans-serif" font-size="28" fill="${rColor}" text-anchor="middle" filter="url(#glow)">
-              ${'★'.repeat(item.rarity || 4)}
-            </text>
-            
-            <!-- Character Name -->
-            <text x="50%" y="${cardHeight - 25}" font-family="sans-serif" font-size="32" font-weight="900" fill="#ffffff" text-anchor="middle" letter-spacing="1">
-              ${item.name.length > 15 ? item.name.substring(0, 14) + '...' : item.name}
-            </text>
-            
-            <!-- Frame border inside the mask -->
-            <rect x="2" y="2" width="${cardWidth - 4}" height="${cardHeight - 4}" rx="22" ry="22" fill="none" stroke="url(#borderGrad)" stroke-width="4" stroke-opacity="0.8" />
-          </svg>
-        `);
+          slotBuffer = await sharp(cardBg)
+            .composite([
+              { input: await charLayer.toBuffer(), blend: 'over' },
+              { input: overlaySvg, blend: 'over' }
+            ])
+            .png()
+            .toBuffer();
 
-        slotBuffer = await sharp(cardBg)
+          // Mask the final card to give rounded corners
+          slotBuffer = await sharp(slotBuffer)
+            .composite([{ input: cardMask, blend: 'dest-in' }])
+            .png()
+            .toBuffer();
+
+        } catch (err) {
+          console.error(`Error generating card for ${item?.name || 'Unknown'}:`, err.message);
+          try {
+            slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#20222b' } })
+              .composite([
+                { input: Buffer.from(`<svg width="${cardWidth}" height="${cardHeight}"><rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="none" stroke="#555" stroke-width="4"/></svg>`), blend: 'over' },
+                { input: cardMask, blend: 'dest-in' }
+              ])
+              .png()
+              .toBuffer();
+          } catch (fallbackErr) {
+            slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#ff0000' } }).png().toBuffer();
+          }
+        }
+      } else {
+        // Empty Slot
+        slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: { r: 255, g: 255, b: 255, alpha: 0 } } })
           .composite([
-            { input: await charLayer.toBuffer(), blend: 'over' },
-            { input: overlaySvg, blend: 'over' }
-          ])
-          .png()
-          .toBuffer();
-
-        // Mask the final card to give rounded corners
-        slotBuffer = await sharp(slotBuffer)
-          .composite([{ input: cardMask, blend: 'dest-in' }])
-          .png()
-          .toBuffer();
-
-      } catch (err) {
-        console.error(`Error generating card for ${item.name}:`, err.message);
-        slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#20222b' } })
-          .composite([
-            { input: Buffer.from(`<svg width="${cardWidth}" height="${cardHeight}"><rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="none" stroke="#555" stroke-width="4"/><text x="50%" y="50%" font-family="sans-serif" font-size="24" fill="#888" text-anchor="middle">${item.name}</text></svg>`), blend: 'over' },
-            { input: cardMask, blend: 'dest-in' }
-          ])
-          .png()
-          .toBuffer();
-      }
-    } else {
-      // Empty Slot
-      slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: { r: 255, g: 255, b: 255, alpha: 0 } } })
-        .composite([
-          {
-            input: Buffer.from(`
+            {
+              input: Buffer.from(`
             <svg width="${cardWidth}" height="${cardHeight}">
               <rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="#181a20" fill-opacity="0.5"/>
               <rect x="4" y="4" width="${cardWidth - 8}" height="${cardHeight - 8}" rx="20" ry="20" fill="none" stroke="#333745" stroke-width="4" stroke-dasharray="12 12"/>
@@ -272,36 +252,37 @@ async function createTeamImage(userData, teamCharacters) {
               <!-- Crosshair graphic -->
               <path d="M ${cardWidth / 2 - 25} ${cardHeight / 2} L ${cardWidth / 2 + 25} ${cardHeight / 2} M ${cardWidth / 2} ${cardHeight / 2 - 25} L ${cardWidth / 2} ${cardHeight / 2 + 25}" stroke="#4f5469" stroke-width="6" stroke-linecap="round"/>
               <circle cx="${cardWidth / 2}" cy="${cardHeight / 2}" r="15" fill="none" stroke="#4f5469" stroke-width="4"/>
-
-              <text x="50%" y="${cardHeight / 2 + 60}" font-family="sans-serif" font-size="22" font-weight="900" fill="#4f5469" text-anchor="middle" letter-spacing="2">SLOT ${i + 1}</text>
-              <text x="50%" y="${cardHeight / 2 + 85}" font-family="sans-serif" font-size="14" font-weight="normal" fill="#3a3e4e" text-anchor="middle" letter-spacing="1">AWAITING ASSIGNMENT</text>
             </svg>
             `),
-            blend: 'over'
-          }
-        ])
-        .png()
-        .toBuffer();
+              blend: 'over'
+            }
+          ])
+          .png()
+          .toBuffer();
+      }
+
+      composites.push({ input: slotBuffer, top: y, left: x });
     }
 
-    composites.push({ input: slotBuffer, top: y, left: x });
+    const outputPath = path.join(TEMP_DIR, `team-banner-${Date.now()}.png`);
+
+    await sharp({
+      create: {
+        width: canvasWidth,
+        height: canvasHeight,
+        channels: 4,
+        background: { r: 0, g: 0, b: 0, alpha: 0 },
+      },
+    })
+      .composite(composites)
+      .png()
+      .toFile(outputPath);
+
+    return outputPath;
+  } catch (globalErr) {
+    console.error('CRITICAL GENERATOR ERROR:', globalErr);
+    return null;
   }
-
-  const outputPath = path.join(TEMP_DIR, `team-banner-${Date.now()}.png`);
-
-  await sharp({
-    create: {
-      width: canvasWidth,
-      height: canvasHeight,
-      channels: 4,
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
-    },
-  })
-    .composite(composites)
-    .png()
-    .toFile(outputPath);
-
-  return outputPath;
 }
 
 module.exports = {
