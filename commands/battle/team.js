@@ -8,7 +8,7 @@ const {
 } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
-const { getCharacterIcon, getCharacterEmoji, getRarityEmoji } = require('../../utils/images.js');
+const { getCharacterIcon, getItemEmoji, getRarityEmoji } = require('../../utils/images.js');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
@@ -283,7 +283,7 @@ module.exports = {
         let slotValue = '*Empty Slot*';
         if (charData) {
           const rarityEmoji = getRarityEmoji(charData.rarity, client);
-          const charEmoji = getCharacterEmoji(charData, client);
+          const charEmoji = getItemEmoji(charData, client);
           slotValue = `${rarityEmoji} ${charEmoji} **${charName}**`;
         }
 
