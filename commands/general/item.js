@@ -10,7 +10,7 @@ const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 const ItemService = require('../../services/ItemService.js');
-const EconomyService = require('../../services/EconomyService.js');
+const EconomyService = require('../../services/EconomyService');
 
 module.exports = {
   name: 'item',

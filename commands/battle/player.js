@@ -3,7 +3,7 @@ const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const { getEquippedItems, calculateEquippedBonuses } = require('./item.js');
 const CombatService = require('../../services/CombatService.js');
-const EconomyService = require('../../services/EconomyService.js');
+const EconomyService = require('../../services/EconomyService');
 
 module.exports = {
   name: 'player',

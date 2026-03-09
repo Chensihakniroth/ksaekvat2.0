@@ -1,12 +1,6 @@
-const mongoose = require('mongoose');
-
-const PromoSchema = new mongoose.Schema({
-  code: { type: String, required: true, unique: true },
-  type: { type: String, enum: ['riel', 'pulls'], required: true },
-  amount: { type: Number, required: true },
-  usedBy: [String], // Array of Discord IDs
-  maxUses: { type: Number, default: 1 },
-  createdAt: { type: Date, default: Date.now },
-});
-
-module.exports = mongoose.model('Promo', PromoSchema);
+/**
+ * Professional Jumper File (Compatible with ts-node & Node.js 22+)
+ * (｡♥‿♥｡) This file allows .js code to use the .ts Promo model!
+ */
+const mod = require('./Promo.ts');
+module.exports = mod.default || mod;

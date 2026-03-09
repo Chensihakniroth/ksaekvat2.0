@@ -28,8 +28,9 @@ const logFormat = winston.format.printf(({ level, message, timestamp, stack }) =
 const consoleFormat = winston.format.combine(
   winston.format.timestamp({ format: 'HH:mm:ss' }),
   winston.format.colorize(),
-  winston.format.printf(({ level, message, timestamp }) => {
-    return `${colors.dim}${timestamp}${colors.reset} ${level}: ${message}`;
+  winston.format.printf(({ level, message, timestamp, stack }) => {
+    const errorStack = stack ? `\n${colors.red}${stack}${colors.reset}` : '';
+    return `${colors.dim}${timestamp}${colors.reset} ${level}: ${message}${errorStack}`;
   })
 );
 

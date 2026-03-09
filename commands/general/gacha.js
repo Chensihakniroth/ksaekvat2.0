@@ -1,7 +1,7 @@
 const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const GachaService = require('../../services/GachaService.js');
-const EconomyService = require('../../services/EconomyService.js');
+const EconomyService = require('../../services/EconomyService');
 const gachaConfig = require('../../config/gachaConfig.js');
 const path = require('path');
 const fs = require('fs');

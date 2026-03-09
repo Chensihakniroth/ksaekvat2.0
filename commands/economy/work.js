@@ -2,6 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../utils/database.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
+const economyService = require('../../services/EconomyService');
 const cooldowns = require('../../utils/cooldowns.js');
 
 module.exports = {
@@ -11,8 +12,6 @@ module.exports = {
   usage: 'work',
   async execute(message, args, client) {
     const userData = await database.getUser(message.author.id, message.author.username);
-
-    // Cooldown is handled by the command handler, but we can add more logic here if needed
 
     // Pick a random work message
     const workMessages = [
@@ -28,16 +27,16 @@ module.exports = {
 
     const randomMessage = workMessages[Math.floor(Math.random() * workMessages.length)];
 
-    // Generate random reward amount
-    const { min, max } = config.economy.workReward;
-    const baseReward = Math.floor(Math.random() * (max - min + 1)) + min;
-
-    // Apply money booster if active
-    let finalReward = baseReward;
+    // Check for active money booster
     const moneyBooster = await database.getActiveBooster(message.author.id, 'money');
-    if (moneyBooster) {
-      finalReward = Math.floor(baseReward * moneyBooster.multiplier);
-    }
+    const multiplier = moneyBooster ? moneyBooster.multiplier : 1;
+
+    // Use EconomyService to calculate reward
+    let finalReward = economyService.calculateWorkReward(
+      config.economy.workReward.min,
+      config.economy.workReward.max,
+      multiplier
+    );
 
     // Add bonus based on level
     const levelBonus = Math.floor(userData.level * 5);
@@ -54,11 +53,11 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor(colors.primary)
       .setTitle('💼 Work Finished!')
-      .setDescription(randomMessage.replace('{amount}', `**${finalReward.toLocaleString()}**`))
+      .setDescription(randomMessage.replace('{amount}', `**${economyService.format(finalReward)}**`))
       .addFields(
         {
           name: '💰 New Balance',
-          value: `${userData.balance.toLocaleString()} ${config.economy.currency}`,
+          value: `${economyService.format(userData.balance)} ${config.economy.currency}`,
           inline: true,
         },
         {

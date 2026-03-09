@@ -7,7 +7,7 @@ const database = require('./utils/database.js');
 const cron = require('node-cron');
 const express = require('express');
 const mongoose = require('mongoose');
-require('dotenv').config();
+const { env, getMongoURI } = require('./utils/env.js');
 
 // === LOGGING BANNER ===
 logger.blank();
@@ -75,7 +75,7 @@ async function deployCommands() {
       return;
     }
 
-    const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN);
+    const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN || '');
     await rest.put(Routes.applicationCommands(config.clientId), { body: commands });
     prog.done();
     logger.item('Deployed', commands.length, '\x1b[32m');
@@ -89,12 +89,7 @@ async function connectDB() {
   logger.section('Database');
   const prog = logger.loader('Connecting to MongoDB');
   try {
-    const uri =
-      process.env.MONGODB_URI ||
-      process.env.MONGODB_URL ||
-      process.env.MONGO_URI ||
-      process.env.MONGO_URL ||
-      'mongodb://127.0.0.1:27017/ksae_bot';
+    const uri = getMongoURI();
     await mongoose.connect(uri);
     prog.done();
     logger.item('Status', 'Connected', '\x1b[32m');
@@ -134,7 +129,7 @@ async function bootstrap() {
   logger.section('Discord Authentication');
   const prog = logger.loader('Establishing gateway connection');
   try {
-    await client.login(process.env.DISCORD_TOKEN);
+    await client.login(env.DISCORD_TOKEN);
     prog.done();
   } catch (err) {
     prog.fail(err.message);

@@ -1,14 +1,6 @@
-const mongoose = require('mongoose');
-
-const AnimalRegistrySchema = new mongoose.Schema({
-  rarity: { type: String, required: true },
-  key: { type: String, required: true },
-  name: { type: String, required: true },
-  emoji: { type: String, default: '🐾' },
-  value: { type: Number, default: 0 },
-});
-
-// Compound index for rarity and key
-AnimalRegistrySchema.index({ rarity: 1, key: 1 }, { unique: true });
-
-module.exports = mongoose.model('AnimalRegistry', AnimalRegistrySchema);
+/**
+ * Professional Jumper File (Compatible with ts-node & Node.js 22+)
+ * (｡♥‿♥｡) This file allows .js code to use the .ts AnimalRegistry model!
+ */
+const mod = require('./AnimalRegistry.ts');
+module.exports = mod.default || mod;
