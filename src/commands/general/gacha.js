@@ -221,9 +221,9 @@ module.exports = {
       .join('\n');
 
     let footerParts = [];
-    if (usedExtra) footerParts.push(`Used Promo Pull (${userData.extraPulls} left)`);
-    else if (isFree) footerParts.push('Daily Free Pull used!');
-    else footerParts.push(`Paid Pull (${EconomyService.format(PULL_COST)} <:coin:1480551418464305163>)`);
+    if (usedExtra) footerParts.push(`Promo Pull (${userData.extraPulls} left)`);
+    else if (isFree) footerParts.push('Daily Free Pull');
+    else footerParts.push('Paid Pull');
     footerParts.push(`Pity: ${userData.pity}/90`);
 
     const finalEmbed = new EmbedBuilder()

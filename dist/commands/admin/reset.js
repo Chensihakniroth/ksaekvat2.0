@@ -3,7 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const AdminService = require('../../services/AdminService.js');
+const AdminService = require('../../services/AdminService.js').default || require('../../services/AdminService.js');
 const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 module.exports = {
     name: 'reset',

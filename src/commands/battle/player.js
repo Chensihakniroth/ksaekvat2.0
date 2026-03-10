@@ -2,7 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const { getEquippedItems, calculateEquippedBonuses } = require('./item.js');
-const CombatService = require('../../services/CombatService.js');
+const CombatService = require('../../services/CombatService.js').default || require('../../services/CombatService.js');
 const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 
 module.exports = {
