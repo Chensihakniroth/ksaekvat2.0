@@ -19,7 +19,10 @@ RUN npm install
 # 5. Copy the rest of the application code
 COPY . .
 
-# 6. Expose the web server port (from your index.js / env.ts)
+# 6. Build typescript to dist/
+RUN npm run build
+
+# 7. Expose the web server port (from your index.js / env.ts)
 EXPOSE 8080
 
 # 7. Start the bot with ts-node

@@ -29,7 +29,7 @@ module.exports = {
             logger.error('Failed to fetch application emojis', err);
         });
         logger.blank();
-        logger.box(`🚀 MOMMY IS READY TO TAKE CARE OF YOU! ヽ(>∀<☆)ノ\nRunning version: ${require('../package.json').version}`, '\x1b[32m');
+        logger.box(`🚀 MOMMY IS READY TO TAKE CARE OF YOU! ヽ(>∀<☆)ノ\nRunning version: ${require('../../package.json').version}`, '\x1b[32m');
         logger.blank();
     },
 };

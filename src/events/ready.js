@@ -33,7 +33,7 @@ module.exports = {
 
     logger.blank();
     logger.box(
-      `🚀 MOMMY IS READY TO TAKE CARE OF YOU! ヽ(>∀<☆)ノ\nRunning version: ${require('../package.json').version}`,
+      `🚀 MOMMY IS READY TO TAKE CARE OF YOU! ヽ(>∀<☆)ノ\nRunning version: ${require('../../package.json').version}`,
       '\x1b[32m'
     );
     logger.blank();

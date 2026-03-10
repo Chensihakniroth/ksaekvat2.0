@@ -1,5 +1,5 @@
 "use strict";
-const Character = require('../models/Character');
+const Character = require('../models/Character').default || require('../models/Character');
 const logger = require('./logger.js');
 /**
  * REGISTRY UTILITY (Gold Standard)
