@@ -7,7 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 const sharp = require('sharp');
-const { getItemEmoji, getRarityEmoji, getElementEmoji } = require('../../utils/images.js');
+const { getItemEmoji, getRarityEmoji, getElementEmoji, getRoleEmoji } = require('../../utils/images.js');
 
 const PULL_COST = 10000;
 const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
@@ -215,8 +215,9 @@ module.exports = {
         const rarityEmoji = getRarityEmoji(item.rarity, client);
         const charEmoji = getItemEmoji(item, client);
         const elementEmoji = getElementEmoji(item, client);
+        const roleEmoji = getRoleEmoji(item.role, client);
         const name = item.name || 'Unknown Item';
-        return `${elementEmoji} ${charEmoji} **${name}** ${rarityEmoji}`;
+        return `${rarityEmoji} ${elementEmoji} ${roleEmoji} ${charEmoji} **${name}** x1`;
       })
       .join('\n');
 

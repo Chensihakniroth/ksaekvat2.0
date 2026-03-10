@@ -2,7 +2,7 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, AttachmentBuilder, } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
-const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji } = require('../../utils/images.js');
+const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji, getRoleEmoji } = require('../../utils/images.js');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
@@ -80,7 +80,8 @@ module.exports = {
                     const rarityGem = charData.rarity === 5 ? '🌟' : charData.rarity === 4 ? '💜' : '🔷';
                     const charEmoji = getItemEmoji(charData, client);
                     const elementEmoji = getElementEmoji(charData, client);
-                    compText += `${rarityGem} ${elementEmoji} ${charEmoji} **${charName}**\n`;
+                    const roleEmoji = getRoleEmoji(charData.role, client);
+                    compText += `${rarityGem} ${elementEmoji} ${roleEmoji} ${charEmoji} **${charName}**\n`;
                 }
                 else {
                     compText += `${slotGems[i]} \`[ Empty Slot ]\`\n`;

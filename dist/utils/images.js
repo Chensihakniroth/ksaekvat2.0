@@ -207,10 +207,44 @@ function getElementEmoji(item, client) {
     };
     return fallbacks[elementName] || '';
 }
+function getRoleEmoji(role, client) {
+    if (!role || !client)
+        return '';
+    // Normalize: trim, uppercase for lookup
+    const roleName = role.trim().toUpperCase().replace(/[-\s]+/g, '_');
+    // Map common variants to emoji names
+    const nameMap = {
+        'DPS': 'DPS',
+        'S_DPS': 'SDPS',
+        'SDPS': 'SDPS',
+        'SUPPORT': 'SUPPORT',
+        'HEAL': 'HEAL',
+        'HEALER': 'HEAL',
+        'TANK': 'TANK',
+    };
+    const emojiName = nameMap[roleName] || roleName;
+    let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);
+    if (!customEmoji) {
+        customEmoji = client.emojis.cache.find(e => e.name === emojiName);
+    }
+    if (customEmoji)
+        return customEmoji.toString();
+    // Unicode fallbacks
+    const fallbacks = {
+        'DPS': '⚔️',
+        'SDPS': '🗡️',
+        'SUPPORT': '🔮',
+        'HEAL': '💚',
+        'HEALER': '💚',
+        'TANK': '🛡️',
+    };
+    return fallbacks[roleName] || '✨';
+}
 module.exports = {
     getCharacterImage,
     getCharacterIcon,
     getItemEmoji,
     getRarityEmoji,
     getElementEmoji,
+    getRoleEmoji,
 };

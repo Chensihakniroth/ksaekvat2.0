@@ -2,7 +2,7 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
-const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji } = require('../../utils/images.js');
+const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji, getRoleEmoji } = require('../../utils/images.js');
 module.exports = {
     name: 'char',
     aliases: ['characters', 'kchar', 'collection'],
@@ -53,7 +53,8 @@ module.exports = {
                 const charEmoji = getItemEmoji(c, client);
                 const rarityEmoji = getRarityEmoji(c.rarity, client);
                 const elementEmoji = getElementEmoji(c, client);
-                return `${rarityEmoji} ${elementEmoji} ${charEmoji} **${c.name}** x${c.count}`;
+                const roleEmoji = getRoleEmoji(c.role, client);
+                return `${rarityEmoji} ${elementEmoji} ${roleEmoji} ${charEmoji} **${c.name}** x${c.count}`;
             })
                 .join('\n');
             const embed = new EmbedBuilder()
