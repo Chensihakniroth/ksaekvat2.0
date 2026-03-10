@@ -200,15 +200,12 @@ async function createTeamImage(userData, teamCharacters) {
 
     composites.push({ input: bgBuffer, top: 0, left: 0 });
 
-    // Add "Battle Team" header text using Jimp
+    // Add "Battle Team" header text using Placehold.co API + Sharp Screen Blend
     try {
-      const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
-      const textImg = new Jimp(canvasWidth, headerHeight, 0x00000000);
-      const textWidth = Jimp.measureText(font, "Battle Team");
-      const textX = Math.floor((canvasWidth - textWidth) / 2);
-      textImg.print(font, textX, Math.floor((headerHeight - 64) / 2) + 10, "Battle Team");
-      const textBuffer = await textImg.getBufferAsync(Jimp.MIME_PNG);
-      composites.push({ input: textBuffer, top: 0, left: 0 });
+      const textUrl = `https://placehold.co/${canvasWidth}x${headerHeight}/000000/FFFFFF/png?text=BATTLE+TEAM&font=Rajdhani`;
+      const textRes = await axios.get(textUrl, { responseType: 'arraybuffer' });
+      const textBuffer = Buffer.from(textRes.data);
+      composites.push({ input: textBuffer, top: 0, left: 0, blend: 'screen' });
     } catch (textErr) {
       console.error("Text generation error:", textErr.message);
     }
