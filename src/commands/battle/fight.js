@@ -10,7 +10,7 @@ const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const itemUtils = require('./item.js');
 const { getCharacterImage } = require('../../utils/images.js');
-const CombatService = require('../../services/CombatService.js');
+const CombatService = require('../../services/CombatService.js').default || require('../../services/CombatService.js');
 const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 
 module.exports = {

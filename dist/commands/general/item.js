@@ -3,7 +3,7 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentTyp
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const ItemService = require('../../services/ItemService.js');
+const ItemService = require('../../services/ItemService.js').default || require('../../services/ItemService.js');
 const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 const { getItemEmoji, getRarityEmoji } = require('../../utils/images.js');
 module.exports = {

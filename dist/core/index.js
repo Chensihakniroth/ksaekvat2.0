@@ -64,6 +64,10 @@ const client = new discord_js_1.Client({
         discord_js_1.GatewayIntentBits.GuildMessageReactions,
     ],
     partials: [discord_js_1.Partials.Message, discord_js_1.Partials.Channel, discord_js_1.Partials.Reaction],
+    allowedMentions: {
+        parse: ['users', 'roles'],
+        repliedUser: true,
+    }
 });
 client.commands = new discord_js_1.Collection();
 client.slashCommands = new discord_js_1.Collection();

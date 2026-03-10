@@ -97,17 +97,19 @@ module.exports = {
         .setDescription(`**Team Status:** ${filledSlots}/4 Slots Deployed\n*Manage your battlefield composition below!* (｡♥‿♥｡)`)
         .setFooter({ text: 'Use buttons below to easily manage your team slots!' });
 
+      const slotGems = ['💠', '💠', '💠', '💠'];
       let compText = '';
       for (let i = 0; i < 4; i++) {
         const charName = userData.team[i];
         const charData = charName ? characters.find((c) => c.name === charName) : null;
 
         if (charData) {
+          const rarityGem = charData.rarity === 5 ? '🌟' : charData.rarity === 4 ? '💜' : '🔷';
           const charEmoji = getItemEmoji(charData, client);
           const elementEmoji = getElementEmoji(charData, client);
-          compText += `**Slot ${i + 1}:** ${elementEmoji} ${charEmoji} **${charName}**\n`;
+          compText += `${rarityGem} ${elementEmoji} ${charEmoji} **${charName}**\n`;
         } else {
-          compText += `**Slot ${i + 1}:** \`[ Empty Slot ]\`\n`;
+          compText += `${slotGems[i]} \`[ Empty Slot ]\`\n`;
         }
       }
 
@@ -132,12 +134,14 @@ module.exports = {
       for (let i = 0; i < 4; i++) {
         const emojiNum = ['1️⃣', '2️⃣', '3️⃣', '4️⃣'][i];
         const isSlotFilled = i < filledSlots && !!userData.team[i];
+        const charData = isSlotFilled ? characters.find((c) => c.name === userData.team[i]) : null;
+        const rarityGem = charData?.rarity === 5 ? '🌟' : charData?.rarity === 4 ? '💜' : '🔷';
 
         row.addComponents(
           new ButtonBuilder()
             .setCustomId(`team_pop_${i + 1}`)
-            .setLabel(isSlotFilled ? `Clear Slot ${i + 1}` : `Slot ${i + 1} Empty`)
-            .setEmoji(emojiNum)
+            .setLabel(isSlotFilled ? `Remove` : `Empty`)
+            .setEmoji(isSlotFilled ? rarityGem : emojiNum)
             .setStyle(isSlotFilled ? ButtonStyle.Danger : ButtonStyle.Secondary)
             .setDisabled(!isSlotFilled)
         );

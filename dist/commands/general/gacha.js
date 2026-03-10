@@ -106,7 +106,7 @@ async function createGachaResultImage(results) {
 }
 module.exports = {
     name: 'gacha',
-    aliases: ['pull', 'wish', 'roll'],
+    aliases: ['pull', 'wish', 'roll', 'kw'],
     description: 'Daily free 10-pull, or buy more for 10k <:coin:1480551418464305163>! ✨',
     usage: 'gacha <gs/hsr/wuwa/zzz>',
     cooldown: 5000,
