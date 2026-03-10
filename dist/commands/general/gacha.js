@@ -220,11 +220,16 @@ module.exports = {
         }
         await new Promise((r) => setTimeout(r, waitTime));
         const messagePayload = { embeds: [finalEmbed], files: files };
-        if (mainMessage) {
-            await mainMessage.edit(messagePayload);
+        try {
+            if (mainMessage) {
+                await mainMessage.edit(messagePayload);
+            }
+            else {
+                await message.reply(messagePayload);
+            }
         }
-        else {
-            await message.reply(messagePayload);
+        catch (err) {
+            console.error(`Failed to deliver gacha results (message might be deleted):`, err.message);
         }
         // --- STEP 4: Cleanup and save ---
         if (imagePath) {

@@ -41,6 +41,11 @@ const client = new Client({
     GatewayIntentBits.GuildMessageReactions,
   ],
   partials: [Partials.Message, Partials.Channel, Partials.Reaction],
+  allowedMentions: {
+    parse: ['users', 'roles'],
+    repliedUser: true,
+    failIfNotExists: false
+  }
 }) as ExtendedClient;
 
 client.commands = new Collection();
