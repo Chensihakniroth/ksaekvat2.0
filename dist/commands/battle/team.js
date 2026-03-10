@@ -7,6 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 const sharp = require('sharp');
+const Jimp = require('jimp');
 const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
 // Ensure temp directory exists
 if (!fs.existsSync(TEMP_DIR)) {
@@ -35,6 +36,173 @@ function isValidImageBuffer(buf) {
     return false;
 }
 // ─────────────────────────────────────────────────────────────────
+// MATHEMATICAL FALLBACK GENERATORS (NO SVG DEPENDENCIES)
+// ─────────────────────────────────────────────────────────────────
+function createGridBgRaw(width, height) {
+    const buf = Buffer.alloc(width * height * 4);
+    const bgColor = [18, 19, 24]; // #121318
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let r = bgColor[0], g = bgColor[1], b = bgColor[2], alpha = 255;
+            const dx = x - width / 2;
+            const dy = y - height / 2;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const maxDist = (width > height ? width : height) * 0.7;
+            let light = 1 - (dist / maxDist);
+            if (light < 0)
+                light = 0;
+            r += light * 24;
+            g += light * 26;
+            b += light * 34;
+            if (r > 255)
+                r = 255;
+            if (g > 255)
+                g = 255;
+            if (b > 255)
+                b = 255;
+            if (x % 40 === 0 || y % 40 === 0) {
+                r = r * 0.9 + 255 * 0.1;
+                g = g * 0.9 + 255 * 0.1;
+                b = b * 0.9 + 255 * 0.1;
+            }
+            const idx = (y * width + x) * 4;
+            buf[idx] = r;
+            buf[idx + 1] = g;
+            buf[idx + 2] = b;
+            buf[idx + 3] = alpha;
+        }
+    }
+    return buf;
+}
+function createCardMaskRaw(width, height, radius) {
+    const buf = Buffer.alloc(width * height * 4);
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let alpha = 255;
+            if (x < radius && y < radius) {
+                const dx = radius - x;
+                const dy = radius - y;
+                if (dx * dx + dy * dy > radius * radius)
+                    alpha = 0;
+            }
+            else if (x >= width - radius && y < radius) {
+                const dx = x - (width - radius) + 1;
+                const dy = radius - y;
+                if (dx * dx + dy * dy > radius * radius)
+                    alpha = 0;
+            }
+            else if (x < radius && y >= height - radius) {
+                const dx = radius - x;
+                const dy = y - (height - radius) + 1;
+                if (dx * dx + dy * dy > radius * radius)
+                    alpha = 0;
+            }
+            else if (x >= width - radius && y >= height - radius) {
+                const dx = x - (width - radius) + 1;
+                const dy = y - (height - radius) + 1;
+                if (dx * dx + dy * dy > radius * radius)
+                    alpha = 0;
+            }
+            const idx = (y * width + x) * 4;
+            buf[idx] = 255;
+            buf[idx + 1] = 255;
+            buf[idx + 2] = 255;
+            buf[idx + 3] = alpha;
+        }
+    }
+    return buf;
+}
+function createCardGradientRaw(width, height, rColors) {
+    const buf = Buffer.alloc(width * height * 4);
+    const rr = parseInt(rColors[0].substring(1, 3), 16) || 200;
+    const gg = parseInt(rColors[0].substring(3, 5), 16) || 150;
+    const bb = parseInt(rColors[0].substring(5, 7), 16) || 200;
+    const rr2 = parseInt(rColors[1].substring(1, 3), 16) || 100;
+    const gg2 = parseInt(rColors[1].substring(3, 5), 16) || 100;
+    const bb2 = parseInt(rColors[1].substring(5, 7), 16) || 100;
+    for (let y = 0; y < height; y++) {
+        const fadeYStart = height * 0.4;
+        let fadeAlpha = 0;
+        if (y > fadeYStart) {
+            fadeAlpha = (y - fadeYStart) / (height - fadeYStart);
+        }
+        // Gradient outline color
+        const t = y / height;
+        const br = Math.floor(rr * (1 - t) + rr2 * t);
+        const bg = Math.floor(gg * (1 - t) + gg2 * t);
+        const bb_ = Math.floor(bb * (1 - t) + bb2 * t);
+        for (let x = 0; x < width; x++) {
+            let r = 0, g = 0, b = 0, a = Math.floor(fadeAlpha * 255);
+            // Top-left triangle glow
+            if (y < 40 && x < (140 - y)) {
+                const glowAlpha = 1 - (x / 140);
+                const finalA = Math.floor(glowAlpha * 0.75 * 255);
+                if (finalA > a) {
+                    r = rr;
+                    g = gg;
+                    b = bb;
+                    a = finalA;
+                }
+            }
+            // Frame border
+            if (x < 3 || x >= width - 3 || y < 3 || y >= height - 3) {
+                r = br;
+                g = bg;
+                b = bb_;
+                a = 230;
+            }
+            const idx = (y * width + x) * 4;
+            buf[idx] = r;
+            buf[idx + 1] = g;
+            buf[idx + 2] = b;
+            buf[idx + 3] = a;
+        }
+    }
+    return buf;
+}
+function createEmptySlotRaw(width, height) {
+    const buf = Buffer.alloc(width * height * 4);
+    const bgColor = [24, 26, 32]; // #181a20
+    const dashColor = [51, 55, 69]; // #333745
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let r = bgColor[0], g = bgColor[1], b = bgColor[2], alpha = 125; // Translucent
+            const rx = width / 2;
+            const ry = height / 2;
+            const borderDist = 4;
+            const onBorderX = (x >= borderDist && x <= borderDist + 3) || (x >= width - borderDist - 4 && x <= width - borderDist - 1);
+            const onBorderY = (y >= borderDist && y <= borderDist + 3) || (y >= height - borderDist - 4 && y <= height - borderDist - 1);
+            if ((onBorderX && (y % 24 < 12)) || (onBorderY && (x % 24 < 12)) || (onBorderX && onBorderY)) {
+                r = dashColor[0];
+                g = dashColor[1];
+                b = dashColor[2];
+                alpha = 255;
+            }
+            const dx = Math.abs(x - rx);
+            const dy = Math.abs(y - ry);
+            if ((dx <= 20 && dy <= 2) || (dy <= 20 && dx <= 2)) {
+                r = dashColor[0];
+                g = dashColor[1];
+                b = dashColor[2];
+                alpha = 255;
+            }
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist >= 14 && dist <= 18) {
+                r = dashColor[0];
+                g = dashColor[1];
+                b = dashColor[2];
+                alpha = 255;
+            }
+            const idx = (y * width + x) * 4;
+            buf[idx] = r;
+            buf[idx + 1] = g;
+            buf[idx + 2] = b;
+            buf[idx + 3] = alpha;
+        }
+    }
+    return buf;
+}
+// ─────────────────────────────────────────────────────────────────
 // BEAUTIFUL TEAM IMAGE GENERATOR
 // ─────────────────────────────────────────────────────────────────
 async function createTeamImage(userData, teamCharacters) {
@@ -48,24 +216,20 @@ async function createTeamImage(userData, teamCharacters) {
     const canvasHeight = headerHeight + cardHeight + padding * 2;
     try {
         const composites = [];
-        // 1. Sleek Background for the canvas (Text removed to prevent Fontconfig crashes)
-        const bgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
-        <defs>
-          <radialGradient id="grad1" cx="50%" cy="50%" r="70%" fx="50%" fy="50%">
-            <stop offset="0%" stop-color="#2a2d3ab3" />
-            <stop offset="100%" stop-color="#121318" />
-          </radialGradient>
-        </defs>
-        <rect x="0" y="0" width="${canvasWidth}" height="${canvasHeight}" fill="url(#grad1)" rx="30" ry="30"/>
-        <pattern id="pattern-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-          <rect width="40" height="40" fill="none" stroke="#ffffff" stroke-opacity="0.03" stroke-width="1"/>
-        </pattern>
-        <rect width="${canvasWidth}" height="${canvasHeight}" fill="url(#pattern-grid)" rx="30" ry="30" />
-        
-        <path d="M 0 60 L 200 60 L 250 80 L ${canvasWidth - 250} 80 L ${canvasWidth - 200} 60 L ${canvasWidth} 60" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="2"/>
-        <path d="M 230 80 L 280 100 L ${canvasWidth - 280} 100 L ${canvasWidth - 230} 80" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="1"/>
-      </svg>`);
-        composites.push({ input: bgSvg, top: 0, left: 0 });
+        // Use raw grid buffer
+        const rawBgArray = createGridBgRaw(canvasWidth, canvasHeight);
+        const bgBuffer = await sharp(rawBgArray, { raw: { width: canvasWidth, height: canvasHeight, channels: 4 } }).png().toBuffer();
+        composites.push({ input: bgBuffer, top: 0, left: 0 });
+        // Add "Battle Team" header text using Placehold.co API + Sharp Screen Blend
+        try {
+            const textUrl = `https://placehold.co/${canvasWidth}x${headerHeight}/000000/FFFFFF/png?text=BATTLE+TEAM&font=Rajdhani`;
+            const textRes = await axios.get(textUrl, { responseType: 'arraybuffer' });
+            const textBuffer = Buffer.from(textRes.data);
+            composites.push({ input: textBuffer, top: 0, left: 0, blend: 'screen' });
+        }
+        catch (textErr) {
+            console.error("Text generation error:", textErr.message);
+        }
         const rarityColors = {
             5: '#FFD700', // Gold
             4: '#B366FF', // Purple
@@ -85,7 +249,8 @@ async function createTeamImage(userData, teamCharacters) {
             }
             const item = charName && teamCharacters ? teamCharacters.find(c => c.name === charName) : null;
             let slotBuffer;
-            const cardMask = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}"><rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="#fff" /></svg>`);
+            const rawMaskArray = createCardMaskRaw(cardWidth, cardHeight, 24);
+            const cardMaskBuffer = await sharp(rawMaskArray, { raw: { width: cardWidth, height: cardHeight, channels: 4 } }).png().toBuffer();
             if (item) {
                 try {
                     let imageUrl = item.image_url;
@@ -225,53 +390,25 @@ async function createTeamImage(userData, teamCharacters) {
                     const rGrad = rarityGradients[item.rarity] || ['#777', '#444'];
                     const cardBg = await sharp({
                         create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' },
-                    }).toBuffer();
+                    }).png().toBuffer();
                     let charLayer = sharp(imageBuffer);
                     const metadata = await charLayer.metadata();
                     charLayer = charLayer.resize(cardWidth, cardHeight, {
                         fit: useCover ? 'cover' : 'contain',
                         background: { r: 0, g: 0, b: 0, alpha: 0 }
                     });
-                    const overlaySvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}">
-            <defs>
-              <linearGradient id="fade" x1="0" y1="0.4" x2="0" y2="1">
-                <stop offset="0%" stop-color="#000" stop-opacity="0" />
-                <stop offset="60%" stop-color="#000" stop-opacity="0.85" />
-                <stop offset="100%" stop-color="#000" stop-opacity="1" />
-              </linearGradient>
-              <linearGradient id="borderGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="${rGrad[0]}" />
-                <stop offset="100%" stop-color="${rGrad[1]}" />
-              </linearGradient>
-              <linearGradient id="roleGrad" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="${rGrad[1]}" stop-opacity="0.8" />
-                <stop offset="100%" stop-color="#000" stop-opacity="0" />
-              </linearGradient>
-              <filter id="glow">
-                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-        <rect width="${cardWidth}" height="${cardHeight}" fill="url(#fade)" />
-        
-        <polygon points="0,0 120,0 90,30 0,30" fill="url(#roleGrad)" />
-        
-        <!-- Frame border inside the mask -->
-        <rect x="2" y="2" width="${cardWidth - 4}" height="${cardHeight - 4}" rx="22" ry="22" fill="none" stroke="url(#borderGrad)" stroke-width="4" stroke-opacity="0.8" />
-      </svg>`);
-                    slotBuffer = await sharp(cardBg)
+                    const rawGradientArray = createCardGradientRaw(cardWidth, cardHeight, rGrad);
+                    const gradientBg = await sharp(rawGradientArray, { raw: { width: cardWidth, height: cardHeight, channels: 4 } }).png().toBuffer();
+                    let slotBaseBuffer = await sharp(cardBg)
                         .composite([
-                        { input: await charLayer.toBuffer(), blend: 'over' },
-                        { input: overlaySvg, blend: 'over' }
+                        { input: await charLayer.png().toBuffer(), blend: 'over' },
+                        { input: gradientBg, blend: 'over' }
                     ])
                         .png()
                         .toBuffer();
-                    // Mask the final card to give rounded corners
-                    slotBuffer = await sharp(slotBuffer)
-                        .composite([{ input: cardMask, blend: 'dest-in' }])
+                    // Apply rounded corner mask
+                    slotBuffer = await sharp(slotBaseBuffer)
+                        .composite([{ input: cardMaskBuffer, blend: 'dest-in' }])
                         .png()
                         .toBuffer();
                 }
@@ -279,10 +416,7 @@ async function createTeamImage(userData, teamCharacters) {
                     console.error(`Error generating card for ${item?.name || 'Unknown'}:`, err.message);
                     try {
                         slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#20222b' } })
-                            .composite([
-                            { input: Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}"><rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="none" stroke="#555" stroke-width="4"/></svg>`), blend: 'over' },
-                            { input: cardMask, blend: 'dest-in' }
-                        ])
+                            .composite([{ input: cardMaskBuffer, blend: 'dest-in' }])
                             .png()
                             .toBuffer();
                     }
@@ -293,19 +427,12 @@ async function createTeamImage(userData, teamCharacters) {
             }
             else {
                 // Empty Slot
-                slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: { r: 255, g: 255, b: 255, alpha: 0 } } })
+                const emptyRawArray = createEmptySlotRaw(cardWidth, cardHeight);
+                const emptyBaseBuffer = await sharp(emptyRawArray, { raw: { width: cardWidth, height: cardHeight, channels: 4 } }).png().toBuffer();
+                slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' } })
                     .composite([
-                    {
-                        input: Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${cardHeight}">
-              <rect x="0" y="0" width="${cardWidth}" height="${cardHeight}" rx="24" ry="24" fill="#181a20" fill-opacity="0.5"/>
-              <rect x="4" y="4" width="${cardWidth - 8}" height="${cardHeight - 8}" rx="20" ry="20" fill="none" stroke="#333745" stroke-width="4" stroke-dasharray="12 12"/>
-              
-              <!-- Crosshair graphic -->
-              <path d="M ${cardWidth / 2 - 25} ${cardHeight / 2} L ${cardWidth / 2 + 25} ${cardHeight / 2} M ${cardWidth / 2} ${cardHeight / 2 - 25} L ${cardWidth / 2} ${cardHeight / 2 + 25}" stroke="#4f5469" stroke-width="6" stroke-linecap="round"/>
-              <circle cx="${cardWidth / 2}" cy="${cardHeight / 2}" r="15" fill="none" stroke="#4f5469" stroke-width="4"/>
-            </svg>`),
-                        blend: 'over'
-                    }
+                    { input: emptyBaseBuffer, blend: 'over' },
+                    { input: cardMaskBuffer, blend: 'dest-in' }
                 ])
                     .png()
                     .toBuffer();
