@@ -40,6 +40,106 @@ function isValidImageBuffer(buf) {
 }
 
 // ─────────────────────────────────────────────────────────────────
+// MATHEMATICAL FALLBACK GENERATORS (NO SVG DEPENDENCIES)
+// ─────────────────────────────────────────────────────────────────
+
+function createGridBgRaw(width, height) {
+  const buf = Buffer.alloc(width * height * 4);
+  const bgColor = [18, 19, 24]; // #121318
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      let r = bgColor[0], g = bgColor[1], b = bgColor[2], alpha = 255;
+
+      const dx = x - width / 2; const dy = y - height / 2;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const maxDist = (width > height ? width : height) * 0.7;
+      let light = 1 - (dist / maxDist);
+      if (light < 0) light = 0;
+
+      r += light * 24; g += light * 26; b += light * 34;
+      if (r > 255) r = 255; if (g > 255) g = 255; if (b > 255) b = 255;
+
+      if (x % 40 === 0 || y % 40 === 0) {
+        r = r * 0.9 + 255 * 0.1; g = g * 0.9 + 255 * 0.1; b = b * 0.9 + 255 * 0.1;
+      }
+      const idx = (y * width + x) * 4;
+      buf[idx] = r; buf[idx + 1] = g; buf[idx + 2] = b; buf[idx + 3] = alpha;
+    }
+  }
+  return buf;
+}
+
+function createCardMaskRaw(width, height, radius) {
+  const buf = Buffer.alloc(width * height * 4);
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      let alpha = 255;
+      if (x < radius && y < radius) {
+        const dx = radius - x; const dy = radius - y;
+        if (dx * dx + dy * dy > radius * radius) alpha = 0;
+      } else if (x >= width - radius && y < radius) {
+        const dx = x - (width - radius) + 1; const dy = radius - y;
+        if (dx * dx + dy * dy > radius * radius) alpha = 0;
+      } else if (x < radius && y >= height - radius) {
+        const dx = radius - x; const dy = y - (height - radius) + 1;
+        if (dx * dx + dy * dy > radius * radius) alpha = 0;
+      } else if (x >= width - radius && y >= height - radius) {
+        const dx = x - (width - radius) + 1; const dy = y - (height - radius) + 1;
+        if (dx * dx + dy * dy > radius * radius) alpha = 0;
+      }
+      const idx = (y * width + x) * 4;
+      buf[idx] = 255; buf[idx + 1] = 255; buf[idx + 2] = 255; buf[idx + 3] = alpha;
+    }
+  }
+  return buf;
+}
+
+function createCardGradientRaw(width, height, rColors) {
+  const buf = Buffer.alloc(width * height * 4);
+  const rr = parseInt(rColors[0].substring(1, 3), 16) || 200;
+  const gg = parseInt(rColors[0].substring(3, 5), 16) || 150;
+  const bb = parseInt(rColors[0].substring(5, 7), 16) || 200;
+
+  const rr2 = parseInt(rColors[1].substring(1, 3), 16) || 100;
+  const gg2 = parseInt(rColors[1].substring(3, 5), 16) || 100;
+  const bb2 = parseInt(rColors[1].substring(5, 7), 16) || 100;
+
+  for (let y = 0; y < height; y++) {
+    const fadeYStart = height * 0.4;
+    let fadeAlpha = 0;
+    if (y > fadeYStart) {
+      fadeAlpha = (y - fadeYStart) / (height - fadeYStart);
+    }
+
+    // Gradient outline color
+    const t = y / height;
+    const br = Math.floor(rr * (1 - t) + rr2 * t);
+    const bg = Math.floor(gg * (1 - t) + gg2 * t);
+    const bb_ = Math.floor(bb * (1 - t) + bb2 * t);
+
+    for (let x = 0; x < width; x++) {
+      let r = 0, g = 0, b = 0, a = Math.floor(fadeAlpha * 255);
+
+      // Top-left triangle glow
+      if (y < 40 && x < (140 - y)) {
+        const glowAlpha = 1 - (x / 140);
+        const finalA = Math.floor(glowAlpha * 0.75 * 255);
+        if (finalA > a) { r = rr; g = gg; b = bb; a = finalA; }
+      }
+
+      // Frame border
+      if (x < 3 || x >= width - 3 || y < 3 || y >= height - 3) {
+        r = br; g = bg; b = bb_; a = 230;
+      }
+
+      const idx = (y * width + x) * 4;
+      buf[idx] = r; buf[idx + 1] = g; buf[idx + 2] = b; buf[idx + 3] = a;
+    }
+  }
+  return buf;
+}
+
+// ─────────────────────────────────────────────────────────────────
 // BEAUTIFUL TEAM IMAGE GENERATOR
 // ─────────────────────────────────────────────────────────────────
 
@@ -58,9 +158,9 @@ async function createTeamImage(userData, teamCharacters) {
   try {
     const composites = [];
 
-    const bgBuffer = await sharp({
-      create: { width: canvasWidth, height: canvasHeight, channels: 4, background: '#121318' }
-    }).png().toBuffer();
+    // Use raw grid buffer
+    const rawBgArray = createGridBgRaw(canvasWidth, canvasHeight);
+    const bgBuffer = await sharp(rawBgArray, { raw: { width: canvasWidth, height: canvasHeight, channels: 4 } }).png().toBuffer();
 
     composites.push({ input: bgBuffer, top: 0, left: 0 });
 
@@ -87,6 +187,9 @@ async function createTeamImage(userData, teamCharacters) {
       const item = charName && teamCharacters ? teamCharacters.find(c => c.name === charName) : null;
 
       let slotBuffer;
+
+      const rawMaskArray = createCardMaskRaw(cardWidth, cardHeight, 24);
+      const cardMaskBuffer = await sharp(rawMaskArray, { raw: { width: cardWidth, height: cardHeight, channels: 4 } }).png().toBuffer();
 
       if (item) {
         try {
@@ -228,16 +331,20 @@ async function createTeamImage(userData, teamCharacters) {
             background: { r: 0, g: 0, b: 0, alpha: 0 }
           });
 
-          // Simple gradient overlay alternative using solid background compositing
-          const gradientBg = await sharp({
-            create: { width: cardWidth, height: Math.floor(cardHeight / 3), channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0.7 } }
-          }).png().toBuffer();
+          const rawGradientArray = createCardGradientRaw(cardWidth, cardHeight, rGrad);
+          const gradientBg = await sharp(rawGradientArray, { raw: { width: cardWidth, height: cardHeight, channels: 4 } }).png().toBuffer();
 
-          slotBuffer = await sharp(cardBg)
+          let slotBaseBuffer = await sharp(cardBg)
             .composite([
               { input: await charLayer.png().toBuffer(), blend: 'over' },
-              { input: gradientBg, top: cardHeight - Math.floor(cardHeight / 3), left: 0, blend: 'over' }
+              { input: gradientBg, blend: 'over' }
             ])
+            .png()
+            .toBuffer();
+
+          // Apply rounded corner mask
+          slotBuffer = await sharp(slotBaseBuffer)
+            .composite([{ input: cardMaskBuffer, blend: 'dest-in' }])
             .png()
             .toBuffer();
 
@@ -245,6 +352,7 @@ async function createTeamImage(userData, teamCharacters) {
           console.error(`Error generating card for ${item?.name || 'Unknown'}:`, err.message);
           try {
             slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#20222b' } })
+              .composite([{ input: cardMaskBuffer, blend: 'dest-in' }])
               .png()
               .toBuffer();
           } catch (fallbackErr) {
@@ -254,6 +362,7 @@ async function createTeamImage(userData, teamCharacters) {
       } else {
         // Empty Slot
         slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' } })
+          .composite([{ input: cardMaskBuffer, blend: 'dest-in' }])
           .png()
           .toBuffer();
       }
