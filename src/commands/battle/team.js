@@ -86,7 +86,7 @@ module.exports = {
       .map((name) => characters.find((c) => c.name === name))
       .filter(Boolean);
 
-    const imagePath = await createTeamImage(userData, teamCharacters);
+    const imagePath = await ImageGenerationService.createTeamImage(userData, teamCharacters);
 
     const createEmbed = () => {
       const filledSlots = userData.team.length;
