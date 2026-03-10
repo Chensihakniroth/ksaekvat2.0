@@ -65,11 +65,8 @@ module.exports = {
         const roleEmoji = getRoleEmoji(match.role, client);
         const charEmoji = getItemEmoji(match, client);
 
-        // Rarity stars text
-        const rarityStars = '⭐'.repeat(Number(match.rarity) || 3);
-
-        // Image URL (splash art)
-        const artUrl = getCharacterImage(match);
+        // Image URL — use stored image_url (same source as gacha result), fallback to fandom wiki
+        const artUrl = match.image_url || getCharacterImage(match);
 
         const gameNames = {
             genshin: 'Genshin Impact',
@@ -86,7 +83,7 @@ module.exports = {
                 .setTitle(`${charEmoji} ${match.name}`)
                 .setDescription(
                     [
-                        `${rarityEmoji} ${elementEmoji} ${roleEmoji}  ·  ${rarityStars}`,
+                        `${rarityEmoji} ${elementEmoji} ${roleEmoji}`,
                         `**Game:** ${gameName}`,
                         `**Role:** ${match.role || 'Unknown'}`,
                         `**Element:** ${match.element || 'Unknown'}`,
@@ -180,7 +177,7 @@ module.exports = {
                     .setTitle(`${charEmoji} ${match.name}`)
                     .setDescription(
                         [
-                            `${rarityEmoji} ${elementEmoji} ${roleEmoji}  ·  ${rarityStars}`,
+                            `${rarityEmoji} ${elementEmoji} ${roleEmoji}`,
                             `**Game:** ${gameName}`,
                             `**Role:** ${match.role || 'Unknown'}`,
                             `**Element:** ${match.element || 'Unknown'}`,
@@ -198,7 +195,7 @@ module.exports = {
                             inline: true,
                         }
                     )
-                    .setImage(artUrl)
+                    .setThumbnail(artUrl)
                     .setFooter({ text: `Added to team! (ﾉ´ヮ\`)ﾉ*:･ﾟ✧` });
 
                 const removeRow = new ActionRowBuilder().addComponents(
@@ -227,7 +224,7 @@ module.exports = {
                     .setTitle(`${charEmoji} ${match.name}`)
                     .setDescription(
                         [
-                            `${rarityEmoji} ${elementEmoji} ${roleEmoji}  ·  ${rarityStars}`,
+                            `${rarityEmoji} ${elementEmoji} ${roleEmoji}`,
                             `**Game:** ${gameName}`,
                             `**Role:** ${match.role || 'Unknown'}`,
                             `**Element:** ${match.element || 'Unknown'}`,
@@ -245,7 +242,7 @@ module.exports = {
                             inline: true,
                         }
                     )
-                    .setImage(artUrl)
+                    .setThumbnail(artUrl)
                     .setFooter({ text: `Removed from team. (っ˘ω˘ς)` });
 
                 const addRow = new ActionRowBuilder().addComponents(

@@ -37,10 +37,8 @@ module.exports = {
         const elementEmoji = getElementEmoji(match, client);
         const roleEmoji = getRoleEmoji(match.role, client);
         const charEmoji = getItemEmoji(match, client);
-        // Rarity stars text
-        const rarityStars = '⭐'.repeat(Number(match.rarity) || 3);
-        // Image URL (splash art)
-        const artUrl = getCharacterImage(match);
+        // Image URL — use stored image_url (same source as gacha result), fallback to fandom wiki
+        const artUrl = match.image_url || getCharacterImage(match);
         const gameNames = {
             genshin: 'Genshin Impact',
             hsr: 'Honkai: Star Rail',
@@ -54,7 +52,7 @@ module.exports = {
                 .setColor(match.rarity >= 5 ? 0xFFB13F : match.rarity >= 4 ? 0xA256FF : colors.primary)
                 .setTitle(`${charEmoji} ${match.name}`)
                 .setDescription([
-                `${rarityEmoji} ${elementEmoji} ${roleEmoji}  ·  ${rarityStars}`,
+                `${rarityEmoji} ${elementEmoji} ${roleEmoji}`,
                 `**Game:** ${gameName}`,
                 `**Role:** ${match.role || 'Unknown'}`,
                 `**Element:** ${match.element || 'Unknown'}`,
@@ -131,7 +129,7 @@ module.exports = {
                     .setColor(match.rarity >= 5 ? 0xFFB13F : match.rarity >= 4 ? 0xA256FF : colors.primary)
                     .setTitle(`${charEmoji} ${match.name}`)
                     .setDescription([
-                    `${rarityEmoji} ${elementEmoji} ${roleEmoji}  ·  ${rarityStars}`,
+                    `${rarityEmoji} ${elementEmoji} ${roleEmoji}`,
                     `**Game:** ${gameName}`,
                     `**Role:** ${match.role || 'Unknown'}`,
                     `**Element:** ${match.element || 'Unknown'}`,
@@ -145,7 +143,7 @@ module.exports = {
                     value: '✅ In your team!',
                     inline: true,
                 })
-                    .setImage(artUrl)
+                    .setThumbnail(artUrl)
                     .setFooter({ text: `Added to team! (ﾉ´ヮ\`)ﾉ*:･ﾟ✧` });
                 const removeRow = new ActionRowBuilder().addComponents(new ButtonBuilder()
                     .setCustomId('cd_remove_team')
@@ -168,7 +166,7 @@ module.exports = {
                     .setColor(match.rarity >= 5 ? 0xFFB13F : match.rarity >= 4 ? 0xA256FF : colors.primary)
                     .setTitle(`${charEmoji} ${match.name}`)
                     .setDescription([
-                    `${rarityEmoji} ${elementEmoji} ${roleEmoji}  ·  ${rarityStars}`,
+                    `${rarityEmoji} ${elementEmoji} ${roleEmoji}`,
                     `**Game:** ${gameName}`,
                     `**Role:** ${match.role || 'Unknown'}`,
                     `**Element:** ${match.element || 'Unknown'}`,
@@ -182,7 +180,7 @@ module.exports = {
                     value: freshUser.team.length >= 4 ? '🚫 Team is full (4/4)' : '➕ Not in team yet',
                     inline: true,
                 })
-                    .setImage(artUrl)
+                    .setThumbnail(artUrl)
                     .setFooter({ text: `Removed from team. (っ˘ω˘ς)` });
                 const addRow = new ActionRowBuilder().addComponents(new ButtonBuilder()
                     .setCustomId('cd_add_team')
