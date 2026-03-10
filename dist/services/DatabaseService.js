@@ -1,10 +1,13 @@
 "use strict";
-const User = require('../models/User');
-const Listener = require('../models/Listener');
-const TalkTarget = require('../models/TalkTarget');
-const CharacterCard = require('../models/CharacterCard');
-const AnimalRegistry = require('../models/AnimalRegistry');
-const Character = require('../models/Character'); // Changed from GachaItem
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const User_1 = __importDefault(require("../models/User"));
+const Listener_1 = __importDefault(require("../models/Listener"));
+const TalkTarget_1 = __importDefault(require("../models/TalkTarget"));
+const CharacterCard_1 = __importDefault(require("../models/CharacterCard"));
+const AnimalRegistry_1 = __importDefault(require("../models/AnimalRegistry"));
 const registry = require('../utils/registry.js');
 const logger = require('../utils/logger.js');
 /**
@@ -14,9 +17,9 @@ const logger = require('../utils/logger.js');
 class DatabaseService {
     async getUser(userId, username = null) {
         try {
-            let user = await User.findOne({ id: userId });
+            let user = await User_1.default.findOne({ id: userId });
             if (!user) {
-                user = await User.create({ id: userId, username: username || 'Unknown Traveler' });
+                user = await User_1.default.create({ id: userId, username: username || 'Unknown Traveler' });
                 logger.debug(`New MongoDB profile created for: ${username || userId}`);
             }
             else if (username && user.username !== username) {
@@ -39,7 +42,7 @@ class DatabaseService {
         }
     }
     async getAllUsers() {
-        return await User.find({});
+        return await User_1.default.find({});
     }
     async addExperience(userId, amount) {
         const user = await this.getUser(userId);
@@ -64,10 +67,10 @@ class DatabaseService {
         };
     }
     async addBalance(userId, amount) {
-        return await User.findOneAndUpdate({ id: userId }, { $inc: { balance: amount } }, { returnDocument: 'after', upsert: true });
+        return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { balance: amount } }, { returnDocument: 'after', upsert: true });
     }
     async removeBalance(userId, amount) {
-        return await User.findOneAndUpdate({ id: userId }, { $inc: { balance: -amount } }, { returnDocument: 'after' });
+        return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { balance: -amount } }, { returnDocument: 'after' });
     }
     async hasBalance(userId, amount) {
         const user = await this.getUser(userId);
@@ -83,7 +86,7 @@ class DatabaseService {
             update['stats.commandsUsed'] = 1;
         else
             update[`stats.${type}`] = amount;
-        await User.findOneAndUpdate({ id: userId }, { $inc: update });
+        await User_1.default.findOneAndUpdate({ id: userId }, { $inc: update });
     }
     async addGachaItem(userId, itemName) {
         const user = await this.getUser(userId);
@@ -122,7 +125,7 @@ class DatabaseService {
     }
     async loadAnimals() {
         try {
-            const animals = await AnimalRegistry.find({});
+            const animals = await AnimalRegistry_1.default.find({});
             const animalsData = {};
             animals.forEach((a) => {
                 if (!animalsData[a.rarity])
@@ -180,21 +183,21 @@ class DatabaseService {
         return null;
     }
     async getListeners() {
-        const listeners = await Listener.find({});
+        const listeners = await Listener_1.default.find({});
         const map = {};
         listeners.forEach((l) => (map[l.adminId] = l.targetUserId));
         return map;
     }
     async saveListener(adminId, targetUserId) {
         if (!targetUserId) {
-            await Listener.deleteOne({ adminId });
+            await Listener_1.default.deleteOne({ adminId });
         }
         else {
-            await Listener.findOneAndUpdate({ adminId }, { adminId, targetUserId }, { upsert: true });
+            await Listener_1.default.findOneAndUpdate({ adminId }, { adminId, targetUserId }, { upsert: true });
         }
     }
     async getTalkTargets() {
-        const targets = await TalkTarget.find({});
+        const targets = await TalkTarget_1.default.find({});
         const map = {};
         targets.forEach((t) => {
             map[t.adminId] = {
@@ -207,10 +210,10 @@ class DatabaseService {
     }
     async saveTalkTarget(adminId, channelId, serverId = 'DM') {
         if (!channelId) {
-            await TalkTarget.deleteOne({ adminId });
+            await TalkTarget_1.default.deleteOne({ adminId });
         }
         else {
-            await TalkTarget.findOneAndUpdate({ adminId }, {
+            await TalkTarget_1.default.findOneAndUpdate({ adminId }, {
                 adminId,
                 channelId,
                 serverId,
@@ -219,10 +222,10 @@ class DatabaseService {
         }
     }
     async getCharacterCard() {
-        return await CharacterCard.findOne({ id: 'default' });
+        return await CharacterCard_1.default.findOne({ id: 'default' });
     }
     async updateCharacterCard(data) {
-        return await CharacterCard.findOneAndUpdate({ id: 'default' }, { ...data, updatedAt: new Date() }, { upsert: true, new: true });
+        return await CharacterCard_1.default.findOneAndUpdate({ id: 'default' }, { ...data, updatedAt: new Date() }, { upsert: true, new: true });
     }
     async getGachaPool() {
         const allChars = registry.getAllCharacters();

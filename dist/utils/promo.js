@@ -1,5 +1,5 @@
 "use strict";
-const Promo = require('../models/Promo');
+const Promo = require('../models/Promo').default || require('../models/Promo');
 const logger = require('./logger.js');
 /**
  * PROMO UTILITY (Gold Standard - MongoDB Edition)

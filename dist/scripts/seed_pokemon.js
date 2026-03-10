@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
-const AnimalRegistry = require('../models/AnimalRegistry.js'); // Assuming we can use the JS jumper
+const AnimalRegistry = require('../models/AnimalRegistry').default || require('../models/AnimalRegistry'); // Assuming we can use the JS jumper
 const pokemonList = [
     // COMMON
     { rarity: 'common', key: 'pidgey', name: 'Pidgey', emoji: '🐦', value: 100 },

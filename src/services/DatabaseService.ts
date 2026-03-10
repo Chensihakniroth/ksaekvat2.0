@@ -1,9 +1,9 @@
-const User = require('../models/User');
-const Listener = require('../models/Listener');
-const TalkTarget = require('../models/TalkTarget');
-const CharacterCard = require('../models/CharacterCard');
-const AnimalRegistry = require('../models/AnimalRegistry');
-const Character = require('../models/Character'); // Changed from GachaItem
+import User from '../models/User';
+import Listener from '../models/Listener';
+import TalkTarget from '../models/TalkTarget';
+import CharacterCard from '../models/CharacterCard';
+import AnimalRegistry from '../models/AnimalRegistry';
+import Character from '../models/Character'; // Changed from GachaItem
 const registry = require('../utils/registry.js');
 const logger = require('../utils/logger.js');
 
@@ -13,7 +13,7 @@ const logger = require('../utils/logger.js');
  */
 
 class DatabaseService {
-  async getUser(userId: string, username: string | null = null) {
+  async getUser(userId: string, username: string | null = null): Promise<any> {
     try {
       let user = await User.findOne({ id: userId });
       if (!user) {
