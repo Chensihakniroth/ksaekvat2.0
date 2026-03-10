@@ -13,6 +13,7 @@ const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 const sharp = require('sharp');
+const Jimp = require('jimp');
 
 const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
 
@@ -139,6 +140,41 @@ function createCardGradientRaw(width, height, rColors) {
   return buf;
 }
 
+function createEmptySlotRaw(width, height) {
+  const buf = Buffer.alloc(width * height * 4);
+  const bgColor = [24, 26, 32]; // #181a20
+  const dashColor = [51, 55, 69]; // #333745
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      let r = bgColor[0], g = bgColor[1], b = bgColor[2], alpha = 125; // Translucent
+      const rx = width / 2;
+      const ry = height / 2;
+      const borderDist = 4;
+      const onBorderX = (x >= borderDist && x <= borderDist + 3) || (x >= width - borderDist - 4 && x <= width - borderDist - 1);
+      const onBorderY = (y >= borderDist && y <= borderDist + 3) || (y >= height - borderDist - 4 && y <= height - borderDist - 1);
+
+      if ((onBorderX && (y % 24 < 12)) || (onBorderY && (x % 24 < 12)) || (onBorderX && onBorderY)) {
+        r = dashColor[0]; g = dashColor[1]; b = dashColor[2]; alpha = 255;
+      }
+
+      const dx = Math.abs(x - rx);
+      const dy = Math.abs(y - ry);
+      if ((dx <= 20 && dy <= 2) || (dy <= 20 && dx <= 2)) {
+        r = dashColor[0]; g = dashColor[1]; b = dashColor[2]; alpha = 255;
+      }
+
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist >= 14 && dist <= 18) {
+        r = dashColor[0]; g = dashColor[1]; b = dashColor[2]; alpha = 255;
+      }
+
+      const idx = (y * width + x) * 4;
+      buf[idx] = r; buf[idx + 1] = g; buf[idx + 2] = b; buf[idx + 3] = alpha;
+    }
+  }
+  return buf;
+}
+
 // ─────────────────────────────────────────────────────────────────
 // BEAUTIFUL TEAM IMAGE GENERATOR
 // ─────────────────────────────────────────────────────────────────
@@ -163,6 +199,19 @@ async function createTeamImage(userData, teamCharacters) {
     const bgBuffer = await sharp(rawBgArray, { raw: { width: canvasWidth, height: canvasHeight, channels: 4 } }).png().toBuffer();
 
     composites.push({ input: bgBuffer, top: 0, left: 0 });
+
+    // Add "Battle Team" header text using Jimp
+    try {
+      const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
+      const textImg = new Jimp(canvasWidth, headerHeight, 0x00000000);
+      const textWidth = Jimp.measureText(font, "Battle Team");
+      const textX = Math.floor((canvasWidth - textWidth) / 2);
+      textImg.print(font, textX, Math.floor((headerHeight - 64) / 2) + 10, "Battle Team");
+      const textBuffer = await textImg.getBufferAsync(Jimp.MIME_PNG);
+      composites.push({ input: textBuffer, top: 0, left: 0 });
+    } catch (textErr) {
+      console.error("Text generation error:", textErr.message);
+    }
 
     const rarityColors = {
       5: '#FFD700', // Gold
@@ -361,8 +410,14 @@ async function createTeamImage(userData, teamCharacters) {
         }
       } else {
         // Empty Slot
+        const emptyRawArray = createEmptySlotRaw(cardWidth, cardHeight);
+        const emptyBaseBuffer = await sharp(emptyRawArray, { raw: { width: cardWidth, height: cardHeight, channels: 4 } }).png().toBuffer();
+
         slotBuffer = await sharp({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' } })
-          .composite([{ input: cardMaskBuffer, blend: 'dest-in' }])
+          .composite([
+            { input: emptyBaseBuffer, blend: 'over' },
+            { input: cardMaskBuffer, blend: 'dest-in' }
+          ])
           .png()
           .toBuffer();
       }
