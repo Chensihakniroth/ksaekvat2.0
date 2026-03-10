@@ -1,6 +1,6 @@
 "use strict";
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, MessageFlags, } = require('discord.js');
-const database = require('../../utils/database.js');
+const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 const ItemService = require('../../services/ItemService.js');

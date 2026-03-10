@@ -2,7 +2,7 @@
 const config = require('../config/config.js');
 const logger = require('../utils/logger.js');
 const cooldowns = require('../utils/cooldowns.js');
-const database = require('../utils/database.js');
+const database = require('../services/DatabaseService');
 const { EmbedBuilder } = require('discord.js');
 const axios = require('axios');
 // Memory storage for conversation history (Channel-based)

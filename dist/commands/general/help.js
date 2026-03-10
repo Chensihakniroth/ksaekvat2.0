@@ -2,7 +2,7 @@
 const { EmbedBuilder } = require('discord.js');
 const config = require('../../config/config.js');
 const colors = require('../../utils/colors.js');
-const database = require('../../utils/database.js');
+const database = require('../../services/DatabaseService');
 module.exports = {
     name: 'help',
     aliases: ['hp', 'commands'],

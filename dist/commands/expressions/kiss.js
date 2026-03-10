@@ -1,7 +1,7 @@
 "use strict";
 const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/colors.js');
-const database = require('../../utils/database.js');
+const database = require('../../services/DatabaseService');
 // Use built-in fetch (Node.js 18+) or axios as fallback
 const fetch = global.fetch || require('axios').get;
 module.exports = {

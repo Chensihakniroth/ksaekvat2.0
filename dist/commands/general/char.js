@@ -1,6 +1,6 @@
 "use strict";
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, } = require('discord.js');
-const database = require('../../utils/database.js');
+const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji } = require('../../utils/images.js');
 module.exports = {

@@ -1,6 +1,6 @@
 "use strict";
 const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
-const database = require('../../utils/database.js');
+const database = require('../../services/DatabaseService');
 const GachaService = require('../../services/GachaService.js');
 const EconomyService = require('../../services/EconomyService');
 const gachaConfig = require('../../config/gachaConfig.js');

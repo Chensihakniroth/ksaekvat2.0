@@ -2,7 +2,7 @@
 const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const database = require('../../utils/database.js');
+const database = require('../../services/DatabaseService');
 module.exports = {
     name: 'ksaekvat',
     aliases: ['kk', 'kkk', 'beksloy'],

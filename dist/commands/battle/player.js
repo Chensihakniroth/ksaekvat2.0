@@ -1,6 +1,6 @@
 "use strict";
 const { EmbedBuilder } = require('discord.js');
-const database = require('../../utils/database.js');
+const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const { getEquippedItems, calculateEquippedBonuses } = require('./item.js');
 const CombatService = require('../../services/CombatService.js');

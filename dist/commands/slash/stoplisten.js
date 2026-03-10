@@ -1,7 +1,7 @@
 "use strict";
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const isAdmin = require('../../utils/adminCheck');
-const database = require('../../utils/database.js');
+const database = require('../../services/DatabaseService');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('stoplisten')
