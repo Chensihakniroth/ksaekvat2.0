@@ -44,7 +44,6 @@ const client = new Client({
   allowedMentions: {
     parse: ['users', 'roles'],
     repliedUser: true,
-    failIfNotExists: false
   }
 }) as ExtendedClient;
 
