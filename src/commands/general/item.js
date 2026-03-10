@@ -10,7 +10,7 @@ const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 const ItemService = require('../../services/ItemService.js');
-const EconomyService = require('../../services/EconomyService');
+const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 const { getItemEmoji, getRarityEmoji } = require('../../utils/images.js');
 
 module.exports = {
@@ -119,7 +119,7 @@ module.exports = {
     });
 
     collector.on('end', () => {
-      msg.edit({ components: [] }).catch(() => {});
+      msg.edit({ components: [] }).catch(() => { });
     });
   },
 };

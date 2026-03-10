@@ -11,7 +11,7 @@ const colors = require('../../utils/colors.js');
 const itemUtils = require('./item.js');
 const { getCharacterImage } = require('../../utils/images.js');
 const CombatService = require('../../services/CombatService.js');
-const EconomyService = require('../../services/EconomyService');
+const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 
 module.exports = {
   name: 'fight',
@@ -87,11 +87,11 @@ module.exports = {
             `${c.hp > 0 ? c.emoji : '💀'} **${c.name}**\n\`[${'■'.repeat(Math.max(0, Math.ceil((c.hp / c.maxHp) * 10)))}${'-'.repeat(Math.max(0, 10 - Math.ceil((c.hp / c.maxHp) * 10)))}]\` ${Math.max(0, c.hp)}/${c.maxHp}`
         )
         .join('\n');
-      
+
       const shieldStr = enemy.shield > 0 ? ` 🛡️ (+${enemy.shield})` : '';
       const eDisp = `${enemy.emoji} **${enemy.name}** (Lv.${enemy.level})\n` +
-                    `**Class:** ${enemy.class} | **Rarity:** ${enemy.rarity}\n` +
-                    `\`[${'■'.repeat(Math.max(0, Math.ceil((enemy.hp / enemy.maxHp) * 10)))}${'-'.repeat(Math.max(0, 10 - Math.ceil((enemy.hp / enemy.maxHp) * 10)))}]\` ${Math.max(0, enemy.hp)}/${enemy.maxHp}${shieldStr}`;
+        `**Class:** ${enemy.class} | **Rarity:** ${enemy.rarity}\n` +
+        `\`[${'■'.repeat(Math.max(0, Math.ceil((enemy.hp / enemy.maxHp) * 10)))}${'-'.repeat(Math.max(0, 10 - Math.ceil((enemy.hp / enemy.maxHp) * 10)))}]\` ${Math.max(0, enemy.hp)}/${enemy.maxHp}${shieldStr}`;
 
       return new EmbedBuilder()
         .setColor(enemy.rarity === 'LEGENDARY' ? 0xffd700 : colors.primary)
@@ -133,7 +133,7 @@ module.exports = {
       // Player Turn
       if (i.customId === 'attack') {
         const dmg = CombatService.calculateAttackDamage(active.atk, enemy.def);
-        
+
         // Handle Shield
         if (enemy.shield > 0) {
           const absorbed = Math.min(enemy.shield, dmg);
@@ -145,7 +145,7 @@ module.exports = {
           enemy.hp -= dmg;
           battleLog.push(`⚔️ ${active.name} hit for ${dmg}!`);
         }
-        
+
         comboPoints = Math.min(4, comboPoints + 1);
       } else if (i.customId === 'combo') {
         const dmg = CombatService.calculateComboDamage(team);

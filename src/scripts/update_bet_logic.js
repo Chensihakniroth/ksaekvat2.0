@@ -16,7 +16,7 @@ commands.forEach(cmd => {
     if (!content.includes('EconomyService')) {
         content = content.replace(
             /const config = require\('\.\.\/\.\.\/config\/config\.js'\);/g,
-            `const config = require('../../config/config.js');\nconst EconomyService = require('../../services/EconomyService.js');`
+            `const config = require('../../config/config.js');\nconst EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService.js');`
         );
     }
 

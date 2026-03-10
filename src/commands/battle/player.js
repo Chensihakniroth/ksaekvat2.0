@@ -3,7 +3,7 @@ const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const { getEquippedItems, calculateEquippedBonuses } = require('./item.js');
 const CombatService = require('../../services/CombatService.js');
-const EconomyService = require('../../services/EconomyService');
+const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 
 module.exports = {
   name: 'player',
@@ -77,13 +77,13 @@ module.exports = {
     const equippedText =
       Object.keys(equipped).length > 0
         ? Object.entries(equipped)
-            .map(([slot, item]) => {
-              const bonusText = Object.entries(item.bonus)
-                .map(([stat, val]) => `+${val} ${stat}`)
-                .join(', ');
-              return `**${slot.charAt(0).toUpperCase() + slot.slice(1)}:** ${item.name}\n   🔹 ${bonusText}`;
-            })
-            .join('\n')
+          .map(([slot, item]) => {
+            const bonusText = Object.entries(item.bonus)
+              .map(([stat, val]) => `+${val} ${stat}`)
+              .join(', ');
+            return `**${slot.charAt(0).toUpperCase() + slot.slice(1)}:** ${item.name}\n   🔹 ${bonusText}`;
+          })
+          .join('\n')
         : 'No items equipped';
 
     embed.addFields({ name: '🛡️ Equipped Items', value: equippedText, inline: false });

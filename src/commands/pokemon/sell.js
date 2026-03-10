@@ -3,7 +3,7 @@ const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 const AnimalService = require('../../services/AnimalService.js');
-const EconomyService = require('../../services/EconomyService');
+const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 
 module.exports = {
   name: 'sell',

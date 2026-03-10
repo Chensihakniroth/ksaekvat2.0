@@ -12,7 +12,7 @@ commands.forEach(cmd => {
     let content = fs.readFileSync(fullPath, 'utf8');
     // Make sure EconomyService is imported
     if (!content.includes('EconomyService')) {
-        content = content.replace(/const config = require\('\.\.\/\.\.\/config\/config\.js'\);/g, `const config = require('../../config/config.js');\nconst EconomyService = require('../../services/EconomyService.js');`);
+        content = content.replace(/const config = require\('\.\.\/\.\.\/config\/config\.js'\);/g, `const config = require('../../config/config.js');\nconst EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService.js');`);
     }
     // Replace the manual bet parsing block
     let betPattern = '';

@@ -3,7 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const economyService = require('../../services/EconomyService');
+const economyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 const cooldowns = require('../../utils/cooldowns.js');
 module.exports = {
     name: 'work',

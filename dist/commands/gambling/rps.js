@@ -3,7 +3,7 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentTyp
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const EconomyService = require('../../services/EconomyService.js');
+const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService.js');
 module.exports = {
     name: 'rps',
     aliases: ['rockpaperscissors'],

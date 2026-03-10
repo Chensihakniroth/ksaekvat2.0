@@ -2,7 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const EconomyService = require('../../services/EconomyService.js');
+const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService.js');
 
 module.exports = {
   name: 'slots',
@@ -32,13 +32,13 @@ module.exports = {
 
     if (betAmount <= 0) {
       if (args[0]?.toLowerCase() === 'all' && userData.balance <= 0) {
-        return message.reply({ embeds: [{ color: colors.error, title: '💸 No funds found!', description: `You don't have any money to play right now, sweetie. (◕‿◕✿)`}] });
+        return message.reply({ embeds: [{ color: colors.error, title: '💸 No funds found!', description: `You don't have any money to play right now, sweetie. (◕‿◕✿)` }] });
       }
-      return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid amount', description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)'}] });
+      return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid amount', description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)' }] });
     }
 
     if (betAmount < minBet) {
-      return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet too low', description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)`}] });
+      return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet too low', description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)` }] });
     }
 
     if (!(await database.hasBalance(message.author.id, betAmount))) {
@@ -143,8 +143,8 @@ module.exports = {
 
       slotEmbed.setDescription(
         `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n` +
-          `🎰 ┃ ${animationSymbols.first} ┃ ${animationSymbols.middle} ┃ ${animationSymbols.last} ┃\n\n` +
-          statusText
+        `🎰 ┃ ${animationSymbols.first} ┃ ${animationSymbols.middle} ┃ ${animationSymbols.last} ┃\n\n` +
+        statusText
       );
 
       try {
@@ -177,10 +177,10 @@ module.exports = {
         .setTitle(`🎉 You won, my lucky little one! ヽ(>∀<☆)ノ`)
         .setDescription(
           `**${selectedOutcome.name}**\n\n` +
-            `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-            `**Winnings:** +${winAmount.toLocaleString()} ${config.economy.currency}\n` +
-            `**New Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}\n` +
-            `**Multiplier:** x${selectedOutcome.multiplier}`
+          `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
+          `**Winnings:** +${winAmount.toLocaleString()} ${config.economy.currency}\n` +
+          `**New Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}\n` +
+          `**Multiplier:** x${selectedOutcome.multiplier}`
         );
 
       if (expGain && expGain.leveledUp) {
@@ -199,9 +199,9 @@ module.exports = {
         .setTitle("🤝 It's a draw, little one!")
         .setDescription(
           `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-            `**Mommy is giving your money back!**\n\n` +
-            `**Returned:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
-            `**Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}`
+          `**Mommy is giving your money back!**\n\n` +
+          `**Returned:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
+          `**Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}`
         );
     } else {
       const userData = await database.getUser(message.author.id, message.author.username);
@@ -212,8 +212,8 @@ module.exports = {
         .setTitle('💀 Oh no, you lost, darling (｡•́︿•̀｡)')
         .setDescription(
           `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-            `**Loss:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
-            `**Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
+          `**Loss:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
+          `**Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
         );
     }
 
