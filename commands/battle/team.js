@@ -60,7 +60,7 @@ async function createTeamImage(userData, teamCharacters) {
 
     const bgBuffer = await sharp({
       create: { width: canvasWidth, height: canvasHeight, channels: 4, background: '#121318' }
-    }).toBuffer();
+    }).png().toBuffer();
 
     composites.push({ input: bgBuffer, top: 0, left: 0 });
 
@@ -218,7 +218,7 @@ async function createTeamImage(userData, teamCharacters) {
 
           const cardBg = await sharp({
             create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' },
-          }).toBuffer();
+          }).png().toBuffer();
 
           let charLayer = sharp(imageBuffer);
           const metadata = await charLayer.metadata();
@@ -231,11 +231,11 @@ async function createTeamImage(userData, teamCharacters) {
           // Simple gradient overlay alternative using solid background compositing
           const gradientBg = await sharp({
             create: { width: cardWidth, height: Math.floor(cardHeight / 3), channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0.7 } }
-          }).toBuffer();
+          }).png().toBuffer();
 
           slotBuffer = await sharp(cardBg)
             .composite([
-              { input: await charLayer.toBuffer(), blend: 'over' },
+              { input: await charLayer.png().toBuffer(), blend: 'over' },
               { input: gradientBg, top: cardHeight - Math.floor(cardHeight / 3), left: 0, blend: 'over' }
             ])
             .png()
