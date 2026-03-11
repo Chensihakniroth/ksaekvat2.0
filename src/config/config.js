@@ -15,6 +15,8 @@ module.exports = {
     w: 'weekly',
     hunt: 'hunt',
     zoo: 'zoo',
+    pdex: 'pokedex',
+    dex: 'pokedex',
     bj: 'blackjack',
     bjob: 'blowjob',
     rps: 'rps',
