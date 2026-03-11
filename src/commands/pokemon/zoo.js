@@ -31,9 +31,11 @@ function getRarityColor(rarity) {
 
 // ─── PC Box image builder (space theme + pixel scaling) ───────────────────────
 async function createPCBoxImage(boxName, boxPokemons) {
+  if (!boxPokemons || boxPokemons.length === 0) return null;
+
   const cols = 6;
   const rows = 5;
-  const cellSize = 110; // Slightly larger for better pixel clarity
+  const cellSize = 124; // Bigger cells for HUGE sprites!
   const padding = 18;
   const headerHeight = 72;
   const canvasWidth = padding * 2 + cols * cellSize;
@@ -87,13 +89,13 @@ async function createPCBoxImage(boxName, boxPokemons) {
       if (spriteUrl) {
         const resp = await axios.get(spriteUrl, { responseType: 'arraybuffer', timeout: 5000 });
         const imgBuffer = Buffer.from(resp.data);
-        const SPRITE_SIZE = cellSize - 10; // Large, fills most of the cell
+        const SPRITE_SIZE = cellSize - 6; // Huge, fills the cell
 
         const resized = await sharp(imgBuffer)
           .resize(SPRITE_SIZE, SPRITE_SIZE, { 
             fit: 'contain', 
             background: { r: 0, g: 0, b: 0, alpha: 0 },
-            kernel: 'nearest' // CRITICAL for sharp pixel art enlargement
+            kernel: 'nearest' // CRITICAL for sharp pixel scaling
           })
           .toBuffer();
         
