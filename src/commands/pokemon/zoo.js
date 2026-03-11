@@ -14,13 +14,13 @@ if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
 
 // ─── Rarity theme map ─────────────────────────────────────────────────────────
 const RARITY_COLORS = {
-  priceless: { hex: '#FFD700', r: 255, g: 215, b: 0 },
-  mythical: { hex: '#FF4FB0', r: 255, g: 79, b: 176 },
-  legendary: { hex: '#FF8C00', r: 255, g: 140, b: 0 },
-  epic:      { hex: '#9932CC', r: 153, g: 50,  b: 204 },
-  rare: { hex: '#0099FF', r: 0, g: 153, b: 255 },
-  uncommon: { hex: '#00CC66', r: 0, g: 204, b: 102 },
-  common: { hex: '#888888', r: 136, g: 136, b: 136 },
+  priceless:  { hex: '#FFD700', r: 255, g: 215, b: 0 },
+  mythical:   { hex: '#FF4FB0', r: 255, g: 79,  b: 176 },
+  legendary:  { hex: '#FF8C00', r: 255, g: 140, b: 0 },
+  epic:       { hex: '#9932CC', r: 153, g: 50,  b: 204 },
+  rare:       { hex: '#0099FF', r: 0,   g: 153, b: 255 },
+  uncommon:   { hex: '#00CC66', r: 0,   g: 204, b: 102 },
+  common:     { hex: '#888888', r: 136, g: 136, b: 136 },
 };
 
 const RARITY_ORDER = ['priceless', 'mythical', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
@@ -29,17 +29,16 @@ function getRarityColor(rarity) {
   return RARITY_COLORS[rarity] || RARITY_COLORS.common;
 }
 
-// ─── PC Box image builder (space theme) ───────────────────────────────────────
+// ─── PC Box image builder (space theme + pixel scaling) ───────────────────────
 async function createPCBoxImage(boxName, boxPokemons) {
   const cols = 6;
   const rows = 5;
-  const cellSize = 96;
+  const cellSize = 110; // Slightly larger for better pixel clarity
   const padding = 18;
   const headerHeight = 72;
   const canvasWidth = padding * 2 + cols * cellSize;
   const canvasHeight = headerHeight + padding + rows * cellSize + padding;
 
-  // ── Background: deep space navy with grid cells ──
   const bgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
     <defs>
       <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
@@ -51,30 +50,18 @@ async function createPCBoxImage(boxName, boxPokemons) {
         <stop offset="100%" stop-color="#102040"/>
       </linearGradient>
     </defs>
-
-    <!-- Background -->
     <rect width="${canvasWidth}" height="${canvasHeight}" rx="16" ry="16" fill="url(#bg)"/>
-    <!-- Border glow -->
-    <rect x="2" y="2" width="${canvasWidth - 4}" height="${canvasHeight - 4}" rx="14" ry="14"
-          fill="none" stroke="#3a5fc8" stroke-width="2" opacity="0.7"/>
-
-    <!-- Header bar -->
+    <rect x="2" y="2" width="${canvasWidth - 4}" height="${canvasHeight - 4}" rx="14" ry="14" fill="none" stroke="#3a5fc8" stroke-width="2" opacity="0.7"/>
     <rect x="12" y="10" width="${canvasWidth - 24}" height="50" rx="10" ry="10" fill="url(#hdr)"/>
-    <text x="${canvasWidth / 2}" y="43" font-family="'Courier New',monospace" font-size="20"
-          font-weight="bold" fill="#88aaff" text-anchor="middle" letter-spacing="4">${boxName}</text>
-
-    <!-- PC icon accent -->
+    <text x="${canvasWidth / 2}" y="43" font-family="'Courier New',monospace" font-size="20" font-weight="bold" fill="#88aaff" text-anchor="middle" letter-spacing="4">${boxName}</text>
     <text x="30" y="44" font-family="sans-serif" font-size="22" fill="#5577cc">💻</text>
-
-    <!-- Grid cells -->
     ${Array.from({ length: rows }).map((_, r) =>
-    Array.from({ length: cols }).map((_, c) => {
-      const cx = padding + c * cellSize;
-      const cy = headerHeight + padding + r * cellSize;
-      return `<rect x="${cx + 3}" y="${cy + 3}" width="${cellSize - 6}" height="${cellSize - 6}"
-                      rx="10" ry="10" fill="#111827" stroke="#1e2d4a" stroke-width="1.5" opacity="0.9"/>`;
-    }).join('')
-  ).join('')}
+      Array.from({ length: cols }).map((_, c) => {
+        const cx = padding + c * cellSize;
+        const cy = headerHeight + padding + r * cellSize;
+        return `<rect x="${cx + 3}" y="${cy + 3}" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="#111827" stroke="#1e2d4a" stroke-width="1.5" opacity="0.9"/>`;
+      }).join('')
+    ).join('')}
   </svg>`);
 
   const composites = [{ input: bgSvg, top: 0, left: 0 }];
@@ -91,29 +78,29 @@ async function createPCBoxImage(boxName, boxPokemons) {
 
     // Rarity glow ring
     const glowSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cellSize - 6}" height="${cellSize - 6}">
-      <rect x="0" y="0" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10"
-            fill="none" stroke="rgb(${rc.r},${rc.g},${rc.b})" stroke-width="2" opacity="0.55"/>
+      <rect x="0" y="0" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="none" stroke="rgb(${rc.r},${rc.g},${rc.b})" stroke-width="2" opacity="0.55"/>
     </svg>`);
     composites.push({ input: glowSvg, top: cy + 3, left: cx + 3 });
 
-    // Sprite
     try {
       const spriteUrl = await AnimalService.getPokemonSprite(pkmn.key);
       if (spriteUrl) {
-        const resp = await axios.get(spriteUrl, { responseType: 'arraybuffer', timeout: 4000 });
+        const resp = await axios.get(spriteUrl, { responseType: 'arraybuffer', timeout: 5000 });
         const imgBuffer = Buffer.from(resp.data);
-        // Resize AND extend so every sprite is exactly the same canvas size
-        const SPRITE_SIZE = cellSize - 22;
+        const SPRITE_SIZE = cellSize - 10; // Large, fills most of the cell
+
         const resized = await sharp(imgBuffer)
-          .resize(SPRITE_SIZE, SPRITE_SIZE, {
-            fit: 'contain',
-            withoutEnlargement: false,
+          .resize(SPRITE_SIZE, SPRITE_SIZE, { 
+            fit: 'contain', 
             background: { r: 0, g: 0, b: 0, alpha: 0 },
+            kernel: 'nearest' // CRITICAL for sharp pixel art enlargement
           })
           .toBuffer();
+        
         const { width: rw, height: rh } = await sharp(resized).metadata();
         const padTop  = Math.floor((SPRITE_SIZE - rh) / 2);
         const padLeft = Math.floor((SPRITE_SIZE - rw) / 2);
+
         const layer = await sharp(resized)
           .extend({
             top:    Math.max(0, padTop),
@@ -123,18 +110,17 @@ async function createPCBoxImage(boxName, boxPokemons) {
             background: { r: 0, g: 0, b: 0, alpha: 0 },
           })
           .toBuffer();
-        composites.push({ input: layer, top: cy + 11, left: cx + 11 });
+
+        composites.push({ input: layer, top: cy + 5, left: cx + 5 });
       }
     } catch (e) {
-      console.warn('Sprite fetch failed:', pkmn.key, e.message);
+      console.warn('PC Sprite scale failed:', pkmn.key, e.message);
     }
 
-    // Count badge
     if (pkmn.count > 1) {
       const badge = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cellSize - 6}" height="${cellSize - 6}">
-        <rect x="${cellSize - 34}" y="${cellSize - 28}" width="28" height="18" rx="6" ry="6" fill="#e63946"/>
-        <text x="${cellSize - 20}" y="${cellSize - 16}" font-family="sans-serif" font-size="11"
-              font-weight="bold" fill="#fff" text-anchor="middle">×${pkmn.count}</text>
+        <rect x="${cellSize - 36}" y="${cellSize - 28}" width="30" height="18" rx="6" ry="6" fill="#e63946"/>
+        <text x="${cellSize - 21}" y="${cellSize - 16}" font-family="sans-serif" font-size="11" font-weight="bold" fill="#fff" text-anchor="middle">×${pkmn.count}</text>
       </svg>`);
       composites.push({ input: badge, top: cy + 3, left: cx + 3 });
     }
@@ -147,40 +133,20 @@ async function createPCBoxImage(boxName, boxPokemons) {
   return outPath;
 }
 
-// ─── Build rarity breakdown string ────────────────────────────────────────────
 function buildRarityBreakdown(allCaught) {
   const counts = {};
-  for (const p of allCaught) {
-    counts[p.rarity] = (counts[p.rarity] || 0) + 1;
-  }
-
-  const emojiMap = {
-    priceless: '✨',
-    mythical: '🌸',
-    legendary: '🔥',
-    epic: '💜',
-    rare: '💙',
-    uncommon: '💚',
-    common: '⬜',
-  };
-
-  return RARITY_ORDER
-    .filter(r => counts[r])
-    .map(r => `${emojiMap[r]} **${counts[r]}** ${r.charAt(0).toUpperCase() + r.slice(1)}`)
-    .join('  •  ');
+  for (const p of allCaught) counts[p.rarity] = (counts[p.rarity] || 0) + 1;
+  const emojiMap = { priceless: '✨', mythical: '🌸', legendary: '🔥', epic: '💜', rare: '💙', uncommon: '💚', common: '⬜' };
+  return RARITY_ORDER.filter(r => counts[r]).map(r => `${emojiMap[r]} **${counts[r]}** ${r.charAt(0).toUpperCase() + r.slice(1)}`).join('  •  ');
 }
 
-// ─── Determine embed accent color from highest rarity owned ───────────────────
 function pickEmbedColor(allCaught) {
   for (const r of RARITY_ORDER) {
-    if (allCaught.some(p => p.rarity === r)) {
-      return getRarityColor(r).hex;
-    }
+    if (allCaught.some(p => p.rarity === r)) return getRarityColor(r).hex;
   }
   return '#3a5fc8';
 }
 
-// ─── Command ─────────────────────────────────────────────────────────────────
 module.exports = {
   name: 'zoo',
   aliases: ['collection', 'animals', 'pokemon', 'pc', 'box'],
@@ -195,120 +161,80 @@ module.exports = {
       if (found) target = found;
     }
 
-    try { await message.channel.sendTyping(); } catch (_) { }
+    try { await message.channel.sendTyping(); } catch (_) {}
 
-    const userData = await database.getUser(target.id, target.username);
+    const userDoc = await database.getUser(target.id, target.username);
     const animalsData = await database.loadAnimals();
-    const userAnimals = userData.animals || {};
+    
+    // CRITICAL FIX: Convert from Mongoose Document to plain Object for reliable iteration
+    const userData = userDoc.toObject();
+    const animalsObj = userData.animals || {};
 
-    const { totalAnimals, totalValue, rarityStats } = AnimalService.calculateZooStats(userAnimals, animalsData);
+    const { totalAnimals, totalValue } = AnimalService.calculateZooStats(animalsObj, animalsData);
 
     if (totalAnimals === 0) {
-      return message.reply({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(colors.warning)
-            .setDescription(`Oh darling~ (｡•́︿•̀｡)\n**${target.username}** hasn't caught any Pokémon yet! Use \`Khunt\` to start your collection!`)
-        ]
-      });
+      return message.reply({ embeds: [new EmbedBuilder().setColor(colors.warning).setDescription(`Oh darling~ (｡•́︿•̀｡)\n**${target.username}** hasn't caught any Pokémon yet! Use \`Khunt\` to start your collection!`)] });
     }
 
-    // ── Flatten ALL caught Pokémon (no Kanto-only filter!) ──────────────────
     const allCaught = [];
-    const rarityEntries = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
-
-    for (const [rarity, animalsMap] of rarityEntries) {
-      const entries = animalsMap instanceof Map ? animalsMap.entries() : Object.entries(animalsMap);
-      for (const [key, count] of entries) {
+    // Data is a plain object now from toObject(), so iterate as a regular nested object
+    for (const [rarity, animalCounts] of Object.entries(animalsObj)) {
+      for (const [key, count] of Object.entries(animalCounts || {})) {
         const def = animalsData[rarity]?.[key];
-        if (count > 0 && def) {
-          allCaught.push({
-            key,
-            name: def.name,
-            rarity,
-            weight: config.hunting.rarities[rarity]?.weight ?? 50,
-            val: def.value,
-            count: Number(count),
-          });
+        if (Number(count) > 0 && def) {
+          allCaught.push({ key, name: def.name, rarity, weight: config.hunting.rarities[rarity]?.weight ?? 50, val: def.value, count: Number(count) });
         }
       }
     }
 
-    // Sort: rarest first, then alphabetical
     allCaught.sort((a, b) => a.weight - b.weight || a.name.localeCompare(b.name));
-
-    const chunk = (arr, size) =>
-      Array.from({ length: Math.ceil(arr.length / size) }, (_, i) => arr.slice(i * size, i * size + size));
-    const boxes = chunk(allCaught, 30);
+    const boxes = Array.from({ length: Math.ceil(allCaught.length / 30) }, (_, i) => allCaught.slice(i * 30, i * 30 + 30));
 
     const embedColor = pickEmbedColor(allCaught);
     const rarityBreakdown = buildRarityBreakdown(allCaught);
-
     let currentBox = 0;
 
     const generatePCMessage = async (boxIndex) => {
       const boxLabel = `PC BOX ${boxIndex + 1}`;
       const imgPath = await createPCBoxImage(boxLabel, boxes[boxIndex]);
-
       const embed = new EmbedBuilder()
         .setColor(embedColor)
         .setTitle(`💻  Pokémon PC Storage  —  ${target.username}`)
-        .setDescription(
-          `📦 **Pokémon Caught:** ${allCaught.length}  •  🔢 **Total Copies:** ${totalAnimals}\n\n${rarityBreakdown}`
-        )
+        .setDescription(`📦 **Pokémon Caught:** ${allCaught.length}  •  🔢 **Total Copies:** ${totalAnimals}\n\n${rarityBreakdown}`)
         .setImage('attachment://pc-box.png')
         .setFooter({ text: `${boxLabel}  •  Box ${boxIndex + 1} / ${boxes.length}  •  Net Worth: ${EconomyService.format(totalValue)} coins` })
         .setTimestamp();
 
-      // Badge row only on page 1
       if (boxIndex === 0) {
-        const badges = AnimalService.calculateBadges(userData.stats?.totalAnimalsFound || 0, totalValue, userAnimals);
-        if (badges.length > 0) {
-          embed.addFields({ name: '🏅 Badges', value: badges.join('  |  '), inline: false });
-        }
+        const badges = AnimalService.calculateBadges(userDoc.stats?.totalAnimalsFound || 0, totalValue, animalsObj);
+        if (badges.length > 0) embed.addFields({ name: '🏅 Badges', value: badges.join('  |  ') });
       }
 
       const row = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId('zoo_prev')
-          .setLabel('◀  Prev')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(boxIndex === 0),
-        new ButtonBuilder()
-          .setCustomId('zoo_next')
-          .setLabel('Next  ▶')
-          .setStyle(ButtonStyle.Secondary)
-          .setDisabled(boxIndex === boxes.length - 1),
+        new ButtonBuilder().setCustomId('zoo_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === 0),
+        new ButtonBuilder().setCustomId('zoo_next').setLabel('Next  ▶').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === boxes.length - 1),
       );
 
-      const files = [new AttachmentBuilder(imgPath, { name: 'pc-box.png' })];
-      const components = boxes.length > 1 ? [row] : [];
-      return { embed, files, components, imgPath };
+      return { embed, files: [new AttachmentBuilder(imgPath, { name: 'pc-box.png' })], components: boxes.length > 1 ? [row] : [], imgPath };
     };
 
     const payload = await generatePCMessage(currentBox);
     const msg = await message.reply({ embeds: [payload.embed], files: payload.files, components: payload.components });
-    if (payload.imgPath) fs.unlink(payload.imgPath, () => { });
+    if (payload.imgPath) fs.unlink(payload.imgPath, () => {});
 
     if (boxes.length > 1) {
-      const collector = msg.createMessageComponentCollector({ time: 120_000 });
-
+      const collector = msg.createMessageComponentCollector({ time: 60_000 });
       collector.on('collect', async (i) => {
-        if (i.user.id !== message.author.id) {
-          return i.reply({ content: "Hands off, darling! (っ˘ω˘ς) This PC belongs to someone else!", flags: [MessageFlags.Ephemeral] });
-        }
+        if (i.user.id !== message.author.id) return i.reply({ content: "That's not yours, sweetheart! (っ˘ω˘ς)", flags: [MessageFlags.Ephemeral] });
         if (i.customId === 'zoo_prev' && currentBox > 0) currentBox--;
         else if (i.customId === 'zoo_next' && currentBox < boxes.length - 1) currentBox++;
-
         await i.deferUpdate();
-        const newPayload = await generatePCMessage(currentBox);
-        await msg.edit({ embeds: [newPayload.embed], files: newPayload.files, components: newPayload.components });
-        if (newPayload.imgPath) fs.unlink(newPayload.imgPath, () => { });
+        const next = await generatePCMessage(currentBox);
+        await msg.edit({ embeds: [next.embed], files: next.files, components: next.components });
+        if (next.imgPath) fs.unlink(next.imgPath, () => {});
       });
-
-      collector.on('end', () => msg.edit({ components: [] }).catch(() => { }));
+      collector.on('end', () => msg.edit({ components: [] }).catch(() => {}));
     }
-
     await database.updateStats(message.author.id, 'command');
   },
 };
