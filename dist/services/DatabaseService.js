@@ -107,15 +107,7 @@ class DatabaseService {
         if (!item)
             return null;
         let existing = user.gacha_inventory.find((i) => i.name === itemName);
-        if (item.type === 'weapon') {
-            if (existing) {
-                existing.count = (existing.count || 1) + 1;
-            }
-            else {
-                user.gacha_inventory.push({ name: itemName, type: 'weapon', refinement: 1, count: 1 });
-            }
-        }
-        else if (item.type === 'item') {
+        if (item.type === 'item') {
             if (itemName === 'Star Dust') {
                 user.star_dust = (user.star_dust || 0) + 1;
             }
@@ -133,6 +125,7 @@ class DatabaseService {
             return { ...item, count: 1, isNew: true };
         }
         else {
+            // Characters only! (｡♥‿♥｡)
             if (existing) {
                 existing.count = (existing.count || 1) + 1;
             }
@@ -256,9 +249,8 @@ class DatabaseService {
         return await CharacterCard_1.default.findOneAndUpdate({ id: 'default' }, { ...data, updatedAt: new Date() }, { upsert: true, returnDocument: 'after' });
     }
     async getGachaPool() {
-        const allChars = registry.getAllCharacters();
-        const allWeapons = registry.getAllWeapons();
-        const items = [...allChars, ...allWeapons];
+        // Registry now returns both characters and items in getAllCharacters! (｡♥‿♥｡)
+        const items = registry.getAllCharacters();
         const pool = {};
         const commonPool = { 3: [], 4: [], 5: [] };
         items.forEach((item) => {
@@ -286,15 +278,7 @@ class DatabaseService {
                 }
             }
         });
-        const genericWeapons = [
-            { name: 'Sword', emoji: '⚔️', image_name: 'sword.webp' },
-            { name: 'Claymore', emoji: '⚔️', image_name: 'claymore.webp' },
-            { name: 'Bow', emoji: '🏹', image_name: 'bow.webp' },
-            { name: 'Catalyst', emoji: '🔮', image_name: 'Catalyst.webp' },
-            { name: 'Polearm', emoji: '⚔️', image_name: 'polearm.webp' },
-        ];
         const gamesToAdd = ['genshin', 'hsr', 'wuwa', 'zzz'];
-        const weaponBaseUrl = 'http://bucket-production-4ca0.up.railway.app/gacha-images/common';
         gamesToAdd.forEach((game) => {
             if (!pool[game]) {
                 pool[game] = { 3: [], 4: [], 5: [] };
@@ -303,18 +287,6 @@ class DatabaseService {
             for (const rarity in commonPool) {
                 pool[game][rarity].push(...commonPool[rarity]);
             }
-            genericWeapons.forEach((weapon) => {
-                const exists = pool[game]['3'].some((w) => w.name === weapon.name);
-                if (!exists) {
-                    pool[game]['3'].push({
-                        name: weapon.name,
-                        game: game,
-                        rarity: 3,
-                        emoji: weapon.emoji,
-                        image_url: `${weaponBaseUrl}/${weapon.image_name}`,
-                    });
-                }
-            });
         });
         return pool;
     }

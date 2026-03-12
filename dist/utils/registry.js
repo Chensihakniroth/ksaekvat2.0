@@ -8,14 +8,12 @@ const logger = require('./logger.js');
  * Now loads from MongoDB on startup (Collection: characters).
  */
 let characterRegistry = {};
-let weaponRegistry = {};
 // Load and index the registry once on startup (Async)
 async function initializeRegistry() {
     try {
         const items = await Character.find({});
         // Reset registries
         characterRegistry = {};
-        weaponRegistry = {};
         items.forEach((item) => {
             const itemData = {
                 name: item.name,
@@ -27,11 +25,9 @@ async function initializeRegistry() {
                 role: item.role,
                 image_url: item.image_url,
             };
-            if (itemData.type === 'character') {
+            // Only characters and items are allowed now! Weapons are retired~ (｡♥‿♥｡)
+            if (itemData.type === 'character' || itemData.type === 'item') {
                 characterRegistry[item.name] = itemData;
-            }
-            else {
-                weaponRegistry[item.name] = itemData;
             }
         });
         logger.debug(`Registry initialized with ${items.length} items from MongoDB (characters collection).`);
@@ -42,9 +38,9 @@ async function initializeRegistry() {
 }
 module.exports = {
     initializeRegistry,
-    getItem: (name) => characterRegistry[name] || weaponRegistry[name],
+    getItem: (name) => characterRegistry[name],
     getCharacter: (name) => characterRegistry[name],
-    getWeapon: (name) => weaponRegistry[name],
+    getWeapon: (name) => null, // Weapon system is OFF
     getAllCharacters: () => Object.values(characterRegistry),
-    getAllWeapons: () => Object.values(weaponRegistry),
+    getAllWeapons: () => [], // Empty armory~
 };

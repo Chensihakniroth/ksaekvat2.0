@@ -9,7 +9,6 @@ const logger = require('./logger.js');
  */
 
 let characterRegistry = {};
-let weaponRegistry = {};
 
 // Load and index the registry once on startup (Async)
 async function initializeRegistry() {
@@ -18,7 +17,6 @@ async function initializeRegistry() {
 
     // Reset registries
     characterRegistry = {};
-    weaponRegistry = {};
 
     items.forEach((item) => {
       const itemData = {
@@ -32,10 +30,9 @@ async function initializeRegistry() {
         image_url: item.image_url,
       };
 
-      if (itemData.type === 'character') {
+      // Only characters and items are allowed now! Weapons are retired~ (｡♥‿♥｡)
+      if (itemData.type === 'character' || itemData.type === 'item') {
         characterRegistry[item.name] = itemData;
-      } else {
-        weaponRegistry[item.name] = itemData;
       }
     });
     logger.debug(
@@ -48,9 +45,9 @@ async function initializeRegistry() {
 
 module.exports = {
   initializeRegistry,
-  getItem: (name) => characterRegistry[name] || weaponRegistry[name],
+  getItem: (name) => characterRegistry[name],
   getCharacter: (name) => characterRegistry[name],
-  getWeapon: (name) => weaponRegistry[name],
+  getWeapon: (name) => null, // Weapon system is OFF
   getAllCharacters: () => Object.values(characterRegistry),
-  getAllWeapons: () => Object.values(weaponRegistry),
+  getAllWeapons: () => [], // Empty armory~
 };

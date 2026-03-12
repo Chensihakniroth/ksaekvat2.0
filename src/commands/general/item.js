@@ -15,111 +15,51 @@ const { getItemEmoji, getRarityEmoji } = require('../../utils/images.js');
 
 module.exports = {
   name: 'item',
-  aliases: ['items', 'kitem', 'weapon', 'weapons'],
-  description: 'Manage your weapons! (Refine and Sell Excess)',
+  aliases: ['items', 'kitem', 'bag'],
+  description: 'View your collection of items and consumables! ✨',
   usage: 'item',
   async execute(message, args, client) {
     const userId = message.author.id;
 
     const renderInventory = async () => {
-      const inventory = await database.getHydratedInventory(userId);
-      const weapons = inventory.filter((i) => i.type === 'weapon');
+      const userData = await database.getUser(userId, message.author.username);
+      
+      const itemsList = [
+        { name: 'Star Dust', count: userData.star_dust || 0, emoji: '✨' },
+        { name: 'Pokeball', count: userData.pokeballs || 0, emoji: '⚪' },
+        { name: 'Ultraball', count: userData.ultraballs || 0, emoji: '🟡' },
+        { name: 'Master Ball', count: userData.masterballs || 0, emoji: '🟣' },
+      ].filter(item => item.count > 0);
 
-      if (weapons.length === 0) {
+      if (itemsList.length === 0) {
         return {
           embed: new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle(`⚔️ ${message.author.username}'s Armory`)
+            .setTitle(`🎒 ${message.author.username}'s Bag`)
             .setDescription(
-              '*Your armory is empty, darling. Pull some weapons from gacha! (｡•́︿•̀｡)*'
+              '*Your bag is empty, darling. Try some gacha pulls! (｡•́︿•̀｡)*'
             ),
-          weapons: [],
+          items: [],
         };
       }
 
-      const list = weapons
-        .sort((a, b) => b.rarity - a.rarity)
+      const list = itemsList
         .map((w) => {
-          const rarityEmoji = getRarityEmoji(w.rarity, client);
-          const rank = `[R${w.refinement || 1}]`;
-          return `${rarityEmoji} **${w.name}** ${rank} x${w.count || 1}`;
+          return `${w.emoji} **${w.name}**: ${w.count}`;
         });
 
       const embed = new EmbedBuilder()
         .setColor(colors.primary)
-        .setTitle(`⚔️ ${message.author.username}'s Armory`)
-        .setDescription(`**Total Weapons:** ${weapons.length}\n\n${list.join('\n')}`)
-        .setFooter({ text: 'Use the buttons below to manage your collection! (◕‿✿)' });
+        .setTitle(`🎒 ${message.author.username}'s Bag`)
+        .setDescription(`**Items in your bag:**\n\n${list.join('\n')}`)
+        .setFooter({ text: 'More items coming soon! (◕‿✿)' });
 
-      return { embed, weapons };
+      return { embed, items: itemsList };
     };
 
-    const getButtons = (weapons) => {
-      const canAscend = weapons.some((w) => (w.count || 1) > 1 && (w.refinement || 1) < 5);
-      const canSell = weapons.some((w) => (w.refinement || 1) === 5 && (w.count || 1) > 1);
-
-      return new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId('auto_ascend')
-          .setLabel('Auto Ascension')
-          .setEmoji('✨')
-          .setStyle(ButtonStyle.Primary)
-          .setDisabled(!canAscend),
-        new ButtonBuilder()
-          .setCustomId('sell_excess')
-          .setLabel('Sell Excess (Max R5)')
-          .setEmoji('💰')
-          .setStyle(ButtonStyle.Danger)
-          .setDisabled(!canSell)
-      );
-    };
-
-    const { embed, weapons: initialWeapons } = await renderInventory();
-    const msg = await message.reply({
+    const { embed, items: initialItems } = await renderInventory();
+    await message.reply({
       embeds: [embed],
-      components: initialWeapons.length > 0 ? [getButtons(initialWeapons)] : [],
-    });
-
-    if (initialWeapons.length === 0) return;
-
-    const collector = msg.createMessageComponentCollector({
-      componentType: ComponentType.Button,
-      time: 300000,
-    });
-
-    collector.on('collect', async (i) => {
-      if (i.user.id !== userId)
-        return i.reply({ content: 'hg ot torm armory heh!', flags: [MessageFlags.Ephemeral] });
-
-      const userData = await database.getUser(userId, message.author.username);
-      const gachaInv = userData.gacha_inventory;
-
-      if (i.customId === 'auto_ascend') {
-        const ascendedCount = ItemService.autoRefineWeapons(gachaInv);
-        await database.saveUser(userData);
-        await i.reply({
-          content: `✅ Successfully performed **${ascendedCount}** refinements! (ﾉ´ヮ\` )ﾉ*:･ﾟ✧`,
-          flags: [MessageFlags.Ephemeral],
-        });
-      } else if (i.customId === 'sell_excess') {
-        const { totalGold, soldCount } = ItemService.sellExcessWeapons(gachaInv);
-
-        if (soldCount > 0) {
-          await database.addBalance(userId, totalGold);
-          await database.saveUser(userData);
-          await i.reply({
-            content: `💰 Sold **${soldCount}** excess weapons for **${EconomyService.format(totalGold)}** ${config.economy.currency}! (｡♥‿♥｡)`,
-            flags: [MessageFlags.Ephemeral],
-          });
-        }
-      }
-
-      const { embed: newEmbed, weapons: newWeapons } = await renderInventory();
-      await msg.edit({ embeds: [newEmbed], components: [getButtons(newWeapons)] });
-    });
-
-    collector.on('end', () => {
-      msg.edit({ components: [] }).catch(() => { });
     });
   },
 };
