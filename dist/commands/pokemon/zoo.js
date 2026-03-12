@@ -140,7 +140,7 @@ module.exports = {
     description: 'Access your Pokémon PC Storage 💻✨',
     usage: 'zoo [@user]',
     async execute(message, args, client) {
-        logger.command('zoo', { user: message.author.tag, args: args.join(' ') });
+        logger.info(`[Command: zoo] User: ${message.author.tag}, Args: ${args.join(' ')}`);
         try {
             let target = message.author;
             if (message.mentions.users.size > 0)
