@@ -69,15 +69,33 @@ class GachaService {
   public performMultiPull(userData: any, pool: Record<string, GachaItem[]>): MultiPullResult {
     const results: GachaResultItem[] = [];
     let { pity: pity5, pity4 } = userData;
+    let hasHighRarity = false;
 
     for (let i = 0; i < 10; i++) {
       const roll = this.rollRarity(pity5, pity4);
       pity5 = roll.pity5;
       pity4 = roll.pity4;
 
+      if (roll.rarity === '4' || roll.rarity === '5') {
+        hasHighRarity = true;
+      }
+
       const charList = pool[roll.rarity];
       const item = charList[Math.floor(Math.random() * charList.length)];
       results.push({ ...item, rarity: parseInt(roll.rarity) });
+    }
+
+    // Mommy's Guarantee! Ensures at least one 4-star or better per 10-pull. (｡♥‿♥｡)
+    if (!hasHighRarity) {
+      // Find a 3-star to replace
+      const replacementIndex = results.findIndex(r => r.rarity === 3);
+      if (replacementIndex !== -1) {
+        const fourStarPool = pool['4'];
+        if (fourStarPool && fourStarPool.length > 0) {
+          const newItem = fourStarPool[Math.floor(Math.random() * fourStarPool.length)];
+          results[replacementIndex] = { ...newItem, rarity: 4 };
+        }
+      }
     }
 
     return { results, pity5, pity4 };

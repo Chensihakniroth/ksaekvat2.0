@@ -158,8 +158,18 @@ module.exports = {
         userData.pity4 = pity4;
         if (!usedExtra)
             userData.dailyPulls++;
+        let bonusMasterball = false;
+        // Check for 5-star characters specifically to grant the bonus
+        const hasFiveStarCharacter = results.some((r) => r.rarity === 5 && (r.type === 'character' || !r.type));
+        if (hasFiveStarCharacter) {
+            // 25% chance to get a bonus master ball! (｡♥‿♥｡)
+            if (Math.random() < 0.25) {
+                bonusMasterball = true;
+                await database.addGachaItem(message.author.id, 'Master Ball');
+            }
+        }
         const hasFiveStar = results.some((r) => r.rarity === 5);
-        const hasFourStar = results.some((r) => r.rarity === 4);
+        const hasFourStar = results.some((r) => r.rarity >= 4); // Use >= 4 to correctly trigger the 4-star animation if a 5-star is also present
         // --- STEP 1: Send the GIF message ---
         const gameData = gachaConfig.games[gameKey];
         let bannerGifUrl = hasFiveStar
@@ -186,6 +196,10 @@ module.exports = {
             return `${rarityEmoji} ${charEmoji} **${name}**`;
         })
             .join('\n');
+        let finalDescription = description;
+        if (bonusMasterball) {
+            finalDescription += `\n\n**BONUS!** You also found a 🟣 **Master Ball**! (｡♥‿♥｡)`;
+        }
         let footerParts = [];
         if (usedExtra)
             footerParts.push(`Promo Pull (${userData.extraPulls} left)`);
@@ -196,7 +210,7 @@ module.exports = {
         footerParts.push(`Pity: ${userData.pity}/90`);
         const finalEmbed = new EmbedBuilder()
             .setColor(hasFiveStar ? '#FFB13F' : '#A256FF')
-            .setDescription(description)
+            .setDescription(finalDescription)
             .setFooter({ text: footerParts.join(' | ') });
         const files = [];
         if (imagePath) {
