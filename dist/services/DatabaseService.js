@@ -255,26 +255,26 @@ class DatabaseService {
         const commonPool = { 3: [], 4: [], 5: [] };
         items.forEach((item) => {
             const rarityStr = item.rarity.toString();
+            const itemPayload = {
+                name: item.name,
+                game: item.game,
+                emoji: item.emoji,
+                image_url: item.image_url,
+            };
             if (item.game === 'common') {
                 if (commonPool[rarityStr]) {
-                    commonPool[rarityStr].push({
-                        name: item.name,
-                        game: item.game,
-                        emoji: item.emoji,
-                        image_url: item.image_url,
-                    });
+                    const isBoosted = item.name === 'Master Ball' || item.name === 'Ultraball';
+                    const weight = isBoosted ? 5 : 1; // 5x boost! (｡♥‿♥｡)
+                    for (let i = 0; i < weight; i++) {
+                        commonPool[rarityStr].push(itemPayload);
+                    }
                 }
             }
             else {
                 if (!pool[item.game])
                     pool[item.game] = { 3: [], 4: [], 5: [] };
                 if (pool[item.game][rarityStr]) {
-                    pool[item.game][rarityStr].push({
-                        name: item.name,
-                        game: item.game,
-                        emoji: item.emoji,
-                        image_url: item.image_url,
-                    });
+                    pool[item.game][rarityStr].push(itemPayload);
                 }
             }
         });
