@@ -16,7 +16,7 @@ class UserRepository {
   }
 
   public async updateStats(id: string, statsUpdate: any): Promise<IUser | null> {
-    return await User.findOneAndUpdate({ id }, { $inc: statsUpdate }, { new: true });
+    return await User.findOneAndUpdate({ id }, { $inc: statsUpdate }, { returnDocument: 'after' });
   }
 
   public async getAll(): Promise<IUser[]> {

@@ -40,7 +40,7 @@ class DatabaseService {
 
   async saveUserUpdate(userId: string, updatePayload: any) {
     try {
-      return await User.findOneAndUpdate({ id: userId }, updatePayload, { new: true });
+      return await User.findOneAndUpdate({ id: userId }, updatePayload, { returnDocument: 'after' });
     } catch (err) {
       logger.error(`MongoDB saveUserUpdate error:`, err);
       return null;
@@ -56,7 +56,7 @@ class DatabaseService {
     const user = await User.findOneAndUpdate(
       { id: userId },
       { $inc: { experience: amount } },
-      { new: true, upsert: true }
+      { returnDocument: 'after', upsert: true }
     );
 
     let leveledUp = false;
@@ -186,7 +186,7 @@ class DatabaseService {
           'stats.totalAnimalsFound': 1 
         } 
       },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: 'after' }
     );
   }
 
@@ -272,7 +272,7 @@ class DatabaseService {
     return await CharacterCard.findOneAndUpdate(
       { id: 'default' },
       { ...data, updatedAt: new Date() },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: 'after' }
     );
   }
 

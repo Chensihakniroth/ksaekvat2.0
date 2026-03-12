@@ -18,7 +18,7 @@ class UserRepository {
         return await user.save();
     }
     async updateStats(id, statsUpdate) {
-        return await User_1.default.findOneAndUpdate({ id }, { $inc: statsUpdate }, { new: true });
+        return await User_1.default.findOneAndUpdate({ id }, { $inc: statsUpdate }, { returnDocument: 'after' });
     }
     async getAll() {
         return await User_1.default.find({});

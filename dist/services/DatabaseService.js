@@ -43,7 +43,7 @@ class DatabaseService {
     }
     async saveUserUpdate(userId, updatePayload) {
         try {
-            return await User_1.default.findOneAndUpdate({ id: userId }, updatePayload, { new: true });
+            return await User_1.default.findOneAndUpdate({ id: userId }, updatePayload, { returnDocument: 'after' });
         }
         catch (err) {
             logger.error(`MongoDB saveUserUpdate error:`, err);
@@ -55,7 +55,7 @@ class DatabaseService {
     }
     async addExperience(userId, amount) {
         // ── First atomic XP boost ───────────────────────────────────────────
-        const user = await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { experience: amount } }, { new: true, upsert: true });
+        const user = await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { experience: amount } }, { returnDocument: 'after', upsert: true });
         let leveledUp = false;
         const getReq = (lvl) => lvl < 5
             ? lvl * 100
@@ -166,7 +166,7 @@ class DatabaseService {
                 [updatePath]: 1,
                 'stats.totalAnimalsFound': 1
             }
-        }, { upsert: true, new: true });
+        }, { upsert: true, returnDocument: 'after' });
     }
     async getUserAnimals(userId) {
         const user = await this.getUser(userId);
@@ -236,7 +236,7 @@ class DatabaseService {
         return await CharacterCard_1.default.findOne({ id: 'default' });
     }
     async updateCharacterCard(data) {
-        return await CharacterCard_1.default.findOneAndUpdate({ id: 'default' }, { ...data, updatedAt: new Date() }, { upsert: true, new: true });
+        return await CharacterCard_1.default.findOneAndUpdate({ id: 'default' }, { ...data, updatedAt: new Date() }, { upsert: true, returnDocument: 'after' });
     }
     async getGachaPool() {
         const allChars = registry.getAllCharacters();
