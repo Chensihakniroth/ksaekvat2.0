@@ -37,6 +37,9 @@ export interface IUser extends Document {
   pity: number;
   pity4: number;
   gacha_inventory: IGachaInventoryItem[];
+  inventory: any[];
+  equipped: Map<string, any>;
+  lootbox: number;
   team: string[];
   animals: Map<string, Map<string, number>>;
   boosters: Map<string, any>;
@@ -81,6 +84,10 @@ const UserSchema: Schema = new Schema({
       count: { type: Number, default: 1 },
     },
   ],
+
+  inventory: { type: [Schema.Types.Mixed], default: [] },
+  equipped: { type: Schema.Types.Map, of: Schema.Types.Mixed, default: {} },
+  lootbox: { type: Number, default: 0 },
 
   team: [String], // Array of character names (Slim Storage)
 

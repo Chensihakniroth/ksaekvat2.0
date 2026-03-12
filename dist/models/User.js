@@ -42,6 +42,7 @@ const UserSchema = new mongoose_1.Schema({
     id: { type: String, required: true, unique: true, index: true }, // Discord ID
     username: { type: String, default: 'Unknown Traveler' }, // Discord Username
     balance: { type: Number, default: 1000 },
+    star_dust: { type: Number, default: 0 },
     level: { type: Number, default: 1 },
     worldLevel: { type: Number, default: 1 },
     experience: { type: Number, default: 0 },
@@ -57,19 +58,23 @@ const UserSchema = new mongoose_1.Schema({
     gacha_inventory: [
         {
             name: String,
-            type: { type: String, enum: ['character', 'weapon'] },
+            type: { type: String, enum: ['character', 'weapon', 'item'] },
             ascension: { type: Number, default: 0 },
             refinement: { type: Number, default: 1 },
             count: { type: Number, default: 1 },
         },
     ],
+    inventory: { type: [mongoose_1.Schema.Types.Mixed], default: [] },
+    equipped: { type: mongoose_1.Schema.Types.Map, of: mongoose_1.Schema.Types.Mixed, default: {} },
+    lootbox: { type: Number, default: 0 },
     team: [String], // Array of character names (Slim Storage)
     // RPG & Stats
     animals: { type: mongoose_1.Schema.Types.Map, of: mongoose_1.Schema.Types.Map, default: {} }, // { rarity: { animalKey: count } }
     boosters: { type: mongoose_1.Schema.Types.Map, of: mongoose_1.Schema.Types.Mixed, default: {} },
-    inventory: [mongoose_1.Schema.Types.Mixed],
-    equipped: { type: mongoose_1.Schema.Types.Map, of: mongoose_1.Schema.Types.Mixed, default: {} },
-    lootbox: { type: Number, default: 0 },
+    // Simplified Items
+    pokeballs: { type: Number, default: 0 },
+    ultraballs: { type: Number, default: 0 },
+    masterballs: { type: Number, default: 0 },
     stats: {
         totalGambled: { type: Number, default: 0 },
         totalWon: { type: Number, default: 0 },

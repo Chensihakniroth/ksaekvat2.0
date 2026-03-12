@@ -36,7 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 /**
  * CHARACTER SCHEMA (Gold Standard - Collection: characters)
- * This model handles all items in the Gacha Pool (Characters & Weapons).
+ * This model handles all items in the Gacha Pool (Characters & Weapons & Items).
  */
 const CharacterSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
@@ -45,7 +45,7 @@ const CharacterSchema = new mongoose_1.Schema({
     emoji: { type: String, default: '✨' },
     element: { type: String },
     role: { type: String },
-    type: { type: String, enum: ['character', 'weapon'], required: true },
+    type: { type: String, enum: ['character', 'weapon', 'item'], required: true },
     image_url: { type: String, default: '' }, // Unified image storage
     updatedAt: { type: Date, default: Date.now },
 }, { collection: 'characters' }); // Force use of existing 'characters' collection

@@ -13,7 +13,17 @@ module.exports = {
     async execute(message, args, client) {
         const userData = await database.getUser(message.author.id, message.author.username);
         const animalsData = await database.loadAnimals();
-        if (Math.random() < config.hunting.distractionChance) {
+        // Check for active ball boosters
+        const activePokeball = await database.getActiveBooster(message.author.id, 'pokeball');
+        const activeUltraball = await database.getActiveBooster(message.author.id, 'ultraball');
+        const activeMasterball = await database.getActiveBooster(message.author.id, 'masterball');
+        const activeBall = activeMasterball || activeUltraball || activePokeball;
+        let distractionChance = config.hunting.distractionChance;
+        if (activeMasterball || activeUltraball)
+            distractionChance = 0;
+        else if (activePokeball)
+            distractionChance = 0.1;
+        if (Math.random() < distractionChance) {
             return message.reply({
                 embeds: [
                     new EmbedBuilder()
@@ -28,16 +38,32 @@ module.exports = {
         const isBoosted = userData.hunt_boost > 0;
         let totalWeight = 0;
         for (const [key, r] of Object.entries(rarities)) {
-            // Apply 5x multiplier to non-common rarities if boosted
+            // Filter rarities based on active ball
+            if (activeMasterball || activeUltraball) {
+                if (!['epic', 'legendary', 'mythical', 'priceless'].includes(key))
+                    continue;
+            }
+            let weight = r.weight;
+            // Master ball has 5x mythical chance
+            if (activeMasterball && key === 'mythical')
+                weight *= 5;
+            // Apply 5x multiplier to non-common rarities if hunt_boost is active
             const weightMult = isBoosted && key !== 'common' ? 5 : 1;
-            totalWeight += r.weight * weightMult;
+            totalWeight += weight * weightMult;
         }
         const random = Math.random() * totalWeight;
         let currentWeight = 0;
         let selectedRarity = 'common';
         for (const [key, r] of Object.entries(rarities)) {
+            if (activeMasterball || activeUltraball) {
+                if (!['epic', 'legendary', 'mythical', 'priceless'].includes(key))
+                    continue;
+            }
+            let weight = r.weight;
+            if (activeMasterball && key === 'mythical')
+                weight *= 5;
             const weightMult = isBoosted && key !== 'common' ? 5 : 1;
-            currentWeight += r.weight * weightMult;
+            currentWeight += weight * weightMult;
             if (random <= currentWeight) {
                 selectedRarity = key;
                 break;
@@ -53,14 +79,8 @@ module.exports = {
         const catchResult = await database.addAnimal(message.author.id, animalKey, selectedRarity);
         const expReward = Math.floor(rarities[selectedRarity].value / 25) + 5;
         const expRes = await database.addExperience(message.author.id, expReward);
-        // Atomic update for lootbox and hunt_boost to avoid race conditions
+        // Atomic update for hunt_boost to avoid race conditions
         const updatePayload = {};
-        // Loot Box Chance (25%)
-        let gotLootBox = false;
-        if (Math.random() < 0.25) {
-            updatePayload['$inc'] = { ...(updatePayload['$inc'] || {}), lootbox: 1 };
-            gotLootBox = true;
-        }
         // Consume Boost Turn
         if (isBoosted) {
             updatePayload['$inc'] = { ...(updatePayload['$inc'] || {}), hunt_boost: -1 };
@@ -74,20 +94,27 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor(parseInt(rarities[selectedRarity].color.slice(1), 16))
             .setTitle('ヽ(>∀<☆)ノ You caught a Pokémon!')
-            .setDescription(`Look, sweetie! You caught a cute **${animal.name}**! (｡♥‿♥｡)\n*${rarities[selectedRarity].name} Rarity*`)
-            .addFields({ name: '(◕‿◕✿) Rank Exp', value: `+${expReward} XP`, inline: true }, {
+            .setDescription(`Look, sweetie! You caught a cute **${animal.name}**! (｡♥‿♥｡)\n*${rarities[selectedRarity].name} Rarity*`);
+        let statusValue = isBoosted ? `🔥 **BOOSTED** (${finalBoostCount} left)` : 'Normal';
+        if (activeMasterball) {
+            const remaining = Math.ceil((activeMasterball.expiresAt - Date.now()) / 60000);
+            statusValue += `\n🟣 **Master Ball** (${remaining}m)`;
+        }
+        else if (activeUltraball) {
+            const remaining = Math.ceil((activeUltraball.expiresAt - Date.now()) / 60000);
+            statusValue += `\n🟡 **Ultra Ball** (${remaining}m)`;
+        }
+        else if (activePokeball) {
+            const remaining = Math.ceil((activePokeball.expiresAt - Date.now()) / 60000);
+            statusValue += `\n⚪ **Pokeball** (${remaining}m)`;
+        }
+        embed.addFields({ name: '(◕‿◕✿) Rank Exp', value: `+${expReward} XP`, inline: true }, {
             name: '(｡♥‿♥｡) Status',
-            value: isBoosted ? `🔥 **BOOSTED** (${finalBoostCount} left)` : 'Normal',
+            value: statusValue,
             inline: true,
         });
         if (imageUrl)
             embed.setImage(imageUrl);
-        if (gotLootBox) {
-            embed.addFields({
-                name: '(｡♥‿♥｡) Special Find!',
-                value: 'You also found a **Loot Box**, darling! Check your bags! (◕‿◕✿)',
-            });
-        }
         if (expRes.leveledUp)
             embed.setFooter({
                 text: `ヽ(>∀<☆)ノ Level Up! You are now Rank ${expRes.newLevel}, sweetie!`,

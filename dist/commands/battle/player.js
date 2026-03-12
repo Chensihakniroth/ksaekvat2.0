@@ -2,7 +2,6 @@
 const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
-const { getEquippedItems, calculateEquippedBonuses } = require('./item.js');
 const CombatService = require('../../services/CombatService.js').default || require('../../services/CombatService.js');
 const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 module.exports = {
@@ -17,67 +16,32 @@ module.exports = {
             target = message.mentions.users.first();
         }
         else if (args[0]) {
-            const userId = args[0];
-            target = client.users.cache.get(userId);
-        }
-        if (!target) {
-            return message.reply({
-                embeds: [
-                    {
-                        color: colors.error,
-                        title: '❌ User Not Found',
-                        description: 'Please mention a valid user or provide their ID.',
-                    },
-                ],
-            });
+            const userId = args[0].replace(/[<@!>]/g, '');
+            const found = client.users.cache.get(userId);
+            if (found)
+                target = found;
         }
         const userData = await database.getUser(target.id, target.username);
-        const equipped = await getEquippedItems(target.id);
-        const bonuses = await calculateEquippedBonuses(target.id);
         // --- CALCULATE STATS (Using Service) ---
-        const { baseStats, totalStats } = CombatService.calculatePlayerStats(userData, bonuses);
+        // Pass empty bonuses as the equipment system is removed
+        const emptyBonuses = { attack: 0, defense: 0, hp: 0, speed: 0, luck: 0 };
+        const { baseStats, totalStats } = CombatService.calculatePlayerStats(userData, emptyBonuses);
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
             .setTitle(`⚔️ ${target.username}'s Combat Stats`)
             .setThumbnail(target.displayAvatarURL())
             .addFields({
-            name: '📊 Base Stats',
+            name: '📊 Combat Stats',
             value: [
                 `**Level:** ${userData.level}`,
                 `**Experience:** ${EconomyService.format(userData.experience)}`,
-                `**Attack:** ${baseStats.attack}`,
-                `**Defense:** ${baseStats.defense}`,
-                `**Health:** ${baseStats.health}`,
-                `**Luck:** ${baseStats.luck}`,
+                `**Health:** ${totalStats.health}`,
+                `**Attack:** ${totalStats.attack}`,
+                `**Defense:** ${totalStats.defense}`,
+                `**Luck:** ${totalStats.luck}`,
             ].join('\n'),
             inline: true,
-        }, {
-            name: '⚔️ Total Stats (With Equipment)',
-            value: [
-                `**Attack:** ${totalStats.attack} ${bonuses.attack > 0 ? `(+${bonuses.attack})` : ''}`,
-                `**Defense:** ${totalStats.defense} ${bonuses.defense > 0 ? `(+${bonuses.defense})` : ''}`,
-                `**Health:** ${totalStats.health} ${bonuses.hp > 0 ? `(+${bonuses.hp})` : ''}`,
-                `**Luck:** ${totalStats.luck} ${bonuses.luck > 0 ? `(+${bonuses.luck})` : ''}`,
-                totalStats.speed > 0 ? `**Speed:** +${totalStats.speed}` : '',
-                totalStats.critRate > 0 ? `**Crit Rate:** +${totalStats.critRate}%` : '',
-                totalStats.evasion > 0 ? `**Evasion:** +${totalStats.evasion}%` : '',
-            ]
-                .filter(Boolean)
-                .join('\n'),
-            inline: true,
         });
-        // Show equipped items
-        const equippedText = Object.keys(equipped).length > 0
-            ? Object.entries(equipped)
-                .map(([slot, item]) => {
-                const bonusText = Object.entries(item.bonus)
-                    .map(([stat, val]) => `+${val} ${stat}`)
-                    .join(', ');
-                return `**${slot.charAt(0).toUpperCase() + slot.slice(1)}:** ${item.name}\n   🔹 ${bonusText}`;
-            })
-                .join('\n')
-            : 'No items equipped';
-        embed.addFields({ name: '🛡️ Equipped Items', value: equippedText, inline: false });
         // Battle statistics
         const stats = userData.stats || {};
         embed.addFields({

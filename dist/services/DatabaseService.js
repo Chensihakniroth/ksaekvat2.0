@@ -115,6 +115,23 @@ class DatabaseService {
                 user.gacha_inventory.push({ name: itemName, type: 'weapon', refinement: 1, count: 1 });
             }
         }
+        else if (item.type === 'item') {
+            if (itemName === 'Star Dust') {
+                user.star_dust = (user.star_dust || 0) + 1;
+            }
+            else if (itemName === 'Pokeball') {
+                user.pokeballs = (user.pokeballs || 0) + 1;
+            }
+            else if (itemName === 'Ultraball') {
+                user.ultraballs = (user.ultraballs || 0) + 1;
+            }
+            else if (itemName === 'Master Ball') {
+                user.masterballs = (user.masterballs || 0) + 1;
+            }
+            // Items are now stored in dedicated fields, but we still return the item info
+            await this.saveUser(user);
+            return { ...item, count: 1, isNew: true };
+        }
         else {
             if (existing) {
                 existing.count = (existing.count || 1) + 1;
@@ -243,17 +260,30 @@ class DatabaseService {
         const allWeapons = registry.getAllWeapons();
         const items = [...allChars, ...allWeapons];
         const pool = {};
+        const commonPool = { 3: [], 4: [], 5: [] };
         items.forEach((item) => {
-            if (!pool[item.game])
-                pool[item.game] = { 3: [], 4: [], 5: [] };
             const rarityStr = item.rarity.toString();
-            if (pool[item.game][rarityStr]) {
-                pool[item.game][rarityStr].push({
-                    name: item.name,
-                    game: item.game,
-                    emoji: item.emoji,
-                    image_url: item.image_url,
-                });
+            if (item.game === 'common') {
+                if (commonPool[rarityStr]) {
+                    commonPool[rarityStr].push({
+                        name: item.name,
+                        game: item.game,
+                        emoji: item.emoji,
+                        image_url: item.image_url,
+                    });
+                }
+            }
+            else {
+                if (!pool[item.game])
+                    pool[item.game] = { 3: [], 4: [], 5: [] };
+                if (pool[item.game][rarityStr]) {
+                    pool[item.game][rarityStr].push({
+                        name: item.name,
+                        game: item.game,
+                        emoji: item.emoji,
+                        image_url: item.image_url,
+                    });
+                }
             }
         });
         const genericWeapons = [
@@ -263,11 +293,15 @@ class DatabaseService {
             { name: 'Catalyst', emoji: '🔮', image_name: 'Catalyst.webp' },
             { name: 'Polearm', emoji: '⚔️', image_name: 'polearm.webp' },
         ];
-        const gamesToAdd = ['genshin', 'hsr', 'wuwa'];
+        const gamesToAdd = ['genshin', 'hsr', 'wuwa', 'zzz'];
         const weaponBaseUrl = 'http://bucket-production-4ca0.up.railway.app/gacha-images/common';
         gamesToAdd.forEach((game) => {
             if (!pool[game]) {
                 pool[game] = { 3: [], 4: [], 5: [] };
+            }
+            // Add common items to this game's pool
+            for (const rarity in commonPool) {
+                pool[game][rarity].push(...commonPool[rarity]);
             }
             genericWeapons.forEach((weapon) => {
                 const exists = pool[game]['3'].some((w) => w.name === weapon.name);

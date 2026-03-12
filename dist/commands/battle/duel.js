@@ -101,24 +101,18 @@ module.exports = {
                 });
             }
         }
-        // Get equipped item bonuses
-        const { calculateEquippedBonuses } = require('./item.js');
-        const challengerBonuses = await calculateEquippedBonuses(message.author.id);
-        const targetBonuses = await calculateEquippedBonuses(target.id);
-        // Calculate combat stats based on level and experience + equipped items
+        // Calculate combat stats based on level and experience (Equipment system removed)
         const challengerStats = {
-            attack: Math.floor(challengerData.level * 10 + challengerData.experience / 100) +
-                challengerBonuses.attack,
-            defense: Math.floor(challengerData.level * 8 + challengerData.experience / 150) +
-                challengerBonuses.defense,
-            health: Math.floor(challengerData.level * 15 + 100) + challengerBonuses.hp,
-            luck: Math.floor(challengerData.level * 2) + challengerBonuses.luck,
+            attack: Math.floor(challengerData.level * 10 + challengerData.experience / 100),
+            defense: Math.floor(challengerData.level * 8 + challengerData.experience / 150),
+            health: Math.floor(challengerData.level * 15 + 100),
+            luck: Math.floor(challengerData.level * 2),
         };
         const targetStats = {
-            attack: Math.floor(targetData.level * 10 + targetData.experience / 100) + targetBonuses.attack,
-            defense: Math.floor(targetData.level * 8 + targetData.experience / 150) + targetBonuses.defense,
-            health: Math.floor(targetData.level * 15 + 100) + targetBonuses.hp,
-            luck: Math.floor(targetData.level * 2) + targetBonuses.luck,
+            attack: Math.floor(targetData.level * 10 + targetData.experience / 100),
+            defense: Math.floor(targetData.level * 8 + targetData.experience / 150),
+            health: Math.floor(targetData.level * 15 + 100),
+            luck: Math.floor(targetData.level * 2),
         };
         // Create duel invitation embed
         const inviteEmbed = new EmbedBuilder()
