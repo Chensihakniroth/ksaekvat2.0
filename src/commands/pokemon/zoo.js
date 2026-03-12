@@ -7,7 +7,7 @@ const EconomyService = require('../../services/EconomyService').default || requi
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
-const sharp = require('sharp');
+const logger = require('../../utils/logger.js');
 
 const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
@@ -155,88 +155,99 @@ module.exports = {
   description: 'Access your Pokémon PC Storage 💻✨',
   usage: 'zoo [@user]',
   async execute(message, args, client) {
-    let target = message.author;
-    if (message.mentions.users.size > 0) target = message.mentions.users.first();
-    else if (args.length > 0) {
-      const userId = args[0].replace(/[<@!>]/g, '');
-      const found = client.users.cache.get(userId);
-      if (found) target = found;
-    }
+    logger.command('zoo', { user: message.author.tag, args: args.join(' ') });
+    try {
+      let target = message.author;
+      if (message.mentions.users.size > 0) target = message.mentions.users.first();
+      else if (args.length > 0) {
+        const userId = args[0].replace(/[<@!>]/g, '');
+        const found = client.users.cache.get(userId);
+        if (found) target = found;
+      }
 
-    try { await message.channel.sendTyping(); } catch (_) {}
+      try { await message.channel.sendTyping(); } catch (_) {}
 
-    const userDoc = await database.getUser(target.id, target.username);
-    const animalsData = await database.loadAnimals();
-    
-    // CRITICAL FIX: Convert from Mongoose Document to plain Object for reliable iteration
-    const userData = userDoc.toObject();
-    const animalsObj = userData.animals || {};
+      const userDoc = await database.getUser(target.id, target.username);
+      const animalsData = await database.loadAnimals();
+      
+      const userData = userDoc.toObject();
+      const animalsObj = userData.animals || {};
 
-    const { totalAnimals, totalValue } = AnimalService.calculateZooStats(animalsObj, animalsData);
+      const { totalAnimals, totalValue } = AnimalService.calculateZooStats(animalsObj, animalsData);
 
-    if (totalAnimals === 0) {
-      return message.reply({ embeds: [new EmbedBuilder().setColor(colors.warning).setDescription(`Oh darling~ (｡•́︿•̀｡)\n**${target.username}** hasn't caught any Pokémon yet! Use \`Khunt\` to start your collection!`)] });
-    }
+      if (totalAnimals === 0) {
+        return message.reply({ embeds: [new EmbedBuilder().setColor(colors.warning).setDescription(`Oh darling~ (｡•́︿•̀｡)\n**${target.username}** hasn't caught any Pokémon yet! Use \`Khunt\` to start your collection!`)] });
+      }
 
-    const allCaught = [];
-    // Data is a plain object now from toObject(), so iterate as a regular nested object
-    for (const [rarity, animalCounts] of Object.entries(animalsObj)) {
-      for (const [key, count] of Object.entries(animalCounts || {})) {
-        const def = animalsData[rarity]?.[key];
-        if (Number(count) > 0 && def) {
-          allCaught.push({ key, name: def.name, rarity, weight: config.hunting.rarities[rarity]?.weight ?? 50, val: def.value, count: Number(count) });
+      const allCaught = [];
+      for (const [rarity, animalCounts] of Object.entries(animalsObj)) {
+        for (const [key, count] of Object.entries(animalCounts || {})) {
+          const def = animalsData[rarity]?.[key];
+          if (Number(count) > 0 && def) {
+            allCaught.push({ key, name: def.name, rarity, weight: config.hunting.rarities[rarity]?.weight ?? 50, val: def.value, count: Number(count) });
+          }
         }
       }
-    }
 
-    allCaught.sort((a, b) => a.weight - b.weight || a.name.localeCompare(b.name));
-    const boxes = Array.from({ length: Math.ceil(allCaught.length / 30) }, (_, i) => allCaught.slice(i * 30, i * 30 + 30));
+      allCaught.sort((a, b) => a.weight - b.weight || a.name.localeCompare(b.name));
+      const boxes = Array.from({ length: Math.ceil(allCaught.length / 30) }, (_, i) => allCaught.slice(i * 30, i * 30 + 30));
 
-    const embedColor = pickEmbedColor(allCaught);
-    const rarityBreakdown = buildRarityBreakdown(allCaught);
-    let currentBox = 0;
+      const embedColor = pickEmbedColor(allCaught);
+      const rarityBreakdown = buildRarityBreakdown(allCaught);
+      let currentBox = 0;
 
-    const generatePCMessage = async (boxIndex) => {
-      const boxLabel = `PC BOX ${boxIndex + 1}`;
-      const imgPath = await createPCBoxImage(boxLabel, boxes[boxIndex]);
-      const embed = new EmbedBuilder()
-        .setColor(embedColor)
-        .setTitle(`💻  Pokémon PC Storage  —  ${target.username}`)
-        .setDescription(`📦 **Pokémon Caught:** ${allCaught.length}  •  🔢 **Total Copies:** ${totalAnimals}\n\n${rarityBreakdown}`)
-        .setImage('attachment://pc-box.png')
-        .setFooter({ text: `${boxLabel}  •  Box ${boxIndex + 1} / ${boxes.length}  •  Net Worth: ${EconomyService.format(totalValue)} coins` })
-        .setTimestamp();
+      const generatePCMessage = async (boxIndex) => {
+        const boxLabel = `PC BOX ${boxIndex + 1}`;
+        const imgPath = await createPCBoxImage(boxLabel, boxes[boxIndex]);
+        const embed = new EmbedBuilder()
+          .setColor(embedColor)
+          .setTitle(`💻  Pokémon PC Storage  —  ${target.username}`)
+          .setDescription(`📦 **Pokémon Caught:** ${allCaught.length}  •  🔢 **Total Copies:** ${totalAnimals}\n\n${rarityBreakdown}`)
+          .setImage('attachment://pc-box.png')
+          .setFooter({ text: `${boxLabel}  •  Box ${boxIndex + 1} / ${boxes.length}  •  Net Worth: ${EconomyService.format(totalValue)} coins` })
+          .setTimestamp();
 
-      if (boxIndex === 0) {
-        const badges = AnimalService.calculateBadges(userDoc.stats?.totalAnimalsFound || 0, totalValue, animalsObj);
-        if (badges.length > 0) embed.addFields({ name: '🏅 Badges', value: badges.join('  |  ') });
+        if (boxIndex === 0) {
+          const badges = AnimalService.calculateBadges(userDoc.stats?.totalAnimalsFound || 0, totalValue, animalsObj);
+          if (badges.length > 0) embed.addFields({ name: '🏅 Badges', value: badges.join('  |  ') });
+        }
+
+        const row = new ActionRowBuilder().addComponents(
+          new ButtonBuilder().setCustomId('zoo_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === 0),
+          new ButtonBuilder().setCustomId('zoo_next').setLabel('Next  ▶').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === boxes.length - 1),
+        );
+
+        return { embed, files: [new AttachmentBuilder(imgPath, { name: 'pc-box.png' })], components: boxes.length > 1 ? [row] : [], imgPath };
+      };
+
+      const payload = await generatePCMessage(currentBox);
+      const msg = await message.reply({ embeds: [payload.embed], files: payload.files, components: payload.components });
+      if (payload.imgPath) fs.unlink(payload.imgPath, () => {});
+
+      if (boxes.length > 1) {
+        const collector = msg.createMessageComponentCollector({ time: 60_000 });
+        collector.on('collect', async (i) => {
+          if (i.user.id !== message.author.id) return i.reply({ content: "That's not yours, sweetheart! (っ˘ω˘ς)", flags: [MessageFlags.Ephemeral] });
+          if (i.customId === 'zoo_prev' && currentBox > 0) currentBox--;
+          else if (i.customId === 'zoo_next' && currentBox < boxes.length - 1) currentBox++;
+          await i.deferUpdate();
+          const next = await generatePCMessage(currentBox);
+          await msg.edit({ embeds: [next.embed], files: next.files, components: next.components });
+          if (next.imgPath) fs.unlink(next.imgPath, () => {});
+        });
+        collector.on('end', () => msg.edit({ components: [] }).catch(() => {}));
       }
-
-      const row = new ActionRowBuilder().addComponents(
-        new ButtonBuilder().setCustomId('zoo_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === 0),
-        new ButtonBuilder().setCustomId('zoo_next').setLabel('Next  ▶').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === boxes.length - 1),
-      );
-
-      return { embed, files: [new AttachmentBuilder(imgPath, { name: 'pc-box.png' })], components: boxes.length > 1 ? [row] : [], imgPath };
-    };
-
-    const payload = await generatePCMessage(currentBox);
-    const msg = await message.reply({ embeds: [payload.embed], files: payload.files, components: payload.components });
-    if (payload.imgPath) fs.unlink(payload.imgPath, () => {});
-
-    if (boxes.length > 1) {
-      const collector = msg.createMessageComponentCollector({ time: 60_000 });
-      collector.on('collect', async (i) => {
-        if (i.user.id !== message.author.id) return i.reply({ content: "That's not yours, sweetheart! (っ˘ω˘ς)", flags: [MessageFlags.Ephemeral] });
-        if (i.customId === 'zoo_prev' && currentBox > 0) currentBox--;
-        else if (i.customId === 'zoo_next' && currentBox < boxes.length - 1) currentBox++;
-        await i.deferUpdate();
-        const next = await generatePCMessage(currentBox);
-        await msg.edit({ embeds: [next.embed], files: next.files, components: next.components });
-        if (next.imgPath) fs.unlink(next.imgPath, () => {});
+      await database.updateStats(message.author.id, 'command');
+    } catch (error) {
+      logger.error('Zoo command failed', { error: error.message, stack: error.stack });
+      message.reply({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(colors.error)
+            .setTitle('(｡•́︿•̀｡) Oopsie!')
+            .setDescription("Something went wrong while trying to open your PC box, sweetie. Mommy's looking into it! (っ˘ω˘ς)"),
+        ],
       });
-      collector.on('end', () => msg.edit({ components: [] }).catch(() => {}));
     }
-    await database.updateStats(message.author.id, 'command');
   },
 };
