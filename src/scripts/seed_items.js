@@ -26,7 +26,7 @@ const items = [
     rarity: '4',
     emoji: '🟡',
     type: 'item',
-    image_url: 'http://bucket-production-4ca0.up.railway.app/gacha-images/common/ultra_ball.png'
+    image_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png'
   },
   {
     name: 'Master Ball',
@@ -34,7 +34,7 @@ const items = [
     rarity: '5',
     emoji: '🟣',
     type: 'item',
-    image_url: 'http://bucket-production-4ca0.up.railway.app/gacha-images/common/master_ball.png'
+    image_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png'
   }
 ];
 
