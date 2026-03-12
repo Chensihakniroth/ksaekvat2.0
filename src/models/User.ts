@@ -6,7 +6,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
  */
 export interface IGachaInventoryItem {
   name: string;
-  type: 'character' | 'weapon';
+  type: 'character' | 'weapon' | 'item';
   ascension: number;
   refinement: number;
   count: number;
@@ -25,6 +25,7 @@ export interface IUser extends Document {
   id: string;
   username: string;
   balance: number;
+  star_dust: number;
   level: number;
   worldLevel: number;
   experience: number;
@@ -39,9 +40,9 @@ export interface IUser extends Document {
   team: string[];
   animals: Map<string, Map<string, number>>;
   boosters: Map<string, any>;
-  inventory: any[];
-  equipped: Map<string, any>;
-  lootbox: number;
+  pokeballs: number;
+  ultraballs: number;
+  masterballs: number;
   stats: IUserStats;
   joinedAt: Date;
   customPrefix?: string;   // User's personal main prefix (e.g. 'K', '!')
@@ -56,6 +57,7 @@ const UserSchema: Schema = new Schema({
   id: { type: String, required: true, unique: true, index: true }, // Discord ID
   username: { type: String, default: 'Unknown Traveler' }, // Discord Username
   balance: { type: Number, default: 1000 },
+  star_dust: { type: Number, default: 0 },
   level: { type: Number, default: 1 },
   worldLevel: { type: Number, default: 1 },
   experience: { type: Number, default: 0 },
@@ -73,7 +75,7 @@ const UserSchema: Schema = new Schema({
   gacha_inventory: [
     {
       name: String,
-      type: { type: String, enum: ['character', 'weapon'] },
+      type: { type: String, enum: ['character', 'weapon', 'item'] },
       ascension: { type: Number, default: 0 },
       refinement: { type: Number, default: 1 },
       count: { type: Number, default: 1 },
@@ -85,9 +87,11 @@ const UserSchema: Schema = new Schema({
   // RPG & Stats
   animals: { type: Schema.Types.Map, of: Schema.Types.Map, default: {} }, // { rarity: { animalKey: count } }
   boosters: { type: Schema.Types.Map, of: Schema.Types.Mixed, default: {} },
-  inventory: [Schema.Types.Mixed],
-  equipped: { type: Schema.Types.Map, of: Schema.Types.Mixed, default: {} },
-  lootbox: { type: Number, default: 0 },
+  
+  // Simplified Items
+  pokeballs: { type: Number, default: 0 },
+  ultraballs: { type: Number, default: 0 },
+  masterballs: { type: Number, default: 0 },
 
   stats: {
     totalGambled: { type: Number, default: 0 },

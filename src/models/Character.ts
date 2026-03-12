@@ -11,14 +11,14 @@ export interface ICharacter extends Document {
   emoji: string;
   element?: string;
   role?: string;
-  type: 'character' | 'weapon';
+  type: 'character' | 'weapon' | 'item';
   image_url: string;
   updatedAt: Date;
 }
 
 /**
  * CHARACTER SCHEMA (Gold Standard - Collection: characters)
- * This model handles all items in the Gacha Pool (Characters & Weapons).
+ * This model handles all items in the Gacha Pool (Characters & Weapons & Items).
  */
 const CharacterSchema: Schema = new Schema(
   {
@@ -28,7 +28,7 @@ const CharacterSchema: Schema = new Schema(
     emoji: { type: String, default: '✨' },
     element: { type: String },
     role: { type: String },
-    type: { type: String, enum: ['character', 'weapon'], required: true },
+    type: { type: String, enum: ['character', 'weapon', 'item'], required: true },
     image_url: { type: String, default: '' }, // Unified image storage
     updatedAt: { type: Date, default: Date.now },
   },

@@ -214,10 +214,8 @@ module.exports = {
       .map((item) => {
         const rarityEmoji = getRarityEmoji(item.rarity, client);
         const charEmoji = getItemEmoji(item, client);
-        const elementEmoji = getElementEmoji(item, client);
-        const roleEmoji = getRoleEmoji(item.role, client);
         const name = item.name || 'Unknown Item';
-        return `${rarityEmoji} ${elementEmoji} ${roleEmoji} ${charEmoji} **${name}** x1`;
+        return `${rarityEmoji} ${charEmoji} **${name}**`;
       })
       .join('\n');
 

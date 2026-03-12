@@ -8,7 +8,6 @@ const {
 } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
-const itemUtils = require('./item.js');
 const { getCharacterImage } = require('../../utils/images.js');
 const CombatService = require('../../services/CombatService.js').default || require('../../services/CombatService.js');
 const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
@@ -50,12 +49,12 @@ module.exports = {
 
     // --- PREPARE TEAM ---
     const hydratedInventory = await database.getHydratedInventory(message.author.id);
+    const emptyBonuses = { attack: 0, defense: 0, hp: 0, speed: 0, luck: 0 };
     const team = userData.team
       .map((name) => {
         const char = hydratedInventory.find((i) => i.name === name);
         if (!char) return null;
-        const bonuses = itemUtils.calculateEquippedBonuses(message.author.id);
-        return CombatService.calculateCharStats(char, userData, bonuses);
+        return CombatService.calculateCharStats(char, userData, emptyBonuses);
       })
       .filter(Boolean);
 
