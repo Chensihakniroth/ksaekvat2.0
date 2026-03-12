@@ -50,20 +50,26 @@ module.exports = {
         const animalKey = Object.keys(available)[Math.floor(Math.random() * Object.keys(available).length)];
         const animal = available[animalKey];
         // --- REWARDS ---
-        await database.addAnimal(message.author.id, animalKey, selectedRarity);
+        const catchResult = await database.addAnimal(message.author.id, animalKey, selectedRarity);
         const expReward = Math.floor(rarities[selectedRarity].value / 25) + 5;
         const expRes = await database.addExperience(message.author.id, expReward);
+        // Atomic update for lootbox and hunt_boost to avoid race conditions
+        const updatePayload = {};
         // Loot Box Chance (25%)
         let gotLootBox = false;
         if (Math.random() < 0.25) {
-            userData.lootbox = (userData.lootbox || 0) + 1;
+            updatePayload['$inc'] = { ...(updatePayload['$inc'] || {}), lootbox: 1 };
             gotLootBox = true;
         }
         // Consume Boost Turn
         if (isBoosted) {
-            userData.hunt_boost--;
+            updatePayload['$inc'] = { ...(updatePayload['$inc'] || {}), hunt_boost: -1 };
         }
-        await database.saveUser(userData);
+        if (Object.keys(updatePayload).length > 0) {
+            await database.saveUserUpdate(message.author.id, updatePayload);
+        }
+        // Up-to-date boost count for the embed
+        const finalBoostCount = isBoosted ? (userData.hunt_boost - 1) : 0;
         const imageUrl = await AnimalService.getPokemonImage(animalKey);
         const embed = new EmbedBuilder()
             .setColor(parseInt(rarities[selectedRarity].color.slice(1), 16))
@@ -71,7 +77,7 @@ module.exports = {
             .setDescription(`Look, sweetie! You caught a cute **${animal.name}**! (｡♥‿♥｡)\n*${rarities[selectedRarity].name} Rarity*`)
             .addFields({ name: '(◕‿◕✿) Rank Exp', value: `+${expReward} XP`, inline: true }, {
             name: '(｡♥‿♥｡) Status',
-            value: isBoosted ? `🔥 **BOOSTED** (${userData.hunt_boost} left)` : 'Normal',
+            value: isBoosted ? `🔥 **BOOSTED** (${finalBoostCount} left)` : 'Normal',
             inline: true,
         });
         if (imageUrl)

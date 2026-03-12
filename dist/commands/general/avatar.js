@@ -26,7 +26,7 @@ module.exports = {
             .setTitle(`🖼️ ah pov ${target.username}`)
             .setImage(target.displayAvatarURL({ size: 1024, dynamic: true }))
             .addFields({
-            name: '👤 User Bek Info',
+            name: '👤 User Info',
             value: [
                 `**Chmous:** ${target.username}`,
                 `**ID bek:** ${target.id}`,

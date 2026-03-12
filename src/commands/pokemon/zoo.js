@@ -8,6 +8,7 @@ const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 const logger = require('../../utils/logger.js');
+const sharp = require('sharp');
 
 const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
@@ -180,8 +181,10 @@ module.exports = {
       }
 
       const allCaught = [];
-      for (const [rarity, animalCounts] of Object.entries(animalsObj)) {
-        for (const [key, count] of Object.entries(animalCounts || {})) {
+      const rarityEntries = animalsObj instanceof Map ? animalsObj.entries() : Object.entries(animalsObj);
+      for (const [rarity, animalCounts] of rarityEntries) {
+        const animalEntries = animalCounts instanceof Map ? animalCounts.entries() : Object.entries(animalCounts || {});
+        for (const [key, count] of animalEntries) {
           const def = animalsData[rarity]?.[key];
           if (Number(count) > 0 && def) {
             allCaught.push({ key, name: def.name, rarity, weight: config.hunting.rarities[rarity]?.weight ?? 50, val: def.value, count: Number(count) });

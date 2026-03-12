@@ -41,29 +41,42 @@ class DatabaseService {
             logger.error(`MongoDB saveUser error:`, err);
         }
     }
+    async saveUserUpdate(userId, updatePayload) {
+        try {
+            return await User_1.default.findOneAndUpdate({ id: userId }, updatePayload, { new: true });
+        }
+        catch (err) {
+            logger.error(`MongoDB saveUserUpdate error:`, err);
+            return null;
+        }
+    }
     async getAllUsers() {
         return await User_1.default.find({});
     }
     async addExperience(userId, amount) {
-        const user = await this.getUser(userId);
-        user.experience += amount;
+        // ── First atomic XP boost ───────────────────────────────────────────
+        const user = await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { experience: amount } }, { new: true, upsert: true });
         let leveledUp = false;
         const getReq = (lvl) => lvl < 5
             ? lvl * 100
             : lvl < 15
                 ? Math.floor(500 * Math.pow(1.2, lvl - 5))
                 : Math.floor(3000 * Math.pow(1.15, lvl - 15) + lvl * 200);
+        // Handle potential multi-level-up based on the now-incremented experience
         while (user.experience >= getReq(user.level)) {
             user.experience -= getReq(user.level);
             user.level++;
             leveledUp = true;
         }
-        await this.saveUser(user);
+        if (leveledUp) {
+            await user.save(); // Only save if we actually modified level/remainder
+        }
         return {
             leveledUp,
             newLevel: user.level,
             currentExp: user.experience,
             nextExp: getReq(user.level),
+            updatedUser: user.toObject(),
         };
     }
     async addBalance(userId, amount) {
@@ -144,18 +157,16 @@ class DatabaseService {
         }
     }
     async addAnimal(userId, animalKey, rarity) {
-        const user = await this.getUser(userId);
-        if (!user.animals)
-            user.animals = new Map();
-        let rarityMap = user.animals.get(rarity);
-        if (!rarityMap) {
-            rarityMap = new Map();
-            user.animals.set(rarity, rarityMap);
-        }
-        const currentCount = rarityMap.get(animalKey) || 0;
-        rarityMap.set(animalKey, currentCount + 1);
-        user.markModified('animals');
-        await this.saveUser(user);
+        // ── ATOMIC INCREMENT FIX (｡♥‿♥｡) ──────────────────────────────────
+        // Uses Mongoose dot notation to $inc deep in the Map.
+        // This ensures no race conditions overwrite the data!
+        const updatePath = `animals.${rarity}.${animalKey}`;
+        return await User_1.default.findOneAndUpdate({ id: userId }, {
+            $inc: {
+                [updatePath]: 1,
+                'stats.totalAnimalsFound': 1
+            }
+        }, { upsert: true, new: true });
     }
     async getUserAnimals(userId) {
         const user = await this.getUser(userId);

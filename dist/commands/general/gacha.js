@@ -211,11 +211,11 @@ module.exports = {
         if (bannerGifUrl) {
             // Only wait if a GIF was shown
             if (gameKey === 'genshin')
-                waitTime = 4500;
+                waitTime = 4200;
             else if (gameKey === 'hsr')
-                waitTime = hasFiveStar ? 4500 : 3500;
+                waitTime = hasFiveStar ? 4200 : 3200;
             else if (gameKey === 'wuwa')
-                waitTime = hasFiveStar ? 3500 : 3000;
+                waitTime = hasFiveStar ? 3200 : 3000;
             else if (gameKey === 'zzz')
                 waitTime = hasFiveStar ? 3200 : 3000;
         }

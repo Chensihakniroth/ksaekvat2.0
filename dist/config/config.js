@@ -15,6 +15,8 @@ module.exports = {
         w: 'weekly',
         hunt: 'hunt',
         zoo: 'zoo',
+        pdex: 'pokedex',
+        dex: 'pokedex',
         bj: 'blackjack',
         bjob: 'blowjob',
         rps: 'rps',
@@ -118,5 +120,24 @@ module.exports = {
         version: '69.69.420',
         description: 'bot jes tah tver tver lg ng hah',
         author: '@_callme_.mo',
+    },
+    // ─────────────────────────────────────────────────────
+    // UI / TIMING — change these to control how long things stay on screen
+    // ─────────────────────────────────────────────────────
+    ui: {
+        // How long buttons / select menus stay active (ms)
+        collectorTimeout: 60_000, // 1 minute  — most commands
+        longCollectorTimeout: 300_000, // 5 minutes — kchar paged collection
+        // Slot machine animation frame delays (ms)
+        slotsFrameDelay: {
+            fast: 200, // early spins
+            mid: 250, // slowing down
+            slow: 300, // almost done
+            final: 400, // last frame
+        },
+        // Coinflip animation: delay between each frame (ms)
+        coinflipFrameDelay: 150,
+        // How long before the temp squad-banner image is deleted (ms)
+        teamImageCleanupDelay: 5_000,
     },
 };
