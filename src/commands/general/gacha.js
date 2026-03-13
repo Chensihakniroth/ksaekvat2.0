@@ -40,7 +40,10 @@ async function createGachaResultImage(results) {
     const isSpecialAspectRatio = ['hsr', 'zzz'].includes(item.game?.toLowerCase());
 
     try {
-      const response = await axios.get(item.image_url, { responseType: 'arraybuffer' });
+      const response = await axios.get(item.image_url, {
+        responseType: 'arraybuffer',
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' }
+      });
       const imageBuffer = Buffer.from(response.data);
       const game = item.game?.toLowerCase();
       const useCover = ['genshin', 'wuwa', 'hsr'].includes(game);
@@ -65,7 +68,7 @@ async function createGachaResultImage(results) {
           .png()
           .toBuffer();
       } else {
-        // For others (ZZZ), place the image onto a card with rarity background
+        // For others (ZZZ, Common items), place the image onto a card with rarity background
         processedCard = await sharp({
           create: {
             width: cardWidth,

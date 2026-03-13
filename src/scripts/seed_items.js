@@ -26,7 +26,7 @@ const items = [
     rarity: '4',
     emoji: '🟡',
     type: 'item',
-    image_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png'
+    image_url: 'https://archives.bulbagarden.net/media/upload/a/a2/Ultra_Ball_artwork.png'
   },
   {
     name: 'Master Ball',
@@ -34,7 +34,7 @@ const items = [
     rarity: '5',
     emoji: '🟣',
     type: 'item',
-    image_url: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png'
+    image_url: 'https://archives.bulbagarden.net/media/upload/a/a4/Master_Ball_artwork.png'
   }
 ];
 
