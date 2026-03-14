@@ -90,11 +90,17 @@ module.exports = {
         }
         // Up-to-date boost count for the embed
         const finalBoostCount = isBoosted ? (userData.hunt_boost - 1) : 0;
-        const imageUrl = await AnimalService.getPokemonImage(animalKey);
+        const imgData = await AnimalService.getPokemonImageBuffer(animalKey);
+        const files = [];
         const embed = new EmbedBuilder()
             .setColor(parseInt(rarities[selectedRarity].color.slice(1), 16))
             .setTitle('ヽ(>∀<☆)ノ You caught a Pokémon!')
             .setDescription(`Look, sweetie! You caught a cute **${animal.name}**! (｡♥‿♥｡)\n*${rarities[selectedRarity].name} Rarity*`);
+        if (imgData) {
+            const attachment = new (require('discord.js').AttachmentBuilder)(imgData.buffer, { name: imgData.fileName });
+            embed.setImage(`attachment://${imgData.fileName}`);
+            files.push(attachment);
+        }
         let statusValue = isBoosted ? `🔥 **BOOSTED** (${finalBoostCount} left)` : 'Normal';
         if (activeMasterball) {
             const remaining = Math.ceil((activeMasterball.expiresAt - Date.now()) / 60000);
@@ -113,14 +119,12 @@ module.exports = {
             value: statusValue,
             inline: true,
         });
-        if (imageUrl)
-            embed.setImage(imageUrl);
         if (expRes.leveledUp)
             embed.setFooter({
                 text: `ヽ(>∀<☆)ノ Level Up! You are now Rank ${expRes.newLevel}, sweetie!`,
             });
         await database.updateStats(message.author.id, 'command');
         await database.updateStats(message.author.id, 'hunt_success', 1);
-        message.reply({ embeds: [embed] });
+        message.reply({ embeds: [embed], files });
     },
 };

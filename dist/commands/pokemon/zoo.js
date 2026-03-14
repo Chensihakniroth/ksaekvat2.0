@@ -78,7 +78,14 @@ async function createPCBoxImage(boxName, boxPokemons) {
         try {
             const spriteUrl = await AnimalService.getPokemonSprite(pkmn.key);
             if (spriteUrl) {
-                const resp = await axios.get(spriteUrl, { responseType: 'arraybuffer', timeout: 5000 });
+                const resp = await axios.get(spriteUrl, {
+                    responseType: 'arraybuffer',
+                    timeout: 5000,
+                    headers: {
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                        'Referer': 'https://pokemon.fandom.com/'
+                    }
+                });
                 const imgBuffer = Buffer.from(resp.data);
                 const SPRITE_SIZE = cellSize - 6; // Huge, fills the cell
                 const resized = await sharp(imgBuffer)
@@ -157,6 +164,7 @@ module.exports = {
             catch (_) { }
             const userDoc = await database.getUser(target.id, target.username);
             const animalsData = await database.loadAnimals();
+            const flatRegistry = await database.getAnimalRegistry();
             const userData = userDoc.toObject();
             const animalsObj = userData.animals || {};
             const { totalAnimals, totalValue } = AnimalService.calculateZooStats(animalsObj, animalsData);
@@ -168,9 +176,18 @@ module.exports = {
             for (const [rarity, animalCounts] of rarityEntries) {
                 const animalEntries = animalCounts instanceof Map ? animalCounts.entries() : Object.entries(animalCounts || {});
                 for (const [key, count] of animalEntries) {
-                    const def = animalsData[rarity]?.[key];
+                    // Priority 1: Check the stored rarity bucket
+                    // Priority 2: Check the flat registry (handles rarity changes!)
+                    const def = animalsData[rarity]?.[key] || flatRegistry[key];
                     if (Number(count) > 0 && def) {
-                        allCaught.push({ key, name: def.name, rarity, weight: config.hunting.rarities[rarity]?.weight ?? 50, val: def.value, count: Number(count) });
+                        allCaught.push({
+                            key,
+                            name: def.name,
+                            rarity: def.rarity || rarity,
+                            weight: config.hunting.rarities[def.rarity || rarity]?.weight ?? 50,
+                            val: def.value,
+                            count: Number(count)
+                        });
                     }
                 }
             }

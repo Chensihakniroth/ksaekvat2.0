@@ -81,7 +81,8 @@ async function buildPokedexEmbed(target, pkmnEntry, userAnimals, animalsData, in
         statsText = pokeData.stats.map(s => `\`${(statNames[s.stat.name] || s.stat.name.toUpperCase()).padEnd(3)}\` ${statBar(s.base_stat)}`).join('\n');
     }
     const isShiny = key === 'shinycharizard';
-    const imageUrl = await AnimalService.getPokemonImage(key);
+    const imgData = await AnimalService.getPokemonImageBuffer(key);
+    const files = [];
     const embed = new EmbedBuilder()
         .setColor(embedColor)
         .setTitle(`📖  ${dexNum}  ${name}${isShiny ? '  ✨ Shiny' : ''}`)
@@ -89,9 +90,12 @@ async function buildPokedexEmbed(target, pkmnEntry, userAnimals, animalsData, in
         .addFields({ name: '🏷️ Type', value: types, inline: true }, { name: '⭐ Rarity', value: RARITY_EMOJIS[rarity] || rarity, inline: true }, { name: '📦 Owned', value: `**${count}×** caught`, inline: true }, { name: '📏 Height', value: heightM, inline: true }, { name: '⚖️ Weight', value: weightKg, inline: true }, { name: '💰 Value', value: `${config.hunting.rarities[rarity]?.value?.toLocaleString() ?? '?'} coins`, inline: true }, { name: '📊 Base Stats', value: statsText, inline: false })
         .setFooter({ text: `${target.username}'s Pokédex  •  ${index + 1} / ${total}  •  PokéAPI` })
         .setTimestamp();
-    if (imageUrl)
-        embed.setThumbnail(imageUrl);
-    return embed;
+    if (imgData) {
+        const attachment = new (require('discord.js').AttachmentBuilder)(imgData.buffer, { name: imgData.fileName });
+        embed.setThumbnail(`attachment://${imgData.fileName}`);
+        files.push(attachment);
+    }
+    return { embed, files };
 }
 module.exports = {
     name: 'pokedex',
@@ -108,6 +112,7 @@ module.exports = {
         catch (_) { }
         const userDoc = await database.getUser(target.id, target.username);
         const animalsData = await database.loadAnimals();
+        const flatRegistry = await database.getAnimalRegistry();
         // Support both Map and plain objects for cross-compatibility! (｡♥‿♥｡)
         const animalsObj = userDoc.animals || {};
         const allCaught = [];
@@ -115,9 +120,9 @@ module.exports = {
         for (const [rarity, animalCounts] of rarityEntries) {
             const animalEntries = animalCounts instanceof Map ? animalCounts.entries() : Object.entries(animalCounts || {});
             for (const [key, count] of animalEntries) {
-                const def = animalsData[rarity]?.[key];
+                const def = animalsData[rarity]?.[key] || flatRegistry[key];
                 if (Number(count) > 0 && def) {
-                    allCaught.push({ key, name: def.name, rarity, count: Number(count) });
+                    allCaught.push({ key, name: def.name, rarity: def.rarity || rarity, count: Number(count) });
                 }
             }
         }
@@ -139,9 +144,9 @@ module.exports = {
         let current = startIndex;
         const msg = await message.reply({ content: '📖 Loading Pokédex entry...' });
         const createView = async (idx) => {
-            const e = await buildPokedexEmbed(target, allCaught[idx], animalsObj, animalsData, idx, allCaught.length);
+            const { embed, files } = await buildPokedexEmbed(target, allCaught[idx], animalsObj, animalsData, idx, allCaught.length);
             const r = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('pdex_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(idx === 0), new ButtonBuilder().setCustomId('pdex_next').setLabel('Next  ▶').setStyle(ButtonStyle.Secondary).setDisabled(idx === allCaught.length - 1));
-            return { embeds: [e], components: allCaught.length > 1 ? [r] : [] };
+            return { embeds: [embed], files, components: allCaught.length > 1 ? [r] : [] };
         };
         const initial = await createView(current);
         await msg.edit({ content: null, ...initial });

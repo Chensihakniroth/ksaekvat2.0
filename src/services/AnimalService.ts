@@ -6,6 +6,9 @@
 
 import config from '../config/config.js';
 import Pokedex from 'pokedex-promise-v2';
+import axios from 'axios';
+import fs from 'fs';
+import path from 'path';
 
 // Due to how some TS/node environments resolve default exports from commonjs
 // packages, we might need `.default` if it's nested.
@@ -20,6 +23,40 @@ interface ZooStats {
 }
 
 class AnimalService {
+  /**
+   * Fetch Pokémon image buffer directly from Pokémon Fandom Wiki (｡♥‿♥｡)
+   * This is used to bypass hotlinking restrictions by proxying through the bot.
+   */
+  public async getPokemonImageBuffer(key: string): Promise<{ buffer: Buffer, fileName: string } | null> {
+    const url = await this.getPokemonImage(key);
+    if (!url) return null;
+
+    try {
+      // If it's a local path, read from disk
+      if (!url.startsWith('http')) {
+        const fullPath = path.isAbsolute(url) ? url : path.join(process.cwd(), url);
+        if (fs.existsSync(fullPath)) {
+          return { buffer: fs.readFileSync(fullPath), fileName: path.basename(fullPath) };
+        }
+        return null;
+      }
+
+      const response = await axios.get(url, {
+        responseType: 'arraybuffer',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+          'Referer': 'https://pokemon.fandom.com/'
+        }
+      });
+
+      const fileName = `${key}_${Date.now()}.png`;
+      return { buffer: Buffer.from(response.data), fileName };
+    } catch (error: any) {
+      console.error(`Failed to fetch image buffer for ${key}:`, error.message);
+      return null;
+    }
+  }
+
   /**
    * Calculate comprehensive stats for a user's animal collection.
    */
@@ -74,39 +111,40 @@ class AnimalService {
   private imageCache: Map<string, string> = new Map();
 
   /**
-   * Fetch Pokémon images using Pokedex Promise v2 (Auto-cached)
+   * Fetch Pokémon images using PokeAPI GitHub (100% Reliable!) (｡♥‿♥｡)
    */
   public async getPokemonImage(key: string): Promise<string | null> {
     if (this.imageCache.has(key)) return this.imageCache.get(key) || null;
 
-    try {
-      let lookup = key.toLowerCase();
-      let isShiny = false;
+    let lookup = key.toLowerCase();
+    
+    if (lookup === 'missingno') {
+      const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png'; // Classic Backward Pikachu! (｡♥‿♥｡)
+      this.imageCache.set(key, url);
+      return url;
+    }
 
+    try {
+      let isShiny = false;
       if (lookup === 'shinycharizard') {
         lookup = 'charizard';
         isShiny = true;
       }
-      if (lookup === 'missingno') {
-        return null;
-      }
 
-      // Automatically cached by pokedex-promise-v2!
+      // Resolve ID using the cached Pokedex library
       const pokemon = await P.getPokemonByName(lookup as any);
-      
-      let imageUrl: string | null = null;
-      if (isShiny) {
-        imageUrl = (pokemon.sprites?.other?.['official-artwork']?.front_shiny as string | undefined) || (pokemon.sprites?.front_shiny as string | undefined) || null;
-      } else {
-        imageUrl = (pokemon.sprites?.other?.['official-artwork']?.front_default as string | undefined) || (pokemon.sprites?.front_default as string | undefined) || null;
-      }
+      const id = pokemon.id;
 
-      if (imageUrl) {
-        this.imageCache.set(key, imageUrl);
-      }
-      return imageUrl;
+      // Construct high-quality GitHub URL
+      const baseUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork';
+      const url = isShiny 
+        ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${id}.png`
+        : `${baseUrl}/${id}.png`;
+
+      this.imageCache.set(key, url);
+      return url;
     } catch (error: any) {
-      console.error(`Pokedex Promise v2 error for ${key}:`, error.message);
+      console.error(`Failed to resolve Pokemon image for ${key}:`, error.message);
       return null;
     }
   }
@@ -114,40 +152,38 @@ class AnimalService {
   private spriteCache: Map<string, string> = new Map();
 
   /**
-   * Fetch Pokémon tiny pixel sprite for PC Box style UI (Auto-cached)
+   * Fetch Pokémon sprites for PC Box style UI using PokeAPI GitHub (｡♥‿♥｡)
    */
   public async getPokemonSprite(key: string): Promise<string | null> {
     if (this.spriteCache.has(key)) return this.spriteCache.get(key) || null;
 
-    try {
-      let lookup = key.toLowerCase();
-      let isShiny = false;
+    let lookup = key.toLowerCase();
+    
+    if (lookup === 'missingno') {
+      const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
+      this.spriteCache.set(key, url);
+      return url;
+    }
 
+    try {
+      let isShiny = false;
       if (lookup === 'shinycharizard') {
         lookup = 'charizard';
         isShiny = true;
       }
-      if (lookup === 'missingno') {
-         return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png'; // tiny placeholder
-      }
 
       const pokemon = await P.getPokemonByName(lookup as any);
-      
-      let spriteUrl: string | null = null;
-      if (isShiny) {
-         spriteUrl = pokemon.sprites?.front_shiny as string | undefined || null;
-      } else {
-         // Prefer gen8 icons for the literal perfectly sized PC Box icons, fallback to standard front_default 
-         const gen8icons = pokemon.sprites?.versions?.['generation-viii']?.icons;
-         spriteUrl = (gen8icons?.front_default as string | undefined) || (pokemon.sprites?.front_default as string | undefined) || null;
-      }
+      const id = pokemon.id;
 
-      if (spriteUrl) {
-        this.spriteCache.set(key, spriteUrl);
-      }
-      return spriteUrl;
+      // Use generation-viii icons for perfect PC Box style
+      const url = isShiny
+        ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`
+        : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-viii/icons/${id}.png`;
+
+      this.spriteCache.set(key, url);
+      return url;
     } catch (error: any) {
-      console.error(`Pokedex Promise v2 sprite error for ${key}:`, error.message);
+      console.error(`Failed to resolve Pokemon sprite for ${key}:`, error.message);
       return null;
     }
   }

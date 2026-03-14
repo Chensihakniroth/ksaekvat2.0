@@ -44,7 +44,10 @@ async function createGachaResultImage(results) {
       if (item.image_url && item.image_url.startsWith('http')) {
           const response = await axios.get(item.image_url, {
             responseType: 'arraybuffer',
-            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' }
+            headers: { 
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+              'Referer': 'https://pokemon.fandom.com/'
+            }
           });
           imageBuffer = Buffer.from(response.data);
       } else if (item.image_url) {
@@ -83,7 +86,7 @@ async function createGachaResultImage(results) {
           .toBuffer();
       } else {
         // For others (ZZZ, Common items), place the image onto a card with rarity background and a nice border! (｡♥‿♥｡)
-        const borderSize = 12;
+        const borderSize = 14;
         const innerCard = await sharp({
           create: {
             width: cardWidth - borderSize * 2,
@@ -92,7 +95,10 @@ async function createGachaResultImage(results) {
             background: bgColor,
           },
         })
-          .composite([{ input: await cardImage.resize(cardWidth - 60, cardHeight - 100, { fit: 'contain' }).toBuffer() }])
+          .composite([{ 
+            input: await cardImage.resize(cardWidth - 80, cardHeight - 120, { fit: 'contain' }).toBuffer(),
+            blend: 'over'
+          }])
           .png()
           .toBuffer();
 
@@ -101,7 +107,7 @@ async function createGachaResultImage(results) {
             width: cardWidth,
             height: cardHeight,
             channels: 4,
-            background: '#ffffff', // White border! (｡♥‿♥｡)
+            background: '#ffffff', // Clean white border! (｡♥‿♥｡)
           },
         })
           .composite([{ input: innerCard, top: borderSize, left: borderSize }])

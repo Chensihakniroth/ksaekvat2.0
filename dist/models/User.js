@@ -75,6 +75,13 @@ const UserSchema = new mongoose_1.Schema({
     pokeballs: { type: Number, default: 0 },
     ultraballs: { type: Number, default: 0 },
     masterballs: { type: Number, default: 0 },
+    // Social & Customization
+    spouse: {
+        name: { type: String, default: null },
+        affinity: { type: Number, default: 0 },
+        marriedAt: { type: Date, default: null },
+    },
+    profileTheme: { type: String, default: null },
     stats: {
         totalGambled: { type: Number, default: 0 },
         totalWon: { type: Number, default: 0 },

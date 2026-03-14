@@ -46,6 +46,12 @@ export interface IUser extends Document {
   pokeballs: number;
   ultraballs: number;
   masterballs: number;
+  spouse: {
+    name: string;
+    affinity: number;
+    marriedAt: Date;
+  } | null;
+  profileTheme: string | null;
   stats: IUserStats;
   joinedAt: Date;
   customPrefix?: string;   // User's personal main prefix (e.g. 'K', '!')
@@ -99,6 +105,14 @@ const UserSchema: Schema = new Schema({
   pokeballs: { type: Number, default: 0 },
   ultraballs: { type: Number, default: 0 },
   masterballs: { type: Number, default: 0 },
+
+  // Social & Customization
+  spouse: {
+    name: { type: String, default: null },
+    affinity: { type: Number, default: 0 },
+    marriedAt: { type: Date, default: null },
+  },
+  profileTheme: { type: String, default: null },
 
   stats: {
     totalGambled: { type: Number, default: 0 },

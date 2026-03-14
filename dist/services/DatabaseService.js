@@ -82,6 +82,24 @@ class DatabaseService {
     async addBalance(userId, amount) {
         return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { balance: amount } }, { returnDocument: 'after', upsert: true });
     }
+    async addPokeball(userId, type, amount = 1) {
+        const field = type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
+        return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { [field]: amount } }, { returnDocument: 'after', upsert: true });
+    }
+    async addItem(userId, itemName, amount = 1) {
+        const user = await this.getUser(userId);
+        if (!user.inventory)
+            user.inventory = [];
+        const existing = user.inventory.find((i) => i.name === itemName);
+        if (existing) {
+            existing.count += amount;
+        }
+        else {
+            user.inventory.push({ name: itemName, count: amount });
+        }
+        user.markModified('inventory');
+        await this.saveUser(user);
+    }
     async removeBalance(userId, amount) {
         return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { balance: -amount } }, { returnDocument: 'after' });
     }
@@ -100,6 +118,32 @@ class DatabaseService {
         else
             update[`stats.${type}`] = amount;
         await User_1.default.findOneAndUpdate({ id: userId }, { $inc: update });
+    }
+    async removeGachaItem(userId, itemName) {
+        const user = await this.getUser(userId);
+        const existing = user.gacha_inventory.find((i) => i.name === itemName);
+        if (existing) {
+            existing.count--;
+            if (existing.count <= 0) {
+                user.gacha_inventory = user.gacha_inventory.filter((i) => i.name !== itemName);
+            }
+            await this.saveUser(user);
+        }
+    }
+    async removeAnimal(userId, animalKey, rarity) {
+        const user = await this.getUser(userId);
+        const rarityMap = user.animals.get(rarity);
+        if (rarityMap) {
+            const count = rarityMap.get(animalKey);
+            if (count && count > 0) {
+                rarityMap.set(animalKey, count - 1);
+                if (rarityMap.get(animalKey) <= 0) {
+                    rarityMap.delete(animalKey);
+                }
+                user.markModified('animals');
+                await this.saveUser(user);
+            }
+        }
     }
     async addGachaItem(userId, itemName) {
         const user = await this.getUser(userId);
@@ -166,6 +210,29 @@ class DatabaseService {
             return {};
         }
     }
+    /**
+     * Returns a flat registry of all animals keyed by their unique key.
+     * Perfect for finding animals whose rarity might have changed! (｡♥‿♥｡)
+     */
+    async getAnimalRegistry() {
+        try {
+            const animals = await AnimalRegistry_1.default.find({});
+            const registry = {};
+            animals.forEach((a) => {
+                registry[a.key] = {
+                    name: a.name,
+                    emoji: a.emoji,
+                    value: a.value,
+                    rarity: a.rarity
+                };
+            });
+            return registry;
+        }
+        catch (error) {
+            logger.error('Error loading flat animal registry:', error);
+            return {};
+        }
+    }
     async addAnimal(userId, animalKey, rarity) {
         // ── ATOMIC INCREMENT FIX (｡♥‿♥｡) ──────────────────────────────────
         // Uses Mongoose dot notation to $inc deep in the Map.
@@ -191,6 +258,11 @@ class DatabaseService {
             expiresAt: Date.now() + duration,
         });
         user.markModified('boosters');
+        await this.saveUser(user);
+    }
+    async addHuntBoost(userId, amount) {
+        const user = await this.getUser(userId);
+        user.hunt_boost = (user.hunt_boost || 0) + amount;
         await this.saveUser(user);
     }
     async getActiveBooster(userId, type) {

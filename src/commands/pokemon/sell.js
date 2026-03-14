@@ -26,6 +26,7 @@ module.exports = {
 
     const userData = await database.getUser(message.author.id, message.author.username);
     const animalsData = await database.loadAnimals();
+    const flatRegistry = await database.getAnimalRegistry();
     const userAnimals = userData.animals || new Map();
 
     // Check if user has any animals with Map-safe logic! (｡♥‿♥｡)
@@ -61,19 +62,17 @@ module.exports = {
 
       const rarityEntriesAll = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
       for (const [rarity, animals] of rarityEntriesAll) {
-        if (animalsData[rarity]) {
-          const animalEntries =
-            animals instanceof Map ? animals.entries() : Object.entries(animals);
-          for (const [animalKey, count] of animalEntries) {
-            if (animalsData[rarity][animalKey] && count > 0) {
-              const animal = animalsData[rarity][animalKey];
-              const value = animal.value * count;
-              totalValue += value;
-              pokemonSold += count;
-              soldPokemon.push(
-                `${animal.emoji} **${animal.name}** x${count} - ${EconomyService.format(value)} ${config.economy.currency}`
-              );
-            }
+        const animalEntries =
+          animals instanceof Map ? animals.entries() : Object.entries(animals);
+        for (const [animalKey, count] of animalEntries) {
+          const animal = animalsData[rarity]?.[animalKey] || flatRegistry[animalKey];
+          if (animal && count > 0) {
+            const value = animal.value * count;
+            totalValue += value;
+            pokemonSold += count;
+            soldPokemon.push(
+              `${animal.emoji} **${animal.name}** x${count} - ${EconomyService.format(value)} ${config.economy.currency}`
+            );
           }
         }
       }
@@ -128,25 +127,23 @@ module.exports = {
       // Search for the animal in user's collection with Map-safe logic! (｡♥‿♥｡)
       const rarityEntriesSingle = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
       for (const [rarity, animals] of rarityEntriesSingle) {
-        if (animalsData[rarity]) {
-          const animalEntries =
-            animals instanceof Map ? animals.entries() : Object.entries(animals);
-          for (const [animalKey, count] of animalEntries) {
-            if (animalsData[rarity][animalKey] && count > 0) {
-              const animal = animalsData[rarity][animalKey];
-              if (
-                animal.name.toLowerCase().includes(animalName) ||
-                animalKey.toLowerCase().includes(animalName)
-              ) {
-                foundAnimal = animal;
-                foundRarity = rarity;
-                foundKey = animalKey;
-                break;
-              }
+        const animalEntries =
+          animals instanceof Map ? animals.entries() : Object.entries(animals);
+        for (const [animalKey, count] of animalEntries) {
+          const animal = animalsData[rarity]?.[animalKey] || flatRegistry[animalKey];
+          if (animal && count > 0) {
+            if (
+              animal.name.toLowerCase().includes(animalName) ||
+              animalKey.toLowerCase().includes(animalName)
+            ) {
+              foundAnimal = animal;
+              foundRarity = rarity;
+              foundKey = animalKey;
+              break;
             }
           }
-          if (foundAnimal) break;
         }
+        if (foundAnimal) break;
       }
 
       if (!foundAnimal) {
