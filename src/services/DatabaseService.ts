@@ -305,7 +305,7 @@ class DatabaseService {
       if (item.game === 'common') {
         if (commonPool[rarityStr]) {
           const isBoosted = item.name === 'Master Ball' || item.name === 'Ultraball';
-          const weight = isBoosted ? 5 : 1; // 5x boost! (｡♥‿♥｡)
+          const weight = isBoosted ? 20 : 1; // Super 20x boost! (｡♥‿♥｡)
           
           for (let i = 0; i < weight; i++) {
             commonPool[rarityStr].push(itemPayload);
