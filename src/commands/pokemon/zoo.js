@@ -146,8 +146,16 @@ async function createPCBoxImage(boxName, boxPokemons) {
 function buildRarityBreakdown(allCaught) {
   const counts = {};
   for (const p of allCaught) counts[p.rarity] = (counts[p.rarity] || 0) + 1;
-  const emojiMap = { priceless: '✨', mythical: '🌸', legendary: '🔥', epic: '💜', rare: '💙', uncommon: '💚', common: '⬜' };
-  return RARITY_ORDER.filter(r => counts[r]).map(r => `${emojiMap[r]} **${counts[r]}** ${r.charAt(0).toUpperCase() + r.slice(1)}`).join('  •  ');
+  const emojiMap = {
+    priceless: '<:rarity_priceless:1482366975672975463>',
+    mythical:  '<:rarity_mythical:1482366970589483180>',
+    legendary: '<:rarity_legendary:1482366964994408528>',
+    epic:      '<:rarity_epic:1482366960070164560>',
+    rare:      '<:rarity_rare:1482366980790157467>',
+    uncommon:  '<:rarity_uncommon:1482366986498605218>',
+    common:    '<:rarity_common:1482366954361716776>',
+  };
+  return RARITY_ORDER.filter(r => counts[r]).map(r => `${emojiMap[r]} **${counts[r]}**`).join('  ');
 }
 
 function pickEmbedColor(allCaught) {
@@ -218,24 +226,17 @@ module.exports = {
       let currentBox = 0;
 
       const generatePCMessage = async (boxIndex) => {
-        const boxLabel = `PC BOX ${boxIndex + 1}`;
+        const boxLabel = `BOX ${boxIndex + 1}`;
         const imgPath = await createPCBoxImage(boxLabel, boxes[boxIndex]);
         const embed = new EmbedBuilder()
           .setColor(embedColor)
-          .setTitle(`💻  Pokémon PC Storage  —  ${target.username}`)
-          .setDescription(`📦 **Pokémon Caught:** ${allCaught.length}  •  🔢 **Total Copies:** ${totalAnimals}\n\n${rarityBreakdown}`)
+          .setTitle(`💻 ${target.username}'s PC`)
           .setImage('attachment://pc-box.png')
-          .setFooter({ text: `${boxLabel}  •  Box ${boxIndex + 1} / ${boxes.length}  •  Net Worth: ${EconomyService.format(totalValue)} coins` })
-          .setTimestamp();
-
-        if (boxIndex === 0) {
-          const badges = AnimalService.calculateBadges(userDoc.stats?.totalAnimalsFound || 0, totalValue, animalsObj);
-          if (badges.length > 0) embed.addFields({ name: '🏅 Badges', value: badges.join('  |  ') });
-        }
+          .setFooter({ text: `${boxLabel} / ${boxes.length}` });
 
         const row = new ActionRowBuilder().addComponents(
-          new ButtonBuilder().setCustomId('zoo_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === 0),
-          new ButtonBuilder().setCustomId('zoo_next').setLabel('Next  ▶').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === boxes.length - 1),
+          new ButtonBuilder().setCustomId('zoo_prev').setLabel('◀').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === 0),
+          new ButtonBuilder().setCustomId('zoo_next').setLabel('▶').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === boxes.length - 1),
         );
 
         return { embed, files: [new AttachmentBuilder(imgPath, { name: 'pc-box.png' })], components: boxes.length > 1 ? [row] : [], imgPath };

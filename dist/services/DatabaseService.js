@@ -92,19 +92,33 @@ class DatabaseService {
         if (!user[field] || user[field] <= 0) {
             return { success: false, message: `You don't have any ${type}s, darling! (｡•́︿•̀｡)` };
         }
+        // Durations in milliseconds
+        const durations = {
+            pokeball: 5 * 60 * 1000,
+            ultraball: 20 * 60 * 1000,
+            masterball: 15 * 60 * 1000
+        };
+        const duration = durations[type] || 0;
         // Consume 1 ball
         user[field]--;
-        // Activate 1-hour booster
-        const duration = 3600000; // 1 hour
         if (!user.boosters)
             user.boosters = new Map();
+        const existing = user.boosters.get(type);
+        const currentExpiry = (existing && existing.expiresAt > Date.now()) ? existing.expiresAt : Date.now();
+        let newExpiresAt = currentExpiry + duration;
+        // Pokeball Stacking Cap: 5x (25 minutes total)
+        if (type === 'pokeball') {
+            const maxExpiry = Date.now() + (25 * 60 * 1000);
+            if (newExpiresAt > maxExpiry)
+                newExpiresAt = maxExpiry;
+        }
         user.boosters.set(type, {
             multiplier: 1, // Logic handled in hunt.js
-            expiresAt: Date.now() + duration,
+            expiresAt: newExpiresAt,
         });
         user.markModified('boosters');
         await this.saveUser(user);
-        return { success: true, expiresAt: Date.now() + duration };
+        return { success: true, expiresAt: newExpiresAt, added: duration };
     }
     async addItem(userId, itemName, amount = 1) {
         const user = await this.getUser(userId);

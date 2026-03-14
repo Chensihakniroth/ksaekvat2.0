@@ -111,44 +111,22 @@ module.exports = {
     const imgData = await AnimalService.getPokemonImageBuffer(animalKey);
     const files = [];
     
+    let statusText = isBoosted ? `🔥 x${finalBoostCount}` : '';
+    if (activeMasterball) statusText += ` | 🟣 ${Math.ceil((activeMasterball.expiresAt - Date.now()) / 60000)}m`;
+    else if (activeUltraball) statusText += ` | 🟡 ${Math.ceil((activeUltraball.expiresAt - Date.now()) / 60000)}m`;
+    else if (activePokeball) statusText += ` | ⚪ ${Math.ceil((activePokeball.expiresAt - Date.now()) / 60000)}m`;
+
     const embed = new EmbedBuilder()
       .setColor(parseInt(rarities[selectedRarity].color.slice(1), 16))
-      .setTitle('ヽ(>∀<☆)ノ You caught a Pokémon!')
-      .setDescription(
-        `Look, sweetie! You caught a cute **${animal.name}**! (｡♥‿♥｡)\n*${rarities[selectedRarity].name} Rarity*`
-      );
+      .setTitle(`${animal.emoji} ${animal.name}`)
+      .setDescription(`*${rarities[selectedRarity].name} Rarity*`)
+      .setFooter({ text: `+${expReward} XP${statusText}${expRes.leveledUp ? ` | 🎊 Rank Up: ${expRes.newLevel}!` : ''}` });
 
     if (imgData) {
         const attachment = new (require('discord.js').AttachmentBuilder)(imgData.buffer, { name: imgData.fileName });
         embed.setImage(`attachment://${imgData.fileName}`);
         files.push(attachment);
     }
-
-    let statusValue = isBoosted ? `🔥 **BOOSTED** (${finalBoostCount} left)` : 'Normal';
-    if (activeMasterball) {
-        const remaining = Math.ceil((activeMasterball.expiresAt - Date.now()) / 60000);
-        statusValue += `\n🟣 **Master Ball** (${remaining}m)`;
-    } else if (activeUltraball) {
-        const remaining = Math.ceil((activeUltraball.expiresAt - Date.now()) / 60000);
-        statusValue += `\n🟡 **Ultra Ball** (${remaining}m)`;
-    } else if (activePokeball) {
-        const remaining = Math.ceil((activePokeball.expiresAt - Date.now()) / 60000);
-        statusValue += `\n⚪ **Pokeball** (${remaining}m)`;
-    }
-
-    embed.addFields(
-        { name: '(◕‿◕✿) Rank Exp', value: `+${expReward} XP`, inline: true },
-        {
-          name: '(｡♥‿♥｡) Status',
-          value: statusValue,
-          inline: true,
-        }
-      );
-
-    if (expRes.leveledUp)
-      embed.setFooter({
-        text: `ヽ(>∀<☆)ノ Level Up! You are now Rank ${expRes.newLevel}, sweetie!`,
-      });
 
     await database.updateStats(message.author.id, 'command');
     await database.updateStats(message.author.id, 'hunt_success', 1);

@@ -22,13 +22,13 @@ const TYPE_COLORS = {
 };
 
 const RARITY_EMOJIS = {
-  priceless: '✨ Priceless',
-  mythical:  '🌸 Mythical',
-  legendary: '🔥 Legendary',
-  epic:      '💜 Epic',
-  rare:      '💙 Rare',
-  uncommon:  '💚 Uncommon',
-  common:    '⬜ Common',
+  priceless: '<:rarity_priceless:1482366975672975463> Priceless',
+  mythical:  '<:rarity_mythical:1482366970589483180> Mythical',
+  legendary: '<:rarity_legendary:1482366964994408528> Legendary',
+  epic:      '<:rarity_epic:1482366960070164560> Epic',
+  rare:      '<:rarity_rare:1482366980790157467> Rare',
+  uncommon:  '<:rarity_uncommon:1482366986498605218> Uncommon',
+  common:    '<:rarity_common:1482366954361716776> Common',
 };
 
 const RARITY_ORDER = ['priceless', 'mythical', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
