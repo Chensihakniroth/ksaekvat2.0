@@ -259,6 +259,7 @@ class DatabaseService {
                 name: item.name,
                 game: item.game,
                 emoji: item.emoji,
+                type: item.type,
                 image_url: item.image_url,
             };
             if (item.game === 'common') {

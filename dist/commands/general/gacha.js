@@ -75,16 +75,28 @@ async function createGachaResultImage(results) {
                     .toBuffer();
             }
             else {
-                // For others (ZZZ, Common items), place the image onto a card with rarity background
+                // For others (ZZZ, Common items), place the image onto a card with rarity background and a nice border! (｡♥‿♥｡)
+                const borderSize = 12;
+                const innerCard = await sharp({
+                    create: {
+                        width: cardWidth - borderSize * 2,
+                        height: cardHeight - borderSize * 2,
+                        channels: 4,
+                        background: bgColor,
+                    },
+                })
+                    .composite([{ input: await cardImage.resize(cardWidth - 60, cardHeight - 100, { fit: 'contain' }).toBuffer() }])
+                    .png()
+                    .toBuffer();
                 processedCard = await sharp({
                     create: {
                         width: cardWidth,
                         height: cardHeight,
                         channels: 4,
-                        background: bgColor,
+                        background: '#ffffff', // White border! (｡♥‿♥｡)
                     },
                 })
-                    .composite([{ input: await cardImage.toBuffer() }])
+                    .composite([{ input: innerCard, top: borderSize, left: borderSize }])
                     .png()
                     .toBuffer();
             }
