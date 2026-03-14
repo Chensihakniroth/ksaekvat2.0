@@ -24,15 +24,25 @@ interface ZooStats {
 
 class AnimalService {
   /**
-   * Fetch Pokémon image buffer directly from Pokémon Fandom Wiki (｡♥‿♥｡)
-   * This is used to bypass hotlinking restrictions by proxying through the bot.
+   * Fetch Pokémon image buffer directly from PokeAPI GitHub (｡♥‿♥｡)
+   * Includes local file caching to make Khunt and Kzoo super fast!
    */
   public async getPokemonImageBuffer(key: string): Promise<{ buffer: Buffer, fileName: string } | null> {
+    const CACHE_DIR = path.join(process.cwd(), '.tmp', 'pokemon_cache');
+    if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
+
+    const localPath = path.join(CACHE_DIR, `${key}_full.png`);
+    
+    // 1. Check local cache first! (•̀ᴗ•́)و
+    if (fs.existsSync(localPath)) {
+      return { buffer: fs.readFileSync(localPath), fileName: `${key}.png` };
+    }
+
     const url = await this.getPokemonImage(key);
     if (!url) return null;
 
     try {
-      // If it's a local path, read from disk
+      // If it's a local path (non-http), read from disk
       if (!url.startsWith('http')) {
         const fullPath = path.isAbsolute(url) ? url : path.join(process.cwd(), url);
         if (fs.existsSync(fullPath)) {
@@ -45,14 +55,46 @@ class AnimalService {
         responseType: 'arraybuffer',
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-          'Referer': 'https://pokemon.fandom.com/'
         }
       });
 
-      const fileName = `${key}_${Date.now()}.png`;
-      return { buffer: Buffer.from(response.data), fileName };
+      const buffer = Buffer.from(response.data);
+      // Save to cache for next time! (｡♥‿♥｡)
+      fs.writeFileSync(localPath, buffer);
+
+      return { buffer, fileName: `${key}.png` };
     } catch (error: any) {
       console.error(`Failed to fetch image buffer for ${key}:`, error.message);
+      return null;
+    }
+  }
+
+  /**
+   * Get a sprite buffer with local caching for Kzoo optimization.
+   */
+  public async getPokemonSpriteBuffer(key: string): Promise<Buffer | null> {
+    const CACHE_DIR = path.join(process.cwd(), '.tmp', 'pokemon_cache');
+    if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
+
+    const localPath = path.join(CACHE_DIR, `${key}_sprite.png`);
+    
+    if (fs.existsSync(localPath)) {
+      return fs.readFileSync(localPath);
+    }
+
+    const url = await this.getPokemonSprite(key);
+    if (!url) return null;
+
+    try {
+      const response = await axios.get(url, {
+        responseType: 'arraybuffer',
+        headers: { 'User-Agent': 'Mozilla/5.0' }
+      });
+
+      const buffer = Buffer.from(response.data);
+      fs.writeFileSync(localPath, buffer);
+      return buffer;
+    } catch (error: any) {
       return null;
     }
   }

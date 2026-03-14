@@ -290,6 +290,9 @@ module.exports = {
         }
         for (const item of results)
             await database.addGachaItem(message.author.id, item.name);
+        // Update Quest Progress! (｡♥‿♥｡)
+        const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+        await QuestService.updateProgress(message.author.id, 'GACHA', results.length);
         await database.saveUser(userData);
     },
 };

@@ -33,7 +33,7 @@ async function createPCBoxImage(boxName, boxPokemons) {
         return null;
     const cols = 6;
     const rows = 5;
-    const cellSize = 124; // Bigger cells for HUGE sprites!
+    const cellSize = 124;
     const padding = 18;
     const headerHeight = 72;
     const canvasWidth = padding * 2 + cols * cellSize;
@@ -61,86 +61,60 @@ async function createPCBoxImage(boxName, boxPokemons) {
     }).join('')).join('')}
   </svg>`);
     const composites = [{ input: bgSvg, top: 0, left: 0 }];
-    for (let i = 0; i < Math.min(boxPokemons.length, 30); i++) {
-        const pkmn = boxPokemons[i];
-        if (!pkmn)
-            continue;
+    // Parallel Sprite Fetching! (｡♥‿♥｡)
+    const spritePromises = boxPokemons.slice(0, 30).map(async (pkmn, i) => {
         const r = Math.floor(i / cols);
         const c = i % cols;
         const cx = padding + c * cellSize;
         const cy = headerHeight + padding + r * cellSize;
         const rc = getRarityColor(pkmn.rarity);
+        const pkmnComposites = [];
         // Rarity glow ring
         const glowSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cellSize - 6}" height="${cellSize - 6}">
       <rect x="0" y="0" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="none" stroke="rgb(${rc.r},${rc.g},${rc.b})" stroke-width="2" opacity="0.55"/>
     </svg>`);
-        composites.push({ input: glowSvg, top: cy + 3, left: cx + 3 });
+        pkmnComposites.push({ input: glowSvg, top: cy + 3, left: cx + 3 });
         try {
-            const spriteUrl = await AnimalService.getPokemonSprite(pkmn.key);
-            if (spriteUrl) {
-                const resp = await axios.get(spriteUrl, {
-                    responseType: 'arraybuffer',
-                    timeout: 5000,
-                    headers: {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-                        'Referer': 'https://pokemon.fandom.com/'
-                    }
-                });
-                const imgBuffer = Buffer.from(resp.data);
-                const SPRITE_SIZE = cellSize - 6; // Huge, fills the cell
+            const imgBuffer = await AnimalService.getPokemonSpriteBuffer(pkmn.key);
+            if (imgBuffer) {
+                const SPRITE_SIZE = cellSize - 6;
                 const resized = await sharp(imgBuffer)
                     .resize(SPRITE_SIZE, SPRITE_SIZE, {
                     fit: 'contain',
                     background: { r: 0, g: 0, b: 0, alpha: 0 },
-                    kernel: 'nearest' // CRITICAL for sharp pixel scaling
+                    kernel: 'nearest'
                 })
                     .toBuffer();
-                const { width: rw, height: rh } = await sharp(resized).metadata();
-                const padTop = Math.floor((SPRITE_SIZE - rh) / 2);
-                const padLeft = Math.floor((SPRITE_SIZE - rw) / 2);
-                const layer = await sharp(resized)
-                    .extend({
-                    top: Math.max(0, padTop),
-                    bottom: Math.max(0, SPRITE_SIZE - rh - padTop),
-                    left: Math.max(0, padLeft),
-                    right: Math.max(0, SPRITE_SIZE - rw - padLeft),
-                    background: { r: 0, g: 0, b: 0, alpha: 0 },
-                })
-                    .toBuffer();
-                composites.push({ input: layer, top: cy + 5, left: cx + 5 });
+                pkmnComposites.push({ input: resized, top: cy + 5, left: cx + 5 });
             }
         }
-        catch (e) {
-            console.warn('PC Sprite scale failed:', pkmn.key, e.message);
-        }
+        catch (e) { }
         if (pkmn.count > 1) {
             const badge = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cellSize - 6}" height="${cellSize - 6}">
         <rect x="${cellSize - 36}" y="${cellSize - 28}" width="30" height="18" rx="6" ry="6" fill="#e63946"/>
         <text x="${cellSize - 21}" y="${cellSize - 16}" font-family="sans-serif" font-size="11" font-weight="bold" fill="#fff" text-anchor="middle">×${pkmn.count}</text>
       </svg>`);
-            composites.push({ input: badge, top: cy + 3, left: cx + 3 });
+            pkmnComposites.push({ input: badge, top: cy + 3, left: cx + 3 });
         }
-    }
+        return pkmnComposites;
+    });
+    const results = await Promise.all(spritePromises);
+    results.forEach(res => composites.push(...res));
     const outPath = path.join(TEMP_DIR, `box-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
     await sharp({
         create: { width: canvasWidth, height: canvasHeight, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } }
     }).composite(composites).png().toFile(outPath);
     return outPath;
 }
-function buildRarityBreakdown(allCaught) {
+function buildRarityBreakdown(allCaught, client) {
     const counts = {};
     for (const p of allCaught)
         counts[p.rarity] = (counts[p.rarity] || 0) + 1;
-    const emojiMap = {
-        priceless: '<:rarity_priceless:1482366975672975463>',
-        mythical: '<:rarity_mythical:1482366970589483180>',
-        legendary: '<:rarity_legendary:1482366964994408528>',
-        epic: '<:rarity_epic:1482366960070164560>',
-        rare: '<:rarity_rare:1482366980790157467>',
-        uncommon: '<:rarity_uncommon:1482366986498605218>',
-        common: '<:rarity_common:1482366954361716776>',
-    };
-    return RARITY_ORDER.filter(r => counts[r]).map(r => `${emojiMap[r]} **${counts[r]}**`).join('  ');
+    const { getRarityEmoji } = require('../../utils/images.js');
+    return RARITY_ORDER
+        .filter(r => counts[r])
+        .map(r => `${getRarityEmoji(r, client)} **${counts[r]}**`)
+        .join('  ');
 }
 function pickEmbedColor(allCaught) {
     for (const r of RARITY_ORDER) {

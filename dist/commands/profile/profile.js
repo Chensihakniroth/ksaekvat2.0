@@ -22,8 +22,19 @@ module.exports = {
         }
         const userData = await database.getUser(target.id, target.username);
         const animalsData = await database.loadAnimals();
+        // Theme logic! (｡♥‿♥｡)
+        const shopConfig = require('../../config/shopConfig.js');
+        let embedColor = colors.primary;
+        let backgroundUrl = null;
+        if (userData.profileTheme && userData.profileTheme !== 'default') {
+            const theme = shopConfig.categories.themes.items.find(t => t.id === userData.profileTheme);
+            if (theme) {
+                embedColor = theme.color;
+                backgroundUrl = theme.image;
+            }
+        }
         // Calculate essential stats
-        const accountAge = Math.floor((Date.now() - userData.joinedAt) / (1000 * 60 * 60 * 24));
+        const accountAge = Math.floor((Date.now() - (userData.joinedAt || Date.now())) / (1000 * 60 * 60 * 24));
         const expToNextLevel = userData.level * 100 - userData.experience;
         // Calculate pokemon collection
         let totalPokemonValue = 0;
@@ -47,13 +58,19 @@ module.exports = {
                 }
             }
         }
+        // Marriage Info!
+        let spouseText = 'None';
+        if (userData.spouse && userData.spouse.name) {
+            const hearts = '❤️'.repeat(Math.min(5, Math.ceil(userData.spouse.affinity / 200)));
+            spouseText = `💍 **${userData.spouse.name}**\n${hearts} (Lv. ${Math.floor(userData.spouse.affinity / 100) + 1})`;
+        }
         // Calculate gambling stats
         const totalGambled = userData.totalGambled || 0;
         const netProfit = (userData.totalWon || 0) - (userData.totalLost || 0);
         const winRate = totalGambled > 0 ? ((userData.totalWon / totalGambled) * 100).toFixed(1) : '0.0';
         // Create compact embed
         const embed = new EmbedBuilder()
-            .setColor(colors.primary)
+            .setColor(embedColor)
             .setTitle(`(◕‿◕✿) ${target.username}'s Trainer Card`)
             .setThumbnail(target.displayAvatarURL({ size: 256 }))
             .setDescription(`Welcome back, sweetie! Here is your progress so far. (｡♥‿♥｡)`)
@@ -70,12 +87,14 @@ module.exports = {
             name: '🎯 Activity Log',
             value: [
                 `**Gambled:** ${EconomyService.format(totalGambled)}`,
-                `**Net:** ${netProfit >= 0 ? '+' : ''}${EconomyService.format(netProfit)}`,
                 `**Win Rate:** ${winRate}%`,
+                `**Spouse:** ${spouseText}`,
                 `**Days Active:** ${accountAge}d`,
             ].join('\n'),
             inline: true,
         });
+        if (backgroundUrl)
+            embed.setImage(backgroundUrl);
         // Add rarest pokemon if available
         const rarest = getRarestPokemon(rarityCount);
         if (rarest !== 'None') {

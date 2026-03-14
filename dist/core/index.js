@@ -170,8 +170,11 @@ bootstrap();
 cron.schedule('0 0 * * *', async () => {
     logger.debug('Running daily reset cron...');
     const users = await database.getAllUsers();
+    const QuestService = require('../services/QuestService').default || require('../services/QuestService');
     for (const u of users) {
         u.dailyClaimed = false;
+        // Generate new quests for everyone! (｡♥‿♥｡)
+        await QuestService.generateDailyQuests(u.id);
         await database.saveUser(u);
     }
 });

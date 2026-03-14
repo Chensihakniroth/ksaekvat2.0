@@ -134,6 +134,27 @@ class DatabaseService {
         user.markModified('inventory');
         await this.saveUser(user);
     }
+    async unlockTheme(userId, themeId) {
+        const user = await this.getUser(userId);
+        if (!user.unlockedThemes)
+            user.unlockedThemes = ['default'];
+        if (!user.unlockedThemes.includes(themeId)) {
+            user.unlockedThemes.push(themeId);
+            user.markModified('unlockedThemes');
+            await this.saveUser(user);
+            return true;
+        }
+        return false;
+    }
+    async setTheme(userId, themeId) {
+        const user = await this.getUser(userId);
+        if (user.unlockedThemes && user.unlockedThemes.includes(themeId)) {
+            user.profileTheme = themeId;
+            await this.saveUser(user);
+            return true;
+        }
+        return false;
+    }
     async removeBalance(userId, amount) {
         return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { balance: -amount } }, { returnDocument: 'after' });
     }

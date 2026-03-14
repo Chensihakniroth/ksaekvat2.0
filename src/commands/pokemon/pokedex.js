@@ -21,16 +21,6 @@ const TYPE_COLORS = {
   steel:    '#B7B7CE', fairy:    '#D685AD',
 };
 
-const RARITY_EMOJIS = {
-  priceless: '<:rarity_priceless:1482366975672975463> Priceless',
-  mythical:  '<:rarity_mythical:1482366970589483180> Mythical',
-  legendary: '<:rarity_legendary:1482366964994408528> Legendary',
-  epic:      '<:rarity_epic:1482366960070164560> Epic',
-  rare:      '<:rarity_rare:1482366980790157467> Rare',
-  uncommon:  '<:rarity_uncommon:1482366986498605218> Uncommon',
-  common:    '<:rarity_common:1482366954361716776> Common',
-};
-
 const RARITY_ORDER = ['priceless', 'mythical', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
 
 function statBar(value, max = 255, length = 12) {
@@ -58,8 +48,11 @@ async function getSpeciesData(id) {
   return await _P.getPokemonSpeciesById(id);
 }
 
-async function buildPokedexEmbed(target, pkmnEntry, userAnimals, animalsData, index, total) {
+async function buildPokedexEmbed(target, pkmnEntry, userAnimals, animalsData, index, total, client) {
   const { key, name, rarity, count } = pkmnEntry;
+  const { getRarityEmoji } = require('../../utils/images.js');
+  const rarityEmoji = getRarityEmoji(rarity, client);
+
   let pokeData = null, speciesData = null;
   try { pokeData = await getPData(key === 'shinycharizard' ? 'charizard' : key); } catch (_) {}
   try { if (pokeData) speciesData = await getSpeciesData(pokeData.id); } catch (_) {}
@@ -90,11 +83,11 @@ async function buildPokedexEmbed(target, pkmnEntry, userAnimals, animalsData, in
 
   const embed = new EmbedBuilder()
     .setColor(embedColor)
-    .setTitle(`📖  ${dexNum}  ${name}${isShiny ? '  ✨ Shiny' : ''}`)
+    .setTitle(`${rarityEmoji} ${name}${isShiny ? ' ✨' : ''}`)
     .setDescription(`*${flavorText}*`)
     .addFields(
       { name: '🏷️ Type', value: types, inline: true },
-      { name: '⭐ Rarity', value: RARITY_EMOJIS[rarity] || rarity, inline: true },
+      { name: '⭐ Rarity', value: `${rarityEmoji} ${rarity.charAt(0).toUpperCase() + rarity.slice(1)}`, inline: true },
       { name: '📦 Owned', value: `**${count}×** caught`, inline: true },
       { name: '📏 Height', value: heightM, inline: true },
       { name: '⚖️ Weight', value: weightKg, inline: true },
@@ -160,7 +153,7 @@ module.exports = {
     const msg = await message.reply({ content: '📖 Loading Pokédex entry...' });
 
     const createView = async (idx) => {
-      const { embed, files } = await buildPokedexEmbed(target, allCaught[idx], animalsObj, animalsData, idx, allCaught.length);
+      const { embed, files } = await buildPokedexEmbed(target, allCaught[idx], animalsObj, animalsData, idx, allCaught.length, client);
       const r = new ActionRowBuilder().addComponents(
         new ButtonBuilder().setCustomId('pdex_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(idx === 0),
         new ButtonBuilder().setCustomId('pdex_next').setLabel('Next  ▶').setStyle(ButtonStyle.Secondary).setDisabled(idx === allCaught.length - 1),

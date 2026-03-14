@@ -39,6 +39,9 @@ module.exports = {
             .setImage(splashArt)
             .setFooter({ text: "Every moment together makes your bond stronger! ヽ(>∀<☆)ノ" });
         message.reply({ embeds: [embed] });
+        // Update Quest Progress! (｡♥‿♥｡)
+        const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+        await QuestService.updateProgress(userId, 'AFFINITY', 1);
         await database.updateStats(userId, 'command');
     },
 };

@@ -99,9 +99,11 @@ module.exports = {
             statusText += ` | 🟡 ${Math.ceil((activeUltraball.expiresAt - Date.now()) / 60000)}m`;
         else if (activePokeball)
             statusText += ` | ⚪ ${Math.ceil((activePokeball.expiresAt - Date.now()) / 60000)}m`;
+        const { getRarityEmoji } = require('../../utils/images.js');
+        const rarityEmoji = getRarityEmoji(selectedRarity, client);
         const embed = new EmbedBuilder()
             .setColor(parseInt(rarities[selectedRarity].color.slice(1), 16))
-            .setTitle(`${animal.emoji} ${animal.name}`)
+            .setTitle(`${rarityEmoji} ${animal.name}`)
             .setDescription(`*${rarities[selectedRarity].name} Rarity*`)
             .setFooter({ text: `+${expReward} XP${statusText}${expRes.leveledUp ? ` | 🎊 Rank Up: ${expRes.newLevel}!` : ''}` });
         if (imgData) {
@@ -111,6 +113,9 @@ module.exports = {
         }
         await database.updateStats(message.author.id, 'command');
         await database.updateStats(message.author.id, 'hunt_success', 1);
+        // Update Quest Progress! (｡♥‿♥｡)
+        const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+        await QuestService.updateProgress(message.author.id, 'HUNT', 1);
         message.reply({ embeds: [embed], files });
     },
 };

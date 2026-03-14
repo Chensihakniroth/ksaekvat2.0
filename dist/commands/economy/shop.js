@@ -100,9 +100,12 @@ module.exports = {
                 else if (selectedItem.id === 'hunt_boost') {
                     await database.addHuntBoost(userId, selectedItem.amount);
                 }
+                else if (categoryKey === 'themes') {
+                    await database.unlockTheme(userId, selectedItem.id);
+                }
                 else {
                     // Generic item (like Ring of Promise)
-                    await database.addItem(userId, selectedItem.name, 1);
+                    await database.addItem(selectedItem.name, 1);
                 }
                 await i.reply({
                     content: `✅ Successfully bought **${selectedItem.emoji} ${selectedItem.name}** for **${EconomyService.format(selectedItem.price)}** coins! Mommy is so happy for you! ヽ(>∀<☆)ノ`,

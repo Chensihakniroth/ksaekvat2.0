@@ -52,6 +52,16 @@ export interface IUser extends Document {
     marriedAt: Date;
   } | null;
   profileTheme: string | null;
+  unlockedThemes: string[];
+  quests: {
+    id: string;
+    type: string;
+    target: number;
+    current: number;
+    completed: boolean;
+    rewarded: boolean;
+  }[];
+  lastQuestReset: Date | null;
   stats: IUserStats;
   joinedAt: Date;
   customPrefix?: string;   // User's personal main prefix (e.g. 'K', '!')
@@ -112,7 +122,21 @@ const UserSchema: Schema = new Schema({
     affinity: { type: Number, default: 0 },
     marriedAt: { type: Date, default: null },
   },
-  profileTheme: { type: String, default: null },
+  profileTheme: { type: String, default: 'default' },
+  unlockedThemes: { type: [String], default: ['default'] },
+
+  // Quest System
+  quests: [
+    {
+      id: String,
+      type: String,
+      target: { type: Number, default: 0 },
+      current: { type: Number, default: 0 },
+      completed: { type: Boolean, default: false },
+      rewarded: { type: Boolean, default: false },
+    },
+  ],
+  lastQuestReset: { type: Date, default: null },
 
   stats: {
     totalGambled: { type: Number, default: 0 },

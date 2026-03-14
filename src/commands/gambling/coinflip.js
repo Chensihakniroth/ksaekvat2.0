@@ -191,6 +191,10 @@ module.exports = {
         } catch (error) {
           message.channel.send({ embeds: [finalEmbed] });
         }
+
+        // Update Quest Progress! (｡♥‿♥｡)
+        const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+        await QuestService.updateProgress(message.author.id, 'COINFLIP', 1);
       })
       .catch((error) => {
         console.error('Error in coinflip animation:', error);

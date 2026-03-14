@@ -218,5 +218,9 @@ module.exports = {
     }
 
     await sentMessage.edit({ embeds: [slotEmbed] });
+
+    // Update Quest Progress! (｡♥‿♥｡)
+    const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+    await QuestService.updateProgress(message.author.id, 'SLOTS', 1);
   },
 };

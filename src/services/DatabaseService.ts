@@ -162,6 +162,29 @@ class DatabaseService {
     await this.saveUser(user);
   }
 
+  async unlockTheme(userId: string, themeId: string) {
+    const user = await this.getUser(userId);
+    if (!user.unlockedThemes) user.unlockedThemes = ['default'];
+    
+    if (!user.unlockedThemes.includes(themeId)) {
+      user.unlockedThemes.push(themeId);
+      user.markModified('unlockedThemes');
+      await this.saveUser(user);
+      return true;
+    }
+    return false;
+  }
+
+  async setTheme(userId: string, themeId: string) {
+    const user = await this.getUser(userId);
+    if (user.unlockedThemes && user.unlockedThemes.includes(themeId)) {
+      user.profileTheme = themeId;
+      await this.saveUser(user);
+      return true;
+    }
+    return false;
+  }
+
   async removeBalance(userId: string, amount: number) {
     return await User.findOneAndUpdate(
       { id: userId },

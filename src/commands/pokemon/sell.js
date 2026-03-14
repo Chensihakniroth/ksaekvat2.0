@@ -67,11 +67,13 @@ module.exports = {
         for (const [animalKey, count] of animalEntries) {
           const animal = animalsData[rarity]?.[animalKey] || flatRegistry[animalKey];
           if (animal && count > 0) {
+            const { getRarityEmoji } = require('../../utils/images.js');
+            const rarityEmoji = getRarityEmoji(rarity, client);
             const value = animal.value * count;
             totalValue += value;
             pokemonSold += count;
             soldPokemon.push(
-              `${animal.emoji} **${animal.name}** x${count} - ${EconomyService.format(value)} ${config.economy.currency}`
+              `${rarityEmoji} **${animal.name}** x${count} - ${EconomyService.format(value)} ${config.economy.currency}`
             );
           }
         }
@@ -185,16 +187,18 @@ module.exports = {
 
       const imageUrl = await AnimalService.getPokemonImage(foundKey);
       const rarityInfo = config.hunting.rarities[foundRarity];
+      const { getRarityEmoji } = require('../../utils/images.js');
+      const rarityEmoji = getRarityEmoji(foundRarity, client);
 
       const embed = new EmbedBuilder()
         .setColor(parseInt(rarityInfo.color.slice(1), 16))
         .setTitle('ヽ(>∀<☆)ノ Released!')
         .setDescription(
-          `Mommy helped you release your ${foundAnimal.emoji} **${foundAnimal.name}** for **${EconomyService.format(sellValue)}** ${config.economy.currency}! (｡♥‿♥｡)`
+          `Mommy helped you release your ${rarityEmoji} **${foundAnimal.name}** for **${EconomyService.format(sellValue)}** ${config.economy.currency}! (｡♥‿♥｡)`
         )
         .addFields({
           name: '(◕‿◕✿) Release Details',
-          value: `**Pokémon:** ${foundAnimal.emoji} ${foundAnimal.name}\n**Rarity:** ${rarityInfo.name}\n**Credit:** ${EconomyService.format(sellValue)} ${config.economy.currency}\n**Remaining:** ${currentCount - 1}`,
+          value: `**Pokémon:** ${rarityEmoji} ${foundAnimal.name}\n**Rarity:** ${rarityInfo.name}\n**Credit:** ${EconomyService.format(sellValue)} ${config.economy.currency}\n**Remaining:** ${currentCount - 1}`,
           inline: true,
         })
         .addFields({

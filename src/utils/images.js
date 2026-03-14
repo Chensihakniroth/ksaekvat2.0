@@ -165,24 +165,21 @@ function getItemEmoji(item, client) {
 }
 
 function getRarityEmoji(rarity, client) {
-  if (!client) return rarity === 5 ? '🟡' : rarity === 4 ? '🟣' : '🔵';
+  const emojiMap = {
+    priceless: '<:rarity_priceless:1482366975672975463>',
+    mythical:  '<:rarity_mythical:1482366970589483180>',
+    legendary: '<:rarity_legendary:1482366964994408528>',
+    epic:      '<:rarity_epic:1482366960070164560>',
+    rare:      '<:rarity_rare:1482366980790157467>',
+    uncommon:  '<:rarity_uncommon:1482366986498605218>',
+    common:    '<:rarity_common:1482366954361716776>',
+    // Numeric fallbacks for Gacha
+    5: '<:rarity_legendary:1482366964994408528>',
+    4: '<:rarity_epic:1482366960070164560>',
+    3: '<:rarity_rare:1482366980790157467>',
+  };
 
-  const emojiName = `${rarity}_star`;
-
-  // 1. Search in Application Emojis
-  let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);
-
-  // 2. Fallback to Guild Emojis
-  if (!customEmoji) {
-    customEmoji = client.emojis.cache.find(e => e.name === emojiName);
-  }
-
-  if (customEmoji) {
-    return customEmoji.toString();
-  }
-
-  // Fallback to standard stars
-  return rarity === 5 ? '🟡' : rarity === 4 ? '🟣' : '🔵';
+  return emojiMap[rarity] || '✨';
 }
 
 function getElementEmoji(item, client) {

@@ -49,6 +49,10 @@ module.exports = {
 
     message.reply({ embeds: [embed] });
     
+    // Update Quest Progress! (｡♥‿♥｡)
+    const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+    await QuestService.updateProgress(userId, 'AFFINITY', 1);
+    
     await database.updateStats(userId, 'command');
   },
 };

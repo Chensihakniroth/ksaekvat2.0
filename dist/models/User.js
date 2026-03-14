@@ -81,7 +81,20 @@ const UserSchema = new mongoose_1.Schema({
         affinity: { type: Number, default: 0 },
         marriedAt: { type: Date, default: null },
     },
-    profileTheme: { type: String, default: null },
+    profileTheme: { type: String, default: 'default' },
+    unlockedThemes: { type: [String], default: ['default'] },
+    // Quest System
+    quests: [
+        {
+            id: String,
+            type: String,
+            target: { type: Number, default: 0 },
+            current: { type: Number, default: 0 },
+            completed: { type: Boolean, default: false },
+            rewarded: { type: Boolean, default: false },
+        },
+    ],
+    lastQuestReset: { type: Date, default: null },
     stats: {
         totalGambled: { type: Number, default: 0 },
         totalWon: { type: Number, default: 0 },

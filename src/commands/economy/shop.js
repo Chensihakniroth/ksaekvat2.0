@@ -127,9 +127,11 @@ module.exports = {
           await database.addPokeball(userId, selectedItem.id, 1);
         } else if (selectedItem.id === 'hunt_boost') {
           await database.addHuntBoost(userId, selectedItem.amount);
+        } else if (categoryKey === 'themes') {
+          await database.unlockTheme(userId, selectedItem.id);
         } else {
           // Generic item (like Ring of Promise)
-          await database.addItem(userId, selectedItem.name, 1);
+          await database.addItem(selectedItem.name, 1);
         }
 
         await i.reply({

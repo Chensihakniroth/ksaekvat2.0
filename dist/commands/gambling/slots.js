@@ -188,5 +188,8 @@ module.exports = {
                 `**Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`);
         }
         await sentMessage.edit({ embeds: [slotEmbed] });
+        // Update Quest Progress! (｡♥‿♥｡)
+        const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+        await QuestService.updateProgress(message.author.id, 'SLOTS', 1);
     },
 };
