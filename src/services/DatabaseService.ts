@@ -1,4 +1,5 @@
 import User from '../models/User';
+import type { IUser } from '../models/User';
 import Listener from '../models/Listener';
 import TalkTarget from '../models/TalkTarget';
 import CharacterCard from '../models/CharacterCard';
@@ -102,6 +103,31 @@ class DatabaseService {
       { $inc: { [field]: amount } },
       { returnDocument: 'after', upsert: true }
     );
+  }
+
+  async usePokeball(userId: string, type: string) {
+    const user = await this.getUser(userId);
+    const field = type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
+    
+    if (!user[field as keyof IUser] || (user[field as keyof IUser] as number) <= 0) {
+      return { success: false, message: `You don't have any ${type}s, darling! (｡•́︿•̀｡)` };
+    }
+
+    // Consume 1 ball
+    (user[field as keyof IUser] as number)--;
+
+    // Activate 1-hour booster
+    const duration = 3600000; // 1 hour
+    if (!user.boosters) user.boosters = new Map();
+    
+    user.boosters.set(type, {
+      multiplier: 1, // Logic handled in hunt.js
+      expiresAt: Date.now() + duration,
+    });
+
+    user.markModified('boosters');
+    await this.saveUser(user);
+    return { success: true, expiresAt: Date.now() + duration };
   }
 
   async addItem(userId: string, itemName: string, amount = 1) {

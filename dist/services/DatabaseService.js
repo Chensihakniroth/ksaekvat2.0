@@ -86,6 +86,26 @@ class DatabaseService {
         const field = type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
         return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { [field]: amount } }, { returnDocument: 'after', upsert: true });
     }
+    async usePokeball(userId, type) {
+        const user = await this.getUser(userId);
+        const field = type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
+        if (!user[field] || user[field] <= 0) {
+            return { success: false, message: `You don't have any ${type}s, darling! (｡•́︿•̀｡)` };
+        }
+        // Consume 1 ball
+        user[field]--;
+        // Activate 1-hour booster
+        const duration = 3600000; // 1 hour
+        if (!user.boosters)
+            user.boosters = new Map();
+        user.boosters.set(type, {
+            multiplier: 1, // Logic handled in hunt.js
+            expiresAt: Date.now() + duration,
+        });
+        user.markModified('boosters');
+        await this.saveUser(user);
+        return { success: true, expiresAt: Date.now() + duration };
+    }
     async addItem(userId, itemName, amount = 1) {
         const user = await this.getUser(userId);
         if (!user.inventory)

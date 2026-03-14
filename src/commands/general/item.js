@@ -51,7 +51,7 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor(colors.primary)
         .setTitle(`🎒 ${message.author.username}'s Bag`)
-        .setDescription(`**Items in your bag:**\n\n${list.join('\n')}`)
+        .setDescription(`**Items in your bag:**\n\n${list.join('\n')}\n\n*💡 Use \`Kuse <ball_name>\` to activate hunting boosters!*`)
         .setFooter({ text: 'More items coming soon! (◕‿✿)' });
 
       return { embed, items: itemsList };
