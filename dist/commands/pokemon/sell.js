@@ -24,14 +24,14 @@ module.exports = {
         }
         const userData = await database.getUser(message.author.id, message.author.username);
         const animalsData = await database.loadAnimals();
-        const userAnimals = userData.animals || {};
-        // Check if user has any animals
+        const userAnimals = userData.animals || new Map();
+        // Check if user has any animals with Map-safe logic! (｡♥‿♥｡)
         let totalPokemon = 0;
-        for (const rarity of Object.keys(userAnimals)) {
-            const rarityAnimals = userAnimals[rarity] || {};
-            for (const animal of Object.keys(rarityAnimals)) {
-                totalPokemon +=
-                    (rarityAnimals instanceof Map ? rarityAnimals.get(animal) : rarityAnimals[animal]) || 0;
+        const rarityEntries = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
+        for (const [rarity, rarityAnimals] of rarityEntries) {
+            const animalEntries = rarityAnimals instanceof Map ? rarityAnimals.entries() : Object.entries(rarityAnimals || {});
+            for (const [animal, count] of animalEntries) {
+                totalPokemon += Number(count) || 0;
             }
         }
         if (totalPokemon === 0) {
@@ -51,7 +51,8 @@ module.exports = {
             let totalValue = 0;
             let pokemonSold = 0;
             const soldPokemon = [];
-            for (const [rarity, animals] of Object.entries(userAnimals)) {
+            const rarityEntriesAll = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
+            for (const [rarity, animals] of rarityEntriesAll) {
                 if (animalsData[rarity]) {
                     const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
                     for (const [animalKey, count] of animalEntries) {
@@ -105,8 +106,9 @@ module.exports = {
             let foundAnimal = null;
             let foundRarity = null;
             let foundKey = null;
-            // Search for the animal in user's collection
-            for (const [rarity, animals] of Object.entries(userAnimals)) {
+            // Search for the animal in user's collection with Map-safe logic! (｡♥‿♥｡)
+            const rarityEntriesSingle = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
+            for (const [rarity, animals] of rarityEntriesSingle) {
                 if (animalsData[rarity]) {
                     const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
                     for (const [animalKey, count] of animalEntries) {

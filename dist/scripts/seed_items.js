@@ -26,7 +26,7 @@ const items = [
         rarity: '4',
         emoji: '🟡',
         type: 'item',
-        image_url: 'http://bucket-production-4ca0.up.railway.app/gacha-images/common/ultra_ball.png'
+        image_url: 'https://pokemon.fandom.com/wiki/Special:FilePath/Ultra_Ball.png?width=1000'
     },
     {
         name: 'Master Ball',
@@ -34,7 +34,7 @@ const items = [
         rarity: '5',
         emoji: '🟣',
         type: 'item',
-        image_url: 'http://bucket-production-4ca0.up.railway.app/gacha-images/common/master_ball.png'
+        image_url: 'https://pokemon.fandom.com/wiki/Special:FilePath/Master_Ball.png?width=1000'
     }
 ];
 async function seedItems() {

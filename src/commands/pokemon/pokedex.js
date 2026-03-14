@@ -120,13 +120,14 @@ module.exports = {
     const userDoc = await database.getUser(target.id, target.username);
     const animalsData = await database.loadAnimals();
     
-    // Data extraction fix: use toObject()
-    const userData = userDoc.toObject();
-    const animalsObj = userData.animals || {};
+    // Support both Map and plain objects for cross-compatibility! (｡♥‿♥｡)
+    const animalsObj = userDoc.animals || {};
 
     const allCaught = [];
-    for (const [rarity, animalCounts] of Object.entries(animalsObj)) {
-      for (const [key, count] of Object.entries(animalCounts || {})) {
+    const rarityEntries = animalsObj instanceof Map ? animalsObj.entries() : Object.entries(animalsObj);
+    for (const [rarity, animalCounts] of rarityEntries) {
+      const animalEntries = animalCounts instanceof Map ? animalCounts.entries() : Object.entries(animalCounts || {});
+      for (const [key, count] of animalEntries) {
         const def = animalsData[rarity]?.[key];
         if (Number(count) > 0 && def) {
           allCaught.push({ key, name: def.name, rarity, count: Number(count) });

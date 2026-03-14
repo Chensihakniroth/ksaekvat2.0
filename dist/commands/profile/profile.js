@@ -33,7 +33,8 @@ module.exports = {
             rarityCount[rarity] = 0;
         }
         if (userData.animals) {
-            for (const [rarity, animals] of Object.entries(userData.animals)) {
+            const rarityEntries = userData.animals instanceof Map ? userData.animals.entries() : Object.entries(userData.animals);
+            for (const [rarity, animals] of rarityEntries) {
                 if (animalsData[rarity]) {
                     const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
                     for (const [animalKey, count] of animalEntries) {

@@ -33,8 +33,27 @@ async function createGachaResultImage(results) {
         let processedCard;
         const isSpecialAspectRatio = ['hsr', 'zzz'].includes(item.game?.toLowerCase());
         try {
-            const response = await axios.get(item.image_url, { responseType: 'arraybuffer' });
-            const imageBuffer = Buffer.from(response.data);
+            let imageBuffer;
+            if (item.image_url && item.image_url.startsWith('http')) {
+                const response = await axios.get(item.image_url, {
+                    responseType: 'arraybuffer',
+                    headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36' }
+                });
+                imageBuffer = Buffer.from(response.data);
+            }
+            else if (item.image_url) {
+                // Handle local paths! (｡♥‿♥｡)
+                const fullPath = path.isAbsolute(item.image_url) ? item.image_url : path.join(process.cwd(), item.image_url);
+                if (fs.existsSync(fullPath)) {
+                    imageBuffer = fs.readFileSync(fullPath);
+                }
+                else {
+                    throw new Error(`Local file not found: ${fullPath}`);
+                }
+            }
+            else {
+                throw new Error('No image_url provided');
+            }
             const game = item.game?.toLowerCase();
             const useCover = ['genshin', 'wuwa', 'hsr'].includes(game);
             // Mommy's rarity colors! (｡♥‿♥｡)
@@ -56,7 +75,7 @@ async function createGachaResultImage(results) {
                     .toBuffer();
             }
             else {
-                // For others (ZZZ), place the image onto a card with rarity background
+                // For others (ZZZ, Common items), place the image onto a card with rarity background
                 processedCard = await sharp({
                     create: {
                         width: cardWidth,

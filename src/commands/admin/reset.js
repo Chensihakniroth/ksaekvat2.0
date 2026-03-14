@@ -64,16 +64,25 @@ module.exports = {
 
     // Get current user data for backup info
     const userData = await database.getUser(target.id, target.username);
+    
+    // Calculate unique animal count with Map-safe logic! (｡♥‿♥｡)
+    let uniqueAnimalCount = 0;
+    const userAnimals = userData.animals || new Map();
+    const rarityEntries = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
+    for (const [rarity, animals] of rarityEntries) {
+      const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals || {});
+      for (const [key, count] of animalEntries) {
+        if (Number(count) > 0) uniqueAnimalCount++;
+      }
+    }
+
     const backupData = {
       balance: userData.balance || 0,
       level: userData.level || 1,
       experience: userData.experience || 0,
       totalAnimalsFound: userData.stats?.totalAnimalsFound || 0,
       commandsUsed: userData.stats?.commandsUsed || 0,
-      animalCount: Object.keys(userData.animals || {}).reduce(
-        (total, rarity) => total + Object.keys(userData.animals[rarity] || {}).length,
-        0
-      ),
+      animalCount: uniqueAnimalCount,
     };
 
     // Create confirmation embed
