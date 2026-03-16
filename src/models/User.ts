@@ -54,7 +54,7 @@ export interface IUser extends Document {
   profileTheme: string | null;
   unlockedThemes: string[];
   quests: {
-    id: string;
+    questId: string;
     type: string;
     target: number;
     current: number;
@@ -67,6 +67,15 @@ export interface IUser extends Document {
   customPrefix?: string;   // User's personal main prefix (e.g. 'K', '!')
   customSubPrefix?: string; // User's personal short/sub prefix override
 }
+
+const QuestSchema: Schema = new Schema({
+  questId: String,
+  type: String,
+  target: { type: Number, default: 0 },
+  current: { type: Number, default: 0 },
+  completed: { type: Boolean, default: false },
+  rewarded: { type: Boolean, default: false },
+}, { _id: false });
 
 /**
  * USER SCHEMA (Gold Standard)
@@ -125,17 +134,7 @@ const UserSchema: Schema = new Schema({
   profileTheme: { type: String, default: 'default' },
   unlockedThemes: { type: [String], default: ['default'] },
 
-  // Quest System
-  quests: [
-    {
-      id: String,
-      type: String,
-      target: { type: Number, default: 0 },
-      current: { type: Number, default: 0 },
-      completed: { type: Boolean, default: false },
-      rewarded: { type: Boolean, default: false },
-    },
-  ],
+  quests: [QuestSchema],
   lastQuestReset: { type: Date, default: null },
 
   stats: {

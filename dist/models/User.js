@@ -34,6 +34,14 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
+const QuestSchema = new mongoose_1.Schema({
+    questId: String,
+    type: String,
+    target: { type: Number, default: 0 },
+    current: { type: Number, default: 0 },
+    completed: { type: Boolean, default: false },
+    rewarded: { type: Boolean, default: false },
+}, { _id: false });
 /**
  * USER SCHEMA (Gold Standard)
  * Defines the structure of our player data in MongoDB with full type-safety! (｡♥‿♥｡)
@@ -83,17 +91,7 @@ const UserSchema = new mongoose_1.Schema({
     },
     profileTheme: { type: String, default: 'default' },
     unlockedThemes: { type: [String], default: ['default'] },
-    // Quest System
-    quests: [
-        {
-            id: String,
-            type: String,
-            target: { type: Number, default: 0 },
-            current: { type: Number, default: 0 },
-            completed: { type: Boolean, default: false },
-            rewarded: { type: Boolean, default: false },
-        },
-    ],
+    quests: [QuestSchema],
     lastQuestReset: { type: Date, default: null },
     stats: {
         totalGambled: { type: Number, default: 0 },

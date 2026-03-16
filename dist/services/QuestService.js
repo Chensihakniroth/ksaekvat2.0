@@ -46,7 +46,7 @@ class QuestService {
             const config = QUEST_TYPES[type];
             const target = config.targets[Math.floor(Math.random() * config.targets.length)];
             return {
-                id: `${type}_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+                questId: `${type}_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
                 type: type,
                 target: target,
                 current: 0,
