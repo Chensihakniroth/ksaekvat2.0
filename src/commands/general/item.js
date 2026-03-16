@@ -23,11 +23,16 @@ module.exports = {
     const renderInventory = async () => {
       const userData = await database.getUser(userId, message.author.username);
       
+      const stardustEmoji = getItemEmoji({ name: 'Star Dust' }, client);
+      const pokeballEmoji = getItemEmoji({ name: 'Pokeball' }, client);
+      const ultraballEmoji = getItemEmoji({ name: 'Ultraball' }, client);
+      const masterballEmoji = getItemEmoji({ name: 'Master Ball' }, client);
+
       const itemsList = [
-        { id: 'star_dust', name: 'Star Dust', count: userData.star_dust || 0, emoji: '✨' },
-        { id: 'pokeball', name: 'Pokeball', count: userData.pokeballs || 0, emoji: '⚪' },
-        { id: 'ultraball', name: 'Ultraball', count: userData.ultraballs || 0, emoji: '🟡' },
-        { id: 'masterball', name: 'Master Ball', count: userData.masterballs || 0, emoji: '🟣' },
+        { id: 'star_dust', name: 'Star Dust', count: userData.star_dust || 0, emoji: stardustEmoji },
+        { id: 'pokeball', name: 'Pokeball', count: userData.pokeballs || 0, emoji: pokeballEmoji },
+        { id: 'ultraball', name: 'Ultraball', count: userData.ultraballs || 0, emoji: ultraballEmoji },
+        { id: 'masterball', name: 'Master Ball', count: userData.masterballs || 0, emoji: masterballEmoji },
       ];
 
       const heldItems = itemsList.filter(item => item.count > 0);

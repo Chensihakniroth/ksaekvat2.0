@@ -9,6 +9,7 @@ const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 const logger = require('../../utils/logger.js');
+const { getItemEmoji } = require('../../utils/images.js');
 
 module.exports = {
   name: 'bag',
@@ -22,10 +23,10 @@ module.exports = {
     const renderBag = async () => {
       const userData = await database.getUser(userId, message.author.username);
       
-      const stardustEmoji = '<:Star_Dust:1481623820614897797>';
-      const pokeballEmoji = '<:Pokeball:1481623822443614239>';
-      const ultraballEmoji = '<:Ultraball:1481623824842625226>';
-      const masterballEmoji = '<:Master_Ball:1481623828319830107>';
+      const stardustEmoji = getItemEmoji({ name: 'Star Dust' }, client);
+      const pokeballEmoji = getItemEmoji({ name: 'Pokeball' }, client);
+      const ultraballEmoji = getItemEmoji({ name: 'Ultraball' }, client);
+      const masterballEmoji = getItemEmoji({ name: 'Master Ball' }, client);
 
       const items = [
         { name: 'Pokeball', count: userData.pokeballs || 0, emoji: pokeballEmoji, key: 'pokeball' },

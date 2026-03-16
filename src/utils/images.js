@@ -164,8 +164,19 @@ function getItemEmoji(item, client) {
   return '✨';
 }
 
-function getRarityEmoji(rarity, client) {
-  const emojiMap = {
+function getRarityEmoji(rarity, client, item = null) {
+  // 1. Detect Type
+  const isNumeric = typeof rarity === 'number' || (!isNaN(parseInt(rarity)) && /^\d+$/.test(rarity.toString()));
+  const isCharacter = item?.type === 'character' || (item && !item.type && isNumeric);
+
+  // 2. Hardcoded ID Mapping
+  const gachaMap = {
+    5: '<:5_star:1480475865212125184>',
+    4: '<:4_star:1480475863114842213>',
+    3: '<:3_star:1480475860753580046>',
+  };
+
+  const pokemonMap = {
     priceless: '<:rarity_priceless:1482366975672975463>',
     mythical:  '<:rarity_mythical:1482366970589483180>',
     legendary: '<:rarity_legendary:1482366964994408528>',
@@ -173,13 +184,37 @@ function getRarityEmoji(rarity, client) {
     rare:      '<:rarity_rare:1482366980790157467>',
     uncommon:  '<:rarity_uncommon:1482366986498605218>',
     common:    '<:rarity_common:1482366954361716776>',
-    // Numeric fallbacks for Gacha
-    5: '<:rarity_legendary:1482366964994408528>',
-    4: '<:rarity_epic:1482366960070164560>',
-    3: '<:rarity_rare:1482366980790157467>',
   };
 
-  return emojiMap[rarity] || '✨';
+  // 3. Logic: If numeric or character context, use Gacha stars
+  if (isNumeric || isCharacter) {
+    const val = parseInt(rarity);
+    if (gachaMap[val]) return gachaMap[val];
+  } else if (typeof rarity === 'string') {
+    // Pokémon/Combat use string names (case-insensitive)
+    const key = rarity.toLowerCase();
+    if (pokemonMap[key]) return pokemonMap[key];
+  }
+
+  // 4. Dynamic Lookup Fallback
+  if (!client) return '✨';
+  
+  const emojiName = (isNumeric || isCharacter) 
+    ? `${rarity}_star` 
+    : `rarity_${rarity.toString().toLowerCase()}`;
+
+  const customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName) 
+                 || client.emojis.cache.find(e => e.name === emojiName);
+
+  if (customEmoji) return customEmoji.toString();
+
+  // 5. Final Fallback
+  const fallbackMap = {
+    5: '⭐', 4: '✨', 3: '💎',
+    legendary: '🟠', epic: '🟣', rare: '🔵', uncommon: '🟢', common: '⚪',
+  };
+
+  return fallbackMap[rarity] || fallbackMap[rarity.toString().toLowerCase()] || '✨';
 }
 
 function getElementEmoji(item, client) {
