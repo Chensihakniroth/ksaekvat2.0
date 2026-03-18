@@ -125,13 +125,31 @@ async function bootstrap() {
   // 3. Deploy Slash
   await deployCommands();
 
-  // 4. HTTP Health Check
+  // 4. HTTP server + API + Dashboard
   logger.section('Web Server');
   const app = express();
-  app.get('/', (req, res) => res.send('OK'));
+  app.use(express.json());
+
+  // API Routes
+  app.use('/api', require('../api/index'));
+
+  // Serve dashboard static build
+  const dashboardDist = path.join(__dirname, '../../dashboard/dist');
+  if (fs.existsSync(dashboardDist)) {
+    app.use(express.static(dashboardDist));
+    // SPA fallback: serve index.html for all non-API routes
+    app.get(/^(?!\/api).*/, (_req: any, res: any) => {
+      res.sendFile(path.join(dashboardDist, 'index.html'));
+    });
+    logger.success('Dashboard static files served from dashboard/dist');
+  } else {
+    app.get('/', (_req: any, res: any) => res.send('KsaeKvat Bot API — dashboard not built yet.'));
+    logger.warn('dashboard/dist not found. Run: cd dashboard && npm run build');
+  }
+
   const port = process.env.PORT || 8080;
   app.listen(port, '0.0.0.0', () => {
-    logger.success(`Health check listener active on port ${port}`);
+    logger.success(`Server active on port ${port}`);
   });
 
   // 5. Login

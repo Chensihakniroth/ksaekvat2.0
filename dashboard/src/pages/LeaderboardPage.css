@@ -1,0 +1,6 @@
+.lb-page { padding-bottom: 60px; }
+.lb-card { padding: 0; overflow: hidden; }
+.lb-username { font-weight: 600; color: var(--text-primary); }
+.lb-username:hover { color: var(--accent-purple-light); }
+.lb-value { font-weight: 700; color: var(--accent-cyan); }
+.rank-cell { font-size: 18px; font-weight: 700; width: 50px; }
