@@ -48,7 +48,12 @@ function CharIcon({ name, game, rarity, emoji }) {
       src={iconUrl}
       alt={name}
       className="char-icon-img"
-      onError={() => setIconUrl(null)}
+      referrerPolicy="no-referrer"
+      crossOrigin="anonymous"
+      onError={() => {
+        console.error(`[CharIcon] Failed to load: ${name} (${game}) - URL: ${iconUrl}`);
+        setIconUrl(null);
+      }}
       loading="lazy"
     />
   );

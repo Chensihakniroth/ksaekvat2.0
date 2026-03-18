@@ -133,9 +133,13 @@ export async function fetchFandomIconUrl(name, game) {
       const url = page.imageinfo?.[0]?.url || null;
       _cache.set(cacheKey, url);
       return url;
-    } catch {
-      _cache.set(cacheKey, null); // cache failure to avoid retry spam
-      return null;
+    } catch (err) {
+      console.warn(`[charImages] API fetch failed for ${name} (${game}), using Special:FilePath fallback.`, err);
+      // Fallback: Use Special:FilePath which Wikia handles as a redirect in browsers
+      const filename = config.getFilename(name);
+      const fallbackUrl = `https://${config.wiki}.fandom.com/wiki/Special:FilePath/${encodeURIComponent(filename)}`;
+      _cache.set(cacheKey, fallbackUrl); 
+      return fallbackUrl;
     } finally {
       _inFlight.delete(cacheKey);
     }
