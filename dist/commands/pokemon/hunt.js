@@ -11,13 +11,38 @@ module.exports = {
     usage: 'hunt',
     cooldown: 10000,
     async execute(message, args, client) {
-        const userData = await database.getUser(message.author.id, message.author.username);
-        const animalsData = await database.loadAnimals();
-        // Check for active ball boosters
-        const activePokeball = await database.getActiveBooster(message.author.id, 'pokeball');
-        const activeUltraball = await database.getActiveBooster(message.author.id, 'ultraball');
-        const activeMasterball = await database.getActiveBooster(message.author.id, 'masterball');
+        try {
+            await message.channel.sendTyping();
+        }
+        catch (_) { }
+        // --- DIRECT HUNT ARGUMENTS (｡♥‿♥｡) ---
+        const arg = args[0]?.toLowerCase();
+        if (arg) {
+            const ballTypeMap = {
+                'p': 'pokeball', 'poke': 'pokeball', 'pokeball': 'pokeball',
+                'u': 'ultraball', 'ultra': 'ultraball', 'ultraball': 'ultraball',
+                'm': 'masterball', 'master': 'masterball', 'masterball': 'masterball'
+            };
+            const typeToUse = ballTypeMap[arg];
+            if (typeToUse) {
+                const useResult = await database.setPokeball(message.author.id, typeToUse);
+                if (!useResult.success) {
+                    return message.reply({ content: useResult.message });
+                }
+            }
+        }
+        // Parallelize DB calls for speed! (｡♥‿♥｡)
+        const [userData, animalsData] = await Promise.all([
+            database.getUser(message.author.id, message.author.username),
+            database.loadAnimals()
+        ]);
+        // Check for active one-time balls
+        const boosters = userData.boosters || new Map();
+        const activePokeball = boosters.get('pokeball')?.active && boosters.get('pokeball')?.oneTime;
+        const activeUltraball = boosters.get('ultraball')?.active && boosters.get('ultraball')?.oneTime;
+        const activeMasterball = boosters.get('masterball')?.active && boosters.get('masterball')?.oneTime;
         const activeBall = activeMasterball || activeUltraball || activePokeball;
+        let activeBallType = activeMasterball ? 'masterball' : activeUltraball ? 'ultraball' : activePokeball ? 'pokeball' : null;
         let distractionChance = config.hunting.distractionChance;
         if (activeMasterball || activeUltraball)
             distractionChance = 0;
@@ -35,7 +60,6 @@ module.exports = {
         }
         // --- RARITY LOGIC ---
         const rarities = config.hunting.rarities;
-        const isBoosted = userData.hunt_boost > 0;
         let totalWeight = 0;
         for (const [key, r] of Object.entries(rarities)) {
             // Filter rarities based on active ball
@@ -47,9 +71,7 @@ module.exports = {
             // Master ball has 5x mythical chance
             if (activeMasterball && key === 'mythical')
                 weight *= 5;
-            // Apply 5x multiplier to non-common rarities if hunt_boost is active
-            const weightMult = isBoosted && key !== 'common' ? 5 : 1;
-            totalWeight += weight * weightMult;
+            totalWeight += weight;
         }
         const random = Math.random() * totalWeight;
         let currentWeight = 0;
@@ -62,8 +84,7 @@ module.exports = {
             let weight = r.weight;
             if (activeMasterball && key === 'mythical')
                 weight *= 5;
-            const weightMult = isBoosted && key !== 'common' ? 5 : 1;
-            currentWeight += weight * weightMult;
+            currentWeight += weight;
             if (random <= currentWeight) {
                 selectedRarity = key;
                 break;
@@ -79,26 +100,19 @@ module.exports = {
         const catchResult = await database.addAnimal(message.author.id, animalKey, selectedRarity);
         const expReward = Math.floor(rarities[selectedRarity].value / 25) + 5;
         const expRes = await database.addExperience(message.author.id, expReward);
-        // Atomic update for hunt_boost to avoid race conditions
-        const updatePayload = {};
-        // Consume Boost Turn
-        if (isBoosted) {
-            updatePayload['$inc'] = { ...(updatePayload['$inc'] || {}), hunt_boost: -1 };
+        // Consume the ball flag (One-time use!)
+        if (activeBallType) {
+            await database.clearOneTimeBall(message.author.id, activeBallType);
         }
-        if (Object.keys(updatePayload).length > 0) {
-            await database.saveUserUpdate(message.author.id, updatePayload);
-        }
-        // Up-to-date boost count for the embed
-        const finalBoostCount = isBoosted ? (userData.hunt_boost - 1) : 0;
         const imgData = await AnimalService.getPokemonImageBuffer(animalKey);
         const files = [];
-        let statusText = isBoosted ? `🔥 x${finalBoostCount}` : '';
+        let statusText = '';
         if (activeMasterball)
-            statusText += ` | 🟣 ${Math.ceil((activeMasterball.expiresAt - Date.now()) / 60000)}m`;
+            statusText += ` | 🟣 Master Ball Active`;
         else if (activeUltraball)
-            statusText += ` | 🟡 ${Math.ceil((activeUltraball.expiresAt - Date.now()) / 60000)}m`;
+            statusText += ` | 🟡 Ultraball Active`;
         else if (activePokeball)
-            statusText += ` | ⚪ ${Math.ceil((activePokeball.expiresAt - Date.now()) / 60000)}m`;
+            statusText += ` | ⚪ Pokeball Active`;
         const { getRarityEmoji } = require('../../utils/images.js');
         const rarityEmoji = getRarityEmoji(selectedRarity, client);
         const embed = new EmbedBuilder()

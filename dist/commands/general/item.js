@@ -3,7 +3,6 @@ const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentTyp
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const ItemService = require('../../services/ItemService.js').default || require('../../services/ItemService.js');
 const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 const { getItemEmoji, getRarityEmoji } = require('../../utils/images.js');
 module.exports = {
@@ -15,11 +14,15 @@ module.exports = {
         const userId = message.author.id;
         const renderInventory = async () => {
             const userData = await database.getUser(userId, message.author.username);
+            const stardustEmoji = getItemEmoji({ name: 'Star Dust' }, client);
+            const pokeballEmoji = getItemEmoji({ name: 'Pokeball' }, client);
+            const ultraballEmoji = getItemEmoji({ name: 'Ultraball' }, client);
+            const masterballEmoji = getItemEmoji({ name: 'Master Ball' }, client);
             const itemsList = [
-                { id: 'star_dust', name: 'Star Dust', count: userData.star_dust || 0, emoji: '✨' },
-                { id: 'pokeball', name: 'Pokeball', count: userData.pokeballs || 0, emoji: '⚪' },
-                { id: 'ultraball', name: 'Ultraball', count: userData.ultraballs || 0, emoji: '🟡' },
-                { id: 'masterball', name: 'Master Ball', count: userData.masterballs || 0, emoji: '🟣' },
+                { id: 'star_dust', name: 'Star Dust', count: userData.star_dust || 0, emoji: stardustEmoji },
+                { id: 'pokeball', name: 'Pokeball', count: userData.pokeballs || 0, emoji: pokeballEmoji },
+                { id: 'ultraball', name: 'Ultraball', count: userData.ultraballs || 0, emoji: ultraballEmoji },
+                { id: 'masterball', name: 'Master Ball', count: userData.masterballs || 0, emoji: masterballEmoji },
             ];
             const heldItems = itemsList.filter(item => item.count > 0);
             const embed = new EmbedBuilder()
@@ -33,7 +36,7 @@ module.exports = {
                 const list = heldItems.map(w => `${w.emoji} **${w.name}**: ${w.count}`);
                 embed.setDescription(`**Items in your bag:**\n\n${list.join('\n')}\n\n*Click a button below to use a ball!*`);
             }
-            embed.setFooter({ text: 'Boosters last 5-20 minutes and stack! (◕‿✿)' });
+            embed.setFooter({ text: 'Pokeballs are one-time-use and valid for exactly one hunt! (◕‿✿)' });
             const row = new ActionRowBuilder().addComponents(new ButtonBuilder()
                 .setCustomId('use_pokeball')
                 .setLabel('Pokeball')
@@ -70,7 +73,7 @@ module.exports = {
                 return i.reply({ content: "Not your bag, darling! (っ˘ω˘ς)", flags: [MessageFlags.Ephemeral] });
             if (i.customId === 'go_shop') {
                 return i.reply({
-                    content: '🏪 Use `Kshop` to visit Mommy\'s General Store and buy more balls! (｡♥‿♥｡)',
+                    content: '🏪 Use `Kshop` to visit Mommy\'s General Store and exchange Star Dust for characters! (｡♥‿♥｡)',
                     flags: [MessageFlags.Ephemeral],
                 });
             }
@@ -82,7 +85,13 @@ module.exports = {
             const type = typeMap[i.customId];
             if (!type)
                 return;
-            const result = await database.usePokeball(userId, type);
+            const userData = await database.getUser(userId, message.author.username);
+            const boosters = userData.boosters || new Map();
+            const currentBooster = boosters.get(type);
+            if (currentBooster?.active && currentBooster?.oneTime) {
+                return i.reply({ content: `❌ You already have a **${type}** active for your next hunt, darling! (｡•́︿•̀｡)`, flags: [MessageFlags.Ephemeral] });
+            }
+            const result = await database.setPokeball(userId, type);
             if (!result.success) {
                 return i.reply({ content: result.message, flags: [MessageFlags.Ephemeral] });
             }
@@ -91,10 +100,8 @@ module.exports = {
                 ultraball: '🟡 Ultraball',
                 masterball: '🟣 Master Ball',
             };
-            const addedMins = result.added / 60000;
-            const totalRemaining = Math.ceil((result.expiresAt - Date.now()) / 60000);
             await i.reply({
-                content: `✅ Activated **${ballNames[type]}**! (+${addedMins}m, ${totalRemaining}m total)`,
+                content: `✅ Activated **${ballNames[type]}**! Your next hunt will be boosted! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧`,
                 flags: [MessageFlags.Ephemeral],
             });
             // Update the main Bag embed

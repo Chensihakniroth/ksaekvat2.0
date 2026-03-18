@@ -227,7 +227,7 @@ module.exports = {
         const imagePath = await createGachaResultImage(highRarityResults);
         const description = results
             .map((item) => {
-            const rarityEmoji = getRarityEmoji(item.rarity, client);
+            const rarityEmoji = getRarityEmoji(item.rarity, client, item);
             const charEmoji = getItemEmoji(item, client);
             const name = item.name || 'Unknown Item';
             return `${rarityEmoji} ${charEmoji} **${name}**`;

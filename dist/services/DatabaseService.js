@@ -86,39 +86,27 @@ class DatabaseService {
         const field = type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
         return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { [field]: amount } }, { returnDocument: 'after', upsert: true });
     }
-    async usePokeball(userId, type) {
+    async setPokeball(userId, type) {
         const user = await this.getUser(userId);
         const field = type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
         if (!user[field] || user[field] <= 0) {
             return { success: false, message: `You don't have any ${type}s, darling! (｡•́︿•̀｡)` };
         }
-        // Durations in milliseconds
-        const durations = {
-            pokeball: 5 * 60 * 1000,
-            ultraball: 20 * 60 * 1000,
-            masterball: 15 * 60 * 1000
-        };
-        const duration = durations[type] || 0;
         // Consume 1 ball
         user[field]--;
         if (!user.boosters)
             user.boosters = new Map();
-        const existing = user.boosters.get(type);
-        const currentExpiry = (existing && existing.expiresAt > Date.now()) ? existing.expiresAt : Date.now();
-        let newExpiresAt = currentExpiry + duration;
-        // Pokeball Stacking Cap: 5x (25 minutes total)
-        if (type === 'pokeball') {
-            const maxExpiry = Date.now() + (25 * 60 * 1000);
-            if (newExpiresAt > maxExpiry)
-                newExpiresAt = maxExpiry;
-        }
+        // Set one-time-use flag
         user.boosters.set(type, {
-            multiplier: 1, // Logic handled in hunt.js
-            expiresAt: newExpiresAt,
+            active: true,
+            oneTime: true
         });
         user.markModified('boosters');
         await this.saveUser(user);
-        return { success: true, expiresAt: newExpiresAt, added: duration };
+        return { success: true };
+    }
+    async clearOneTimeBall(userId, type) {
+        return await User_1.default.findOneAndUpdate({ id: userId }, { $unset: { [`boosters.${type}`]: "" } }, { returnDocument: 'after' });
     }
     async addItem(userId, itemName, amount = 1) {
         const user = await this.getUser(userId);
@@ -157,6 +145,9 @@ class DatabaseService {
     }
     async removeBalance(userId, amount) {
         return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { balance: -amount } }, { returnDocument: 'after' });
+    }
+    async removeStarDust(userId, amount) {
+        return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { star_dust: -amount } }, { returnDocument: 'after' });
     }
     async hasBalance(userId, amount) {
         const user = await this.getUser(userId);
@@ -313,11 +304,6 @@ class DatabaseService {
             expiresAt: Date.now() + duration,
         });
         user.markModified('boosters');
-        await this.saveUser(user);
-    }
-    async addHuntBoost(userId, amount) {
-        const user = await this.getUser(userId);
-        user.hunt_boost = (user.hunt_boost || 0) + amount;
         await this.saveUser(user);
     }
     async getActiveBooster(userId, type) {

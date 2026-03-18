@@ -14,7 +14,7 @@ class EconomyService {
      * Parse and validate a bet amount from user input.
      * Supports 'all' keyword and handles balance checks.
      */
-    parseBet(input, userBalance, minLimit = config_js_1.default.economy.minBet || 2500, maxLimit = config_js_1.default.economy.maxBet) {
+    parseBet(input, userBalance, minLimit = config_js_1.default.economy.minBet || 1, maxLimit = config_js_1.default.economy.maxBet) {
         let amount = 0;
         const normalized = input?.toLowerCase();
         if (normalized === 'all') {

@@ -51,7 +51,7 @@ module.exports = {
     economy: {
         currency: '<:coin:1480551418464305163>',
         currencySymbol: '💲',
-        minBet: 2500,
+        minBet: 1,
         maxBet: 1000000,
         dailyReward: {
             min: 1000,
@@ -69,11 +69,11 @@ module.exports = {
     // Gambling Configuration
     gambling: {
         coinflip: {
-            minBet: 2500,
+            minBet: 1,
             maxBet: 1000000,
         },
         slots: {
-            minBet: 2500,
+            minBet: 1,
             maxBet: 1000000,
             symbols: {
                 diamond: { emoji: '💎', multiplier: 10, weight: 1 },
@@ -83,11 +83,11 @@ module.exports = {
             },
         },
         rps: {
-            minBet: 2500,
+            minBet: 1,
             maxBet: 1000000,
         },
         blackjack: {
-            minBet: 2500,
+            minBet: 1,
             maxBet: 1000000,
         },
     },

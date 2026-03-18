@@ -33,7 +33,7 @@ module.exports = {
         const isInTeam = userData.team.includes(match.name);
         const teamFull = userData.team.length >= 4 && !isInTeam;
         // Build emojis
-        const rarityEmoji = getRarityEmoji(match.rarity, client);
+        const rarityEmoji = getRarityEmoji(match.rarity, client, match);
         const elementEmoji = getElementEmoji(match, client);
         const roleEmoji = getRoleEmoji(match.role, client);
         const charEmoji = getItemEmoji(match, client);

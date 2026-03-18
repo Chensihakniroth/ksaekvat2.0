@@ -75,16 +75,8 @@ async function createPCBoxImage(boxName, boxPokemons) {
     </svg>`);
         pkmnComposites.push({ input: glowSvg, top: cy + 3, left: cx + 3 });
         try {
-            const imgBuffer = await AnimalService.getPokemonSpriteBuffer(pkmn.key);
-            if (imgBuffer) {
-                const SPRITE_SIZE = cellSize - 6;
-                const resized = await sharp(imgBuffer)
-                    .resize(SPRITE_SIZE, SPRITE_SIZE, {
-                    fit: 'contain',
-                    background: { r: 0, g: 0, b: 0, alpha: 0 },
-                    kernel: 'nearest'
-                })
-                    .toBuffer();
+            const resized = await AnimalService.getResizedSpriteBuffer(pkmn.key, cellSize - 6);
+            if (resized) {
                 pkmnComposites.push({ input: resized, top: cy + 5, left: cx + 5 });
             }
         }
@@ -144,9 +136,12 @@ module.exports = {
                 await message.channel.sendTyping();
             }
             catch (_) { }
-            const userDoc = await database.getUser(target.id, target.username);
-            const animalsData = await database.loadAnimals();
-            const flatRegistry = await database.getAnimalRegistry();
+            // Parallelize DB calls for speed! (｡♥‿♥｡)
+            const [userDoc, animalsData, flatRegistry] = await Promise.all([
+                database.getUser(target.id, target.username),
+                database.loadAnimals(),
+                database.getAnimalRegistry()
+            ]);
             const userData = userDoc.toObject();
             const animalsObj = userData.animals || {};
             const { totalAnimals, totalValue } = AnimalService.calculateZooStats(animalsObj, animalsData);
