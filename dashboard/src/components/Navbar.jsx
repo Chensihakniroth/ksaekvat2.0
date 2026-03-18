@@ -1,21 +1,21 @@
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
 export default function Navbar() {
   return (
-    <nav className="navbar">
-      <div className="container navbar-inner">
-        <Link to="/" className="navbar-brand">
-          <span className="brand-icon">✦</span>
-          <span className="brand-name">KsaeKvat</span>
-          <span className="brand-tag">Dashboard</span>
+    <header className="nav">
+      <div className="wrap nav-inner">
+        <Link to="/" className="nav-brand">
+          <span className="nav-logo">✦</span>
+          <span className="nav-name">KsaeKvat</span>
+          <span className="nav-pill">Dashboard</span>
         </Link>
-        <div className="navbar-links">
-          <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>Home</NavLink>
-          <NavLink to="/leaderboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>🏆 Leaderboard</NavLink>
-          <NavLink to="/characters" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>🎭 Characters</NavLink>
-        </div>
+        <nav className="nav-links">
+          <NavLink to="/" end className={({isActive}) => 'nav-link' + (isActive ? ' active' : '')}>Home</NavLink>
+          <NavLink to="/leaderboard" className={({isActive}) => 'nav-link' + (isActive ? ' active' : '')}>Leaderboard</NavLink>
+          <NavLink to="/characters" className={({isActive}) => 'nav-link' + (isActive ? ' active' : '')}>Characters</NavLink>
+        </nav>
       </div>
-    </nav>
+    </header>
   );
 }
