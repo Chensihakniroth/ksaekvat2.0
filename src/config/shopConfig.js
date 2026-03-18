@@ -3,40 +3,7 @@ module.exports = {
     characters: {
       name: '🎭 Characters',
       currency: 'star_dust',
-      items: [
-        {
-          id: 'char_amber',
-          name: 'Amber',
-          price: 200,
-          rarity: 4,
-          description: 'The Outrider of the Knights of Favonius.',
-          emoji: '🏹',
-        },
-        {
-          id: 'char_kaeya',
-          name: 'Kaeya',
-          price: 200,
-          rarity: 4,
-          description: 'The Cavalry Captain of the Knights of Favonius.',
-          emoji: '❄️',
-        },
-        {
-          id: 'char_raiden',
-          name: 'Raiden Shogun',
-          price: 400,
-          rarity: 5,
-          description: 'The Almighty Narukami Ogosho, God of Eternity.',
-          emoji: '⚡',
-        },
-        {
-          id: 'char_furina',
-          name: 'Furina',
-          price: 400,
-          rarity: 5,
-          description: 'The Regina of All Waters, Kindreds, Peoples and Laws.',
-          emoji: '💧',
-        },
-      ],
+      items: [], // Loaded dynamically from registry in shop.js
     },
     social: {
       name: '💍 Social',
