@@ -12,6 +12,24 @@ module.exports = {
   cooldown: 10000,
   async execute(message, args, client) {
     try { await message.channel.sendTyping(); } catch (_) {}
+
+    // --- DIRECT HUNT ARGUMENTS (｡♥‿♥｡) ---
+    const arg = args[0]?.toLowerCase();
+    if (arg) {
+      const ballTypeMap = {
+        'p': 'pokeball', 'poke': 'pokeball', 'pokeball': 'pokeball',
+        'u': 'ultraball', 'ultra': 'ultraball', 'ultraball': 'ultraball',
+        'm': 'masterball', 'master': 'masterball', 'masterball': 'masterball'
+      };
+      
+      const typeToUse = ballTypeMap[arg];
+      if (typeToUse) {
+        const useResult = await database.setPokeball(message.author.id, typeToUse);
+        if (!useResult.success) {
+           return message.reply({ content: useResult.message });
+        }
+      }
+    }
     
     // Parallelize DB calls for speed! (｡♥‿♥｡)
     const [userData, animalsData] = await Promise.all([
