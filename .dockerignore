@@ -1,7 +1,9 @@
 node_modules
+dashboard/node_modules
 npm-debug.log
 logs
 .git
 .env
 dist
+.tmp
 *.log

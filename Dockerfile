@@ -1,4 +1,4 @@
-# Professional Dockerfile for Node.js (Industry Standard)
+# Professional Dockerfile for KsaeKvat Bot + Dashboard
 # (｡♥‿♥｡) Lightweight, fast, and secure!
 
 # 1. Base image (LTS Version - Alpine for small size)
@@ -10,20 +10,22 @@ WORKDIR /app
 # 3. Install necessary system fonts for Sharp SVG text rendering
 RUN apk add --no-cache fontconfig ttf-dejavu
 
-# 4. Copy dependency definitions
+# 4. Copy ROOT dependency definitions and install
 COPY package*.json ./
-
-# 5. Install dependencies (including devDeps for ts-node)
 RUN npm install
 
-# 5. Copy the rest of the application code
+# 5. Copy DASHBOARD dependency definitions and install
+COPY dashboard/package*.json ./dashboard/
+RUN cd dashboard && npm install
+
+# 6. Copy the rest of the application code
 COPY . .
 
-# 6. Build typescript to dist/
+# 7. Build dashboard (Vite) + compile bot (TypeScript)
 RUN npm run build
 
-# 7. Expose the web server port (from your index.js / env.ts)
+# 8. Expose the web server port
 EXPOSE 8080
 
-# 7. Start the bot with ts-node
+# 9. Start the bot (serves API + dashboard)
 CMD ["npm", "start"]
