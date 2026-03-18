@@ -14,6 +14,7 @@ import {
   ShieldCheck,
   TrendingUp
 } from 'lucide-react';
+import CharIcon from '../components/CharIcon';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, 
   BarChart, Bar, XAxis, YAxis, Tooltip, AreaChart, Area
@@ -304,8 +305,10 @@ export default function ProfilePage() {
                 >
                   <div className={`h-1 bg-gradient-to-r ${c.rarity === 5 ? 'from-gold to-yellow-200' : 'from-purple to-purple-light'}`} />
                   <div className="p-4 text-center">
-                    <div className="text-4xl mb-3 group-hover:scale-125 transition-transform duration-300 transform-gpu">
-                      {c.emoji || '✨'}
+                    <div className="text-4xl mb-3 group-hover:scale-125 transition-transform duration-300 transform-gpu flex justify-center">
+                      <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-white/10 shadow-lg">
+                        <CharIcon name={c.name} game={c.game} rarity={c.rarity} emoji={c.emoji} />
+                      </div>
                     </div>
                     <div className="text-xs font-black mb-2 truncate">{c.name}</div>
                     <div className="flex flex-wrap justify-center gap-1">

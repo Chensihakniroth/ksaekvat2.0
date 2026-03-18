@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Sparkles, Globe, Sword, Train, Tv, Waves, X, Info, Shield, Zap, Target } from 'lucide-react';
 import { fetchFandomIconUrl, getFallbackEmoji } from '../utils/charImages.js';
+import CharIcon from '../components/CharIcon';
 import './CharactersPage.css';
 
 const GAMES = {
@@ -81,52 +82,6 @@ function CharacterModal({ char, onClose }) {
   );
 }
 
-function CharIcon({ name, game, rarity, emoji }) {
-  const [iconUrl, setIconUrl] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setIconUrl(null);
-
-    fetchFandomIconUrl(name, game).then((url) => {
-      if (!cancelled) {
-        setIconUrl(url);
-        setLoading(false);
-      }
-    });
-
-    return () => { cancelled = true; };
-  }, [name, game]);
-
-  if (loading) {
-    return <div className="char-icon-fallback loading-shimmer" style={{ background: 'rgba(255,255,255,0.05)' }} />;
-  }
-
-  if (!iconUrl) {
-    return (
-      <div className="char-icon-fallback">
-        {emoji || getFallbackEmoji(rarity)}
-      </div>
-    );
-  }
-
-  return (
-    <img
-      src={iconUrl}
-      alt={name}
-      className="char-icon-img"
-      referrerPolicy="no-referrer"
-      crossOrigin="anonymous"
-      onError={() => {
-        console.error(`[CharIcon] Failed to load: ${name} (${game}) - URL: ${iconUrl}`);
-        setIconUrl(null);
-      }}
-      loading="lazy"
-    />
-  );
-}
 
 export default function CharactersPage() {
   const [all, setAll] = useState([]);
