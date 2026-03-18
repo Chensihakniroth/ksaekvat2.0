@@ -50,7 +50,7 @@ export default function CharactersPage() {
   }, []);
 
   const filtered = all.filter(c =>
-    (game === 'all' || c.game === game) &&
+    (game === 'all' || c.game?.toLowerCase() === game) &&
     (rarity === 'all' || String(c.rarity) === rarity) &&
     (!search || c.name.toLowerCase().includes(search.toLowerCase()))
   );
@@ -131,7 +131,7 @@ export default function CharactersPage() {
                   <p>No characters found</p>
                 </motion.div>
               ) : filtered.map((c) => {
-                  const gInfo = GAMES[c.game] || {};
+                  const gInfo = GAMES[c.game?.toLowerCase()] || {};
                   return (
                     <motion.div
                       layout
@@ -143,7 +143,7 @@ export default function CharactersPage() {
                       className={`glass-card char-card rarity-border-${c.rarity}`}
                     >
                       <div className="char-img-wrapper">
-                        <CharIcon name={c.name} game={c.game} rarity={c.rarity} emoji={c.emoji} />
+                        <CharIcon name={c.name} game={c.game?.toLowerCase()} rarity={c.rarity} emoji={c.emoji} />
                         <div className={`char-rarity-badge rarity-bg-${c.rarity}`}>
                           {c.rarity}★
                         </div>
