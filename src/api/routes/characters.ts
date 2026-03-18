@@ -85,13 +85,22 @@ const wikiConfigs: Record<string, { wiki: string; patterns: string[] }> = {
   },
 };
 
+// In-memory cache for icon URLs: "game:name" -> "url"
+const iconCache = new Map<string, string>();
+
 // GET /api/characters/icon/:game/:name — Proxy for Fandom icons to fix 404s
 router.get('/icon/:game/:name', async (req: Request, res: Response) => {
   try {
     const game = String(req.params.game).toLowerCase();
     const name = String(req.params.name);
+    const cacheKey = `${game}:${name.toLowerCase()}`;
+
+    // Check cache first to avoid 429s from Fandom
+    if (iconCache.has(cacheKey)) {
+      return res.redirect(iconCache.get(cacheKey)!);
+    }
+
     const config = wikiConfigs[game];
-    
     if (!config) return res.status(404).send('Game not supported');
 
     const normalized = nameNormalizers[game]?.(name) || name.replace(/ /g, '_');
@@ -107,7 +116,9 @@ router.get('/icon/:game/:name', async (req: Request, res: Response) => {
 
         const page = Object.values(pages)[0] as any;
         if (page && page.imageinfo && page.imageinfo[0]?.url) {
-          return res.redirect(page.imageinfo[0].url);
+          const validUrl = page.imageinfo[0].url;
+          iconCache.set(cacheKey, validUrl); // Cache it!
+          return res.redirect(validUrl);
         }
       } catch (err) {
         // Continue to next pattern
