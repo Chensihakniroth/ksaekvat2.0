@@ -11,8 +11,13 @@ module.exports = {
   usage: 'hunt',
   cooldown: 10000,
   async execute(message, args, client) {
-    const userData = await database.getUser(message.author.id, message.author.username);
-    const animalsData = await database.loadAnimals();
+    try { await message.channel.sendTyping(); } catch (_) {}
+    
+    // Parallelize DB calls for speed! (｡♥‿♥｡)
+    const [userData, animalsData] = await Promise.all([
+      database.getUser(message.author.id, message.author.username),
+      database.loadAnimals()
+    ]);
 
     // Check for active one-time balls
     const boosters = userData.boosters || new Map();
@@ -42,6 +47,7 @@ module.exports = {
 
     // --- RARITY LOGIC ---
     const rarities = config.hunting.rarities;
+    let totalWeight = 0;
     for (const [key, r] of Object.entries(rarities)) {
       // Filter rarities based on active ball
       if (activeMasterball || activeUltraball) {

@@ -100,6 +100,45 @@ class AnimalService {
   }
 
   /**
+   * Get a RESIZED sprite buffer with local DISK caching.
+   * Extremely important for Kzoo performance! (｡♥‿♥｡)
+   */
+  public async getResizedSpriteBuffer(key: string, size: number): Promise<Buffer | null> {
+    const CACHE_DIR = path.join(process.cwd(), '.tmp', 'pokemon_cache', 'resized');
+    if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
+
+    const localPath = path.join(CACHE_DIR, `${key}_${size}.png`);
+
+    // 1. Check disk cache first
+    if (fs.existsSync(localPath)) {
+      return fs.readFileSync(localPath);
+    }
+
+    // 2. Fetch original sprite
+    const originalBuffer = await this.getPokemonSpriteBuffer(key);
+    if (!originalBuffer) return null;
+
+    try {
+      // 3. Resize using Sharp
+      const sharp = require('sharp');
+      const resized = await sharp(originalBuffer)
+        .resize(size, size, { 
+          fit: 'contain', 
+          background: { r: 0, g: 0, b: 0, alpha: 0 },
+          kernel: 'nearest' 
+        })
+        .toBuffer();
+
+      // 4. Save to cache
+      fs.writeFileSync(localPath, resized);
+      return resized;
+    } catch (error: any) {
+      console.error(`Failed to resize sprite for ${key}:`, error.message);
+      return null;
+    }
+  }
+
+  /**
    * Calculate comprehensive stats for a user's animal collection.
    */
   public calculateZooStats(userAnimals: any, animalsData: any): ZooStats {

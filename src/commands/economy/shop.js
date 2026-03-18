@@ -102,11 +102,13 @@ module.exports = {
         const itemId = i.values[0];
         let selectedItem = null;
         let categoryKey = null;
+        let category = null;
 
         for (const [key, cat] of Object.entries(shopConfig.categories)) {
           selectedItem = cat.items.find((it) => it.id === itemId);
           if (selectedItem) {
             categoryKey = key;
+            category = cat;
             break;
           }
         }
@@ -149,8 +151,9 @@ module.exports = {
           await database.addItem(userId, selectedItem.name, 1);
         }
 
+        const currencySymbol = category.currency === 'star_dust' ? '✨' : '🪙';
         await i.reply({
-          content: `✅ Successfully bought **${selectedItem.emoji} ${selectedItem.name}** for **${EconomyService.format(selectedItem.price)}** coins! Mommy is so happy for you! ヽ(>∀<☆)ノ`,
+          content: `✅ Successfully bought **${selectedItem.emoji} ${selectedItem.name}** for **${selectedItem.price} ${currencySymbol}**! Mommy is so happy for you! ヽ(>∀<☆)ノ`,
           flags: [MessageFlags.Ephemeral],
         });
 
