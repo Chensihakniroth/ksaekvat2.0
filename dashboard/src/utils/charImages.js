@@ -4,8 +4,8 @@
  * Sources:
  *  Genshin → enka.network CDN (fast, community-maintained)
  *  HSR     → Mar-7th StarRailRes GitHub CDN (name → numeric ID map)
- *  Wuwa    → api.resonance.rest (unofficial but reliable REST API)
- *  ZZZ     → Fandom wiki Special:FilePath redirect (img-tag safe)
+ *  Wuwa    → wutheringwaves.fandom.com CDN (Resonator_{Name}.png)
+ *  ZZZ     → zenless-zone-zero.fandom.com CDN (Agent_{Name}_Icon.png)
  */
 
 // ── Genshin: enka.network ────────────────────────────────────────────────────
@@ -107,76 +107,57 @@ const HSR_IDS = {
   'Yao Guang':                  1502,
 };
 
-// ── ZZZ: Fandom Special:FilePath (browser follows redirect) ──────────────────
-const ZZZ_FILENAMES = {
-  'Rina':           'Rina',
-  'Anby Demara':    'Anby Demara',
-  'Anton Ivanov':   'Anton',
-  'Billy Kid':      'Billy Kid',
-  'Burnice White':  'Burnice',
-  'Caesar King':    'Caesar',
-  'Corin Wickes':   'Corin',
-  'Ellen Joe':      'Ellen',
-  'Grace Howard':   'Grace',
-  'Hoshimi Miyabi': 'Miyabi',
-  'Jane Doe':       'Jane Doe',
-  'Koleda Belobog': 'Koleda',
-  'Lighter':        'Lighter',
-  'Lucy':           'Lucy',
-  'Nangong Yu':     'Harumasa',
-  'Nekomata':       'Nicole', // alias
-  'Nicole Demara':  'Nicole',
-  'Piper Wheel':    'Piper',
-  'Qingyi':         'Qingyi',
-  'Seth Lowell':    'Seth',
-  'Soukaku':        'Soukaku',
-  'Von Lycaon':     'Von Lycaon',
-  'Yanagi':         'Yanagi',
-  'Zhu Yuan':       'Zhu Yuan',
-  'Evelyn Chevalier': 'Evelyn',
-  'Soldier 11':     'Soldier 11',
-  'Astra Yao':      'Astra Yao',
+// ── ZZZ: Fandom CDN — File:Agent_{Name}_Icon.png ─────────────────────────────
+// Wiki name differs from display name for some characters
+const ZZZ_WIKI_NAME = {
+  'Hoshimi Miyabi':  'Miyabi',
+  'Koleda Belobog':  'Koleda',
+  'Nangong Yu':      'Nangong Yu',
+  'Soldier 0 - Anby':'Soldier 0 - Anby',
 };
 
-const HSR_BASE = 'https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/icon/character';
-const WUWA_BASE = 'https://api.resonance.rest/characters';
-const ZZZ_WIKI  = 'https://zenless-zone-zero.fandom.com/wiki/Special:FilePath';
+const HSR_BASE  = 'https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/icon/character';
+const ZZZ_CDN   = 'https://static.wikia.nocookie.net/zenless-zone-zero/images';
+const WUWA_CDN  = 'https://static.wikia.nocookie.net/wutheringwaves/images';
+
 
 export function getCharacterImageUrl(name, game) {
   if (!name || !game) return null;
 
-  // Genshin Impact
+  // Genshin Impact — enka.network
   if (game === 'genshin') {
     const assetName = GI_MAP[name] || name.replace(/['\s]/g, '');
     return `https://enka.network/ui/UI_AvatarIcon_${assetName}.png`;
   }
 
-  // Honkai: Star Rail
+  // Honkai: Star Rail — Mar-7th StarRailRes
   if (game === 'hsr') {
-    // Try exact name match first, then fuzzy (remove "Dan Heng • IL" variants)
     let id = HSR_IDS[name];
     if (!id) {
-      // Fuzzy: strip bullets and special chars
       const fuzzy = name.replace(/[•\.\s]/g, '').toLowerCase();
       for (const [k, v] of Object.entries(HSR_IDS)) {
         if (k.replace(/[•\.\s]/g, '').toLowerCase() === fuzzy) { id = v; break; }
       }
     }
     if (id) return `${HSR_BASE}/${id}.png`;
-    return null; // Unknown HSR char → fallback to emoji
+    return null;
   }
 
-  // Wuthering Waves — api.resonance.rest/{Name}/icon
+  // Wuthering Waves — wutheringwaves Fandom CDN
+  // File pattern: Resonator_{Name}.png
   if (game === 'wuwa') {
-    // Handle special name "Rover (Spectro/Havoc/Aero)" → "Rover"
-    let wuwaName = name.includes('Rover') ? 'Rover' : name;
-    return `${WUWA_BASE}/${encodeURIComponent(wuwaName)}/icon`;
+    const wikiName = name.includes('Rover') ? 'Rover' : name;
+    const filename = `Resonator_${wikiName.replace(/ /g, '_')}.png`;
+    // Use /revision/latest which always serves the current version
+    return `${WUWA_CDN}/thumb/latest/${filename}/revision/latest`;
   }
 
-  // Zenless Zone Zero — Fandom wiki Special:FilePath
+  // Zenless Zone Zero — ZZZ Fandom CDN
+  // File pattern: Agent_{Name}_Icon.png
   if (game === 'zzz') {
-    const filename = ZZZ_FILENAMES[name] || name;
-    return `${ZZZ_WIKI}/${encodeURIComponent(filename)}_Profile.png`;
+    const wikiName = ZZZ_WIKI_NAME[name] || name;
+    const filename = `Agent_${wikiName.replace(/ /g, '_')}_Icon.png`;
+    return `${ZZZ_CDN}/thumb/latest/${filename}/revision/latest`;
   }
 
   return null;

@@ -4,6 +4,7 @@ import { Search, Sparkles, Globe, Sword, Train, Tv, Waves } from 'lucide-react';
 import { getCharacterImageUrl, getFallbackEmoji } from '../utils/charImages.js';
 import './CharactersPage.css';
 
+
 const GAMES = {
   all:    { label: 'All Games', icon: Globe },
   genshin:{ label: 'Genshin',   icon: Sword,  badge: 'badge-genshin' },
@@ -12,11 +13,18 @@ const GAMES = {
   zzz:    { label: 'ZZZ',       icon: Tv,     badge: 'badge-zzz' },
 };
 
-function CharIcon({ name, game, rarity, emoji }) {
-  const [failed, setFailed] = useState(false);
-  const url = getCharacterImageUrl(name, game);
+function CharIcon({ name, game, rarity, emoji, imageUrl }) {
+  const [apiFailed, setApiFailed]           = useState(false);
+  const [fallbackFailed, setFallbackFailed] = useState(false);
 
-  if (!url || failed) {
+  // Tier 1: use the pre-fetched image_url from MongoDB (works for all games)
+  // Tier 2: client-side URL builder from charImages.js (Genshin / HSR)
+  // Tier 3: emoji placeholder
+  const primaryUrl  = !apiFailed ? imageUrl : null;
+  const fallbackUrl = apiFailed && !fallbackFailed ? getCharacterImageUrl(name, game) : null;
+  const url         = primaryUrl || fallbackUrl;
+
+  if (!url) {
     return (
       <div className="char-icon-fallback">
         {emoji || getFallbackEmoji(rarity)}
@@ -24,12 +32,24 @@ function CharIcon({ name, game, rarity, emoji }) {
     );
   }
 
+  if (primaryUrl) {
+    return (
+      <img
+        src={primaryUrl}
+        alt={name}
+        className="char-icon-img"
+        onError={() => setApiFailed(true)}
+        loading="lazy"
+      />
+    );
+  }
+
   return (
     <img
-      src={url}
+      src={fallbackUrl}
       alt={name}
       className="char-icon-img"
-      onError={() => setFailed(true)}
+      onError={() => setFallbackFailed(true)}
       loading="lazy"
     />
   );
@@ -143,7 +163,7 @@ export default function CharactersPage() {
                       className={`glass-card char-card rarity-border-${c.rarity}`}
                     >
                       <div className="char-img-wrapper">
-                        <CharIcon name={c.name} game={c.game?.toLowerCase()} rarity={c.rarity} emoji={c.emoji} />
+                        <CharIcon name={c.name} game={c.game?.toLowerCase()} rarity={c.rarity} emoji={c.emoji} imageUrl={c.image_url} />
                         <div className={`char-rarity-badge rarity-bg-${c.rarity}`}>
                           {c.rarity}★
                         </div>

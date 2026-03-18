@@ -31,7 +31,7 @@ router.get('/', (req: Request, res: Response) => {
       element: c.element || null,
       role: c.role || null,
       emoji: c.emoji || null,
-      image: c.image || null,
+      image_url: c.image_url || null,
       type: c.type || 'character',
       shopPrice: c.rarity === '5' ? 400 : 200,
     }));
