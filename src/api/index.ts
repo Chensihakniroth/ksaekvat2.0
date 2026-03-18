@@ -24,7 +24,8 @@ router.use((req: Request, res: Response, next: NextFunction) => {
   }
 
   entry.count++;
-  if (entry.count > 60) {
+  // Increased limit for dashboard functionality (galleries/icons)
+  if (entry.count > 1000) {
     return res.status(429).json({ success: false, error: 'Too many requests. Slow down, darling! (ᗒᗣᗕ)' });
   }
   next();
