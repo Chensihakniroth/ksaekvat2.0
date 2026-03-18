@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
-import { LayoutDashboard, Trophy, Users, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Trophy, Users, PawPrint, Menu, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import './Navbar.css';
 
