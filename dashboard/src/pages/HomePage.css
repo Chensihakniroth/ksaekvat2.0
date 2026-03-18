@@ -35,6 +35,7 @@
   position: relative;
   z-index: 10;
   max-width: 800px;
+  margin: 0 auto; /* Added to center inside container */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -98,7 +99,7 @@
   align-items: center;
   text-align: center;
   gap: 1.25rem;
-  padding: 3rem 2rem;
+  padding: 2.5rem 1.5rem; /* Adjusted padding so it doesn't cramp the text */
 }
 
 .stat-icon-wrapper {
@@ -117,10 +118,11 @@
 .stat-icon-wrapper.cyan { color: #22d3ee; box-shadow: 0 0 30px rgba(34, 211, 238, 0.15); }
 
 .stat-value {
-  font-size: 3.5rem;
+  font-size: clamp(2rem, 5vw, 3rem); /* Reduced from 3.5rem to scale better */
   font-weight: 800;
   line-height: 1;
   color: var(--text-main);
+  word-break: break-word; /* Prevents long numbers from breaking the layout */
 }
 
 .stat-label {
