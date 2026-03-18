@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Filter, Sparkles, Globe, Sword, Train, Tv, Waves } from 'lucide-react';
 import { getCharacterImageUrl, getFallbackEmoji } from '../utils/charImages.js';
 
 const GAMES = {
-  all:    { label: '🌐 All' },
-  genshin:{ label: '⚔️ Genshin', badge: 'b-g' },
-  hsr:    { label: '🚂 HSR',     badge: 'b-h' },
-  wuwa:   { label: '🌊 Wuwa',   badge: 'b-w' },
-  zzz:    { label: '📺 ZZZ',    badge: 'b-z' },
+  all:    { label: 'All Games', icon: Globe },
+  genshin:{ label: 'Genshin',   icon: Sword,  badge: 'bg-green/10 text-green border-green/20' },
+  hsr:    { label: 'HSR',       icon: Train,  badge: 'bg-pink/10 text-pink border-pink/20' },
+  wuwa:   { label: 'Wuwa',      icon: Waves,  badge: 'bg-cyan/10 text-cyan border-cyan/20' },
+  zzz:    { label: 'ZZZ',       icon: Tv,     badge: 'bg-gold/10 text-gold border-gold/20' },
 };
 
 function CharIcon({ name, game, rarity, emoji }) {
@@ -15,7 +17,7 @@ function CharIcon({ name, game, rarity, emoji }) {
 
   if (!url || failed) {
     return (
-      <div className="char-icon-fallback">
+      <div className="char-icon-fallback-v3">
         {emoji || getFallbackEmoji(rarity)}
       </div>
     );
@@ -25,7 +27,7 @@ function CharIcon({ name, game, rarity, emoji }) {
     <img
       src={url}
       alt={name}
-      className="char-icon-img"
+      className="char-icon-img-v3"
       onError={() => setFailed(true)}
       loading="lazy"
     />
@@ -48,138 +50,204 @@ export default function CharactersPage() {
 
   const filtered = all.filter(c =>
     (game === 'all' || c.game === game) &&
-    (rarity === 'all' || c.rarity === rarity) &&
+    (rarity === 'all' || String(c.rarity) === rarity) &&
     (!search || c.name.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
-    <div className="page">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="page"
+    >
       <div className="wrap">
-        <div className="ph">
-          <h1>🎭 <span className="grad">Characters</span></h1>
-          <p>{all.length} characters available · Purchase with Star Dust in-game</p>
+        <div className="ph-v3">
+          <h1>🎭 <span className="grad">Character Gallery</span></h1>
+          <p>Explore {all.length} unique characters. Use Star Dust ✨ to unlock them in-game.</p>
         </div>
 
-        {/* Filter bar */}
-        <div style={{ display:'flex', flexDirection:'column', gap:12, marginBottom:24 }}>
-          <input
-            className="input"
-            placeholder="🔍  Search by name..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            style={{ maxWidth: 300 }}
-          />
-          <div className="tags">
-            {Object.entries(GAMES).map(([k,v]) => (
-              <button key={k} className={`btn btn-tab ${game===k?'active':''}`} onClick={() => setGame(k)}>
-                {v.label}
-              </button>
+        {/* Search & Filters */}
+        <div className="card-glass p-6 mb-8">
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-text-3" size={18} />
+              <input
+                className="input-v3 w-full pl-12"
+                placeholder="Search characters by name..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            
+            <div className="flex flex-wrap gap-2">
+              <div className="flex gap-1 bg-white/5 p-1 rounded-xl border border-white/5">
+                {Object.entries(GAMES).map(([k,v]) => {
+                  const Icon = v.icon;
+                  return (
+                    <button 
+                      key={k} 
+                      className={`btn-tab-v3 px-4 py-2 flex items-center gap-2 ${game === k ? 'active' : ''}`}
+                      onClick={() => setGame(k)}
+                    >
+                      <Icon size={14} />
+                      <span className="hidden lg:inline">{v.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-2 mt-4">
+             <button className={`btn-tab-v3 ${rarity==='all'?'active':''}`} onClick={() => setRarity('all')}>All Rarities</button>
+             <button className={`btn-tab-v3 ${rarity==='5'?'active':''}`} onClick={() => setRarity('5')}>⭐ 5-Star</button>
+             <button className={`btn-tab-v3 ${rarity==='4'?'active':''}`} onClick={() => setRarity('4')}>✨ 4-Star</button>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between mb-6 px-2">
+          <p className="text-xs font-bold uppercase tracking-widest text-text-3">
+            Showing <span className="text-text">{filtered.length}</span> of {all.length} Characters
+          </p>
+        </div>
+
+        {loading ? (
+          <div className="grid-chars">
+            {[...Array(12)].map((_, i) => (
+              <div key={i} className="card-glass aspect-[4/5] loading-shimmer" />
             ))}
           </div>
-          <div className="tags">
-            <button className={`btn btn-tab ${rarity==='all'?'active':''}`} onClick={() => setRarity('all')}>All Rarities</button>
-            <button className={`btn btn-tab ${rarity==='5'?'active':''}`} onClick={() => setRarity('5')}>⭐ 5-Star</button>
-            <button className={`btn btn-tab ${rarity==='4'?'active':''}`} onClick={() => setRarity('4')}>✨ 4-Star</button>
-          </div>
-        </div>
-
-        <p style={{ fontSize:12, color:'var(--text-3)', marginBottom:20 }}>
-          Showing <strong style={{color:'var(--text)'}}>{filtered.length}</strong> of {all.length} characters
-        </p>
-
-        {loading ? <div className="spinner" /> : (
-          <div className="char-grid fade">
-            {filtered.length === 0
-              ? <div className="empty" style={{ gridColumn:'1/-1' }}>
-                  <div className="empty-icon">😶</div>
-                  No characters match these filters.
-                </div>
-              : filtered.map((c, i) => {
+        ) : (
+          <motion.div 
+            layout
+            className="grid-chars"
+          >
+            <AnimatePresence mode="popLayout">
+              {filtered.length === 0 ? (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="col-span-full py-20 text-center"
+                >
+                  <div className="text-4xl mb-4">😶</div>
+                  <p className="text-text-3 font-bold uppercase tracking-widest text-xs">No characters found</p>
+                </motion.div>
+              ) : filtered.map((c) => {
                   const gInfo = GAMES[c.game] || {};
                   return (
-                    <div key={i} className={`card char-card rarity-border-${c.rarity}`}>
-                      <div className={`cr-bar rarity-${c.rarity}`} />
-                      <div className="char-icon-wrap">
+                    <motion.div
+                      layout
+                      key={c.name}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
+                      className={`card-glass char-card-v3 rarity-border-${c.rarity}`}
+                    >
+                      <div className="char-img-wrap-v3">
                         <CharIcon name={c.name} game={c.game} rarity={c.rarity} emoji={c.emoji} />
-                      </div>
-                      <div className="char-body">
-                        <div className="char-name">{c.name}</div>
-                        <div style={{ display:'flex', gap:4, justifyContent:'center', flexWrap:'wrap', marginBottom:6 }}>
-                          <span className={`badge b-${c.rarity}`}>{c.rarity}★</span>
-                          {c.game && <span className={`badge ${gInfo.badge||''}`}>{c.game.toUpperCase()}</span>}
+                        <div className="char-rarity-badge">
+                          {c.rarity}★
                         </div>
-                        {c.element && <div style={{ fontSize:11, color:'var(--text-3)', marginBottom:4 }}>{c.element}</div>}
-                        <div style={{ fontSize:12, color:'var(--gold)', fontWeight:700 }}>✨ {c.shopPrice}</div>
                       </div>
-                    </div>
+                      <div className="p-4 text-center">
+                        <h3 className="font-bold text-sm mb-2 truncate">{c.name}</h3>
+                        <div className="flex flex-wrap justify-center gap-1.5 mb-3">
+                          {c.game && (
+                            <span className={`badge-v3 ${gInfo.badge || 'bg-white/5'}`}>
+                              {c.game.toUpperCase()}
+                            </span>
+                          )}
+                          {c.element && (
+                            <span className="badge-v3 bg-white/5 text-text-3">
+                              {c.element}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-gold font-black text-sm flex items-center justify-center gap-1">
+                          <Sparkles size={12} />
+                          <span>{c.shopPrice}</span>
+                        </div>
+                      </div>
+                    </motion.div>
                   );
                 })
-            }
-          </div>
+              }
+            </AnimatePresence>
+          </motion.div>
         )}
       </div>
 
       <style>{`
-        .char-grid {
+        .grid-chars {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-          gap: 12px;
+          grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+          gap: 16px;
         }
-        .char-card {
-          overflow: hidden;
-          transition: transform .18s, box-shadow .18s;
+        .input-v3 {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          padding: 12px 16px;
+          color: var(--text);
+          font-family: inherit;
+          font-weight: 600;
+          outline: none;
+          transition: all 0.2s;
+        }
+        .input-v3:focus {
+          border-color: var(--purple);
+          background: rgba(255, 255, 255, 0.08);
+          box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+        .char-card-v3 {
           display: flex;
           flex-direction: column;
+          overflow: hidden;
         }
-        .char-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 8px 24px rgba(0,0,0,.4);
-        }
-        .cr-bar { height: 3px; flex-shrink: 0; }
-        .rarity-5 { background: linear-gradient(90deg, var(--gold), #fde68a); }
-        .rarity-4 { background: linear-gradient(90deg, var(--purple), var(--purple-light)); }
-        .char-icon-wrap {
-          width: 100%;
+        .char-img-wrap-v3 {
+          position: relative;
           aspect-ratio: 1;
           overflow: hidden;
-          background: linear-gradient(160deg, var(--bg-3) 0%, var(--bg-2) 100%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          background: var(--bg-3);
         }
-        .char-icon-img {
+        .char-icon-img-v3 {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          object-position: top center;
-          transition: transform .3s ease;
+          transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .char-card:hover .char-icon-img {
-          transform: scale(1.06);
+        .char-card-v3:hover .char-icon-img-v3 {
+          transform: scale(1.1);
         }
-        .char-icon-fallback {
-          font-size: 40px;
+        .char-rarity-badge {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          background: rgba(0,0,0,0.6);
+          backdrop-filter: blur(4px);
+          padding: 2px 8px;
+          border-radius: 100px;
+          font-size: 10px;
+          font-weight: 800;
+          color: var(--gold);
+          border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+        .char-icon-fallback-v3 {
+          width: 100%;
+          height: 100%;
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 100%;
-          height: 100%;
+          font-size: 48px;
         }
-        .char-body {
-          padding: 10px 10px 12px;
-          text-align: center;
-          flex: 1;
-        }
-        .char-name {
-          font-size: 12px;
-          font-weight: 700;
-          margin-bottom: 6px;
-          line-height: 1.3;
-          color: var(--text);
-        }
-        .rarity-border-5 { border-color: rgba(245,158,11,.2); }
-        .rarity-border-4 { border-color: rgba(139,92,246,.15); }
+        .rarity-border-5 { border-color: rgba(251, 191, 36, 0.2); }
+        .rarity-border-4 { border-color: rgba(139, 92, 246, 0.2); }
+        
+        .col-span-full { grid-column: 1 / -1; }
+        .w-full { width: 100%; }
+        .pl-12 { padding-left: 3rem; }
       `}</style>
-    </div>
+    </motion.div>
   );
 }
