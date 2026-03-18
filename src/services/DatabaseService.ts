@@ -4,7 +4,8 @@ import Listener from '../models/Listener';
 import TalkTarget from '../models/TalkTarget';
 import CharacterCard from '../models/CharacterCard';
 import AnimalRegistry from '../models/AnimalRegistry';
-import Character from '../models/Character'; // Changed from GachaItem
+import Character from '../models/Character'; 
+import GachaHistory from '../models/GachaHistory';
 const registry = require('../utils/registry.js');
 const logger = require('../utils/logger.js');
 
@@ -204,6 +205,15 @@ class DatabaseService {
     else update[`stats.${type}`] = amount;
 
     await User.findOneAndUpdate({ id: userId }, { $inc: update });
+  }
+
+  async logGachaPull(userId: string, username: string, itemName: string, game: string, rarity: number) {
+    try {
+      if (rarity < 5) return; // Only log legendaries for the ticker! (｡♥‿♥｡)
+      await GachaHistory.create({ userId, username, itemName, game, rarity });
+    } catch (err) {
+      logger.error(`MongoDB logGachaPull error:`, err);
+    }
   }
 
   async removeGachaItem(userId: string, itemName: string) {

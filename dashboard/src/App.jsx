@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import GlobalTicker from './components/GlobalTicker';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import LeaderboardPage from './pages/LeaderboardPage';
@@ -10,6 +11,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="app-wrapper">
+        <GlobalTicker />
         <Navbar />
         <main className="main-content">
           <Routes>

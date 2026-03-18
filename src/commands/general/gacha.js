@@ -318,7 +318,12 @@ module.exports = {
       });
     }
 
-    for (const item of results) await database.addGachaItem(message.author.id, item.name);
+    for (const item of results) {
+      await database.addGachaItem(message.author.id, item.name);
+      if (item.rarity >= 5) {
+        await database.logGachaPull(message.author.id, message.author.username, item.name, item.game, item.rarity);
+      }
+    }
     
     // Update Quest Progress! (｡♥‿♥｡)
     const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');

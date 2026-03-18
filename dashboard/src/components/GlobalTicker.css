@@ -1,0 +1,88 @@
+.global-ticker-container {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  height: 40px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  z-index: 100;
+}
+
+.ticker-label {
+  background: linear-gradient(90deg, #ffb13f, #ff7e5f);
+  color: #000;
+  font-weight: 800;
+  font-size: 0.7rem;
+  padding: 0 15px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 2;
+}
+
+.ticker-viewport {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 50px;
+  white-space: nowrap;
+  width: max-content;
+  animation: scroll-ticker 40s linear infinite;
+  padding-left: 20px;
+}
+
+.ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.ticker-user {
+  color: #fff;
+  font-weight: 600;
+}
+
+.ticker-action {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+}
+
+.ticker-item-name {
+  color: #ffb13f; /* Legacy Gold */
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(255, 177, 63, 0.3);
+}
+
+.badge-mini {
+  font-size: 0.6rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 700;
+}
+
+@keyframes scroll-ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}

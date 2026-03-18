@@ -35,6 +35,7 @@ router.use('/leaderboard', require('./routes/leaderboard'));
 router.use('/profile', require('./routes/profile'));
 router.use('/characters', require('./routes/characters'));
 router.use('/stats', require('./routes/stats'));
+router.use('/gacha', require('./routes/gacha'));
 
 // --- Health ---
 router.get('/ping', (_req, res) => res.json({ success: true, message: 'KsaeKvat API is alive! ヽ(>∀<☆)ノ' }));

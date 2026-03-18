@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Sparkles, Globe, Sword, Train, Tv, Waves } from 'lucide-react';
+import { Search, Sparkles, Globe, Sword, Train, Tv, Waves, X, Info, Shield, Zap, Target } from 'lucide-react';
 import { fetchFandomIconUrl, getFallbackEmoji } from '../utils/charImages.js';
 import './CharactersPage.css';
 
@@ -11,6 +11,75 @@ const GAMES = {
   wuwa:   { label: 'Wuwa',      icon: Waves,  badge: 'badge-wuwa' },
   zzz:    { label: 'ZZZ',       icon: Tv,     badge: 'badge-zzz' },
 };
+
+function CharacterModal({ char, onClose }) {
+  const gInfo = GAMES[char.game?.toLowerCase()] || {};
+  
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="modal-overlay"
+      onClick={onClose}
+    >
+      <motion.div 
+        initial={{ y: 50, opacity: 0, scale: 0.9 }}
+        animate={{ y: 0, opacity: 1, scale: 1 }}
+        exit={{ y: 50, opacity: 0, scale: 0.9 }}
+        className={`modal-container element-${char.element?.toLowerCase() || 'none'}`}
+        onClick={e => e.stopPropagation()}
+      >
+        <button className="modal-close" onClick={onClose}><X /></button>
+        
+        <div className="modal-content">
+          <div className="modal-visual">
+            <div className="modal-image-glow" />
+            <CharIcon name={char.name} game={char.game?.toLowerCase()} rarity={char.rarity} emoji={char.emoji} />
+            <div className="modal-rarity">{char.rarity}★</div>
+          </div>
+          
+          <div className="modal-details">
+            <div className="modal-header">
+              <span className={`game-badge-large ${gInfo.badge}`}>{char.game?.toUpperCase()}</span>
+              <h2 className="modal-title">{char.name}</h2>
+              <div className="modal-subtitle">{char.emoji} Legendary Character</div>
+            </div>
+            
+            <div className="modal-grid">
+              <div className="modal-stat-item">
+                <Info size={18} />
+                <div className="stat-label">Element</div>
+                <div className="stat-value">{char.element || 'Unknown'}</div>
+              </div>
+              <div className="modal-stat-item">
+                <Shield size={18} />
+                <div className="stat-label">Role</div>
+                <div className="stat-value">{char.role || 'Unknown'}</div>
+              </div>
+              <div className="modal-stat-item">
+                <Zap size={18} />
+                <div className="stat-label">Shop Price</div>
+                <div className="stat-value">{char.shopPrice || 'N/A'}</div>
+              </div>
+            </div>
+
+            <div className="modal-description">
+              <p>A powerful {char.rarity}-star character from {char.game?.toUpperCase()}. You can obtain this character through the Gacha system in the bot or by purchasing with Star Dust.</p>
+            </div>
+            
+            <div className="modal-footer">
+              <button className="btn btn-primary btn-large" onClick={onClose}>
+                <Sparkles size={20} />
+                <span>Collecting Since 2026</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 function CharIcon({ name, game, rarity, emoji }) {
   const [iconUrl, setIconUrl] = useState(null);
@@ -65,6 +134,7 @@ export default function CharactersPage() {
   const [game, setGame] = useState('all');
   const [rarity, setRarity] = useState('all');
   const [search, setSearch] = useState('');
+  const [selectedChar, setSelectedChar] = useState(null);
 
   useEffect(() => {
     fetch('/api/characters')
@@ -165,6 +235,7 @@ export default function CharactersPage() {
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.2 }}
                       className={`glass-card char-card rarity-border-${c.rarity}`}
+                      onClick={() => setSelectedChar(c)}
                     >
                       <div className="char-img-wrapper">
                         <CharIcon name={c.name} game={c.game?.toLowerCase()} rarity={c.rarity} emoji={c.emoji} />
@@ -199,6 +270,15 @@ export default function CharactersPage() {
           </motion.div>
         )}
       </div>
+
+      <AnimatePresence>
+        {selectedChar && (
+          <CharacterModal 
+            char={selectedChar} 
+            onClose={() => setSelectedChar(null)} 
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
