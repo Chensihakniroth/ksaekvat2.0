@@ -328,3 +328,220 @@
   background-size: 200% 100%;
   animation: shimmer 2s infinite linear;
 }
+
+/* --- Modal Styling --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-container {
+  width: 100%;
+  max-width: 900px;
+  background: #121214;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: rotate(90deg);
+}
+
+.modal-content {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  min-height: 500px;
+}
+
+.modal-visual {
+  background: rgba(255, 255, 255, 0.02);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 40px;
+}
+
+.modal-image-glow {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  z-index: 1;
+}
+
+.modal-visual .char-icon-img {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: contain;
+  z-index: 2;
+  filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
+}
+
+.modal-rarity {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  background: var(--rarity-gold);
+  color: #000;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 1.2rem;
+  z-index: 3;
+}
+
+.modal-details {
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.game-badge-large {
+  width: fit-content;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.modal-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+
+.modal-subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 1rem;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.modal-stat-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.modal-stat-item svg {
+  color: var(--accent-purple);
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 700;
+}
+
+.stat-value {
+  font-size: 0.9rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.modal-description {
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.modal-footer {
+  margin-top: auto;
+}
+
+.btn-large {
+  width: 100%;
+  padding: 16px;
+  border-radius: 14px;
+  font-size: 1.1rem;
+}
+
+/* --- Element Themes --- */
+.element-anemo { --accent-color: #74ffbc; }
+.element-pyro { --accent-color: #ff6b6b; }
+.element-hydro { --accent-color: #4d96ff; }
+.element-electro { --accent-color: #a256ff; }
+.element-geo { --accent-color: #ffb13f; }
+.element-cryo { --accent-color: #82f0ff; }
+.element-dendro { --accent-color: #a5d63f; }
+
+.modal-container[class*="element-"] .modal-visual {
+  background: radial-gradient(circle at center, rgba(var(--accent-color-rgb, 255,255,255), 0.1), transparent 70%);
+}
+
+.modal-container.element-anemo .modal-visual { background: radial-gradient(circle at center, rgba(116, 255, 188, 0.12), transparent 70%); }
+.modal-container.element-pyro .modal-visual { background: radial-gradient(circle at center, rgba(255, 107, 107, 0.12), transparent 70%); }
+.modal-container.element-hydro .modal-visual { background: radial-gradient(circle at center, rgba(77, 150, 255, 0.12), transparent 70%); }
+.modal-container.element-electro .modal-visual { background: radial-gradient(circle at center, rgba(162, 86, 255, 0.12), transparent 70%); }
+.modal-container.element-geo .modal-visual { background: radial-gradient(circle at center, rgba(255, 177, 63, 0.12), transparent 70%); }
+.modal-container.element-cryo .modal-visual { background: radial-gradient(circle at center, rgba(130, 240, 255, 0.12), transparent 70%); }
+.modal-container.element-dendro .modal-visual { background: radial-gradient(circle at center, rgba(165, 214, 63, 0.12), transparent 70%); }
+
+/* Mobile Adaptability */
+@media (max-width: 768px) {
+  .modal-content {
+    grid-template-columns: 1fr;
+  }
+  .modal-visual {
+    padding: 20px;
+    min-height: 250px;
+  }
+  .modal-details {
+    padding: 30px 20px;
+  }
+  .modal-title {
+    font-size: 1.8rem;
+  }
+}
