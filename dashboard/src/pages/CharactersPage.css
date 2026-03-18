@@ -509,6 +509,16 @@
 }
 
 /* --- Element Themes --- */
+/* Generic / Bot Names */
+.element-nature { --accent-color: #74ffbc; }
+.element-fire { --accent-color: #ff6b6b; }
+.element-frozen { --accent-color: #82f0ff; }
+.element-water { --accent-color: #4d96ff; }
+.element-lightning { --accent-color: #a256ff; }
+.element-rock { --accent-color: #ffb13f; }
+.element-dark { --accent-color: #a256ff; }
+
+/* Game Specific Names */
 .element-anemo { --accent-color: #74ffbc; }
 .element-pyro { --accent-color: #ff6b6b; }
 .element-hydro { --accent-color: #4d96ff; }
@@ -517,17 +527,25 @@
 .element-cryo { --accent-color: #82f0ff; }
 .element-dendro { --accent-color: #a5d63f; }
 
+/* WuWa / ZZZ Specific */
+.element-spectro { --accent-color: #fff9ab; }
+.element-havoc { --accent-color: #9254ff; }
+.element-ether { --accent-color: #ce91ff; }
+.element-ice { --accent-color: #a1f5ff; }
+.element-physical { --accent-color: #ffffff; }
+
 .modal-container[class*="element-"] .modal-visual {
   background: radial-gradient(circle at center, rgba(var(--accent-color-rgb, 255,255,255), 0.1), transparent 70%);
 }
 
-.modal-container.element-anemo .modal-visual { background: radial-gradient(circle at center, rgba(116, 255, 188, 0.12), transparent 70%); }
-.modal-container.element-pyro .modal-visual { background: radial-gradient(circle at center, rgba(255, 107, 107, 0.12), transparent 70%); }
-.modal-container.element-hydro .modal-visual { background: radial-gradient(circle at center, rgba(77, 150, 255, 0.12), transparent 70%); }
-.modal-container.element-electro .modal-visual { background: radial-gradient(circle at center, rgba(162, 86, 255, 0.12), transparent 70%); }
-.modal-container.element-geo .modal-visual { background: radial-gradient(circle at center, rgba(255, 177, 63, 0.12), transparent 70%); }
-.modal-container.element-cryo .modal-visual { background: radial-gradient(circle at center, rgba(130, 240, 255, 0.12), transparent 70%); }
-.modal-container.element-dendro .modal-visual { background: radial-gradient(circle at center, rgba(165, 214, 63, 0.12), transparent 70%); }
+.modal-container.element-nature .modal-visual, .modal-container.element-anemo .modal-visual { background: radial-gradient(circle at center, rgba(116, 255, 188, 0.12), transparent 70%); }
+.modal-container.element-fire .modal-visual, .modal-container.element-pyro .modal-visual { background: radial-gradient(circle at center, rgba(255, 107, 107, 0.12), transparent 70%); }
+.modal-container.element-frozen .modal-visual, .modal-container.element-cryo .modal-visual, .modal-container.element-ice .modal-visual { background: radial-gradient(circle at center, rgba(130, 240, 255, 0.12), transparent 70%); }
+.modal-container.element-water .modal-visual, .modal-container.element-hydro .modal-visual { background: radial-gradient(circle at center, rgba(77, 150, 255, 0.12), transparent 70%); }
+.modal-container.element-lightning .modal-visual, .modal-container.element-electro .modal-visual { background: radial-gradient(circle at center, rgba(162, 86, 255, 0.12), transparent 70%); }
+.modal-container.element-rock .modal-visual, .modal-container.element-geo .modal-visual { background: radial-gradient(circle at center, rgba(255, 177, 63, 0.12), transparent 70%); }
+.modal-container.element-spectro .modal-visual { background: radial-gradient(circle at center, rgba(255, 249, 171, 0.12), transparent 70%); }
+.modal-container.element-havoc .modal-visual, .modal-container.element-ether .modal-visual { background: radial-gradient(circle at center, rgba(146, 84, 255, 0.12), transparent 70%); }
 
 /* Mobile Adaptability */
 @media (max-width: 768px) {
