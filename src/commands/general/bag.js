@@ -93,7 +93,7 @@ module.exports = {
         
         let hasItem = false;
         let boosterKey = '';
-        let stackLimit = 2;
+        const boosters = userData.boosters || new Map();
 
         if (itemName === 'Pokeball') {
             if (userData.pokeballs > 0) {
@@ -120,25 +120,15 @@ module.exports = {
           return i.reply({ content: `❌ You don't have any **${itemName}** left! (｡•́︿•̀｡)`, flags: [MessageFlags.Ephemeral] });
         }
 
-        const duration = 5 * 60 * 1000; // 5 minutes
-        const currentBooster = await database.getActiveBooster(userId, boosterKey);
-        const now = Date.now();
-        
-        const maxDuration = stackLimit * duration;
-        const currentRemaining = currentBooster ? (currentBooster.expiresAt - now) : 0;
-
-        if (currentRemaining + duration > maxDuration + 5000) {
-          return i.reply({ content: `❌ You've already reached the stacking limit for **${itemName}**, darling! (Max ${stackLimit * 5} minutes) (｡•́︿•̀｡)`, flags: [MessageFlags.Ephemeral] });
+        const currentBooster = boosters.get(boosterKey);
+        if (currentBooster?.active && currentBooster?.oneTime) {
+          return i.reply({ content: `❌ You already have a **${itemName}** active for your next hunt, darling! (｡•́︿•̀｡)`, flags: [MessageFlags.Ephemeral] });
         }
 
-        const newExpiresAt = (currentRemaining > 0 ? currentBooster.expiresAt : now) + duration;
-        const totalDurationToSet = newExpiresAt - now;
-
-        await database.addBooster(userId, boosterKey, 1, totalDurationToSet);
-        await database.saveUser(userData);
+        await database.setPokeball(userId, boosterKey);
 
         await i.reply({
-          content: `✅ Successfully used **${itemName}**! Duration extended by 5 minutes. (Total: ${Math.ceil(totalDurationToSet / 60000)}m) (ﾉ´ヮ\` )ﾉ*:･ﾟ✧`,
+          content: `✅ Successfully used **${itemName}**! Your next hunt will have much better rates! (ﾉ´ヮ\` )ﾉ*:･ﾟ✧`,
           flags: [MessageFlags.Ephemeral],
         });
 

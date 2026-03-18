@@ -105,7 +105,7 @@ class DatabaseService {
     );
   }
 
-  async usePokeball(userId: string, type: string) {
+  async setPokeball(userId: string, type: string) {
     const user = await this.getUser(userId);
     const field = type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
     
@@ -113,38 +113,28 @@ class DatabaseService {
       return { success: false, message: `You don't have any ${type}s, darling! (｡•́︿•̀｡)` };
     }
 
-    // Durations in milliseconds
-    const durations: Record<string, number> = {
-      pokeball: 5 * 60 * 1000,
-      ultraball: 20 * 60 * 1000,
-      masterball: 15 * 60 * 1000
-    };
-    const duration = durations[type] || 0;
-
     // Consume 1 ball
     (user[field as keyof IUser] as number)--;
 
     if (!user.boosters) user.boosters = new Map();
     
-    const existing = user.boosters.get(type);
-    const currentExpiry = (existing && existing.expiresAt > Date.now()) ? existing.expiresAt : Date.now();
-    
-    let newExpiresAt = currentExpiry + duration;
-
-    // Pokeball Stacking Cap: 5x (25 minutes total)
-    if (type === 'pokeball') {
-      const maxExpiry = Date.now() + (25 * 60 * 1000);
-      if (newExpiresAt > maxExpiry) newExpiresAt = maxExpiry;
-    }
-
+    // Set one-time-use flag
     user.boosters.set(type, {
-      multiplier: 1, // Logic handled in hunt.js
-      expiresAt: newExpiresAt,
+      active: true,
+      oneTime: true
     });
 
     user.markModified('boosters');
     await this.saveUser(user);
-    return { success: true, expiresAt: newExpiresAt, added: duration };
+    return { success: true };
+  }
+
+  async clearOneTimeBall(userId: string, type: string) {
+    return await User.findOneAndUpdate(
+      { id: userId },
+      { $unset: { [`boosters.${type}`]: "" } },
+      { returnDocument: 'after' }
+    );
   }
 
   async addItem(userId: string, itemName: string, amount = 1) {
@@ -189,6 +179,14 @@ class DatabaseService {
     return await User.findOneAndUpdate(
       { id: userId },
       { $inc: { balance: -amount } },
+      { returnDocument: 'after' }
+    );
+  }
+
+  async removeStarDust(userId: string, amount: number) {
+    return await User.findOneAndUpdate(
+      { id: userId },
+      { $inc: { star_dust: -amount } },
       { returnDocument: 'after' }
     );
   }
@@ -358,11 +356,6 @@ class DatabaseService {
     await this.saveUser(user);
   }
 
-  async addHuntBoost(userId: string, amount: number) {
-    const user = await this.getUser(userId);
-    user.hunt_boost = (user.hunt_boost || 0) + amount;
-    await this.saveUser(user);
-  }
 
   async getActiveBooster(userId: string, type: string) {
     const user = await this.getUser(userId);

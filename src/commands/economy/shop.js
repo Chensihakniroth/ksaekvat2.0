@@ -19,7 +19,7 @@ module.exports = {
   async execute(message, args, client) {
     const userId = message.author.id;
 
-    const createShopEmbed = (categoryKey = 'essentials') => {
+    const createShopEmbed = (categoryKey = 'characters') => {
       const category = shopConfig.categories[categoryKey];
       const embed = new EmbedBuilder()
         .setColor(colors.primary)
@@ -30,8 +30,9 @@ module.exports = {
         .setThumbnail(client.user.displayAvatarURL());
 
       category.items.forEach((item) => {
+        const currencySymbol = category.currency === 'star_dust' ? '✨' : '🪙';
         embed.addFields({
-          name: `${item.emoji} ${item.name} — ${EconomyService.format(item.price)}`,
+          name: `${item.emoji} ${item.name} — ${item.price} ${currencySymbol}`,
           value: item.description,
           inline: false,
         });
@@ -41,7 +42,7 @@ module.exports = {
       return embed;
     };
 
-    const createComponents = (categoryKey = 'essentials') => {
+    const createComponents = (categoryKey = 'characters') => {
       const categoryMenu = new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
           .setCustomId('shop_category')
@@ -113,25 +114,39 @@ module.exports = {
         if (!selectedItem) return;
 
         const userData = await database.getUser(userId, message.author.username);
-        if (userData.balance < selectedItem.price) {
-          return i.reply({
-            content: `💸 Oh no, darling! You need **${EconomyService.format(selectedItem.price - userData.balance)}** more coins to buy that. (｡•́︿•̀｡)`,
-            flags: [MessageFlags.Ephemeral],
-          });
+        
+        // Currency Check
+        if (category.currency === 'star_dust') {
+          if ((userData.star_dust || 0) < selectedItem.price) {
+            return i.reply({
+              content: `✨ Oh no, darling! You need **${selectedItem.price - (userData.star_dust || 0)}** more Star Dust to buy that. (｡•́︿•̀｡)`,
+              flags: [MessageFlags.Ephemeral],
+            });
+          }
+        } else {
+          if (userData.balance < selectedItem.price) {
+            return i.reply({
+              content: `💸 Oh no, darling! You need **${EconomyService.format(selectedItem.price - userData.balance)}** more coins to buy that. (｡•́︿•̀｡)`,
+              flags: [MessageFlags.Ephemeral],
+            });
+          }
         }
 
         // Process Purchase
-        await database.removeBalance(userId, selectedItem.price);
+        if (category.currency === 'star_dust') {
+          await database.removeStarDust(userId, selectedItem.price);
+        } else {
+          await database.removeBalance(userId, selectedItem.price);
+        }
 
-        if (selectedItem.id.includes('ball')) {
-          await database.addPokeball(userId, selectedItem.id, 1);
-        } else if (selectedItem.id === 'hunt_boost') {
-          await database.addHuntBoost(userId, selectedItem.amount);
+        if (categoryKey === 'characters') {
+          // Add character to inventory (using the already fixed addGachaItem which handles counts)
+          await database.addGachaItem(userId, selectedItem.name);
         } else if (categoryKey === 'themes') {
           await database.unlockTheme(userId, selectedItem.id);
         } else {
           // Generic item (like Ring of Promise)
-          await database.addItem(selectedItem.name, 1);
+          await database.addItem(userId, selectedItem.name, 1);
         }
 
         await i.reply({
@@ -141,7 +156,7 @@ module.exports = {
 
         // Update the original message to show new balance (optional, but nice)
         const updatedCategory = i.message.embeds[0].title.split('—')[1].trim();
-        const catKey = Object.keys(shopConfig.categories).find(k => shopConfig.categories[k].name.includes(updatedCategory)) || 'essentials';
+        const catKey = Object.keys(shopConfig.categories).find(k => shopConfig.categories[k].name.includes(updatedCategory)) || 'characters';
         
         await msg.edit({
             embeds: [createShopEmbed(catKey)],

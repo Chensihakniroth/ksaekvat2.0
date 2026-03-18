@@ -49,7 +49,7 @@ module.exports = {
         embed.setDescription(`**Items in your bag:**\n\n${list.join('\n')}\n\n*Click a button below to use a ball!*`);
       }
 
-      embed.setFooter({ text: 'Boosters last 5-20 minutes and stack! (◕‿✿)' });
+      embed.setFooter({ text: 'Pokeballs are one-time-use and valid for exactly one hunt! (◕‿✿)' });
 
       const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
@@ -96,7 +96,7 @@ module.exports = {
 
       if (i.customId === 'go_shop') {
         return i.reply({
-          content: '🏪 Use `Kshop` to visit Mommy\'s General Store and buy more balls! (｡♥‿♥｡)',
+          content: '🏪 Use `Kshop` to visit Mommy\'s General Store and exchange Star Dust for characters! (｡♥‿♥｡)',
           flags: [MessageFlags.Ephemeral],
         });
       }
@@ -110,7 +110,15 @@ module.exports = {
       const type = typeMap[i.customId];
       if (!type) return;
 
-      const result = await database.usePokeball(userId, type);
+      const userData = await database.getUser(userId, message.author.username);
+      const boosters = userData.boosters || new Map();
+      const currentBooster = boosters.get(type);
+
+      if (currentBooster?.active && currentBooster?.oneTime) {
+        return i.reply({ content: `❌ You already have a **${type}** active for your next hunt, darling! (｡•́︿•̀｡)`, flags: [MessageFlags.Ephemeral] });
+      }
+
+      const result = await database.setPokeball(userId, type);
 
       if (!result.success) {
         return i.reply({ content: result.message, flags: [MessageFlags.Ephemeral] });
@@ -122,11 +130,8 @@ module.exports = {
         masterball: '🟣 Master Ball',
       };
 
-      const addedMins = result.added / 60000;
-      const totalRemaining = Math.ceil((result.expiresAt - Date.now()) / 60000);
-
       await i.reply({
-        content: `✅ Activated **${ballNames[type]}**! (+${addedMins}m, ${totalRemaining}m total)`,
+        content: `✅ Activated **${ballNames[type]}**! Your next hunt will be boosted! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧`,
         flags: [MessageFlags.Ephemeral],
       });
 
