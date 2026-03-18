@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Sparkles, Globe, Sword, Train, Tv, Waves } from 'lucide-react';
-import { getCharacterImageUrl, getFallbackEmoji } from '../utils/charImages.js';
+import { fetchFandomIconUrl, getFallbackEmoji } from '../utils/charImages.js';
 import './CharactersPage.css';
-
 
 const GAMES = {
   all:    { label: 'All Games', icon: Globe },
@@ -13,18 +12,30 @@ const GAMES = {
   zzz:    { label: 'ZZZ',       icon: Tv,     badge: 'badge-zzz' },
 };
 
-function CharIcon({ name, game, rarity, emoji, imageUrl }) {
-  const [apiFailed, setApiFailed]           = useState(false);
-  const [fallbackFailed, setFallbackFailed] = useState(false);
+function CharIcon({ name, game, rarity, emoji }) {
+  const [iconUrl, setIconUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Tier 1: use the pre-fetched image_url from MongoDB (works for all games)
-  // Tier 2: client-side URL builder from charImages.js (Genshin / HSR)
-  // Tier 3: emoji placeholder
-  const primaryUrl  = !apiFailed ? imageUrl : null;
-  const fallbackUrl = apiFailed && !fallbackFailed ? getCharacterImageUrl(name, game) : null;
-  const url         = primaryUrl || fallbackUrl;
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setIconUrl(null);
 
-  if (!url) {
+    fetchFandomIconUrl(name, game).then((url) => {
+      if (!cancelled) {
+        setIconUrl(url);
+        setLoading(false);
+      }
+    });
+
+    return () => { cancelled = true; };
+  }, [name, game]);
+
+  if (loading) {
+    return <div className="char-icon-fallback loading-shimmer" style={{ background: 'rgba(255,255,255,0.05)' }} />;
+  }
+
+  if (!iconUrl) {
     return (
       <div className="char-icon-fallback">
         {emoji || getFallbackEmoji(rarity)}
@@ -32,24 +43,12 @@ function CharIcon({ name, game, rarity, emoji, imageUrl }) {
     );
   }
 
-  if (primaryUrl) {
-    return (
-      <img
-        src={primaryUrl}
-        alt={name}
-        className="char-icon-img"
-        onError={() => setApiFailed(true)}
-        loading="lazy"
-      />
-    );
-  }
-
   return (
     <img
-      src={fallbackUrl}
+      src={iconUrl}
       alt={name}
       className="char-icon-img"
-      onError={() => setFallbackFailed(true)}
+      onError={() => setIconUrl(null)}
       loading="lazy"
     />
   );
@@ -163,7 +162,7 @@ export default function CharactersPage() {
                       className={`glass-card char-card rarity-border-${c.rarity}`}
                     >
                       <div className="char-img-wrapper">
-                        <CharIcon name={c.name} game={c.game?.toLowerCase()} rarity={c.rarity} emoji={c.emoji} imageUrl={c.image_url} />
+                        <CharIcon name={c.name} game={c.game?.toLowerCase()} rarity={c.rarity} emoji={c.emoji} />
                         <div className={`char-rarity-badge rarity-bg-${c.rarity}`}>
                           {c.rarity}★
                         </div>

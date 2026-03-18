@@ -1,166 +1,148 @@
 /**
- * Character Icon URL generator
+ * charImages.js — fetch character ICONS from Fandom wikis (async, cached)
  *
- * Sources:
- *  Genshin → enka.network CDN (fast, community-maintained)
- *  HSR     → Mar-7th StarRailRes GitHub CDN (name → numeric ID map)
- *  Wuwa    → wutheringwaves.fandom.com CDN (Resonator_{Name}.png)
- *  ZZZ     → zenless-zone-zero.fandom.com CDN (Agent_{Name}_Icon.png)
+ * Wiki sources:
+ *   Genshin → genshin-impact.fandom.com     File:{Name}_Icon.png
+ *   HSR     → honkai-star-rail.fandom.com   File:Character_{Name}_Icon.png
+ *   WuWa    → wutheringwaves.fandom.com     File:Resonator_{Name}.png
+ *   ZZZ     → zenless-zone-zero.fandom.com  File:Agent_{Name}_Icon.png
  */
 
-// ── Genshin: enka.network ────────────────────────────────────────────────────
-// Asset name differs from display name for some characters
-const GI_MAP = {
-  'Hu Tao': 'Hutao',
-  'Yae Miko': 'Yae',
-  'Kaedehara Kazuha': 'Kazuha',
-  'Kamisato Ayaka': 'Ayaka',
-  'Kamisato Ayato': 'Ayato',
-  'Raiden Shogun': 'Shougun',
-  'Sangonomiya Kokomi': 'Kokomi',
-  'Arataki Itto': 'Itto',
-  'Shikanoin Heizou': 'Heizo',
-  'Yun Jin': 'Yunjin',
-  'Thoma': 'Tohma',
-  'Kujou Sara': 'Sara',
-  'Baizhu': 'Baizhuer',
-  'Lyney': 'Lyney',
-  'Lynette': 'Lynette',
-  'Xianyun': 'Liuyun',
-  'Alhaitham': 'Alhatham',
-  'Emilie': 'Emily',
-  'Lan Yan': 'Lanyan',
-  'Wanderer': 'Wanderer',
+// ─── Wiki config per game ────────────────────────────────────────────────────
+const WIKI_CONFIG = {
+  genshin: {
+    wiki: 'genshin-impact',
+    // File: {wikiName}_Icon.png
+    getFilename: (name) => `${toWikiName_GI(name)}_Icon.png`,
+  },
+  hsr: {
+    wiki: 'honkai-star-rail',
+    // File: Character_{wikiName}_Icon.png
+    getFilename: (name) => `Character_${toWikiName_HSR(name)}_Icon.png`,
+  },
+  wuwa: {
+    wiki: 'wutheringwaves',
+    // File: Resonator_{Name}.png
+    getFilename: (name) => `Resonator_${toWikiName_WuWa(name)}.png`,
+  },
+  zzz: {
+    wiki: 'zenless-zone-zero',
+    // File: Agent_{Name}_Icon.png
+    getFilename: (name) => `Agent_${toWikiName_ZZZ(name)}_Icon.png`,
+  },
 };
 
-// ── HSR: Mar-7th StarRailRes ──────────────────────────────────────────────────
-// URL: https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/icon/character/{ID}.png
-const HSR_IDS = {
-  'March 7th':                  1001,
-  'Dan Heng':                   1002,
-  'Himeko':                     1003,
-  'Welt':                       1004,
-  'Kafka':                      1005,
-  'Silver Wolf':                1006,
-  'Arlan':                      1008,
-  'Asta':                       1009,
-  'Herta':                      1013,
-  'Archer':                     1015,
-  'Bronya':                     1101,
-  'Seele':                      1102,
-  'Serval':                     1103,
-  'Gepard':                     1104,
-  'Natasha':                    1105,
-  'Pela':                       1106,
-  'Clara':                      1107,
-  'Sampo':                      1108,
-  'Hook':                       1109,
-  'Lynx':                       1110,
-  'Luka':                       1111,
-  'Topaz & Numby':              1112,
-  'Qingque':                    1201,
-  'Tingyun':                    1202,
-  'Luocha':                     1203,
-  'Jing Yuan':                  1204,
-  'Blade':                      1205,
-  'Sushang':                    1206,
-  'Yukong':                     1207,
-  'Fu Xuan':                    1208,
-  'Yanqing':                    1209,
-  'Guinaifen':                  1210,
-  'Bailu':                      1211,
-  'Jingliu':                    1212,
-  'Dan Heng • IL':              1213,
-  'Xueyi':                      1214,
-  'Hanya':                      1215,
-  'Huohuo':                     1217,
-  'Jiaoqiu':                    1218,
-  'Feixiao':                    1220,
-  'Lingsha':                    1222,
-  'Moze':                       1223,
-  'Fugue':                      1225,
-  'Gallagher':                  1301,
-  'Argenti':                    1302,
-  'Ruan Mei':                   1303,
-  'Aventurine':                 1304,
-  'Dr. Ratio':                  1305,
-  'Sparkle':                    1306,
-  'Black Swan':                 1307,
-  'Acheron':                    1308,
-  'Robin':                      1309,
-  'Firefly':                    1310,
-  'Misha':                      1312,
-  'Sunday':                     1313,
-  'Jade':                       1314,
-  'Boothill':                   1315,
-  'Rappa':                      1317,
-  'The Herta':                  1401,
-  'Aglaea':                     1402,
-  'Tribbie':                    1403,
-  'Anaxa':                      1405,
-  'Cipher':                     1406,
-  'Castorice':                  1407,
-  'Phainon':                    1408,
-  'Hyacine':                    1409,
-  'Cerydra':                    1412,
-  'Sparxie':                    1501,
-  'Yao Guang':                  1502,
-};
+// ─── Name normalisation helpers ──────────────────────────────────────────────
 
-// ── ZZZ: Fandom CDN — File:Agent_{Name}_Icon.png ─────────────────────────────
-// Wiki name differs from display name for some characters
-const ZZZ_WIKI_NAME = {
+// Genshin: display name → wiki asset name (spaces → underscores, special cases)
+const GI_OVERRIDES = {
+  'Hu Tao':               'Hu_Tao',
+  'Yae Miko':             'Yae_Miko',
+  'Kaedehara Kazuha':     'Kaedehara_Kazuha',
+  'Kamisato Ayaka':       'Kamisato_Ayaka',
+  'Kamisato Ayato':       'Kamisato_Ayato',
+  'Raiden Shogun':        'Raiden_Shogun',
+  'Sangonomiya Kokomi':   'Sangonomiya_Kokomi',
+  'Shikanoin Heizou':     'Shikanoin_Heizou',
+  'Yun Jin':              'Yun_Jin',
+  'Kujou Sara':           'Kujou_Sara',
+  'Lan Yan':              'Lan_Yan',
+  'Dan Heng':             'Dan_Heng',
+};
+function toWikiName_GI(name) {
+  return GI_OVERRIDES[name] || name.replace(/ /g, '_');
+}
+
+// HSR: display name → wiki name (spaces → underscores, special chars stripped)
+const HSR_OVERRIDES = {
+  'Dan Heng • IL': 'Dan_Heng_Imbibitor_Lunae',
+  'Topaz & Numby': 'Topaz_and_Numby',
+  'Dr. Ratio':     'Dr._Ratio',
+  'The Herta':     'The_Herta',
+};
+function toWikiName_HSR(name) {
+  return HSR_OVERRIDES[name] || name.replace(/ /g, '_');
+}
+
+// WuWa: display name → wiki name
+const WUWA_OVERRIDES = {
+  'Rover (Spectro/Havoc/Aero)': 'Rover',
+  'Xiangli Yao':  'Xiangli_Yao',
+  'Luuk Herssen': 'Luuk_Herssen',
+};
+function toWikiName_WuWa(name) {
+  return WUWA_OVERRIDES[name] || name.replace(/ /g, '_');
+}
+
+// ZZZ: display name → wiki name
+const ZZZ_OVERRIDES = {
   'Hoshimi Miyabi':  'Miyabi',
   'Koleda Belobog':  'Koleda',
-  'Nangong Yu':      'Nangong Yu',
-  'Soldier 0 - Anby':'Soldier 0 - Anby',
+  'Soldier 0 - Anby':'Soldier_0_-_Anby',
+  'Orphie & Magus':  'Orphie_%26_Magus',
 };
+function toWikiName_ZZZ(name) {
+  return ZZZ_OVERRIDES[name] || name.replace(/ /g, '_');
+}
 
-const HSR_BASE  = 'https://raw.githubusercontent.com/Mar-7th/StarRailRes/master/icon/character';
-const ZZZ_CDN   = 'https://static.wikia.nocookie.net/zenless-zone-zero/images';
-const WUWA_CDN  = 'https://static.wikia.nocookie.net/wutheringwaves/images';
+// ─── Fandom MediaWiki API fetcher ────────────────────────────────────────────
 
+// Module-level URL cache: `${game}:${name}` → CDN URL string | null
+const _cache = new Map();
+// In-flight promise cache to avoid duplicate simultaneous fetches
+const _inFlight = new Map();
 
-export function getCharacterImageUrl(name, game) {
+/**
+ * Fetch the icon CDN URL for a character from the appropriate Fandom wiki.
+ * Results are cached forever for the lifecycle of the page.
+ *
+ * @param {string} name  — display name (e.g. "Hu Tao")
+ * @param {string} game  — one of: genshin | hsr | wuwa | zzz
+ * @returns {Promise<string|null>}
+ */
+export async function fetchFandomIconUrl(name, game) {
   if (!name || !game) return null;
 
-  // Genshin Impact — enka.network
-  if (game === 'genshin') {
-    const assetName = GI_MAP[name] || name.replace(/['\s]/g, '');
-    return `https://enka.network/ui/UI_AvatarIcon_${assetName}.png`;
-  }
+  const config = WIKI_CONFIG[game];
+  if (!config) return null;
 
-  // Honkai: Star Rail — Mar-7th StarRailRes
-  if (game === 'hsr') {
-    let id = HSR_IDS[name];
-    if (!id) {
-      const fuzzy = name.replace(/[•\.\s]/g, '').toLowerCase();
-      for (const [k, v] of Object.entries(HSR_IDS)) {
-        if (k.replace(/[•\.\s]/g, '').toLowerCase() === fuzzy) { id = v; break; }
-      }
+  const cacheKey = `${game}:${name}`;
+
+  // Return cached result
+  if (_cache.has(cacheKey)) return _cache.get(cacheKey);
+
+  // Return in-flight promise (deduplicate parallel calls for same char)
+  if (_inFlight.has(cacheKey)) return _inFlight.get(cacheKey);
+
+  const promise = (async () => {
+    try {
+      const filename = config.getFilename(name);
+      const apiUrl = `https://${config.wiki}.fandom.com/api.php?action=query&titles=File:${encodeURIComponent(filename)}&prop=imageinfo&iiprop=url&format=json&origin=*`;
+
+      const res = await fetch(apiUrl);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+      const data = await res.json();
+      const pages = data?.query?.pages;
+      if (!pages) return null;
+
+      const page = Object.values(pages)[0];
+      // page.missing === '' means file not found on wiki
+      if (page.missing !== undefined) return null;
+
+      const url = page.imageinfo?.[0]?.url || null;
+      _cache.set(cacheKey, url);
+      return url;
+    } catch {
+      _cache.set(cacheKey, null); // cache failure to avoid retry spam
+      return null;
+    } finally {
+      _inFlight.delete(cacheKey);
     }
-    if (id) return `${HSR_BASE}/${id}.png`;
-    return null;
-  }
+  })();
 
-  // Wuthering Waves — wutheringwaves Fandom CDN
-  // File pattern: Resonator_{Name}.png
-  if (game === 'wuwa') {
-    const wikiName = name.includes('Rover') ? 'Rover' : name;
-    const filename = `Resonator_${wikiName.replace(/ /g, '_')}.png`;
-    // Use /revision/latest which always serves the current version
-    return `${WUWA_CDN}/thumb/latest/${filename}/revision/latest`;
-  }
-
-  // Zenless Zone Zero — ZZZ Fandom CDN
-  // File pattern: Agent_{Name}_Icon.png
-  if (game === 'zzz') {
-    const wikiName = ZZZ_WIKI_NAME[name] || name;
-    const filename = `Agent_${wikiName.replace(/ /g, '_')}_Icon.png`;
-    return `${ZZZ_CDN}/thumb/latest/${filename}/revision/latest`;
-  }
-
-  return null;
+  _inFlight.set(cacheKey, promise);
+  return promise;
 }
 
 export function getFallbackEmoji(rarity) {
