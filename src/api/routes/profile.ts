@@ -58,6 +58,8 @@ router.get('/:userId', async (req: Request, res: Response) => {
         balance: user.balance || 0,
         star_dust: user.star_dust || 0,
         experience: user.experience || 0,
+        pity: user.pity || 0,
+        pity4: user.pity4 || 0,
         stats: user.stats || {},
         dailyClaimed: user.dailyClaimed || false,
         characters: hydratedInventory,

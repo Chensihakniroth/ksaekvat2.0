@@ -26,6 +26,7 @@ export default function Navbar() {
           <NavBtn to="/" icon={<LayoutDashboard size={18} />} label="Home" />
           <NavBtn to="/leaderboard" icon={<Trophy size={18} />} label="Leaderboard" />
           <NavBtn to="/characters" icon={<Users size={18} />} label="Characters" />
+          <NavBtn to="/zoo" icon={<PawPrint size={18} />} label="Zoo" />
         </nav>
 
         {/* Mobile Toggle */}
@@ -39,6 +40,7 @@ export default function Navbar() {
             <NavLink to="/" onClick={() => setMobileMenuOpen(false)} className="mobile-link">Home</NavLink>
             <NavLink to="/leaderboard" onClick={() => setMobileMenuOpen(false)} className="mobile-link">Leaderboard</NavLink>
             <NavLink to="/characters" onClick={() => setMobileMenuOpen(false)} className="mobile-link">Characters</NavLink>
+            <NavLink to="/zoo" onClick={() => setMobileMenuOpen(false)} className="mobile-link">Zoo</NavLink>
           </div>
         )}
       </div>

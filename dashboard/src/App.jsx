@@ -6,12 +6,12 @@ import HomePage from './pages/HomePage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import ProfilePage from './pages/ProfilePage';
 import CharactersPage from './pages/CharactersPage';
+import ZooPage from './pages/ZooPage';
 
 function App() {
   return (
     <BrowserRouter>
       <div className="app-wrapper">
-        <GlobalTicker />
         <Navbar />
         <main className="main-content">
           <Routes>
@@ -19,8 +19,10 @@ function App() {
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/profile/:userId" element={<ProfilePage />} />
             <Route path="/characters" element={<CharactersPage />} />
+            <Route path="/zoo" element={<ZooPage />} />
           </Routes>
         </main>
+        <GlobalTicker />
         <Footer />
       </div>
     </BrowserRouter>

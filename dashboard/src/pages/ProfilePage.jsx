@@ -11,8 +11,13 @@ import {
   ArrowLeft,
   Terminal,
   ChevronRight,
-  ShieldCheck
+  ShieldCheck,
+  TrendingUp
 } from 'lucide-react';
+import { 
+  PieChart, Pie, Cell, ResponsiveContainer, 
+  BarChart, Bar, XAxis, YAxis, Tooltip, AreaChart, Area
+} from 'recharts';
 
 const GAME_LABEL = { genshin:'Genshin', hsr:'HSR', wuwa:'Wuwa', zzz:'ZZZ' };
 const GAME_BADGE = { 
@@ -20,6 +25,12 @@ const GAME_BADGE = {
   hsr:'bg-pink/10 text-pink border-pink/20', 
   wuwa:'bg-cyan/10 text-cyan border-cyan/20', 
   zzz:'bg-gold/10 text-gold border-gold/20' 
+};
+
+const COLORS = {
+  '5': '#fbbf24', // Gold
+  '4': '#a78bfa', // Purple
+  '3': '#94a3b8'  // Slate
 };
 
 export default function ProfilePage() {
@@ -59,12 +70,22 @@ export default function ProfilePage() {
     </motion.div>
   );
 
-  const xpPct = Math.min(100, Math.round((p.experience % 1000) / 10));
-  const games = ['all', ...new Set(p.characters.map(c => c.game))];
-  const chars = gameFilter === 'all' ? p.characters : p.characters.filter(c => c.game === gameFilter);
+  const statsData = [
+    { name: '5★', value: p.characters.filter(c => c.rarity === '5').length },
+    { name: '4★', value: p.characters.filter(c => c.rarity === '4').length },
+    { name: '3★', value: p.characters.filter(c => c.rarity === '3').length },
+  ].filter(d => d.value > 0);
 
-  const totalPoke = Object.values(p.pokemon).reduce((a, g) =>
-    a + Object.values(g).reduce((s, c) => s + c, 0), 0);
+  // Mock progression data for the chart
+  const progressData = [
+    { name: 'Mon', xp: 400 },
+    { name: 'Tue', xp: 700 },
+    { name: 'Wed', xp: 500 },
+    { name: 'Thu', xp: 900 },
+    { name: 'Fri', xp: 1200 },
+    { name: 'Sat', xp: 1500 },
+    { name: 'Sun', xp: p.experience % 2000 },
+  ];
 
   return (
     <motion.div 
@@ -151,6 +172,100 @@ export default function ProfilePage() {
             </div>
           </div>
         </motion.div>
+
+        {/* --- Stats Dashboard --- */}
+        <section className="mb-20">
+          <div className="flex items-center gap-3 mb-8">
+            <TrendingUp size={24} className="text-purple-light" />
+            <h2 className="text-xl font-bold uppercase tracking-widest text-text-2">Performance & Stats</h2>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Rarity Chart */}
+            <div className="card-glass p-8 flex flex-col items-center">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-text-dim mb-6">Collection Rarity</h3>
+              <div className="h-[200px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={statsData}
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {statsData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[entry.name[0]] || '#8884d8'} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      contentStyle={{ background: '#1a1a1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                      itemStyle={{ color: '#fff' }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="flex gap-4 mt-4">
+                {statsData.map(d => (
+                  <div key={d.name} className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full" style={{ background: COLORS[d.name[0]] }} />
+                    <span className="text-[10px] font-bold text-text-3">{d.name}: {d.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Progress Chart */}
+            <div className="card-glass p-8 lg:col-span-2">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-text-dim">Experience Velocity</h3>
+                <span className="text-[10px] font-bold text-cyan bg-cyan/10 px-2 py-1 rounded">+24% this week</span>
+              </div>
+              <div className="h-[200px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={progressData}>
+                    <defs>
+                      <linearGradient id="colorXp" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="name" stroke="rgba(255,255,255,0.2)" fontSize={10} axisLine={false} tickLine={false} />
+                    <Tooltip 
+                      contentStyle={{ background: '#1a1a1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
+                    />
+                    <Area type="monotone" dataKey="xp" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorXp)" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Gacha Luck Gauge */}
+            <div className="card-glass p-8 lg:col-span-3 flex flex-col md:flex-row items-center gap-10">
+              <div className="flex-1">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-text-dim mb-2">Gacha Luck Meter</h3>
+                <p className="text-xs text-text-3 mb-6">Current 5★ Pity Status: You are getting closer to a legendary pull!</p>
+                <div className="relative h-4 bg-white/5 rounded-full overflow-hidden border border-white/5 mb-2">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: `${(p.pity ?? 0) / 90 * 100}%` }}
+                    className="h-full bg-gradient-to-r from-gold to-yellow-200 shadow-[0_0_15px_rgba(251,191,36,0.4)]"
+                  />
+                </div>
+                <div className="flex justify-between text-[10px] font-bold text-text-dim">
+                  <span>0 PITY</span>
+                  <span className="text-gold">{p.pity ?? 0} / 90 PITY</span>
+                  <span>GUARANTEED</span>
+                </div>
+              </div>
+              <div className="bg-white/5 p-6 rounded-2xl border border-white/5 text-center min-w-[150px]">
+                <div className="text-xs font-bold text-text-3 uppercase mb-1">Luck Rating</div>
+                <div className="text-3xl font-black text-gold">S+</div>
+                <div className="text-[10px] font-bold text-text-dim mt-2">Top 5% Players</div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Characters Grid */}
         <section className="mb-20">
