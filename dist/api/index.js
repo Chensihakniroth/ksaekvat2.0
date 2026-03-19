@@ -7,7 +7,7 @@ router.use((_req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Cache-Control', 'public, max-age=30'); // 30 second cache
+    // res.setHeader('Cache-Control', 'public, max-age=30'); // 30 second cache
     next();
 });
 // --- Simple rate limiter (in-memory) ---
@@ -21,7 +21,8 @@ router.use((req, res, next) => {
         return next();
     }
     entry.count++;
-    if (entry.count > 60) {
+    // Increased limit for dashboard functionality (galleries/icons)
+    if (entry.count > 1000) {
         return res.status(429).json({ success: false, error: 'Too many requests. Slow down, darling! (ᗒᗣᗕ)' });
     }
     next();
@@ -31,6 +32,8 @@ router.use('/leaderboard', require('./routes/leaderboard'));
 router.use('/profile', require('./routes/profile'));
 router.use('/characters', require('./routes/characters'));
 router.use('/stats', require('./routes/stats'));
+router.use('/gacha', require('./routes/gacha'));
+router.use('/zoo', require('./routes/zoo'));
 // --- Health ---
 router.get('/ping', (_req, res) => res.json({ success: true, message: 'KsaeKvat API is alive! ヽ(>∀<☆)ノ' }));
 module.exports = router;

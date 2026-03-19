@@ -47,35 +47,50 @@ router.get('/:userId', async (req: Request, res: Response) => {
     }
 
     // Hydrate inventory: merge registry data with owned items
-    const hydratedInventory = (user.gacha_inventory || []).map((item: any) => {
-      const regChar = registry.getCharacter(item.name);
-      return {
-        name: item.name,
-        count: item.count || 1,
-        game: regChar?.game || 'unknown',
-        rarity: regChar?.rarity || '4',
-        element: regChar?.element || null,
-        role: regChar?.role || null,
-        emoji: regChar?.emoji || '✨',
-        image: regChar?.image || null,
-      };
-    });
+    const hydratedInventory = (user.gacha_inventory || [])
+      .filter((item: any) => item.type !== 'weapon') // Surgical removal! (｡♥‿♥｡)
+      .map((item: any) => {
+        const regChar = registry.getCharacter(item.name);
+        return {
+          name: item.name,
+          count: item.count || 1,
+          game: regChar?.game || 'unknown',
+          rarity: regChar?.rarity || '4',
+          element: regChar?.element || null,
+          role: regChar?.role || null,
+          emoji: regChar?.emoji || '✨',
+          image: regChar?.image || null,
+        };
+      });
 
-    // Format animal collection
-    const animalMap: Record<string, Record<string, number>> = {};
+    // Format animal collection with sprites
+    const animalMap: Record<string, Record<string, { count: number; sprite: string | null }>> = {};
+    const animalService = require('../../services/AnimalService').default;
+
     if (user.animals) {
       for (const [rarity, pokemonMap] of Object.entries(user.animals as any)) {
         animalMap[rarity] = {};
         if (pokemonMap && typeof pokemonMap === 'object') {
           for (const [pokemon, count] of Object.entries(pokemonMap as any)) {
-            animalMap[rarity][pokemon] = count as number;
+            const sprite = await animalService.getPokemonSprite(pokemon);
+            // Only include if it's a real Pokemon! (•̀ᴗ•́)و
+            if (sprite || (pokemonMap as any).hasOwnProperty(pokemon)) {
+               // We use the sprite as a truth check for "validity"
+               // but actually the service now returns null for non-pokemon.
+               if (sprite) {
+                animalMap[rarity][pokemon] = {
+                  count: count as number,
+                  sprite
+                };
+               }
+            }
           }
         }
       }
     }
 
     const totalPokemon = Object.values(animalMap).reduce((acc, rarityGroup) => {
-      return acc + Object.values(rarityGroup).reduce((s, c) => s + c, 0);
+      return acc + Object.values(rarityGroup).reduce((s, c) => s + c.count, 0);
     }, 0);
 
     res.json({

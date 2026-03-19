@@ -4,7 +4,7 @@
   "main": "src/core/index.ts",
   "scripts": {
     "start": "node --no-deprecation dist/core/index.js",
-    "dev": "nodemon --exec ts-node --no-deprecation src/core/index.ts",
+    "dev": "nodemon --exec \"node --no-deprecation -r ts-node/register\" src/core/index.ts",
     "dev:dashboard": "cd dashboard && npm run dev",
     "dev:all": "concurrently --names \"BOT,DASH\" --prefix-colors \"cyan,magenta\" \"npm run dev\" \"npm run dev:dashboard\"",
     "build": "cd dashboard && npm run build && cd .. && tsc",

@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 // Set VITE_API_URL in your .env file to override (e.g. for local bot dev)
-// Default: Railway production URL
-const API_TARGET = process.env.VITE_API_URL || 'https://worker-production-d94a.up.railway.app';
+// Default: Local Bot Server (port 8080)
+const API_TARGET = process.env.VITE_API_URL || 'http://localhost:8080';
 
 export default defineConfig({
   plugins: [react()],
@@ -18,7 +18,7 @@ export default defineConfig({
       '/api': {
         target: API_TARGET,
         changeOrigin: true,
-        secure: true,
+        secure: false,
       },
     },
   },

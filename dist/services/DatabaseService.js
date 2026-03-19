@@ -8,6 +8,7 @@ const Listener_1 = __importDefault(require("../models/Listener"));
 const TalkTarget_1 = __importDefault(require("../models/TalkTarget"));
 const CharacterCard_1 = __importDefault(require("../models/CharacterCard"));
 const AnimalRegistry_1 = __importDefault(require("../models/AnimalRegistry"));
+const GachaHistory_1 = __importDefault(require("../models/GachaHistory"));
 const registry = require('../utils/registry.js');
 const logger = require('../utils/logger.js');
 /**
@@ -164,6 +165,16 @@ class DatabaseService {
         else
             update[`stats.${type}`] = amount;
         await User_1.default.findOneAndUpdate({ id: userId }, { $inc: update });
+    }
+    async logGachaPull(userId, username, itemName, game, rarity) {
+        try {
+            if (rarity < 5)
+                return; // Only log legendaries for the ticker! (｡♥‿♥｡)
+            await GachaHistory_1.default.create({ userId, username, itemName, game, rarity });
+        }
+        catch (err) {
+            logger.error(`MongoDB logGachaPull error:`, err);
+        }
     }
     async removeGachaItem(userId, itemName) {
         const user = await this.getUser(userId);

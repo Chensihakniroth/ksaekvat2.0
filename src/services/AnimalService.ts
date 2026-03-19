@@ -156,6 +156,9 @@ class AnimalService {
       if (animalsData[rarity] && rarityStats[rarity]) {
         const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
         for (const [animalKey, count] of animalEntries) {
+          // Only count valid Pokemon! (•̀ᴗ•́)و
+          if (!AnimalService.GEN1_POKEMON.has(animalKey.toLowerCase())) continue;
+
           if (animalsData[rarity][animalKey]) {
             const val = animalsData[rarity][animalKey].value * (count as number);
             totalAnimals += (count as number);
@@ -189,7 +192,48 @@ class AnimalService {
 
     return badges;
   }
+  private static readonly GEN1_POKEMON = new Set([
+    'bulbasaur', 'ivysaur', 'venusaur', 'charmander', 'charmeleon', 'charizard',
+    'squirtle', 'wartortle', 'blastoise', 'caterpie', 'metapod', 'butterfree',
+    'weedle', 'kakuna', 'beedrill', 'pidgey', 'pidgeotto', 'pidgeot',
+    'rattata', 'raticate', 'spearow', 'fearow', 'ekans', 'arbok',
+    'pikachu', 'raichu', 'sandshrew', 'sandslash', 'nidoran-f', 'nidorina',
+    'nidoqueen', 'nidoran-m', 'nidorino', 'nidoking', 'clefairy', 'clefable',
+    'vulpix', 'ninetales', 'jigglypuff', 'wigglytuff', 'zubat', 'golbat',
+    'oddish', 'gloom', 'vileplume', 'paras', 'parasect', 'venonat',
+    'venomoth', 'diglett', 'dugtrio', 'meowth', 'persian', 'psyduck',
+    'golduck', 'mankey', 'primeape', 'growlithe', 'arcanine', 'poliwag',
+    'poliwhirl', 'poliwrath', 'abra', 'kadabra', 'alakazam', 'machop',
+    'machoke', 'machamp', 'bellsprout', 'weepinbell', 'victreebel', 'tentacool',
+    'tentacruel', 'geodude', 'graveler', 'golem', 'ponyta', 'rapidash',
+    'slowpoke', 'slowbro', 'magnemite', 'magneton', 'farfetchd', 'doduo',
+    'dodrio', 'seel', 'dewgong', 'grimer', 'muk', 'shellder', 'cloyster',
+    'gastly', 'haunter', 'gengar', 'onix', 'drowzee', 'hypno', 'krabby',
+    'kingler', 'voltorb', 'electrode', 'exeggcute', 'exeggutor', 'cubone',
+    'marowak', 'hitmonlee', 'hitmonchan', 'lickitung', 'koffing', 'weezing',
+    'rhyhorn', 'rhydon', 'chansey', 'tangela', 'kangaskhan', 'horsea',
+    'seadra', 'goldeen', 'seaking', 'staryu', 'starmie', 'mr-mime',
+    'scyther', 'jynx', 'electabuzz', 'magmar', 'pinsir', 'tauros',
+    'magikarp', 'gyarados', 'lapras', 'ditto', 'eevee', 'vaporeon',
+    'jolteon', 'flareon', 'porygon', 'omanyte', 'omastar', 'kabuto',
+    'kabutops', 'aerodactyl', 'snorlax', 'articuno', 'zapdos', 'moltres',
+    'dratini', 'dragonair', 'dragonite', 'mewtwo', 'mew', 'missingno', 'shinycharizard'
+  ]);
+
   private imageCache: Map<string, string> = new Map();
+  private spriteCache: Map<string, string> = new Map();
+
+  /**
+   * Sanitize names for PokeAPI (e.g. Mr. Mime -> mr-mime)
+   */
+  private sanitizeName(name: string): string {
+    return name.toLowerCase()
+      .replace(/nidoran\s?♀/g, 'nidoran-f')
+      .replace(/nidoran\s?♂/g, 'nidoran-m')
+      .replace(/farfetch['’]d/g, 'farfetchd')
+      .replace(/mr\.\s?mime/g, 'mr-mime')
+      .replace(/[^a-z0-9-]/g, ''); // Remove other special chars
+  }
 
   /**
    * Fetch Pokémon images using PokeAPI GitHub (100% Reliable!) (｡♥‿♥｡)
@@ -197,10 +241,13 @@ class AnimalService {
   public async getPokemonImage(key: string): Promise<string | null> {
     if (this.imageCache.has(key)) return this.imageCache.get(key) || null;
 
-    let lookup = key.toLowerCase();
+    let lookup = this.sanitizeName(key);
     
+    // Safety check: is it actually a pokemon? (•̀ᴗ•́)و
+    if (!AnimalService.GEN1_POKEMON.has(lookup)) return null;
+
     if (lookup === 'missingno') {
-      const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png'; // Classic Backward Pikachu! (｡♥‿♥｡)
+      const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
       this.imageCache.set(key, url);
       return url;
     }
@@ -212,11 +259,9 @@ class AnimalService {
         isShiny = true;
       }
 
-      // Resolve ID using the cached Pokedex library
       const pokemon = await P.getPokemonByName(lookup as any);
       const id = pokemon.id;
 
-      // Construct high-quality GitHub URL
       const baseUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork';
       const url = isShiny 
         ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${id}.png`
@@ -225,12 +270,13 @@ class AnimalService {
       this.imageCache.set(key, url);
       return url;
     } catch (error: any) {
-      console.error(`Failed to resolve Pokemon image for ${key}:`, error.message);
+      if (error.response?.status !== 404) {
+        console.error(`Failed to resolve Pokemon image for ${key}:`, error.message);
+      }
       return null;
     }
   }
 
-  private spriteCache: Map<string, string> = new Map();
 
   /**
    * Fetch Pokémon sprites for PC Box style UI using PokeAPI GitHub (｡♥‿♥｡)
@@ -238,8 +284,10 @@ class AnimalService {
   public async getPokemonSprite(key: string): Promise<string | null> {
     if (this.spriteCache.has(key)) return this.spriteCache.get(key) || null;
 
-    let lookup = key.toLowerCase();
+    let lookup = this.sanitizeName(key);
     
+    if (!AnimalService.GEN1_POKEMON.has(lookup)) return null;
+
     if (lookup === 'missingno') {
       const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
       this.spriteCache.set(key, url);
@@ -256,7 +304,6 @@ class AnimalService {
       const pokemon = await P.getPokemonByName(lookup as any);
       const id = pokemon.id;
 
-      // Use generation-viii icons for perfect PC Box style
       const url = isShiny
         ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`
         : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-viii/icons/${id}.png`;
@@ -264,7 +311,9 @@ class AnimalService {
       this.spriteCache.set(key, url);
       return url;
     } catch (error: any) {
-      console.error(`Failed to resolve Pokemon sprite for ${key}:`, error.message);
+      if (error.response?.status !== 404) {
+        console.error(`Failed to resolve Pokemon sprite for ${key}:`, error.message);
+      }
       return null;
     }
   }

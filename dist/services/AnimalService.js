@@ -137,6 +137,9 @@ class AnimalService {
             if (animalsData[rarity] && rarityStats[rarity]) {
                 const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
                 for (const [animalKey, count] of animalEntries) {
+                    // Only count valid Pokemon! (•̀ᴗ•́)و
+                    if (!AnimalService.GEN1_POKEMON.has(animalKey.toLowerCase()))
+                        continue;
                     if (animalsData[rarity][animalKey]) {
                         const val = animalsData[rarity][animalKey].value * count;
                         totalAnimals += count;
@@ -168,16 +171,58 @@ class AnimalService {
             badges.push('🌈 **Collector**');
         return badges;
     }
+    static GEN1_POKEMON = new Set([
+        'bulbasaur', 'ivysaur', 'venusaur', 'charmander', 'charmeleon', 'charizard',
+        'squirtle', 'wartortle', 'blastoise', 'caterpie', 'metapod', 'butterfree',
+        'weedle', 'kakuna', 'beedrill', 'pidgey', 'pidgeotto', 'pidgeot',
+        'rattata', 'raticate', 'spearow', 'fearow', 'ekans', 'arbok',
+        'pikachu', 'raichu', 'sandshrew', 'sandslash', 'nidoran-f', 'nidorina',
+        'nidoqueen', 'nidoran-m', 'nidorino', 'nidoking', 'clefairy', 'clefable',
+        'vulpix', 'ninetales', 'jigglypuff', 'wigglytuff', 'zubat', 'golbat',
+        'oddish', 'gloom', 'vileplume', 'paras', 'parasect', 'venonat',
+        'venomoth', 'diglett', 'dugtrio', 'meowth', 'persian', 'psyduck',
+        'golduck', 'mankey', 'primeape', 'growlithe', 'arcanine', 'poliwag',
+        'poliwhirl', 'poliwrath', 'abra', 'kadabra', 'alakazam', 'machop',
+        'machoke', 'machamp', 'bellsprout', 'weepinbell', 'victreebel', 'tentacool',
+        'tentacruel', 'geodude', 'graveler', 'golem', 'ponyta', 'rapidash',
+        'slowpoke', 'slowbro', 'magnemite', 'magneton', 'farfetchd', 'doduo',
+        'dodrio', 'seel', 'dewgong', 'grimer', 'muk', 'shellder', 'cloyster',
+        'gastly', 'haunter', 'gengar', 'onix', 'drowzee', 'hypno', 'krabby',
+        'kingler', 'voltorb', 'electrode', 'exeggcute', 'exeggutor', 'cubone',
+        'marowak', 'hitmonlee', 'hitmonchan', 'lickitung', 'koffing', 'weezing',
+        'rhyhorn', 'rhydon', 'chansey', 'tangela', 'kangaskhan', 'horsea',
+        'seadra', 'goldeen', 'seaking', 'staryu', 'starmie', 'mr-mime',
+        'scyther', 'jynx', 'electabuzz', 'magmar', 'pinsir', 'tauros',
+        'magikarp', 'gyarados', 'lapras', 'ditto', 'eevee', 'vaporeon',
+        'jolteon', 'flareon', 'porygon', 'omanyte', 'omastar', 'kabuto',
+        'kabutops', 'aerodactyl', 'snorlax', 'articuno', 'zapdos', 'moltres',
+        'dratini', 'dragonair', 'dragonite', 'mewtwo', 'mew', 'missingno', 'shinycharizard'
+    ]);
     imageCache = new Map();
+    spriteCache = new Map();
+    /**
+     * Sanitize names for PokeAPI (e.g. Mr. Mime -> mr-mime)
+     */
+    sanitizeName(name) {
+        return name.toLowerCase()
+            .replace(/nidoran\s?♀/g, 'nidoran-f')
+            .replace(/nidoran\s?♂/g, 'nidoran-m')
+            .replace(/farfetch['’]d/g, 'farfetchd')
+            .replace(/mr\.\s?mime/g, 'mr-mime')
+            .replace(/[^a-z0-9-]/g, ''); // Remove other special chars
+    }
     /**
      * Fetch Pokémon images using PokeAPI GitHub (100% Reliable!) (｡♥‿♥｡)
      */
     async getPokemonImage(key) {
         if (this.imageCache.has(key))
             return this.imageCache.get(key) || null;
-        let lookup = key.toLowerCase();
+        let lookup = this.sanitizeName(key);
+        // Safety check: is it actually a pokemon? (•̀ᴗ•́)و
+        if (!AnimalService.GEN1_POKEMON.has(lookup))
+            return null;
         if (lookup === 'missingno') {
-            const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png'; // Classic Backward Pikachu! (｡♥‿♥｡)
+            const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
             this.imageCache.set(key, url);
             return url;
         }
@@ -187,10 +232,8 @@ class AnimalService {
                 lookup = 'charizard';
                 isShiny = true;
             }
-            // Resolve ID using the cached Pokedex library
             const pokemon = await P.getPokemonByName(lookup);
             const id = pokemon.id;
-            // Construct high-quality GitHub URL
             const baseUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork';
             const url = isShiny
                 ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${id}.png`
@@ -199,18 +242,21 @@ class AnimalService {
             return url;
         }
         catch (error) {
-            console.error(`Failed to resolve Pokemon image for ${key}:`, error.message);
+            if (error.response?.status !== 404) {
+                console.error(`Failed to resolve Pokemon image for ${key}:`, error.message);
+            }
             return null;
         }
     }
-    spriteCache = new Map();
     /**
      * Fetch Pokémon sprites for PC Box style UI using PokeAPI GitHub (｡♥‿♥｡)
      */
     async getPokemonSprite(key) {
         if (this.spriteCache.has(key))
             return this.spriteCache.get(key) || null;
-        let lookup = key.toLowerCase();
+        let lookup = this.sanitizeName(key);
+        if (!AnimalService.GEN1_POKEMON.has(lookup))
+            return null;
         if (lookup === 'missingno') {
             const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
             this.spriteCache.set(key, url);
@@ -224,7 +270,6 @@ class AnimalService {
             }
             const pokemon = await P.getPokemonByName(lookup);
             const id = pokemon.id;
-            // Use generation-viii icons for perfect PC Box style
             const url = isShiny
                 ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`
                 : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-viii/icons/${id}.png`;
@@ -232,7 +277,9 @@ class AnimalService {
             return url;
         }
         catch (error) {
-            console.error(`Failed to resolve Pokemon sprite for ${key}:`, error.message);
+            if (error.response?.status !== 404) {
+                console.error(`Failed to resolve Pokemon sprite for ${key}:`, error.message);
+            }
             return null;
         }
     }

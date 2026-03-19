@@ -15,7 +15,7 @@ const GachaHistorySchema: Schema = new Schema({
   itemName: { type: String, required: true },
   game: { type: String, required: true },
   rarity: { type: Number, required: true },
-  timestamp: { type: Date, default: Date.now, index: true },
+  timestamp: { type: Date, default: Date.now },
 });
 
 // Set auto-delete after 7 days to keep the database clean

@@ -1,6 +1,13 @@
 const winston = require('winston');
 const DailyRotateFile = require('winston-daily-rotate-file');
 const path = require('path');
+const fs = require('fs');
+
+// Ensure logs directory exists to avoid winston warnings
+const logDir = path.join(process.cwd(), 'logs');
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
 
 // Console colors for our custom methods (keeping your beautiful palette!)
 const colors = {
@@ -70,7 +77,15 @@ const logger = {
   // Winston-powered methods
   info: (msg) => winstonLogger.info(msg),
   warn: (msg) => winstonLogger.warn(msg),
-  error: (msg, err) => winstonLogger.error(msg, { stack: err?.stack || err }),
+  error: (msg, err) => {
+    if (err instanceof Error) {
+      winstonLogger.error(msg, { stack: err.stack });
+    } else if (err) {
+      winstonLogger.error(`${msg}: ${err}`);
+    } else {
+      winstonLogger.error(msg);
+    }
+  },
   debug: (msg) => winstonLogger.debug(msg),
   success: (msg) => winstonLogger.info(`${colors.green}✓${colors.reset} ${msg}`),
 
