@@ -9,7 +9,6 @@ import {
   Dog, 
   Sparkles, 
   ArrowLeft,
-  Terminal,
   ChevronRight,
   ShieldCheck,
   TrendingUp
@@ -17,17 +16,10 @@ import {
 import CharIcon from '../components/CharIcon';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, 
-  BarChart, Bar, XAxis, YAxis, Tooltip, AreaChart, Area
+  Tooltip, AreaChart, Area, XAxis, YAxis
 } from 'recharts';
 
 const GAME_LABEL = { genshin:'Genshin', hsr:'HSR', wuwa:'Wuwa', zzz:'ZZZ' };
-const GAME_BADGE = { 
-  genshin:'bg-green/10 text-green border-green/20', 
-  hsr:'bg-pink/10 text-pink border-pink/20', 
-  wuwa:'bg-cyan/10 text-cyan border-cyan/20', 
-  zzz:'bg-gold/10 text-gold border-gold/20' 
-};
-
 const COLORS = {
   '5': '#fbbf24', // Gold
   '4': '#a78bfa', // Purple
@@ -40,6 +32,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [gameFilter, setGameFilter] = useState('all');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -49,13 +42,19 @@ export default function ProfilePage() {
       .catch(() => { setNotFound(true); setLoading(false); });
   }, [userId]);
 
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   if (loading) return (
     <div className="page flex-center py-40">
       <div className="spinner" />
     </div>
   );
 
-  if (notFound) return (
+  if (notFound || !p) return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -77,46 +76,51 @@ export default function ProfilePage() {
     { name: '3★', value: p.characters.filter(c => c.rarity === '3').length },
   ].filter(d => d.value > 0);
 
-  // Mock progression data for the chart
   const progressData = [
-    { name: 'Mon', xp: 400 },
-    { name: 'Tue', xp: 700 },
-    { name: 'Wed', xp: 500 },
-    { name: 'Thu', xp: 900 },
-    { name: 'Fri', xp: 1200 },
-    { name: 'Sat', xp: 1500 },
+    { name: 'Mon', xp: 400 }, { name: 'Tue', xp: 700 }, { name: 'Wed', xp: 500 },
+    { name: 'Thu', xp: 900 }, { name: 'Fri', xp: 1200 }, { name: 'Sat', xp: 1500 },
     { name: 'Sun', xp: p.experience % 2000 },
   ];
 
+  const xpPct = p.experience > 0 ? (p.experience % 1000) / 10 : 0;
+  const games = ['all', 'genshin', 'hsr', 'wuwa', 'zzz'];
+  const chars = gameFilter === 'all' ? p.characters : p.characters.filter(c => c.game?.toLowerCase() === gameFilter);
+
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="page"
-    >
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="page">
       <div className="wrap">
-        {/* Breadcrumbs */}
-        <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text-dim mb-8">
-          <Link to="/leaderboard" className="hover:text-purple-light transition-colors">Leaderboard</Link>
-          <ChevronRight size={12} />
-          <span className="text-text-3">Profile</span>
-          <ChevronRight size={12} />
-          <span className="text-purple-light">{p.username}</span>
+        {/* Breadcrumbs & Share */}
+        <div className="flex items-center justify-between gap-2 mb-8">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text-dim">
+            <Link to="/leaderboard" className="hover:text-purple-light transition-colors">Leaderboard</Link>
+            <ChevronRight size={12} />
+            <span className="text-text-3">Profile</span>
+            <ChevronRight size={12} />
+            <span className="text-purple-light">{p.username}</span>
+          </div>
+
+          <button 
+            onClick={handleShare}
+            className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-text-3 hover:text-purple-light transition-colors group"
+          >
+            <Sparkles size={14} className={copied ? "text-green animate-pulse" : "group-hover:animate-bounce"} />
+            <span>{copied ? 'Copied Link!' : 'Share Profile'}</span>
+          </button>
         </div>
 
         {/* Profile Header Card */}
         <motion.div 
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="card-glass p-8 md:p-10 mb-12 relative overflow-hidden group"
+          className="card-glass p-0 mb-12 relative overflow-hidden group"
         >
-          <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none transform group-hover:scale-110 transition-transform duration-700">
-            <User size={200} />
+          <div className="h-24 bg-gradient-to-r from-purple/20 via-cyan/20 to-purple/20 relative">
+            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
           </div>
-          
-          <div className="flex flex-col md:flex-row gap-10 items-center md:items-start relative z-10">
+
+          <div className="p-8 md:p-10 -mt-12 relative z-10 flex flex-col md:flex-row gap-8 items-center md:items-start">
             <div className="relative">
-              <div className="w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-gradient-to-br from-purple to-cyan flex items-center justify-center text-4xl md:text-5xl font-black text-white shadow-2xl shadow-purple/20 border-4 border-white/10">
+              <div className="w-24 h-24 md:w-32 md:h-32 rounded-3xl bg-gradient-to-br from-purple to-cyan flex items-center justify-center text-4xl md:text-5xl font-black text-white shadow-2xl shadow-purple/20 border-4 border-bg-2">
                 {p.username[0]?.toUpperCase()}
               </div>
               <div className="absolute -bottom-2 -right-2 bg-bg-2 border-2 border-border p-2 rounded-xl text-gold shadow-lg">
@@ -124,20 +128,15 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="flex-1 text-center md:text-left">
+            <div className="flex-1 text-center md:text-left md:mt-12">
               <h1 className="text-4xl md:text-5xl font-black tracking-tighter mb-4 grad">{p.username}</h1>
-              
               <div className="flex flex-wrap justify-center md:justify-start gap-3 mb-8">
-                <span className="badge-v3 bg-purple/10 text-purple-light border-purple/20 px-3 py-1.5 text-xs">
-                  Level {p.level}
-                </span>
+                <span className="badge-v3 bg-purple/10 text-purple-light border-purple/20 px-3 py-1.5 text-xs">Level {p.level}</span>
                 <div className="flex items-center gap-2 bg-white/5 border border-white/5 px-3 py-1.5 rounded-full text-gold font-bold text-xs">
-                  <Coins size={14} />
-                  <span>{p.balance.toLocaleString()}</span>
+                  <Coins size={14} /> <span>{p.balance.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center gap-2 bg-white/5 border border-white/5 px-3 py-1.5 rounded-full text-cyan-light font-bold text-xs">
-                  <Sparkles size={14} />
-                  <span>{p.star_dust.toLocaleString()} Star Dust</span>
+                  <Sparkles size={14} /> <span>{p.star_dust.toLocaleString()} Star Dust</span>
                 </div>
               </div>
 
@@ -150,20 +149,19 @@ export default function ProfilePage() {
                   <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${xpPct}%` }}
-                    transition={{ duration: 1, ease: "easeOut" }}
                     className="h-full bg-gradient-to-r from-purple to-cyan rounded-full" 
                   />
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-3 md:flex md:flex-col gap-8 text-center md:text-right">
+            <div className="grid grid-cols-3 md:flex md:flex-col gap-6 text-center md:text-right md:mt-12">
               <div className="ms-v3">
                 <span className="block text-2xl font-black text-text mb-1">{p.characterCount}</span>
                 <span className="block text-[10px] font-bold uppercase tracking-widest text-text-3">Characters</span>
               </div>
               <div className="ms-v3">
-                <span className="block text-2xl font-black text-text mb-1">{totalPoke.toLocaleString()}</span>
+                <span className="block text-2xl font-black text-text mb-1">{p.pokemonCount?.toLocaleString() || 0}</span>
                 <span className="block text-[10px] font-bold uppercase tracking-widest text-text-3">Pokémon</span>
               </div>
               <div className="ms-v3">
@@ -174,35 +172,22 @@ export default function ProfilePage() {
           </div>
         </motion.div>
 
-        {/* --- Stats Dashboard --- */}
+        {/* Stats Dashboard */}
         <section className="mb-20">
           <div className="flex items-center gap-3 mb-8">
             <TrendingUp size={24} className="text-purple-light" />
             <h2 className="text-xl font-bold uppercase tracking-widest text-text-2">Performance & Stats</h2>
           </div>
-          
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Rarity Chart */}
             <div className="card-glass p-8 flex flex-col items-center">
               <h3 className="text-sm font-bold uppercase tracking-widest text-text-dim mb-6">Collection Rarity</h3>
               <div className="h-[200px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie
-                      data={statsData}
-                      innerRadius={60}
-                      outerRadius={80}
-                      paddingAngle={5}
-                      dataKey="value"
-                    >
-                      {statsData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[entry.name[0]] || '#8884d8'} />
-                      ))}
+                    <Pie data={statsData} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
+                      {statsData.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[entry.name[0]] || '#8884d8'} />)}
                     </Pie>
-                    <Tooltip 
-                      contentStyle={{ background: '#1a1a1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                      itemStyle={{ color: '#fff' }}
-                    />
+                    <Tooltip contentStyle={{ background: '#1a1a1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -216,53 +201,37 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Progress Chart */}
             <div className="card-glass p-8 lg:col-span-2">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-sm font-bold uppercase tracking-widest text-text-dim">Experience Velocity</h3>
-                <span className="text-[10px] font-bold text-cyan bg-cyan/10 px-2 py-1 rounded">+24% this week</span>
-              </div>
+              <h3 className="text-sm font-bold uppercase tracking-widest text-text-dim mb-6">Experience Velocity</h3>
               <div className="h-[200px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={progressData}>
                     <defs>
                       <linearGradient id="colorXp" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/><stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
                     <XAxis dataKey="name" stroke="rgba(255,255,255,0.2)" fontSize={10} axisLine={false} tickLine={false} />
-                    <Tooltip 
-                      contentStyle={{ background: '#1a1a1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }}
-                    />
+                    <Tooltip contentStyle={{ background: '#1a1a1e', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px' }} />
                     <Area type="monotone" dataKey="xp" stroke="#8b5cf6" strokeWidth={3} fillOpacity={1} fill="url(#colorXp)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-            {/* Gacha Luck Gauge */}
             <div className="card-glass p-8 lg:col-span-3 flex flex-col md:flex-row items-center gap-10">
               <div className="flex-1">
                 <h3 className="text-sm font-bold uppercase tracking-widest text-text-dim mb-2">Gacha Luck Meter</h3>
-                <p className="text-xs text-text-3 mb-6">Current 5★ Pity Status: You are getting closer to a legendary pull!</p>
                 <div className="relative h-4 bg-white/5 rounded-full overflow-hidden border border-white/5 mb-2">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: `${(p.pity ?? 0) / 90 * 100}%` }}
-                    className="h-full bg-gradient-to-r from-gold to-yellow-200 shadow-[0_0_15px_rgba(251,191,36,0.4)]"
-                  />
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${(p.pity ?? 0) / 90 * 100}%` }} className="h-full bg-gradient-to-r from-gold to-yellow-200" />
                 </div>
                 <div className="flex justify-between text-[10px] font-bold text-text-dim">
-                  <span>0 PITY</span>
-                  <span className="text-gold">{p.pity ?? 0} / 90 PITY</span>
-                  <span>GUARANTEED</span>
+                  <span>0 PITY</span><span className="text-gold">{p.pity ?? 0} / 90 PITY</span><span>GUARANTEED</span>
                 </div>
               </div>
               <div className="bg-white/5 p-6 rounded-2xl border border-white/5 text-center min-w-[150px]">
                 <div className="text-xs font-bold text-text-3 uppercase mb-1">Luck Rating</div>
                 <div className="text-3xl font-black text-gold">S+</div>
-                <div className="text-[10px] font-bold text-text-dim mt-2">Top 5% Players</div>
               </div>
             </div>
           </div>
@@ -271,63 +240,25 @@ export default function ProfilePage() {
         {/* Characters Grid */}
         <section className="mb-20">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
-            <div className="flex items-center gap-3">
-              <Sparkles className="text-purple-light" />
-              <h2 className="text-xl font-bold uppercase tracking-widest text-text-2">Character Collection</h2>
-            </div>
-            
+            <h2 className="text-xl font-bold uppercase tracking-widest text-text-2">Character Collection</h2>
             <div className="flex flex-wrap gap-1.5 bg-white/5 p-1 rounded-xl border border-white/5">
               {games.map(g => (
-                <button 
-                  key={g} 
-                  className={`btn-tab-v3 px-4 py-2 ${gameFilter === g ? 'active' : ''}`}
-                  onClick={() => setGameFilter(g)}
-                >
+                <button key={g} className={`btn-tab-v3 px-4 py-2 ${gameFilter === g ? 'active' : ''}`} onClick={() => setGameFilter(g)}>
                   {g === 'all' ? 'All' : GAME_LABEL[g] || g}
                 </button>
               ))}
             </div>
           </div>
-
-          {chars.length === 0 ? (
-            <div className="card-glass p-20 text-center">
-              <div className="text-4xl mb-4">🎭</div>
-              <p className="text-text-3 font-bold uppercase tracking-widest text-xs">No characters in this category</p>
-            </div>
-          ) : (
+          {chars.length === 0 ? <p className="text-text-3 text-center py-20">No characters found</p> : (
             <div className="grid-mini-chars">
               {chars.map((c, i) => (
-                <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  key={i} 
-                  className={`card-glass overflow-hidden group hover:border-purple/30 transition-all rarity-border-${c.rarity}`}
-                >
-                  <div className={`h-1 bg-gradient-to-r ${c.rarity === 5 ? 'from-gold to-yellow-200' : 'from-purple to-purple-light'}`} />
-                  <div className="p-4 text-center">
-                    <div className="text-4xl mb-3 group-hover:scale-125 transition-transform duration-300 transform-gpu flex justify-center">
-                      <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-white/10 shadow-lg">
-                        <CharIcon name={c.name} game={c.game} rarity={c.rarity} emoji={c.emoji} />
-                      </div>
-                    </div>
-                    <div className="text-xs font-black mb-2 truncate">{c.name}</div>
-                    <div className="flex flex-wrap justify-center gap-1">
-                      <span className={`text-[9px] font-black px-1.5 py-0.5 rounded border ${c.rarity === 5 ? 'border-gold/30 text-gold bg-gold/5' : 'border-purple/30 text-purple-light bg-purple/5'}`}>
-                        {c.rarity}★
-                      </span>
-                      {c.game && (
-                        <span className={`text-[9px] font-black px-1.5 py-0.5 rounded border border-white/5 bg-white/5 text-text-dim`}>
-                          {c.game.toUpperCase()}
-                        </span>
-                      )}
-                    </div>
-                    {c.count > 1 && (
-                      <div className="mt-2 inline-block bg-cyan/10 text-cyan text-[10px] font-black px-2 py-0.5 rounded-full border border-cyan/20">
-                        ×{c.count} Owned
-                      </div>
-                    )}
+                <div key={i} className={`card-glass p-4 text-center rarity-border-${c.rarity}`}>
+                  <div className="w-16 h-16 mx-auto mb-3 rounded-2xl overflow-hidden border-2 border-white/10">
+                    <CharIcon name={c.name} game={c.game} rarity={c.rarity} emoji={c.emoji} />
                   </div>
-                </motion.div>
+                  <div className="text-xs font-black truncate">{c.name}</div>
+                  <div className="text-[9px] font-black mt-1 text-text-dim uppercase">{c.rarity}★ {c.game}</div>
+                </div>
               ))}
             </div>
           )}
@@ -335,36 +266,16 @@ export default function ProfilePage() {
 
         {/* Pokémon Collection */}
         <section>
-          <div className="flex items-center gap-3 mb-8">
-            <Dog className="text-cyan-light" />
-            <h2 className="text-xl font-bold uppercase tracking-widest text-text-2">Pokémon Collection</h2>
-          </div>
-
-          {Object.keys(p.pokemon).length === 0 ? (
-            <div className="card-glass p-20 text-center">
-              <div className="text-4xl mb-4">🐾</div>
-              <p className="text-text-3 font-bold uppercase tracking-widest text-xs">No Pokémon caught yet</p>
-            </div>
-          ) : (
+          <h2 className="text-xl font-bold uppercase tracking-widest text-text-2 mb-8">Pokémon Collection</h2>
+          {Object.keys(p.pokemon || {}).length === 0 ? <p className="text-text-3 py-20 text-center">No Pokémon caught yet</p> : (
             <div className="flex flex-col gap-6">
               {Object.entries(p.pokemon).map(([rarity, group]) => (
                 <div key={rarity} className="card-glass p-6">
-                  <div className="text-xs font-black uppercase tracking-widest text-text-dim mb-4 flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${rarity.toLowerCase().includes('legendary') ? 'bg-gold' : 'bg-cyan'}`} />
-                    {rarity}
-                  </div>
+                  <div className="text-xs font-black uppercase text-text-dim mb-4">{rarity}</div>
                   <div className="flex flex-wrap gap-2">
                     {Object.entries(group).map(([name, count]) => (
-                      <div 
-                        key={name} 
-                        className="bg-white/5 border border-white/5 px-4 py-2 rounded-xl text-xs font-bold text-text-2 hover:border-cyan/30 transition-colors flex items-center gap-2"
-                      >
-                        {name}
-                        {count > 1 && (
-                          <span className="bg-cyan-light/10 text-cyan-light px-1.5 py-0.5 rounded text-[10px] font-black border border-cyan-light/20">
-                            ×{count}
-                          </span>
-                        )}
+                      <div key={name} className="bg-white/5 border border-white/5 px-4 py-2 rounded-xl text-xs font-bold text-text-2">
+                        {name} {count > 1 && <span className="text-cyan ml-1">×{count}</span>}
                       </div>
                     ))}
                   </div>
@@ -376,18 +287,9 @@ export default function ProfilePage() {
       </div>
 
       <style>{`
-        .grid-mini-chars {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-          gap: 12px;
-        }
-        .from-purple { --tw-gradient-from: #8b5cf6; --tw-gradient-to: rgb(139 92 246 / 0); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
-        .to-cyan { --tw-gradient-to: #22d3ee; }
-        .bg-gradient-to-br { background-image: linear-gradient(to bottom right, var(--tw-gradient-stops)); }
-        .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
-        .shadow-purple\\/20 { box-shadow: 0 20px 25px -5px rgba(139, 92, 246, 0.2), 0 8px 10px -6px rgba(139, 92, 246, 0.2); }
-        .rarity-border-5 { border-color: rgba(251, 191, 36, 0.2); }
-        .rarity-border-4 { border-color: rgba(139, 92, 246, 0.2); }
+        .grid-mini-chars { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
+        .rarity-border-5 { border-color: rgba(251, 191, 36, 0.3); }
+        .rarity-border-4 { border-color: rgba(139, 92, 246, 0.3); }
       `}</style>
     </motion.div>
   );

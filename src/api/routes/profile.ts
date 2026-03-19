@@ -4,6 +4,35 @@ const registry = require('../../utils/registry.js');
 
 const router = Router();
 
+// GET /api/profile/search?query=...
+router.get('/search', async (req: Request, res: Response) => {
+  try {
+    const query = String(req.query.query || '').trim();
+    if (!query) return res.json({ success: true, data: [] });
+
+    // Search by ID or Username (case-insensitive fuzzy)
+    const users = await User.find({
+      $or: [
+        { id: query },
+        { username: { $regex: query, $options: 'i' } }
+      ]
+    })
+    .limit(10)
+    .select('id username level')
+    .lean();
+
+    const formatted = users.map((u: any) => ({
+      userId: u.id,
+      username: u.username || 'Unknown Traveler',
+      level: u.level || 1,
+    }));
+
+    res.json({ success: true, data: formatted });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET /api/profile/:userId
 router.get('/:userId', async (req: Request, res: Response) => {
   try {
