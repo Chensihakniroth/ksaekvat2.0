@@ -5,6 +5,16 @@
 
 const cacheStore = new Map();
 
+// Periodic cleanup of expired items to prevent memory leaks
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of cacheStore.entries()) {
+    if (entry.expiry < now) {
+      cacheStore.delete(key);
+    }
+  }
+}, 3600_000); // Clean every hour
+
 const cache = {
   /**
    * Get data from cache or fetch new data and store it.
@@ -17,16 +27,17 @@ const cache = {
     const entry = cacheStore.get(key);
 
     if (entry && entry.expiry > now) {
-      console.log(`[Cache] HIT: "${key}" (Saving ~150ms)`);
       return entry.data;
     }
 
-    console.log(`[Cache] MISS: "${key}" (Fetching from Source)`);
     const data = await fetchFn();
     
+    // Safety: Don't cache undefined/null results for long periods
+    const effectiveTtl = data === null || data === undefined ? 5000 : ttlMs;
+
     cacheStore.set(key, {
       data,
-      expiry: now + ttlMs
+      expiry: now + effectiveTtl
     });
 
     return data;
@@ -37,6 +48,13 @@ const cache = {
    */
   invalidate: (key) => {
     cacheStore.delete(key);
+  },
+
+  /**
+   * Clear all cached data
+   */
+  clear: () => {
+    cacheStore.clear();
   }
 };
 

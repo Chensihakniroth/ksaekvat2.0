@@ -29,7 +29,6 @@ logger.header('System Boot Sequence');
 // Initialize Client
 export interface ExtendedClient extends Client {
   commands: Collection<string, any>;
-  slashCommands: Collection<string, any>;
 }
 
 const client = new Client({
@@ -48,50 +47,6 @@ const client = new Client({
 }) as ExtendedClient;
 
 client.commands = new Collection();
-client.slashCommands = new Collection();
-
-// Auto-deploy slash commands
-async function deployCommands() {
-  const { REST, Routes } = require('discord.js');
-  logger.section('Slash Deployment');
-  const prog = logger.loader('Preparing slash commands');
-
-  try {
-    const commands: any[] = [];
-    const commandsPath = path.join(__dirname, '../commands/slash');
-
-    if (!fs.existsSync(commandsPath)) {
-      prog.fail('Folder missing');
-      return;
-    }
-
-    const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
-
-    for (const file of commandFiles) {
-      try {
-        delete require.cache[require.resolve(`../commands/slash/${file}`)];
-        const command = require(`../commands/slash/${file}`);
-        if (command.data) {
-          commands.push(command.data.toJSON());
-        }
-      } catch (error: any) {
-        logger.warn(`Error loading ${file}: ${error.message}`);
-      }
-    }
-
-    if (commands.length === 0) {
-      prog.fail('No commands found');
-      return;
-    }
-
-    const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN || '');
-    await rest.put(Routes.applicationCommands(config.clientId), { body: commands });
-    prog.done();
-    logger.item('Deployed', commands.length, '\x1b[32m');
-  } catch (error: any) {
-    prog.fail(error.message);
-  }
-}
 
 // Database Connection
 async function connectDB() {
@@ -122,9 +77,6 @@ async function bootstrap() {
   require('../handlers/commandHandler.js')(client);
   require('../handlers/eventHandler.js')(client);
 
-  // 3. Deploy Slash
-  await deployCommands();
-
   // 4. HTTP server + API + Dashboard
   logger.section('Web Server');
   const app = express();
@@ -147,7 +99,7 @@ async function bootstrap() {
     logger.warn('dashboard/dist not found. Run: cd dashboard && npm run build');
   }
 
-  const port = process.env.PORT || 8080;
+  const port = env.PORT || 8080;
   app.listen(port, '0.0.0.0', () => {
     logger.success(`Server active on port ${port}`);
   });

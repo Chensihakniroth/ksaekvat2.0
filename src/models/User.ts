@@ -84,11 +84,11 @@ const QuestSchema: Schema = new Schema({
 const UserSchema: Schema = new Schema({
   id: { type: String, required: true, unique: true, index: true }, // Discord ID
   username: { type: String, default: 'Unknown Traveler' }, // Discord Username
-  balance: { type: Number, default: 1000 },
+  balance: { type: Number, default: 1000, index: true },
   star_dust: { type: Number, default: 0 },
-  level: { type: Number, default: 1 },
+  level: { type: Number, default: 1, index: true },
   worldLevel: { type: Number, default: 1 },
-  experience: { type: Number, default: 0 },
+  experience: { type: Number, default: 0, index: true },
 
   // Rewards & Gacha
   dailyClaimed: { type: Boolean, default: false },

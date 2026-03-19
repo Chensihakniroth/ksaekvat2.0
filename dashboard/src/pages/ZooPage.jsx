@@ -30,9 +30,36 @@ export default function ZooPage() {
             </div>
             <h1 className="header-title">ZOO <span className="text-gradient">REGISTRY</span></h1>
           </div>
-          <div className="header-meta glass-panel">
-            <Activity size={12} className="text-green-400" />
-            <span>{registry.length} Species Cataloged</span>
+          
+          <div className="collection-stats glass-panel">
+            <div className="stats-main">
+              <div className="stats-label">GLOBAL_COMPLETION_INDEX</div>
+              <div className="stats-progress-wrap">
+                <div className="stats-progress-bar">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    animate={{ width: '100%' }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                    className="progress-fill shadow-[0_0_15px_var(--green)]" 
+                  />
+                </div>
+                <span className="stats-percent">100%</span>
+              </div>
+            </div>
+            <div className="stats-grid">
+              <div className="stat-mini">
+                <span className="mini-label">SPECIES</span>
+                <span className="mini-val text-green-400">{registry.length}</span>
+              </div>
+              <div className="stat-mini">
+                <span className="mini-label">LEGENDARY</span>
+                <span className="mini-val text-yellow-400">{registry.filter(a => a.rarity === 'legendary').length}</span>
+              </div>
+              <div className="stat-mini">
+                <span className="mini-label">MYTHICAL</span>
+                <span className="mini-val text-red-500">{registry.filter(a => a.rarity === 'priceless').length}</span>
+              </div>
+            </div>
           </div>
         </div>
 

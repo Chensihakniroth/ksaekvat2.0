@@ -9,6 +9,12 @@ const axios = require('axios');
 const conversationMemory = new Map();
 const MAX_MEMORY = 20;
 
+// Track active command requests to prevent spam/overlap! (｡♥‿♥｡)
+const activeRequests = new Set();
+
+// Progressive spam penalty tracking! (ᗒᗣᗕ)
+const spamStrikes = new Map();
+
 module.exports = {
   name: 'messageCreate',
   async execute(message, client) {
@@ -93,8 +99,80 @@ module.exports = {
     if (commandName) {
       const command = client.commands.get(commandName);
       if (command) {
+        const userId = message.author.id;
+        const now = Date.now();
+
+        // --- 2.3 SPAM PENALTY ENGINE (Mommy's Mood) ---
+        let strikeData = spamStrikes.get(userId) || { count: 0, lastSpam: 0 };
+        
+        // Reset strikes if they've been good for 30 seconds
+        if (now - strikeData.lastSpam > 30000) {
+          strikeData = { count: 0, lastSpam: now };
+        }
+
+        const handleSpam = (penaltyTime, title, desc) => {
+          const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, penaltyTime);
+          
+          // Only reply if it's the first few strikes to avoid bot-spamming-about-spam
+          if (strikeData.count < 4) {
+            message.reply({
+              embeds: [{
+                color: parseInt(config.colors.warning.slice(1), 16),
+                title: title,
+                description: desc + `\n\n**Wait time: ${(timeLeft / 1000).toFixed(1)}s**`,
+                timestamp: new Date(),
+              }],
+            }).catch(() => {});
+          }
+
+          strikeData.count++;
+          strikeData.lastSpam = now;
+          spamStrikes.set(userId, strikeData);
+          cooldowns.setCooldown(`GLOBAL-${userId}`);
+          return true;
+        };
+
+        // 1. Check Concurrency Lock
+        if (activeRequests.has(userId)) {
+          cooldowns.setCooldown(`GLOBAL-${userId}`);
+          return; 
+        }
+
+        // 2. Check Strikes
+        const GLOBAL_3S = 3000;
+        const GLOBAL_8S = 8000;
+        const GLOBAL_20S = 20000;
+        const GLOBAL_60S = 60000;
+
+        if (strikeData.count >= 3 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_60S)) {
+          return handleSpam(GLOBAL_60S, '🚫 MOMMY IS ANGRY! (ಠ_ಠ)', 'You are being put in timeout for **60 seconds**, darling. No more spamming! (ಥ﹏ಥ)');
+        } else if (strikeData.count === 2 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_20S)) {
+          return handleSpam(GLOBAL_20S, '⏳ Really, sweetie? (｡•́︿•̀｡)', "Mommy told you to slow down! Now you have to wait **20 seconds**. Don't make me disappointed! (っ˘ω˘ς)");
+        } else if (strikeData.count === 1 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_8S)) {
+          return handleSpam(GLOBAL_8S, '⏳ Slow down, darling! (｡♥‿♥｡)', "You're going a bit too fast! Please wait **8 seconds** before trying again. (◕‿◕✿)");
+        } else if (cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_3S)) {
+          // Strike 0 -> 1
+          strikeData.count = 1;
+          strikeData.lastSpam = now;
+          spamStrikes.set(userId, strikeData);
+          const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, GLOBAL_3S);
+          return message.reply({
+            embeds: [{
+              color: parseInt(config.colors.warning.slice(1), 16),
+              title: '⏳ Wait a moment, sweetie (｡♥‿♥｡)',
+              description: `Mommy needs a 3-second break too! Please wait **${(timeLeft / 1000).toFixed(1)}s** more. (っ˘ω˘ς)`,
+              timestamp: new Date(),
+            }],
+          });
+        }
+
+        // 3. Clear to go!
+        cooldowns.setCooldown(`GLOBAL-${userId}`);
+        activeRequests.add(userId);
+
         // Check if user is admin for admin-only commands
         if (command.adminOnly && !config.adminIds.includes(message.author.id)) {
+          activeRequests.delete(userId); // Important: clean up if denied!
           return message.reply({
             embeds: [
               {
@@ -112,6 +190,7 @@ module.exports = {
         if (command.cooldown) {
           const cooldownKey = `${message.author.id}-${commandName}`;
           if (cooldowns.isOnCooldown(cooldownKey, command.cooldown)) {
+            activeRequests.delete(userId); // Clean up
             const timeLeft = cooldowns.getTimeLeft(cooldownKey, command.cooldown);
             return message.reply({
               embeds: [
@@ -138,10 +217,9 @@ module.exports = {
           handleMessageListening(message, client).catch((e) =>
             logger.error('Background listener error', e)
           );
-          return;
         } catch (error) {
           logger.error(`Error executing command ${commandName}:`, error);
-          return message.reply({
+          message.reply({
             embeds: [
               {
                 color: parseInt(config.colors.error.slice(1), 16),
@@ -152,7 +230,10 @@ module.exports = {
               },
             ],
           });
+        } finally {
+          activeRequests.delete(userId);
         }
+        return;
       }
     }
 

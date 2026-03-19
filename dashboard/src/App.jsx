@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 // Layout Components (Loaded Immediately)
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import GlobalTicker from './components/GlobalTicker';
 
 // Page Components (Lazy Loaded for Performance) ✂️
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -44,7 +45,9 @@ function App() {
           <div className="bg-orb-cyan" />
         </div>
         
-        <Navbar />
+        <header className="fixed-top-section">
+          <Navbar />
+        </header>
         
         <main className="main-content">
           <Suspense fallback={<LoadingGateway />}>
@@ -59,6 +62,7 @@ function App() {
         </main>
 
         <Footer />
+        <GlobalTicker />
       </div>
     </BrowserRouter>
   );
