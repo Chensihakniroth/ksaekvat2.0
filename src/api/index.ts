@@ -1,6 +1,10 @@
 import { Router, Request, Response, NextFunction } from 'express';
+const compression = require('compression');
 
 const router = Router();
+
+// Enable Gzip compression
+router.use(compression());
 
 // --- CORS and basic headers ---
 router.use((_req: Request, res: Response, next: NextFunction) => {

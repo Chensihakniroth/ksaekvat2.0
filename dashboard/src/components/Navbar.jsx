@@ -1,7 +1,7 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Trophy, Users, PawPrint, Menu, X, Search } from 'lucide-react';
+import { LayoutDashboard, Trophy, Users, PawPrint, Menu, X, Search, Clock, Shield, Activity } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import './Navbar.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -9,123 +9,138 @@ export default function Navbar() {
   const [search, setSearch] = useState('');
   const [results, setResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [currentTime, setCurrentClock] = useState(new Date());
+  
   const searchRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const timer = setInterval(() => setCurrentClock(new Date()), 1000);
+    
     window.addEventListener('scroll', handleScroll);
-
-    const handleClickOutside = (e) => {
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
-        setShowResults(false);
-      }
-    };
+    const handleClickOutside = (e) => { if (searchRef.current && !searchRef.current.contains(e.target)) setShowResults(false); };
     window.addEventListener('mousedown', handleClickOutside);
-
+    
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousedown', handleClickOutside);
+      clearInterval(timer);
     };
   }, []);
 
-  // Debounced search
   useEffect(() => {
     const term = search.trim();
-    if (term.length < 2) {
-      setResults([]);
-      setShowResults(false);
-      return;
-    }
-
+    if (term.length < 2) { setResults([]); setShowResults(false); return; }
+    
     const delay = setTimeout(() => {
-      fetch(`/api/profile/search?query=${encodeURIComponent(term)}`)
-        .then(r => r.json())
-        .then(res => {
-          if (res.success) {
-            setResults(res.data);
-            setShowResults(true);
-          }
-        });
+      fetch(`/api/profile/search?query=${encodeURIComponent(term)}`).then(r => r.json()).then(res => {
+        if (res.success) {
+          setResults(res.data); setShowResults(true);
+        }
+      }).catch(err => console.error('[Search] Fetch failed:', err));
     }, 300);
-
     return () => clearTimeout(delay);
   }, [search]);
 
   const handleSelect = (userId) => {
-    setSearch('');
-    setShowResults(false);
-    setMobileMenuOpen(false);
+    setSearch(''); setShowResults(false); setMobileMenuOpen(false);
     navigate(`/profile/${userId}`);
   };
 
   return (
-    <header className={`nav-v3 ${isScrolled ? 'scrolled' : ''}`}>
-      <div className="wrap nav-inner-v3">
-        <Link to="/" className="nav-brand-v3" onClick={() => setMobileMenuOpen(false)}>
-          <div className="nav-logo-v3">✦</div>
-          <span className="nav-name-v3">KsaeKvat</span>
-        </Link>
-
-        {/* Global Search */}
-        <div className="nav-search-v3" ref={searchRef}>
-          <div className="search-input-wrapper">
-            <Search className="search-icon-nav" size={16} />
-            <input 
-              type="text" 
-              className="search-field" 
-              placeholder="Find player..." 
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              onFocus={() => search.length >= 2 && setShowResults(true)}
-            />
-          </div>
-
-          {showResults && (
-            <div className="search-results-v3">
-              {results.length === 0 ? (
-                <div className="no-res">No players found (ᗒᗣᗕ)</div>
-              ) : (
-                results.map(r => (
-                  <div 
-                    key={r.userId} 
-                    className="search-result-item" 
-                    onClick={() => handleSelect(r.userId)}
-                  >
-                    <div className="res-avatar">{r.username[0]?.toUpperCase()}</div>
-                    <div className="res-info">
-                      <span className="res-name">{r.username}</span>
-                      <span className="res-meta">Level {r.level} • ID: {r.userId}</span>
-                    </div>
-                  </div>
-                ))
-              )}
+    <header className={`navbar-v3 ${isScrolled ? 'scrolled' : ''}`}>
+      <div className="wrap navbar-inner">
+        
+        {/* --- BRANDING --- */}
+        <div className="nav-left">
+          <Link to="/" className="navbar-brand" onClick={() => setMobileMenuOpen(false)}>
+            <div className="brand-logo-v3">
+              <div className="logo-pulse" />
+              ✦
             </div>
-          )}
+            <div className="brand-info">
+              <span className="brand-name">KsaeKvat</span>
+              <span className="brand-status"><Activity size={8} /> SYSTEM_ONLINE</span>
+            </div>
+          </Link>
         </div>
 
-        {/* Desktop Links */}
-        <nav className="nav-links-v3">
-          <NavBtn to="/" icon={<LayoutDashboard size={18} />} label="Home" />
-          <NavBtn to="/leaderboard" icon={<Trophy size={18} />} label="Leaderboard" />
-          <NavBtn to="/characters" icon={<Users size={18} />} label="Characters" />
-          <NavBtn to="/zoo" icon={<PawPrint size={18} />} label="Zoo" />
+        {/* --- DESKTOP NAV --- */}
+        <nav className="desktop-nav-v3">
+          <NavBtn to="/" icon={<LayoutDashboard size={16} />} label="Mission" />
+          <NavBtn to="/leaderboard" icon={<Trophy size={16} />} label="Rankings" />
+          <NavBtn to="/characters" icon={<Users size={16} />} label="Arsenal" />
+          <NavBtn to="/zoo" icon={<PawPrint size={16} />} label="Bio-Data" />
         </nav>
 
-        {/* Mobile Toggle */}
-        <button className="mobile-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* --- ACTIONS & SEARCH --- */}
+        <div className="nav-right">
+          <div className="navbar-search-v3" ref={searchRef}>
+            <div className={`search-box-v4 ${search.length > 0 ? 'active' : ''}`}>
+              <Search className="search-icon-v4" size={14} />
+              <input 
+                type="text" 
+                className="search-input-v4" 
+                placeholder="Find Operative..." 
+                value={search} 
+                onChange={e => setSearch(e.target.value)} 
+                onFocus={() => search.length >= 2 && setShowResults(true)} 
+              />
+            </div>
 
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="mobile-menu-v3 glass">
-            <NavLink to="/" onClick={() => setMobileMenuOpen(false)} className="mobile-link">Home</NavLink>
-            <NavLink to="/leaderboard" onClick={() => setMobileMenuOpen(false)} className="mobile-link">Leaderboard</NavLink>
-            <NavLink to="/characters" onClick={() => setMobileMenuOpen(false)} className="mobile-link">Characters</NavLink>
-            <NavLink to="/zoo" onClick={() => setMobileMenuOpen(false)} className="mobile-link">Zoo</NavLink>
+            <AnimatePresence>
+              {showResults && (
+                <motion.div initial={{ opacity: 0, y: 15, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }} className="search-results-v4 glass-panel neon-border">
+                  <div className="results-header">BIOMETRIC_SCAN_RESULTS</div>
+                  <div className="results-list">
+                    {results.length === 0 ? (
+                      <div className="search-empty">NO_MATCH_FOUND</div>
+                    ) : (
+                      results.map(r => (
+                        <div key={r.userId} className="search-result-v4" onClick={() => handleSelect(r.userId)}>
+                          <div className="res-avatar">{r.username[0]}</div>
+                          <div className="res-info">
+                            <div className="res-name">{r.username}</div>
+                            <div className="res-meta">LVL_{r.level} // UID_{r.userId.slice(-6)}</div>
+                          </div>
+                          <Shield size={12} className="res-icon" />
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-        )}
+
+          <div className="nav-clock glass-panel">
+            <Clock size={12} className="text-cyan" />
+            <span>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</span>
+          </div>
+
+          <button className="mobile-toggle-v3" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {/* --- MOBILE OVERLAY --- */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mobile-overlay-v3" onClick={() => setMobileMenuOpen(false)}>
+              <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25 }} className="mobile-drawer glass-panel" onClick={e => e.stopPropagation()}>
+                <div className="drawer-header">COMMAND_MENU</div>
+                <div className="mobile-links-v3">
+                  <MobileLink to="/" label="Mission Control" icon={<LayoutDashboard/>} onClick={() => setMobileMenuOpen(false)} />
+                  <MobileLink to="/leaderboard" label="Rankings Terminal" icon={<Trophy/>} onClick={() => setMobileMenuOpen(false)} />
+                  <MobileLink to="/characters" label="Arsenal Database" icon={<Users/>} onClick={() => setMobileMenuOpen(false)} />
+                  <MobileLink to="/zoo" label="Bio-Registry" icon={<PawPrint/>} onClick={() => setMobileMenuOpen(false)} />
+                </div>
+                <div className="drawer-footer">Authorized Personnel Only</div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   );
@@ -133,7 +148,21 @@ export default function Navbar() {
 
 function NavBtn({ to, icon, label }) {
   return (
-    <NavLink to={to} end={to === '/'} className={({isActive}) => `nav-link-v3 ${isActive ? 'active' : ''}`}>
+    <NavLink to={to} end={to === '/'} className={({isActive}) => `nav-item-v3 ${isActive ? 'active' : ''}`}>
+      {({ isActive }) => (
+        <>
+          <div className="nav-icon-wrap">{icon}</div>
+          <span className="nav-label-v3">{label}</span>
+          {isActive && <motion.div layoutId="navGlow" className="nav-active-glow" />}
+        </>
+      )}
+    </NavLink>
+  );
+}
+
+function MobileLink({ to, label, icon, onClick }) {
+  return (
+    <NavLink to={to} end={to === '/'} className={({isActive}) => `mobile-btn-v3 ${isActive ? 'active' : ''}`} onClick={onClick}>
       {icon}
       <span>{label}</span>
     </NavLink>

@@ -1,80 +1,57 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Sparkles, Globe, Sword, Train, Tv, Waves, X, Info, Shield, Zap, Target } from 'lucide-react';
-import { fetchFandomIconUrl, getFallbackEmoji } from '../utils/charImages.js';
+import { Search, Sparkles, Globe, Sword, Train, Tv, Waves, X, Info, Shield, Zap, Target, Activity, Star } from 'lucide-react';
 import CharIcon from '../components/CharIcon';
-import './CharactersPage.css';
 
 const GAMES = {
-  all:    { label: 'All Games', icon: Globe },
-  genshin:{ label: 'Genshin',   icon: Sword,  badge: 'badge-genshin' },
-  hsr:    { label: 'HSR',       icon: Train,  badge: 'badge-hsr' },
-  wuwa:   { label: 'Wuwa',      icon: Waves,  badge: 'badge-wuwa' },
-  zzz:    { label: 'ZZZ',       icon: Tv,     badge: 'badge-zzz' },
+  all:    { label: 'All Systems', icon: Globe },
+  genshin:{ label: 'Genshin',   icon: Sword,  color: 'text-purple-400' },
+  hsr:    { label: 'HSR',       icon: Train,  color: 'text-cyan-400' },
+  wuwa:   { label: 'Wuwa',      icon: Waves,  color: 'text-green-400' },
+  zzz:    { label: 'ZZZ',       icon: Tv,     color: 'text-pink' },
 };
 
 function CharacterModal({ char, onClose }) {
-  const gInfo = GAMES[char.game?.toLowerCase()] || {};
-  
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="modal-overlay"
-      onClick={onClose}
-    >
-      <motion.div 
-        initial={{ y: 50, opacity: 0, scale: 0.9 }}
-        animate={{ y: 0, opacity: 1, scale: 1 }}
-        exit={{ y: 50, opacity: 0, scale: 0.9 }}
-        className={`modal-container element-${char.element?.toLowerCase() || 'none'}`}
-        onClick={e => e.stopPropagation()}
-      >
-        <button className="modal-close" onClick={onClose}><X /></button>
-        
-        <div className="modal-content">
-          <div className="modal-visual">
-            <div className="modal-image-glow" />
-            <CharIcon name={char.name} game={char.game?.toLowerCase()} rarity={char.rarity} emoji={char.emoji} />
-            <div className="modal-rarity">{char.rarity}★</div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay" onClick={onClose}>
+      <motion.div initial={{ y: 100, opacity: 0, scale: 0.9 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 100, opacity: 0, scale: 0.9 }} className="glass-panel modal-panel-lg neon-border" onClick={e => e.stopPropagation()}>
+        <button className="modal-close-btn" onClick={onClose}><X size={24} /></button>
+        <div className="modal-content-split">
+          <div className="modal-visual-side">
+             <div className="visual-bg-glow" />
+             <div className="visual-char-icon">
+                <CharIcon name={char.name} game={char.game?.toLowerCase()} rarity={char.rarity} emoji={char.emoji} />
+             </div>
+             <div className="visual-footer">
+                <div className="visual-stars">
+                   {[...Array(char.rarity)].map((_, i) => <Star key={i} size={16} className="text-gold" />)}
+                </div>
+                <div className="visual-name glitch-text">{char.name}</div>
+             </div>
           </div>
-          
-          <div className="modal-details">
-            <div className="modal-header">
-              <span className={`game-badge-large ${gInfo.badge}`}>{char.game?.toUpperCase()}</span>
-              <h2 className="modal-title">{char.name}</h2>
-              <div className="modal-subtitle">{char.emoji} Legendary Character</div>
+          <div className="modal-details-side">
+            <div className="details-header">
+              <span className="game-tag">{char.game?.toUpperCase()}</span>
+              <span className="element-tag">{char.element || 'NEUTRAL'}</span>
             </div>
-            
-            <div className="modal-grid">
-              <div className="modal-stat-item">
-                <Info size={18} />
-                <div className="stat-label">Element</div>
-                <div className="stat-value">{char.element || 'Unknown'}</div>
+            <h2 className="details-subtitle">Tactical Specifications</h2>
+            <div className="details-grid">
+              <div className="spec-box glass-panel">
+                <div className="spec-label"><Shield size={14} /> ROLE</div>
+                <div className="spec-val">{char.role || 'ASSET'}</div>
               </div>
-              <div className="modal-stat-item">
-                <Shield size={18} />
-                <div className="stat-label">Role</div>
-                <div className="stat-value">{char.role || 'Unknown'}</div>
-              </div>
-              <div className="modal-stat-item">
-                <Zap size={18} />
-                <div className="stat-label">Shop Price</div>
-                <div className="stat-value">{char.shopPrice || 'N/A'}</div>
+              <div className="spec-box glass-panel">
+                <div className="spec-label"><Zap size={14} /> COST</div>
+                <div className="spec-val">{char.shopPrice} SD</div>
               </div>
             </div>
-
-            <div className="modal-description">
-              <p>A powerful {char.rarity}-star character from {char.game?.toUpperCase()}. You can obtain this character through the Gacha system in the bot or by purchasing with Star Dust.</p>
+            <div className="details-bio glass-panel">
+              <p>"High-performance operative secured from the {char.game?.toUpperCase()} mainframe. Integrated with advanced neural protocols for peak combat efficiency."</p>
             </div>
-            
-            <div className="modal-footer">
-              <button className="btn btn-primary btn-large" onClick={onClose}>
-                <Sparkles size={20} />
-                <span>Collecting Since 2026</span>
-              </button>
-            </div>
+            <button className="btn-v3 btn-v3-primary w-full" onClick={onClose}>
+              <span>Initialize Deployment</span>
+              <Target size={18} />
+            </button>
           </div>
         </div>
       </motion.div>
@@ -82,20 +59,17 @@ function CharacterModal({ char, onClose }) {
   );
 }
 
-
 export default function CharactersPage() {
   const [all, setAll] = useState([]);
   const [loading, setLoading] = useState(true);
   const [game, setGame] = useState('all');
   const [rarity, setRarity] = useState('all');
   const [search, setSearch] = useState('');
+  const [displayCount, setDisplayCount] = useState(30);
   const [selectedChar, setSelectedChar] = useState(null);
 
   useEffect(() => {
-    fetch('/api/characters')
-      .then(r => r.json())
-      .then(res => { if (res.success) setAll(res.data); setLoading(false); })
-      .catch(() => setLoading(false));
+    fetch('/api/characters').then(r => r.json()).then(res => { if (res.success) setAll(res.data); setLoading(false); }).catch(() => setLoading(false));
   }, []);
 
   const filtered = all.filter(c =>
@@ -104,136 +78,97 @@ export default function CharactersPage() {
     (!search || c.name.toLowerCase().includes(search.toLowerCase()))
   );
 
+  const displayed = filtered.slice(0, displayCount);
+
   return (
-    <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="page chars-page"
-    >
-      <div className="container">
-        <div className="page-header">
-          <motion.h1 className="page-title">
-            🎭 <span className="text-gradient">Character Gallery</span>
-          </motion.h1>
-          <p className="page-subtitle">Explore {all.length} unique characters. Use Star Dust ✨ to unlock them in-game.</p>
-        </div>
-
-        {/* Search & Filters */}
-        <div className="glass-card filter-card">
-          <div className="filter-row">
-            <div className="search-wrapper">
-              <Search className="search-icon" size={20} />
-              <input
-                className="search-input"
-                placeholder="Search characters by name..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
+    <div className="chars-container">
+      <div className="wrap">
+        <div className="chars-header">
+          <div className="header-info">
+            <div className="header-badge">
+              <Target size={16} className="text-purple-400" />
+              <span>Tactical Asset Roster</span>
             </div>
-            
-            <div className="game-tabs">
-              {Object.entries(GAMES).map(([k,v]) => {
-                const Icon = v.icon;
-                return (
-                  <button 
-                    key={k} 
-                    className={`game-tab-btn ${game === k ? 'active' : ''}`}
-                    onClick={() => setGame(k)}
-                  >
-                    <Icon size={16} />
-                    <span className="tab-label">{v.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+            <h1 className="header-title">OPERATIVE <span className="text-gradient">DATABASE</span></h1>
           </div>
-
-          <div className="rarity-tabs">
-             <button className={`rarity-btn ${rarity==='all'?'active':''}`} onClick={() => setRarity('all')}>All Rarities</button>
-             <button className={`rarity-btn ${rarity==='5'?'active':''}`} onClick={() => setRarity('5')}>⭐ 5-Star</button>
-             <button className={`rarity-btn ${rarity==='4'?'active':''}`} onClick={() => setRarity('4')}>✨ 4-Star</button>
+          <div className="header-meta glass-panel">
+            <Activity size={12} className="text-green-400" />
+            <span>{all.length} Units Indexed</span>
           </div>
         </div>
 
-        <div className="results-info">
-          <p>
-            Showing <span>{filtered.length}</span> of {all.length} Characters
-          </p>
+        <div className="filter-bar glass-panel">
+          <div className="search-wrap">
+            <Search className="search-icon" size={18} />
+            <input className="search-input" placeholder="Filter by name or ID..." value={search} onChange={e => { setSearch(e.target.value); setDisplayCount(30); }} />
+          </div>
+          <div className="game-filters">
+            {Object.entries(GAMES).map(([k,v]) => (
+              <button key={k} className={`game-btn ${game === k ? 'active' : ''}`} onClick={() => { setGame(k); setDisplayCount(30); }}>
+                <v.icon size={16} className={game === k ? v.color : ''} />
+                <span className="btn-label">{v.label}</span>
+              </button>
+            ))}
+          </div>
+          <div className="rarity-filters">
+             {['all', '5', '4'].map(r => (
+               <button key={r} className={`rarity-btn ${rarity === r ? 'active' : ''}`} onClick={() => { setRarity(r); setDisplayCount(30); }}>
+                 {r === 'all' ? 'All Tiers' : `${r}★`}
+               </button>
+             ))}
+          </div>
         </div>
 
         {loading ? (
-          <div className="chars-grid">
-            {[...Array(12)].map((_, i) => (
-              <div key={i} className="glass-card skeleton-card loading-shimmer" />
-            ))}
+          <div className="chars-grid-loading">
+            {[...Array(12)].map((_, i) => <div key={i} className="skeleton-card glass-panel" />)}
           </div>
         ) : (
-          <motion.div layout className="chars-grid">
-            <AnimatePresence mode="popLayout">
-              {filtered.length === 0 ? (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="empty-results"
+          <>
+            <div className="chars-grid">
+              <AnimatePresence mode="popLayout">
+                {displayed.map((c, i) => (
+                  <motion.div layout key={c.name} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ delay: (i % 30) * 0.01 }} className="char-card-wrap" onClick={() => setSelectedChar(c)}>
+                    <div className="char-card glass-panel">
+                      <div className="char-card-visual">
+                         <CharIcon name={c.name} game={c.game?.toLowerCase()} rarity={c.rarity} emoji={c.emoji} />
+                      </div>
+                      <div className="char-card-info">
+                         <div className="char-card-top">
+                            <span className="char-game-label">{c.game?.toUpperCase()}</span>
+                            <div className="char-stars">
+                               {[...Array(c.rarity)].map((_, i) => <Star key={i} size={8} className="text-gold" />)}
+                            </div>
+                         </div>
+                         <h3 className="char-card-name">{c.name}</h3>
+                         <div className="char-card-price">
+                            <Zap size={10} className="text-cyan-400" />
+                            <span>{c.shopPrice} SD</span>
+                         </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+
+            {displayCount < filtered.length && (
+              <div className="flex justify-center mt-12 pb-12">
+                <button 
+                  className="btn-v3 btn-v3-ghost group neon-border"
+                  onClick={() => setDisplayCount(prev => prev + 30)}
                 >
-                  <div className="empty-emoji">😶</div>
-                  <p>No characters found</p>
-                </motion.div>
-              ) : filtered.map((c) => {
-                  const gInfo = GAMES[c.game?.toLowerCase()] || {};
-                  return (
-                    <motion.div
-                      layout
-                      key={c.name}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.2 }}
-                      className={`glass-card char-card rarity-border-${c.rarity}`}
-                      onClick={() => setSelectedChar(c)}
-                    >
-                      <div className="char-img-wrapper">
-                        <CharIcon name={c.name} game={c.game?.toLowerCase()} rarity={c.rarity} emoji={c.emoji} />
-                        <div className={`char-rarity-badge rarity-bg-${c.rarity}`}>
-                          {c.rarity}★
-                        </div>
-                      </div>
-                      <div className="char-info">
-                        <h3 className="char-name">{c.name}</h3>
-                        <div className="char-badges">
-                          {c.game && (
-                            <span className={`game-badge ${gInfo.badge || 'badge-default'}`}>
-                              {c.game.toUpperCase()}
-                            </span>
-                          )}
-                          {c.element && (
-                            <span className="element-badge">
-                              {c.element}
-                            </span>
-                          )}
-                        </div>
-                        <div className="char-price">
-                          <Sparkles size={14} />
-                          <span>{c.shopPrice}</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })
-              }
-            </AnimatePresence>
-          </motion.div>
+                  <Activity size={16} className="text-cyan group-hover:animate-pulse" />
+                  <span>Synchronize More Assets ({filtered.length - displayCount} Remaining)</span>
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
-
       <AnimatePresence>
-        {selectedChar && (
-          <CharacterModal 
-            char={selectedChar} 
-            onClose={() => setSelectedChar(null)} 
-          />
-        )}
+        {selectedChar && <CharacterModal char={selectedChar} onClose={() => setSelectedChar(null)} />}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }

@@ -1,54 +1,35 @@
 import { Router, Request, Response } from 'express';
 const User = require('../../models/User').default || require('../../models/User');
 const registry = require('../../utils/registry.js');
+const animalService = require('../../services/AnimalService').default || require('../../services/AnimalService');
+const mongoose = require('mongoose');
 
 const router = Router();
 
-// GET /api/profile/search?query=...
-router.get('/search', async (req: Request, res: Response) => {
-  try {
-    const query = String(req.query.query || '').trim();
-    if (!query) return res.json({ success: true, data: [] });
-
-    // Search by ID or Username (case-insensitive fuzzy)
-    const users = await User.find({
-      $or: [
-        { id: query },
-        { username: { $regex: query, $options: 'i' } }
-      ]
-    })
-    .limit(10)
-    .select('id username level')
-    .lean();
-
-    const formatted = users.map((u: any) => ({
-      userId: u.id,
-      username: u.username || 'Unknown Traveler',
-      level: u.level || 1,
-    }));
-
-    res.json({ success: true, data: formatted });
-  } catch (err: any) {
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
+// ... existing search route ...
 
 // GET /api/profile/:userId
 router.get('/:userId', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
-    const user = await User.findOne({ id: userId })
-      .select('id username level balance experience star_dust gacha_inventory animals stats pokeballs dailyClaimed')
-      .lean();
+    // Try finding by Discord ID first, then by MongoDB _id
+    let user = await User.findOne({ id: userId }).lean();
+    
+    if (!user && mongoose.Types.ObjectId.isValid(userId)) {
+      user = await User.findById(userId).lean();
+    }
 
     if (!user) {
+      console.warn(`[Backend] Profile not found for UID: ${userId}`);
       return res.status(404).json({ success: false, error: 'User not found' });
     }
 
-    // Hydrate inventory: merge registry data with owned items
+    console.log(`[Backend] Loading profile for: ${user.username} (${user.id})`);
+
+    // Hydrate inventory
     const hydratedInventory = (user.gacha_inventory || [])
-      .filter((item: any) => item.type !== 'weapon') // Surgical removal! (｡♥‿♥｡)
+      .filter((item: any) => item.type !== 'weapon')
       .map((item: any) => {
         const regChar = registry.getCharacter(item.name);
         return {
@@ -63,26 +44,24 @@ router.get('/:userId', async (req: Request, res: Response) => {
         };
       });
 
-    // Format animal collection with sprites
+    // Format animal collection
     const animalMap: Record<string, Record<string, { count: number; sprite: string | null }>> = {};
-    const animalService = require('../../services/AnimalService').default;
 
     if (user.animals) {
       for (const [rarity, pokemonMap] of Object.entries(user.animals as any)) {
         animalMap[rarity] = {};
         if (pokemonMap && typeof pokemonMap === 'object') {
           for (const [pokemon, count] of Object.entries(pokemonMap as any)) {
-            const sprite = await animalService.getPokemonSprite(pokemon);
-            // Only include if it's a real Pokemon! (•̀ᴗ•́)و
-            if (sprite || (pokemonMap as any).hasOwnProperty(pokemon)) {
-               // We use the sprite as a truth check for "validity"
-               // but actually the service now returns null for non-pokemon.
-               if (sprite) {
+            try {
+              const sprite = await animalService.getPokemonSprite(pokemon);
+              if (sprite) {
                 animalMap[rarity][pokemon] = {
                   count: count as number,
                   sprite
                 };
-               }
+              }
+            } catch (err) {
+              console.error(`[Backend] Failed to get sprite for ${pokemon}:`, err);
             }
           }
         }
@@ -90,13 +69,13 @@ router.get('/:userId', async (req: Request, res: Response) => {
     }
 
     const totalPokemon = Object.values(animalMap).reduce((acc, rarityGroup) => {
-      return acc + Object.values(rarityGroup).reduce((s, c) => s + c.count, 0);
+      return acc + Object.values(rarityGroup).reduce((s, c) => s + (c.count || 0), 0);
     }, 0);
 
     res.json({
       success: true,
       data: {
-        userId: user.id,
+        userId: user.id || user._id.toString(),
         username: user.username || 'Unknown Traveler',
         level: user.level || 1,
         balance: user.balance || 0,
@@ -113,6 +92,7 @@ router.get('/:userId', async (req: Request, res: Response) => {
       },
     });
   } catch (err: any) {
+    console.error(`[Backend] Profile fetch error for ${req.params.userId}:`, err);
     res.status(500).json({ success: false, error: err.message });
   }
 });

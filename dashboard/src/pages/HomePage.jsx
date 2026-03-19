@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, Users, Star, ArrowRight, Gamepad2, Sparkles, ChevronRight } from 'lucide-react';
-import './HomePage.css'; // Make sure we are importing the newly styled CSS
+import { motion } from 'framer-motion';
+import { Trophy, Users, Star, ArrowRight, ChevronRight, Activity, Zap, Target } from 'lucide-react';
 
 export default function HomePage() {
   const [stats, setStats] = useState(null);
@@ -17,113 +17,189 @@ export default function HomePage() {
       .catch(() => setLoading(false));
   }, []);
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="home-page">
-      {/* --- HERO SECTION --- */}
-      <section className="hero-section">
-        <div className="hero-glow" />
-        <div className="container">
+    <div className="home-container">
+      <div className="wrap">
+        {/* --- HERO SECTION --- */}
+        <motion.section 
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="hero-grid"
+        >
           <div className="hero-content">
-            <div className="hero-badge">
-              <Sparkles size={16} />
-              <span>KSAEKVAT V3.0 ONLINE</span>
-            </div>
+            <motion.div variants={item} className="status-badge">
+              <Activity size={14} />
+              <span>Strategic Operations Active</span>
+            </motion.div>
             
-            <h1 className="hero-title">
-              Your Ultimate <br/>
-              <span className="text-gradient">Gaming Companion</span>
-            </h1>
+            <motion.h1 variants={item} className="hero-title">
+              MISSION <br/>
+              <span className="text-gradient glitch-text">CONTROL</span>
+            </motion.h1>
             
-            <p className="hero-subtitle">
-              Collect 260+ characters, battle players worldwide, and rise to the top of the global leaderboards. The ultimate gacha experience on Discord.
-            </p>
+            <motion.p variants={item} className="hero-desc">
+              Initialize your gaming protocols. Collect elite operatives, dominate global rankings, and secure your position in the KsaeKvat ecosystem.
+            </motion.p>
             
-            <div className="hero-actions">
-              <Link to="/characters" className="btn btn-primary">
-                <Gamepad2 size={24} />
-                <span>Start Collecting</span>
+            <motion.div variants={item} className="hero-actions">
+              <Link to="/characters" className="btn-v3 btn-v3-primary">
+                <Target size={18} />
+                <span>Initialize Roster</span>
+                <ChevronRight size={16} />
               </Link>
-              <Link to="/leaderboard" className="btn btn-secondary">
-                <Trophy size={24} />
-                <span>View Leaderboard</span>
+              <Link to="/leaderboard" className="btn-v3 btn-v3-ghost">
+                <Trophy size={18} />
+                <span>Global Rankings</span>
               </Link>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      </section>
 
-      {/* --- STATS SECTION --- */}
-      <section className="stats-section">
-        <div className="container">
-          <div className="stats-grid">
-            <div className="glass-card stat-card">
-              <div className="stat-icon-wrapper purple">
-                <Users size={40} />
+          <motion.div variants={item} className="hero-visual">
+            <div className="visual-glow" />
+            <div className="glass-panel neon-border status-card">
+              <h3 className="card-title">
+                <Zap className="text-cyan" />
+                SYSTEM STATUS
+              </h3>
+              <div className="status-rows">
+                <StatusRow label="NEURAL NETWORK" value="OPTIMIZED" color="text-green" />
+                <StatusRow label="DATABASE SYNC" value="100% SECURE" color="text-cyan" />
+                <StatusRow label="CORE UPTIME" value="99.98%" color="text-purple" />
               </div>
-              <div className="stat-value">{stats?.totalUsers?.toLocaleString() || "10k+"}</div>
-              <div className="stat-label">Active Players</div>
-            </div>
-            
-            <div className="glass-card stat-card">
-              <div className="stat-icon-wrapper gold">
-                <Star size={40} />
-              </div>
-              <div className="stat-value">{stats?.totalCharactersOwned?.toLocaleString() || "1M+"}</div>
-              <div className="stat-label">Characters Collected</div>
-            </div>
-            
-            <div className="glass-card stat-card">
-              <div className="stat-icon-wrapper cyan">
-                <Trophy size={40} />
-              </div>
-              <div className="stat-value">{stats?.totalCoinsCirculating?.toLocaleString() || "50M+"}</div>
-              <div className="stat-label">Economy Value</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* --- FEATURES SECTION --- */}
-      <section className="features-section">
-        <div className="container">
-          <div className="feature-block">
-            <div className="feature-content">
-              <h2 className="feature-title">Build Your Dream Team</h2>
-              <p className="feature-desc">
-                From Genshin Impact to Honkai Star Rail. Pull your favorite 5-star characters, build your roster, and show off your legendary collection. Experience smooth gameplay with high-quality visual designs.
-              </p>
-              <Link to="/characters" className="feature-link">
-                <span>Explore The Roster</span>
-                <ArrowRight size={24} />
-              </Link>
-            </div>
-            
-            <div className="feature-visual">
-              <div className="visual-card">
-                <div className="visual-avatar">✨</div>
-                <div className="visual-info">
-                  <h4>Legendary Pull</h4>
-                  <p>Ultra Rare Drop</p>
+              <div className="status-stats">
+                <div className="mini-stat">
+                  <div className="stat-label">Active Sessions</div>
+                  <div className="stat-value">{stats?.totalUsers?.toLocaleString() || "---"}</div>
+                </div>
+                <div className="mini-stat">
+                  <div className="stat-label">Gacha Pulse</div>
+                  <div className="stat-value text-cyan">HIGH</div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </motion.div>
+        </motion.section>
 
-      {/* --- CTA SECTION --- */}
-      <section className="cta-section">
-        <div className="container">
-          <div className="glass-card cta-content">
-            <h2 className="cta-title">Ready to Dominate?</h2>
-            <p className="cta-desc">Join thousands of players right now. It's completely free to play, highly rewarding, and insanely addictive.</p>
-            <a href="#" className="btn btn-primary btn-large">
-              <span>Invite Bot to Discord</span>
-              <ChevronRight size={24} />
+        {/* --- STATS GRID --- */}
+        <motion.section 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="stats-grid"
+        >
+          <StatBox 
+            icon={<Users size={32} />} 
+            label="Total Operatives" 
+            value={stats?.totalUsers?.toLocaleString() || "10,000+"} 
+            color="purple"
+          />
+          <StatBox 
+            icon={<Star size={32} />} 
+            label="Characters Deployed" 
+            value={stats?.totalCharactersOwned?.toLocaleString() || "1,000,000+"} 
+            color="gold"
+          />
+          <StatBox 
+            icon={<Trophy size={32} />} 
+            label="Credits Circulating" 
+            value={stats?.totalCoinsCirculating?.toLocaleString() || "50,000,000+"} 
+            color="cyan"
+          />
+        </motion.section>
+
+        {/* --- OBJECTIVES --- */}
+        <section className="section-spacer">
+          <div className="section-header">
+            <h2 className="section-title">MISSION <span className="text-cyan">OBJECTIVES</span></h2>
+            <div className="header-line" />
+          </div>
+
+          <div className="objective-grid">
+            <ObjectiveCard 
+              title="ROSTER EXPANSION"
+              desc="Pull legendary operatives from Genshin Impact, Honkai Star Rail, and beyond. Build the ultimate tactical squad."
+              icon={<Target />}
+              link="/characters"
+              linkText="Access Roster"
+            />
+            <ObjectiveCard 
+              title="DOMINANCE"
+              desc="Climb the global Rankings Terminal. Prove your strategic superiority and earn your place among the elite."
+              icon={<Trophy />}
+              link="/leaderboard"
+              linkText="View Rankings"
+            />
+          </div>
+        </section>
+
+        {/* --- CTA --- */}
+        <motion.section 
+          initial={{ scale: 0.95, opacity: 0 }}
+          whileInView={{ scale: 1, opacity: 1 }}
+          viewport={{ once: true }}
+          className="cta-panel glass-panel"
+        >
+          <div className="cta-content">
+            <h2 className="cta-title">Ready for Deployment?</h2>
+            <p className="cta-desc">Join the global network of elite gamers. Initialize the bot and start your mission today.</p>
+            <a href="#" className="btn-v3 btn-v3-primary cta-btn">
+              <span>Invite to Server</span>
+              <ArrowRight size={24} />
             </a>
           </div>
+        </motion.section>
+      </div>
+    </div>
+  );
+}
+
+function StatusRow({ label, value, color }) {
+  return (
+    <div className="status-row">
+      <span className="row-label">{label}</span>
+      <span className={color}>{value}</span>
+    </div>
+  );
+}
+
+function StatBox({ icon, label, value, color }) {
+  return (
+    <div className={`stat-box glass-panel glow-${color}`}>
+      <div className={`stat-icon-wrap icon-${color}`}>
+        {icon}
+      </div>
+      <div className="stat-main-value">{value}</div>
+      <div className="stat-main-label">{label}</div>
+    </div>
+  );
+}
+
+function ObjectiveCard({ title, desc, icon, link, linkText }) {
+  return (
+    <div className="objective-card glass-panel">
+      <div className="objective-top">
+        <div className="objective-icon">
+          {icon}
         </div>
-      </section>
+        <div className="objective-id">OBJ.01</div>
+      </div>
+      <h3 className="objective-title">{title}</h3>
+      <p className="objective-desc">{desc}</p>
+      <Link to={link} className="objective-link">
+        <span>{linkText}</span>
+        <ArrowRight size={16} />
+      </Link>
     </div>
   );
 }
