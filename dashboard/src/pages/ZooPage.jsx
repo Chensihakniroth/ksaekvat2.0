@@ -142,7 +142,7 @@ function AnimalModal({ animal, onClose }) {
               </div>
             </div>
             <div className="details-bio glass-panel">
-              <p>"Biological signature confirmed. This unique lifeform originates from the KsaeKvat wild zones. High concentration of ethereal energy detected within its core."</p>
+              <p>"Biological signature confirmed. This unique lifeform originates from the KOHI wild zones. High concentration of ethereal energy detected within its core."</p>
             </div>
             <button className="btn-v3 btn-v3-primary w-full" onClick={onClose}>
               <span>Finalize Observation</span>

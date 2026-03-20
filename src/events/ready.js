@@ -15,8 +15,8 @@ module.exports = {
 
     // Set bot activity
     try {
-      client.user.setActivity('KsaekVat | K help', { type: 0 }); // 0 is PLAYING
-      logger.item('Activity', 'KsaekVat | K help', '\x1b[35m');
+      client.user.setActivity('KOHI | K help', { type: 0 }); // 0 is PLAYING
+      logger.item('Activity', 'KOHI | K help', '\x1b[35m');
     } catch (error) {
       logger.error('Failed to set activity', error);
     }

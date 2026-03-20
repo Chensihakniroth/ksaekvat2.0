@@ -1,6 +1,6 @@
-# 📘 KsaeKvat Bot Revamp 2.0 — Project Documentation
+# 📘 KOHI Bot Revamp 2.0 — Project Documentation
 
-> **Bot Name:** KsaeKvat Bot | **Version:** 2.0 (Revamp Edition) | **Author:** @_callme_.mo  
+> **Bot Name:** KOHI Bot | **Version:** 2.0 (Revamp Edition) | **Author:** @_callme_.mo  
 > **Stack:** TypeScript + Node.js + Discord.js v14 + MongoDB (Mongoose)
 
 ---
@@ -8,7 +8,7 @@
 ## 🗂️ Project Structure Overview
 
 ```
-ksaekvat_revamp/
+kohi_revamp/
 ├── src/
 │   ├── core/           → Entry point & bot bootstrap
 │   ├── config/         → Bot settings and constants
@@ -31,7 +31,7 @@ ksaekvat_revamp/
 
 ---
 
-## ⚡ Entry Point — [src/core/index.ts](file:///c:/laragon/www/ksaekvat_revamp/src/core/index.ts)
+## ⚡ Entry Point — [src/core/index.ts](file:///c:/laragon/www/kohi_revamp/src/core/index.ts)
 
 The main application bootstrap file. It initializes the Discord client, connects the database, registers handlers, starts an HTTP server, and logs in.
 
@@ -47,9 +47,9 @@ interface ExtendedClient extends Client {
 
 | Function | Description |
 |---|---|
-| [deployCommands()](file:///c:/laragon/www/ksaekvat_revamp/src/core/index.ts#53-95) | Reads all files in `commands/slash/`, builds JSON payloads, and pushes them to Discord's REST API via `Routes.applicationCommands`. Logs success/failure per file. |
-| [connectDB()](file:///c:/laragon/www/ksaekvat_revamp/src/core/index.ts#96-115) | Connects to MongoDB using Mongoose with the URI resolved by [getMongoURI()](file:///c:/laragon/www/ksaekvat_revamp/src/utils/env.ts#51-63). On success, immediately calls `registry.initializeRegistry()` to warm up the gacha item cache. Exits process on failure. |
-| [bootstrap()](file:///c:/laragon/www/ksaekvat_revamp/src/core/index.ts#116-148) | Orchestrates the full startup sequence: DB → Handlers → Slash Deploy → HTTP Health Check → Discord Login. |
+| [deployCommands()](file:///c:/laragon/www/kohi_revamp/src/core/index.ts#53-95) | Reads all files in `commands/slash/`, builds JSON payloads, and pushes them to Discord's REST API via `Routes.applicationCommands`. Logs success/failure per file. |
+| [connectDB()](file:///c:/laragon/www/kohi_revamp/src/core/index.ts#96-115) | Connects to MongoDB using Mongoose with the URI resolved by [getMongoURI()](file:///c:/laragon/www/kohi_revamp/src/utils/env.ts#51-63). On success, immediately calls `registry.initializeRegistry()` to warm up the gacha item cache. Exits process on failure. |
+| [bootstrap()](file:///c:/laragon/www/kohi_revamp/src/core/index.ts#116-148) | Orchestrates the full startup sequence: DB → Handlers → Slash Deploy → HTTP Health Check → Discord Login. |
 
 ### Other Notable Behaviors
 - **HTTP Health Check**: A minimal Express server listens on `PORT` (default `8080`) and responds `OK` to `GET /`. Required by Railway for uptime detection.
@@ -58,7 +58,7 @@ interface ExtendedClient extends Client {
 
 ---
 
-## ⚙️ Configuration — [src/config/config.js](file:///c:/laragon/www/ksaekvat_revamp/src/config/config.js)
+## ⚙️ Configuration — [src/config/config.js](file:///c:/laragon/www/kohi_revamp/src/config/config.js)
 
 Central configuration object exported via `module.exports`. All values pull from environment variables with sensible fallbacks.
 
@@ -79,9 +79,9 @@ Central configuration object exported via `module.exports`. All values pull from
 
 ---
 
-## 🔒 Environment Validation — [src/utils/env.ts](file:///c:/laragon/www/ksaekvat_revamp/src/utils/env.ts)
+## 🔒 Environment Validation — [src/utils/env.ts](file:///c:/laragon/www/kohi_revamp/src/utils/env.ts)
 
-Uses **Zod** to strictly validate the [.env](file:///c:/laragon/www/ksaekvat_revamp/.env) file on startup. If any required variable is missing or malformed, the process exits with a clear error message before anything else runs.
+Uses **Zod** to strictly validate the [.env](file:///c:/laragon/www/kohi_revamp/.env) file on startup. If any required variable is missing or malformed, the process exits with a clear error message before anything else runs.
 
 ### Validated Variables
 
@@ -90,7 +90,7 @@ Uses **Zod** to strictly validate the [.env](file:///c:/laragon/www/ksaekvat_rev
 | `DISCORD_TOKEN` | ✅ Yes | — |
 | `CLIENT_ID` | No | `1399459454889754805` |
 | `GUILD_ID` | No | `1240627007340150785` |
-| `MONGODB_URI` / `MONGODB_URL` / `MONGO_URI` / `MONGO_URL` | At least one | `mongodb://127.0.0.1:27017/ksae_bot` |
+| `MONGODB_URI` / `MONGODB_URL` / `MONGO_URI` / `MONGO_URL` | At least one | `mongodb://127.0.0.1:27017/kohi_bot` |
 | `PORT` | No | `8080` |
 | `NODE_ENV` | No | `development` |
 
@@ -98,8 +98,8 @@ Uses **Zod** to strictly validate the [.env](file:///c:/laragon/www/ksaekvat_rev
 
 | Export | Description |
 |---|---|
-| [env](file:///c:/laragon/www/ksaekvat_revamp/.env) | Validated, type-safe environment object |
-| [getMongoURI()](file:///c:/laragon/www/ksaekvat_revamp/src/utils/env.ts#51-63) | Returns the first available MongoDB URI from the four possible variable names |
+| [env](file:///c:/laragon/www/kohi_revamp/.env) | Validated, type-safe environment object |
+| [getMongoURI()](file:///c:/laragon/www/kohi_revamp/src/utils/env.ts#51-63) | Returns the first available MongoDB URI from the four possible variable names |
 
 ---
 

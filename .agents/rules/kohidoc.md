@@ -2,16 +2,16 @@
 trigger: always_on
 ---
 
-# 📘 KsaeKvat Bot Revamp 2.0 — Project Documentation
+# 📘 KOHI Bot Revamp 2.0 — Project Documentation
 
-> **Bot Name:** KsaeKvat Bot | **Version:** 2.0 (Revamp Edition) | **Author:** @_callme_.mo  
+> **Bot Name:** KOHI Bot | **Version:** 2.0 (Revamp Edition) | **Author:** @_callme_.mo  
 > **Stack:** TypeScript + Node.js + Discord.js v14 + MongoDB (Mongoose)
 
 ---
 ## 🗂️ Project Structure Overview
 
 ```
-ksaekvat_revamp/
+kohi_revamp/
 ├── src/
 │   ├── core/           → Entry point & bot bootstrap
 │   ├── config/         → Bot settings and constants
@@ -93,7 +93,7 @@ Uses **Zod** to strictly validate the [.env](file:///c:/laragon/www/ksaekvat_rev
 | `DISCORD_TOKEN` | ✅ Yes | — |
 | `CLIENT_ID` | No | `1399459454889754805` |
 | `GUILD_ID` | No | `1240627007340150785` |
-| `MONGODB_URI` / `MONGODB_URL` / `MONGO_URI` / `MONGO_URL` | At least one | `mongodb://127.0.0.1:27017/ksae_bot` |
+| `MONGODB_URI` / `MONGODB_URL` / `MONGO_URI` / `MONGO_URL` | At least one | `mongodb://127.0.0.1:27017/kohi_bot` |
 | `PORT` | No | `8080` |
 | `NODE_ENV` | No | `development` |
 
@@ -219,4 +219,4 @@ Handles the hunting/zoo system and Pokémon image fetching using `pokedex-promis
 | `calculateBadges(totalAnimalsFound, totalValue, userAnimals)` | Awards emoji badges: 🦁 Hunter (100+), 👑 Master (500+), 💰 Tycoon (1M+ value), 🌟 Legend (has priceless), 🌈 Collector (10+ unique rarities). |
 | `getPokemonImage(key)` | Fetches official artwork URL from PokéAPI via `pokedex-promise-v2`. Handles shiny Charizard override. Caches results in-memory. |
 | `getPokemonSprite(key)` | Fetches small pixel sprite (prefers Gen8 icons). Also cached. |
-| `getKantoPokedexEntries()` | Fetches all Pokémon names from the Kanto Pokédex. Retu
+| `getKantoPokedexEntries()` | Fetches all Pokémon names from the Kanto Pokédex. Returns string array. |

@@ -7,7 +7,7 @@ import argparse
 # === CONFIGURATION ===
 ENDPOINT = "http://bucket-production-4ca0.up.railway.app"
 BUCKET = "gacha-images"  # Using exactly as provided in your .env
-DB_NAME = "ksae_bot"
+DB_NAME = "kohi_bot"
 COLLECTION_NAME = "characters"
 REPORT_PATH = "markdown/character_collection_report.txt"
 

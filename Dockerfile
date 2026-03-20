@@ -1,4 +1,4 @@
-# Professional Dockerfile for KsaeKvat Bot + Dashboard
+# Professional Dockerfile for KOHI Bot + Dashboard
 # (｡♥‿♥｡) Lightweight, fast, and secure!
 
 # 1. Base image (LTS Version - Alpine for small size)

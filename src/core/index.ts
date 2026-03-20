@@ -13,12 +13,12 @@ const { env, getMongoURI } = require('../utils/env.js');
 logger.blank();
 logger.ascii(
   `
- ██╗  ██╗███████╗ █████╗ ███████╗██╗  ██╗██╗   ██╗ █████╗ ████████╗
- ██║ ██╔╝██╔════╝██╔══██╗██╔════╝██║ ██╔╝██║   ██║██╔══██╗╚══██╔══╝
- █████╔╝ ███████╗███████║█████╗  █████╔╝ ██║   ██║███████║   ██║   
- ██╔═██╗ ╚════██║██╔══██║██╔══╝  ██╔═██╗ ╚██╗ ██╔╝██╔══██║   ██║   
- ██║  ██╗███████║██║  ██║███████╗██║  ██╗ ╚████╔╝ ██║  ██║   ██║   
- ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝  ╚═╝   ╚═╝   
+ ██╗  ██╗ ██████╗ ██╗  ██╗ ██╗
+ ██║ ██╔╝██╔═══██╗██║  ██║ ██║
+ █████╔╝ ██║   ██║███████║ ██║
+ ██╔═██╗ ██║   ██║██╔══██║ ██║
+ ██║  ██╗╚██████╔╝██║  ██║ ██║
+ ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═╝
                                             REVAMP EDITION v2.0
 `,
   '\x1b[36m'
@@ -95,7 +95,7 @@ async function bootstrap() {
     });
     logger.success('Dashboard static files served from dashboard/dist');
   } else {
-    app.get('/', (_req: any, res: any) => res.send('KsaeKvat Bot API — dashboard not built yet.'));
+    app.get('/', (_req: any, res: any) => res.send('KOHI Bot API — dashboard not built yet.'));
     logger.warn('dashboard/dist not found. Run: cd dashboard && npm run build');
   }
 

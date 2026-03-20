@@ -23,8 +23,8 @@ module.exports = {
     wish: 'gacha',
     chars: 'char',
     item: 'item',
-    kkk: 'ksaekvat',
-    kk: 'ksaekvat',
+    kkk: 'kohi',
+    kk: 'kohi',
     h: 'coinflip heads',
     t: 'coinflip tails',
   },
@@ -125,7 +125,7 @@ module.exports = {
 
   // Bot Information
   botInfo: {
-    name: 'KsaeKvat Bot',
+    name: 'KOHI Bot',
     version: '69.69.420',
     description: 'bot jes tah tver tver lg ng hah',
     author: '@_callme_.mo',

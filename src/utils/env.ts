@@ -57,6 +57,6 @@ export const getMongoURI = (): string => {
     env.MONGODB_URL ||
     env.MONGO_URI ||
     env.MONGO_URL ||
-    'mongodb://127.0.0.1:27017/ksae_bot'
+    'mongodb://127.0.0.1:27017/kohi_bot'
   );
 };

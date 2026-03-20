@@ -60,7 +60,7 @@ export default function Navbar() {
               ✦
             </div>
             <div className="brand-info">
-              <span className="brand-name">KsaeKvat</span>
+              <span className="brand-name">KOHI</span>
               <span className="brand-status"><Activity size={8} /> SYSTEM_ONLINE</span>
             </div>
           </Link>

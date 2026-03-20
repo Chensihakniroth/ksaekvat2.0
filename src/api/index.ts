@@ -44,6 +44,6 @@ router.use('/gacha', require('./routes/gacha'));
 router.use('/zoo', require('./routes/zoo'));
 
 // --- Health ---
-router.get('/ping', (_req, res) => res.json({ success: true, message: 'KsaeKvat API is alive! ヽ(>∀<☆)ノ' }));
+router.get('/ping', (_req, res) => res.json({ success: true, message: 'KOHI API is alive! ヽ(>∀<☆)ノ' }));
 
 module.exports = router;

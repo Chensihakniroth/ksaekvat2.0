@@ -49,7 +49,7 @@ export default function HomePage() {
             </motion.h1>
             
             <motion.p variants={item} className="hero-desc">
-              Initialize your gaming protocols. Collect elite operatives, dominate global rankings, and secure your position in the KsaeKvat ecosystem.
+              Initialize your gaming protocols. Collect elite operatives, dominate global rankings, and secure your position in the KOHI ecosystem.
             </motion.p>
             
             <motion.div variants={item} className="hero-actions">
