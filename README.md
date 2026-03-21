@@ -117,4 +117,4 @@ Internal Project. All rights reserved.
 
 ---
 
-*Made with 💖 by @_callme_.mo and Hikari Pixel (AI).*
+*Made with 💖 by @_callme_.mo 
