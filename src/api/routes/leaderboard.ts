@@ -22,7 +22,7 @@ router.get('/', async (req: Request, res: Response) => {
       const users = await User.find({})
         .sort(mongoSort)
         .limit(limit * 2) // Fetch a bit extra for complex sorts
-        .select('id username level balance experience star_dust gacha_inventory animals stats')
+        .select('id username level balance experience star_dust gacha_inventory animals stats profileTheme.slug')
         .lean();
 
       const withCounts = users.map((u: any) => {
@@ -51,6 +51,7 @@ router.get('/', async (req: Request, res: Response) => {
           collectionCount: characterCount + pokemonCount,
           commandsUsed: u.stats?.commandsUsed || 0,
           totalDonated: u.stats?.totalDonated || 0,
+          slug: u.profileTheme?.slug || null
         };
       });
 

@@ -59,6 +59,7 @@ export interface IUser extends Document {
     banner: string | null;
     avatar: string | null;
     music: string | null;
+    slug: string | null;
     socials: {
       discord?: string;
       instagram?: string;
@@ -166,6 +167,7 @@ const UserSchema: Schema = new Schema({
     banner: { type: String, default: null },
     avatar: { type: String, default: null },
     music: { type: String, default: null },
+    slug: { type: String, default: null, index: true },
     socials: {
       discord: { type: String, default: null },
       instagram: { type: String, default: null },

@@ -74,6 +74,7 @@ router.get('/me', async (req: any, res) => {
         id: decoded.id,
         username: decoded.username,
         avatar: decoded.avatar,
+        slug: user.profileTheme?.slug || null,
         balance: user.balance || 0,
         level: user.level || 1,
       }

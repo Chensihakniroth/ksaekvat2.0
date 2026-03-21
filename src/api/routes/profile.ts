@@ -28,6 +28,13 @@ router.get('/:userId', async (req: Request, res: Response) => {
       }).lean();
     }
 
+    // 4. Try finding by Custom Slug (Case-insensitive)
+    if (!user) {
+      user = await User.findOne({
+        'profileTheme.slug': { $regex: new RegExp(`^${userId}$`, 'i') }
+      }).lean();
+    }
+
     if (!user) {
       console.warn(`[Backend] Profile not found for UID: ${userId}`);
       return res.status(404).json({ success: false, error: 'User not found' });
@@ -123,6 +130,7 @@ router.get('/:userId', async (req: Request, res: Response) => {
             theme: 'default',
             accentColor: '#22d3ee',
             bio: 'Exploring the digital realm.',
+            slug: null,
             showStats: true,
             showInventory: true,
             socials: {}
@@ -148,10 +156,19 @@ router.post('/update', async (req: any, res: Response) => {
     const { env } = require('../../utils/env.js');
     const decoded: any = jwt.verify(token, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls');
     
-    const { bio, accentColor, background, music, socials, banner, avatar, showStats, showInventory, portfolio, favorites } = req.body;
+    const { bio, accentColor, background, music, socials, banner, avatar, showStats, showInventory, portfolio, favorites, slug } = req.body;
 
     const user = await User.findOne({ id: decoded.id });
     if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+
+    // Validate and check slug uniqueness if provided
+    if (slug && slug !== user.profileTheme?.slug) {
+      if (!/^[a-zA-Z0-9-_]+$/.test(slug)) {
+        return res.status(400).json({ success: false, error: 'Invalid slug format. Use only letters, numbers, dashes, and underscores.' });
+      }
+      const slugExists = await User.findOne({ 'profileTheme.slug': { $regex: new RegExp(`^${slug}$`, 'i') } });
+      if (slugExists) return res.status(400).json({ success: false, error: 'This custom URL slug is already taken.' });
+    }
 
     // Update profile theme object
     user.profileTheme = {
@@ -162,6 +179,7 @@ router.post('/update', async (req: any, res: Response) => {
       music: music !== undefined ? music : user.profileTheme.music,
       banner: banner !== undefined ? banner : user.profileTheme.banner,
       avatar: avatar !== undefined ? avatar : user.profileTheme.avatar,
+      slug: slug !== undefined ? slug : user.profileTheme.slug,
       showStats: showStats !== undefined ? showStats : user.profileTheme.showStats,
       showInventory: showInventory !== undefined ? showInventory : user.profileTheme.showInventory,
       portfolio: portfolio !== undefined ? portfolio : user.profileTheme.portfolio,

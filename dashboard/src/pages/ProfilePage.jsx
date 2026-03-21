@@ -215,7 +215,7 @@ export default function ProfilePage() {
             )}
             <button onClick={(e) => { 
               e.stopPropagation(); 
-              const url = `${window.location.origin}/profile/${p.username}`;
+              const url = `${window.location.origin}/profile/${theme.slug || p.username}`;
               navigator.clipboard.writeText(url); 
               setCopied(true); 
               setTimeout(()=>setCopied(false), 2000); 

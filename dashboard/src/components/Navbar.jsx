@@ -81,7 +81,7 @@ export default function Navbar() {
               <button onClick={() => navigate('/dashboard')} className="zen-action-btn">
                 EDIT
               </button>
-              <div className="zen-avatar-wrap" onClick={() => navigate(`/profile/${user.username}`)}>
+              <div className="zen-avatar-wrap" onClick={() => navigate(`/profile/${user.slug || user.username}`)}>
                 <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '/assets/default-avatar.png'} alt="" />
               </div>
               <button onClick={logout} className="zen-logout-btn" title="Logout">

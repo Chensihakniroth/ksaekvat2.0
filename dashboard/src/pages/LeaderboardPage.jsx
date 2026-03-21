@@ -110,7 +110,7 @@ export default function LeaderboardPage() {
                   transition={{ delay: i * 0.04, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   key={u.userId}
                 >
-                  <Link to={`/profile/${u.username}`} style={{ display: 'block' }}>
+                  <Link to={`/profile/${u.slug || u.username}`} style={{ display: 'block' }}>
                     <div className="roster-card">
                       {/* Rank Number */}
                       <div className="roster-rank" style={{ 

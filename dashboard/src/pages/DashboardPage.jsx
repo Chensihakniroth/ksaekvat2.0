@@ -20,6 +20,7 @@ export default function DashboardPage() {
     bio: '',
     accentColor: '#22d3ee',
     avatar: '',
+    slug: '',
     background: '',
     banner: '',
     bannerPosition: '50%',
