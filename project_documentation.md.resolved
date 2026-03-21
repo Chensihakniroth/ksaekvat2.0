@@ -1,0 +1,384 @@
+# 📘 KOHI Bot Revamp 2.0 — Project Documentation
+
+> **Bot Name:** KOHI Bot | **Version:** 2.0 (Revamp Edition) | **Author:** @_callme_.mo  
+> **Stack:** TypeScript + Node.js + Discord.js v14 + MongoDB (Mongoose)
+
+---
+
+## 🗂️ Project Structure Overview
+
+```
+kohi_revamp/
+├── src/
+│   ├── core/           → Entry point & bot bootstrap
+│   ├── config/         → Bot settings and constants
+│   ├── handlers/       → Command & event loaders
+│   ├── events/         → Discord event listeners
+│   ├── commands/       → All prefix + slash commands (by category)
+│   ├── services/       → Business logic layer (TypeScript classes)
+│   ├── models/         → Mongoose schema definitions
+│   ├── repositories/   → Data access layer abstractions
+│   ├── utils/          → Shared utility functions
+│   └── scripts/        → One-off database/migration scripts
+├── assets/             → Static image assets
+├── .tmp/               → Temp files (image generation output)
+├── logs/               → Daily rotating log files (Winston)
+├── tests/              → Jest test suite
+├── Dockerfile          → Production Docker container definition
+├── tsconfig.json       → TypeScript compiler config
+└── package.json        → Project dependencies & npm scripts
+```
+
+---
+
+## ⚡ Entry Point — [src/core/index.ts](file:///c:/laragon/www/kohi_revamp/src/core/index.ts)
+
+The main application bootstrap file. It initializes the Discord client, connects the database, registers handlers, starts an HTTP server, and logs in.
+
+### Exported Interface
+```ts
+interface ExtendedClient extends Client {
+  commands: Collection<string, any>;       // Prefix commands
+  slashCommands: Collection<string, any>;  // Slash commands
+}
+```
+
+### Boot Functions
+
+| Function | Description |
+|---|---|
+| [deployCommands()](file:///c:/laragon/www/kohi_revamp/src/core/index.ts#53-95) | Reads all files in `commands/slash/`, builds JSON payloads, and pushes them to Discord's REST API via `Routes.applicationCommands`. Logs success/failure per file. |
+| [connectDB()](file:///c:/laragon/www/kohi_revamp/src/core/index.ts#96-115) | Connects to MongoDB using Mongoose with the URI resolved by [getMongoURI()](file:///c:/laragon/www/kohi_revamp/src/utils/env.ts#51-63). On success, immediately calls `registry.initializeRegistry()` to warm up the gacha item cache. Exits process on failure. |
+| [bootstrap()](file:///c:/laragon/www/kohi_revamp/src/core/index.ts#116-148) | Orchestrates the full startup sequence: DB → Handlers → Slash Deploy → HTTP Health Check → Discord Login. |
+
+### Other Notable Behaviors
+- **HTTP Health Check**: A minimal Express server listens on `PORT` (default `8080`) and responds `OK` to `GET /`. Required by Railway for uptime detection.
+- **Global Error Handling**: `process.on('unhandledRejection')` and `process.on('uncaughtException')` both route through `logger.error`.
+- **Daily Cron Job**: Runs at midnight (`0 0 * * *`) via `node-cron`. Iterates all users from MongoDB and resets `dailyClaimed = false`.
+
+---
+
+## ⚙️ Configuration — [src/config/config.js](file:///c:/laragon/www/kohi_revamp/src/config/config.js)
+
+Central configuration object exported via `module.exports`. All values pull from environment variables with sensible fallbacks.
+
+| Key | Description |
+|---|---|
+| `token` | Discord Bot Token |
+| `prefix` | Main bot prefixes: `['k', 'K']` |
+| `clientId` / `guildId` | Discord Application & Guild IDs |
+| `shortPrefixes` | Map of shorthand aliases (e.g., `cf` → `coinflip`, `s` → `slots`) |
+| `adminIds` | Array of admin Discord user IDs (from env + hardcoded) |
+| `giphyApiKey`, `googleApiKey`, `seaLionApiKey`, `tenorApiKey` | External API keys |
+| `aiConfig` | SEA-LION AI chatbot: `baseUrl`, `model`, and `systemPrompt` (waifu personality) |
+| `economy` | Currency emoji, min/max bet, daily/weekly/work reward ranges |
+| `gambling` | Per-game min/max bets and slots symbol config (diamond✦, rocket, coin, skull) |
+| `hunting` | Cooldown, distraction chance (30%), and rarity table (common → priceless) with weights and values |
+| `colors` | Discord-themed embed color palette |
+| `botInfo` | Bot name, version, description, author |
+
+---
+
+## 🔒 Environment Validation — [src/utils/env.ts](file:///c:/laragon/www/kohi_revamp/src/utils/env.ts)
+
+Uses **Zod** to strictly validate the [.env](file:///c:/laragon/www/kohi_revamp/.env) file on startup. If any required variable is missing or malformed, the process exits with a clear error message before anything else runs.
+
+### Validated Variables
+
+| Variable | Required | Default |
+|---|---|---|
+| `DISCORD_TOKEN` | ✅ Yes | — |
+| `CLIENT_ID` | No | `1399459454889754805` |
+| `GUILD_ID` | No | `1240627007340150785` |
+| `MONGODB_URI` / `MONGODB_URL` / `MONGO_URI` / `MONGO_URL` | At least one | `mongodb://127.0.0.1:27017/kohi_bot` |
+| `PORT` | No | `8080` |
+| `NODE_ENV` | No | `development` |
+
+### Exports
+
+| Export | Description |
+|---|---|
+| [env](file:///c:/laragon/www/kohi_revamp/.env) | Validated, type-safe environment object |
+| [getMongoURI()](file:///c:/laragon/www/kohi_revamp/src/utils/env.ts#51-63) | Returns the first available MongoDB URI from the four possible variable names |
+
+---
+
+## 🔌 Handlers — `src/handlers/`
+
+### `commandHandler.js`
+Recursively walks the `commands/` directory (skipping the `slash/` subfolder), loads every `.js` file, and registers it in `client.commands`. 
+
+**Structure requirements for a command file:**
+- `name` — string (required)
+- `execute` — function (required)
+- `aliases` — string[] (optional, all registered too)
+- `category` — string (auto-set to folder name if missing)
+
+### `eventHandler.js`
+Reads all `.js` files from `events/`. For each event:
+- If `event.once === true` → registers with `client.once()`
+- Otherwise → registers with `client.on()`
+- Passes `client` as the last argument to every `execute()` call
+
+---
+
+## 📡 Events — `src/events/`
+
+| File | Description |
+|---|---|
+| `ready.js` | Fires once when the bot logs in. Typically logs the bot's tag and sets activity status. |
+| `messageCreate.js` | The main message router. Parses prefix (including user custom prefixes and short aliases), checks cooldowns, resolves the command from `client.commands`, and executes it. |
+
+---
+
+## 🛠️ Services Layer — `src/services/`
+
+All services are TypeScript classes exported as singletons (`module.exports = new XService()`).
+
+---
+
+### `DatabaseService.ts`
+The **primary data access layer** wrapping all Mongoose model operations. Connects to MongoDB models: `User`, `Listener`, `TalkTarget`, `CharacterCard`, `AnimalRegistry`, `Character`.
+
+| Method | Description |
+|---|---|
+| `getUser(userId, username?)` | Finds or creates a user document. Auto-updates username if changed. |
+| `saveUser(user)` | Calls `user.save()` with error logging. |
+| `getAllUsers()` | Returns all user documents. |
+| `addExperience(userId, amount)` | Adds XP and handles multi-level-up with exponential scaling formula. Returns `{leveledUp, newLevel, currentExp, nextExp}`. |
+| `addBalance(userId, amount)` | Atomic `$inc` update on balance. |
+| `removeBalance(userId, amount)` | Atomic `$inc` with negative value on balance. |
+| `hasBalance(userId, amount)` | Returns `true` if user balance ≥ amount. |
+| `updateStats(userId, type, amount?)` | Increments `stats.totalWon`, `stats.totalLost`, `stats.commandsUsed`, or any custom stat field. |
+| `addGachaItem(userId, itemName)` | Adds character or weapon to `gacha_inventory`. Increments `count` if already owned. Returns merged item data. |
+| `getHydratedInventory(userId)` | Returns inventory items merged with static registry data. |
+| `loadAnimals()` | Fetches all `AnimalRegistry` documents and returns a rarity-grouped map. |
+| `addAnimal(userId, animalKey, rarity)` | Increments a nested `Map<rarity, Map<animalKey, count>>` in the user document. |
+| `getUserAnimals(userId)` | Returns user's animals map. |
+| `addBooster(userId, type, multiplier, duration)` | Sets a booster with expiry timestamp in user's `boosters` Map. |
+| `getActiveBooster(userId, type)` | Returns booster if it hasn't expired, otherwise `null`. |
+| `getListeners()` | Returns `{ adminId: targetUserId }` map from `Listener` collection. |
+| `saveListener(adminId, targetUserId)` | Upserts or deletes a listener record. |
+| `getTalkTargets()` | Returns `{ adminId: { channelId, serverId, setAt } }` from `TalkTarget` collection. |
+| `saveTalkTarget(adminId, channelId, serverId?)` | Upserts or deletes a talk target record. |
+| `getCharacterCard()` | Returns the singleton `CharacterCard` document with id `'default'`. |
+| `updateCharacterCard(data)` | Upserts the default `CharacterCard`. |
+| `getGachaPool()` | Builds a `{ game: { 3: [], 4: [], 5: [] } }` pool from the registry. Injects 3-star generic weapons (Sword, Claymore, Bow, Catalyst, Polearm) for genshin/hsr/wuwa. |
+
+---
+
+### `CombatService.ts`
+All RPG battle math is centralized here. Uses TypeScript interfaces for type safety.
+
+**Interfaces:** `CombatStats`, `PlayerStats`, `Enemy`, `BattleRewards`
+
+| Method | Description |
+|---|---|
+| `calculateCharStats(char, userData, bonuses?)` | Computes character HP/ATK/DEF based on rarity, ascension, and user level. |
+| `calculatePlayerStats(userData, bonuses?)` | Builds `baseStats` (ATK, DEF, HP, Luck) and `totalStats` (+ Speed, CritRate, Evasion from bonuses). |
+| `generateEnemy(userLevel, worldLevel)` | Creates a randomized enemy. 10% chance to be a BOSS. Classes: TANK, STRIKER, SUPPORT, BOSS — each with HP/ATK/DEF multipliers. |
+| `getEnemyAction(enemy, team)` | 30% chance for a class-specific skill (TANK shields, SUPPORT heals, STRIKER crits, BOSS AOE), otherwise a normal attack. Returns `{ type, damage, log, metadata? }`. |
+| `calculateAttackDamage(attackerAtk, targetDef)` | Computes damage with 90–110% variance and a minimum floor of 30. |
+| `calculateComboDamage(team)` | Sums ATK of all alive party members × 2.5. |
+| `calculateRewards(enemy, betAmount, won)` | Returns `{ money, exp }`. Multiplied by boss/rarity bonuses (up to 6×). Returns `{ 0, 10 }` on loss. |
+
+---
+
+### `GachaService.ts`
+Manages all gacha pull logic — rates, pity, and pool selection.
+
+**Constants:** Base 5★ rate: `0.6%`, Soft pity start: pull `75`, Hard pity 5★: `90`, Hard pity 4★: `10`
+
+| Method | Description |
+|---|---|
+| `rollRarity(currentPity5, currentPity4)` | Determines rarity of a single pull. Applies soft pity (rate increases per pull after 75). Returns `{ rarity, pity5, pity4 }`. |
+| `performMultiPull(userData, pool)` | Performs 10 consecutive rolls using `rollRarity`. Picks a random item from the matching rarity pool each time. Returns full results with updated pity counters. |
+
+---
+
+### `EconomyService.ts`
+Handles bet parsing and economy math. Reads limits from `config.js`.
+
+| Method | Description |
+|---|---|
+| `parseBet(input, userBalance, minLimit?, maxLimit?)` | Accepts `'all'`, `'min'`, `'max'`, or a number string. Clamps to maxBet. Returns `0` on invalid input. |
+| `calculateWorkReward(min?, max?, multiplier?)` | Random value in `[min, max]` range, scaled by multiplier. |
+| `format(amount)` | Returns `amount.toLocaleString()` for display. |
+
+---
+
+### `AnimalService.ts`
+Handles the hunting/zoo system and Pokémon image fetching using `pokedex-promise-v2` (auto-caching library).
+
+| Method | Description |
+|---|---|
+| `calculateZooStats(userAnimals, animalsData)` | Aggregates total animal count, total value, and per-rarity breakdown. Returns `ZooStats`. |
+| `calculateBadges(totalAnimalsFound, totalValue, userAnimals)` | Awards emoji badges: 🦁 Hunter (100+), 👑 Master (500+), 💰 Tycoon (1M+ value), 🌟 Legend (has priceless), 🌈 Collector (10+ unique rarities). |
+| `getPokemonImage(key)` | Fetches official artwork URL from PokéAPI via `pokedex-promise-v2`. Handles shiny Charizard override. Caches results in-memory. |
+| `getPokemonSprite(key)` | Fetches small pixel sprite (prefers Gen8 icons). Also cached. |
+| `getKantoPokedexEntries()` | Fetches all Pokémon names from the Kanto Pokédex. Returns a `Set<string>`. Cached after first call. |
+
+---
+
+### `ImageGenerationService.ts`
+A static utility class for compositing team card images entirely via **Sharp** pixel buffer manipulation (no canvas dependency).
+
+| Method | Description |
+|---|---|
+| `isValidImageBuffer(buf)` | Checks magic bytes for PNG, JPEG, WebP, GIF. Prevents Sharp crashes from bad HTTP responses. |
+| `createGridBgRaw(w, h)` | Generates a `#121318` dark background with a subtle radial glow and 40px grid lines. Returns raw RGBA buffer. |
+| `createCardMaskRaw(w, h, radius)` | Creates a rounded-corner alpha mask for card cutouts. |
+| `createCardGradientRaw(w, h, rColors)` | Creates a rarity-colored gradient overlay with a corner glow effect. |
+| `createEmptySlotRaw(w, h)` | Creates an empty card slot with dashed border and a `+` icon in the center. |
+| `createTeamImage(userData, teamCharacters)` | **Main composite function.** Renders a 4-column team card banner (280×420 each). Fetches character art with fallback logic per game: **Genshin** (`jmp.blue` → Fandom wiki), **HSR** (Fandom wiki), **WuWa** (Fandom wiki), **ZZZ** (Fandom wiki). Returns path to saved `.tmp/team-banner-{timestamp}.png`. |
+
+---
+
+## 🗃️ Models — `src/models/`
+
+All models use Mongoose Schema + TypeScript interfaces. Each model has both a `.ts` source and a compiled `.js` file.
+
+### `User.ts` — Main player profile
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `id` | String | — | Discord User ID (unique, indexed) |
+| `username` | String | `'Unknown Traveler'` | Discord display name |
+| `balance` | Number | `1000` | Currency balance |
+| `level` | Number | `1` | Player level |
+| `worldLevel` | Number | `1` | Battle world level |
+| `experience` | Number | `0` | XP toward next level |
+| `dailyClaimed` | Boolean | `false` | Daily reward claimed today |
+| `weeklyClaimed` | Boolean | `false` | Weekly reward claimed |
+| `lastGachaReset` | Date | `null` | Last gacha pull reset timestamp |
+| `dailyPulls` | Number | `0` | Pulls used today |
+| `extraPulls` | Number | `0` | Bonus pull credits |
+| `pity` | Number | `0` | Current 5★ pity counter |
+| `pity4` | Number | `0` | Current 4★ pity counter |
+| `gacha_inventory` | Array | `[]` | Items: `{ name, type, ascension, refinement, count }` |
+| `team` | `String[]` | `[]` | Up to 4 character names (slim storage) |
+| `animals` | `Map<string, Map<string, number>>` | `{}` | `{ rarity: { animalKey: count } }` |
+| `boosters` | `Map<string, any>` | `{}` | Active booster entries with expiry |
+| `inventory` | Mixed[] | `[]` | General item inventory |
+| `equipped` | `Map<string, any>` | `{}` | Currently equipped gear |
+| `lootbox` | Number | `0` | Lootbox count |
+| `stats` | Object | all zeros | `totalGambled, totalWon, totalLost, commandsUsed, won_riel, lost_riel` |
+| `customPrefix` | String | `null` | Per-user main prefix override |
+| `customSubPrefix` | String | `null` | Per-user short prefix override |
+| `joinedAt` | Date | `Date.now` | Account creation timestamp |
+
+### Other Models
+
+| Model | Description |
+|---|---|
+| `Character.ts` | Gacha pool item: `name, game, rarity, type (character/weapon), element, role, emoji, image_url` |
+| `CharacterCard.ts` | Singleton config for the active character showcase card (id: `'default'`) |
+| `AnimalRegistry.ts` | Animal definitions: `key, name, emoji, rarity, value` |
+| `Listener.ts` | Admin listener map: `adminId → targetUserId` |
+| `TalkTarget.ts` | Admin talk target: `adminId → { channelId, serverId, setAt }` |
+| `Promo.ts` | Promotional data schema |
+
+---
+
+## 🔧 Utilities — `src/utils/`
+
+| File | Key Exports / Description |
+|---|---|
+| `logger.js` | Winston-backed logger with daily rotating file transports (`logs/error-*.log`, `logs/combined-*.log`) + colored console output. Custom aesthetic methods: `ascii()`, `header()`, `section()`, `item()`, `table()`, `box()`, `divider()`, `blank()`, `loader()` (returns `{ done(), fail() }` for progress display). |
+| `env.ts` | Zod validation of `.env`. Exports `env` (typed) and `getMongoURI()`. |
+| `registry.js` | In-memory gacha item cache loaded from MongoDB on startup. Exports: `initializeRegistry()`, `getItem(name)`, `getCharacter(name)`, `getWeapon(name)`, `getAllCharacters()`, `getAllWeapons()`. |
+| `env.js` | Compiled JS output of `env.ts` |
+| `adminCheck.js` | Utility to validate if a user is in the `adminIds` list |
+| `cooldowns.js` | Per-command cooldown tracking map |
+| `colors.js` | Color constants / palette helpers |
+| `images.js` | Image URL builders and asset helpers |
+| `promo.js` | Promo card construction utilities |
+
+---
+
+## 📦 Commands — `src/commands/`
+
+Commands are organized by category folder. Each file exports: `name`, `execute`, and optionally `aliases`, `description`, `usage`, `cooldown`.
+
+| Category | Commands |
+|---|---|
+| `admin/` | Admin-only tools (user management, data editing, broadcaster controls, etc.) |
+| `battle/` | RPG combat system (battle initiation, team selection, etc.) |
+| `economy/` | Currency commands (`daily`, `weekly`, `work`, `balance`, `leaderboard`) |
+| `expressions/` | Social/reaction commands (hug, kiss, pat, slap, etc.) — largest category (~19 files) |
+| `gambling/` | Gambling games (`coinflip`, `slots`, `blackjack`, `rps`) |
+| `general/` | Utility commands (`help`, `ping`, `profile`, `info`, etc.) |
+| `meme/` | Meme generation commands |
+| `pokemon/` | Pokémon-themed commands (likely for the hunting/zoo system) |
+| `profile/` | User profile card display |
+| `slash/` | Discord slash command definitions (registered via `deployCommands()`) |
+
+---
+
+## 🗄️ Repositories — `src/repositories/`
+
+Thin abstraction layer over Mongoose models, following the Repository Pattern. Separates raw DB queries from service-level logic.
+
+| File | Description |
+|---|---|
+| `UserRepository.ts` | Basic CRUD for User documents |
+| `CharacterRepository.ts` | Basic CRUD for Character documents |
+| `AnimalRepository.ts` | Basic CRUD for AnimalRegistry documents |
+
+---
+
+## 🚀 Deployment & Tooling
+
+### npm Scripts
+
+| Script | Command | Description |
+|---|---|---|
+| `start` | `node --no-deprecation dist/core/index.js` | Production start from compiled JS |
+| `dev` | `nodemon --exec ts-node src/core/index.ts` | Dev server with hot reload |
+| `build` | `tsc` | Compile TypeScript to `dist/` |
+| `lint` | `eslint .` | Lint all source files |
+| `format` | `prettier --write .` | Auto-format all files |
+| `test` | `jest` | Run the Jest test suite |
+
+### Key Dependencies
+
+| Package | Purpose |
+|---|---|
+| `discord.js ^14.25.1` | Core Discord bot framework |
+| `mongoose ^9.2.3` | MongoDB ODM |
+| `sharp ^0.34.5` | High-performance image processing |
+| `jimp ^0.22.10` | Pure-JS image manipulation (fallback) |
+| `axios ^1.11.0` | HTTP client for external API calls |
+| `node-cron ^3.0.2` | Scheduled jobs (daily reset) |
+| `express ^4.18.2` | HTTP health check server |
+| `winston ^3.19.0` | Production logging |
+| `winston-daily-rotate-file ^5.0.0` | Log file rotation |
+| `zod ^4.3.6` | Runtime environment validation |
+| `pokedex-promise-v2 ^4.2.0` | PokéAPI client with auto-caching |
+| `minio ^8.0.7` | S3-compatible object storage client |
+| `dotenv ^16.6.1` | `.env` file loading |
+
+### Docker / Railway Deployment
+- **`Dockerfile`**: Standard Node.js production image. Copies `dist/` and runs `node dist/core/index.js`.
+- **`Procfile`**: Defines the web process for Railway/Heroku-style deployments.
+- **`docker-compose.yml`**: Local development orchestration.
+- **`.railwayignore`**: Excludes dev files from Railway deployment builds.
+
+---
+
+## 🔄 Data Flow Summary
+
+```
+Discord Message
+      ↓
+messageCreate.js (Event)
+      ↓
+commandHandler lookup → client.commands.get(commandName)
+      ↓
+Command File { name, execute, aliases }
+      ↓
+Service Layer (CombatService / GachaService / EconomyService / AnimalService / ImageGenerationService)
+      ↓
+DatabaseService (Mongoose → MongoDB Atlas)
+      ↓
+Discord Reply (embed / image attachment)
+```

@@ -1,0 +1,115 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const User = require('../../models/User').default || require('../../models/User');
+const registry = require('../../utils/registry.js');
+const animalService = require('../../services/AnimalService').default || require('../../services/AnimalService');
+const mongoose = require('mongoose');
+const router = (0, express_1.Router)();
+// ... existing search route ...
+// GET /api/profile/:userId
+router.get('/:userId', async (req, res) => {
+    try {
+        const { userId } = req.params;
+        // Try finding by Discord ID first, then by MongoDB _id
+        let user = await User.findOne({ id: userId }).lean();
+        if (!user && mongoose.Types.ObjectId.isValid(userId)) {
+            user = await User.findById(userId).lean();
+        }
+        if (!user) {
+            console.warn(`[Backend] Profile not found for UID: ${userId}`);
+            return res.status(404).json({ success: false, error: 'User not found' });
+        }
+        console.log(`[Backend] Loading profile for: ${user.username} (${user.id})`);
+        // Hydrate inventory
+        const hydratedInventory = (user.gacha_inventory || [])
+            .filter((item) => item.type !== 'weapon')
+            .map((item) => {
+            const regChar = registry.getCharacter(item.name);
+            return {
+                name: item.name,
+                count: item.count || 1,
+                game: regChar?.game || 'unknown',
+                rarity: regChar?.rarity || '4',
+                element: regChar?.element || null,
+                role: regChar?.role || null,
+                emoji: regChar?.emoji || '✨',
+                image: regChar?.image || null,
+            };
+        });
+        // Format animal collection
+        const animalMap = {};
+        if (user.animals) {
+            for (const [rarity, pokemonMap] of Object.entries(user.animals)) {
+                animalMap[rarity] = {};
+                if (pokemonMap && typeof pokemonMap === 'object') {
+                    for (const [pokemon, count] of Object.entries(pokemonMap)) {
+                        try {
+                            const sprite = await animalService.getPokemonSprite(pokemon);
+                            if (sprite) {
+                                animalMap[rarity][pokemon] = {
+                                    count: count,
+                                    sprite
+                                };
+                            }
+                        }
+                        catch (err) {
+                            console.error(`[Backend] Failed to get sprite for ${pokemon}:`, err);
+                        }
+                    }
+                }
+            }
+        }
+        const totalPokemon = Object.values(animalMap).reduce((acc, rarityGroup) => {
+            return acc + Object.values(rarityGroup).reduce((s, c) => s + (c.count || 0), 0);
+        }, 0);
+        res.json({
+            success: true,
+            data: {
+                userId: user.id || user._id.toString(),
+                username: user.username || 'Unknown Traveler',
+                level: user.level || 1,
+                balance: user.balance || 0,
+                star_dust: user.star_dust || 0,
+                experience: user.experience || 0,
+                pity: user.pity || 0,
+                pity4: user.pity4 || 0,
+                stats: user.stats || {},
+                dailyClaimed: user.dailyClaimed || false,
+                characters: hydratedInventory,
+                characterCount: hydratedInventory.length,
+                pokemon: animalMap,
+                pokemonCount: totalPokemon,
+            },
+        });
+    }
+    catch (err) {
+        console.error(`[Backend] Profile fetch error for ${req.params.userId}:`, err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+// GET /api/profile — lists all users (paginated, public names only)
+router.get('/', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = Math.min(parseInt(req.query.limit) || 20, 50);
+        const skip = (page - 1) * limit;
+        const users = await User.find({})
+            .sort({ level: -1 })
+            .skip(skip)
+            .limit(limit)
+            .select('id username level balance')
+            .lean();
+        const formatted = users.map((u) => ({
+            userId: u.id,
+            username: u.username || 'Unknown Traveler',
+            level: u.level || 1,
+            balance: u.balance || 0,
+        }));
+        res.json({ success: true, page, data: formatted });
+    }
+    catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+module.exports = router;

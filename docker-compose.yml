@@ -1,0 +1,22 @@
+# Professional Docker Compose for Discord Bot (Industry Standard)
+# (｡♥‿♥｡) Makes it super easy to manage your bot and its dependencies!
+
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    container_name: kohi_bot
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "8080:8080" # Maps local 8080 to container 8080
+    volumes:
+      - ./logs:/app/logs # Persistent logs!
+    networks:
+      - bot_network
+
+networks:
+  bot_network:
+    driver: bridge

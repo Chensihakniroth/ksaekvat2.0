@@ -1,0 +1,302 @@
+
+
+================================================================================
+📊 DETAILED CHARACTER COLLECTION SUMMARY
+================================================================================
+
+📁 Checking path: gacha-images/wuwa_char
+============================================================
+
+✅ Found (44):
+   • Aalto                     → Aalto_Card.webp
+   • Aemeath                   → Aemeath_Card.webp
+   • Augusta                   → Augusta_Card.webp
+   • Baizhi                    → Baizhi_Card.webp
+   • Brant                     → Brant_Card.webp
+   • Buling                    → Buling_Card.webp
+   • Changli                   → Changli_Card.webp
+   • Calcharo                  → Calcharo_Card.webp
+   • Camellya                  → Camellya_Card.webp
+   • Cantarella                → Cantarella_Card.webp
+   • Carlotta                  → Carlotta_Card.webp
+   • Cartethyia                → Cartethyia_Card.webp
+   • Chisa                     → Chisa_Card.webp
+   • Chixia                    → Chixia_Card.webp
+   • Ciaccona                  → Ciaccona_Card.webp
+   • Danjin                    → Danjin_Card.webp
+   • Encore                    → Encore_Card.webp
+   • Galbrena                  → Galbrena_Card.webp
+   • Iuno                      → Iuno_Card.webp
+   • Jianxin                   → Jianxin_Card.webp
+   • Jinhsi                    → Jinhsi_Card.webp
+   • Jiyan                     → Jiyan_Card.webp
+   • Lingyang                  → Lingyang_Card.webp
+   • Lumi                      → Lumi_Card.webp
+   • Lupa                      → Lupa_Card.webp
+   • Luuk Herssen              → Luuk_Herssen_Card.webp
+   • Lynae                     → Lynae_Card.webp
+   • Mornye                    → Mornye_Card.webp
+   • Mortefi                   → Mortefi_Card.webp
+   • Phoebe                    → Phoebe_Card.webp
+   • Phrolova                  → Phrolova_Card.webp
+   • Qiuyuan                   → Qiuyuan_Card.webp
+   • Roccia                    → Roccia_Card.webp
+   • Sanhua                    → Sanhua_Card.webp
+   • Shorekeeper               → Shorekeeper_Card.webp
+   • Sigrika                   → Sigrika_Card.webp
+   • Taoqi                     → Taoqi_Card.webp
+   • Verina                    → Verina_Card.webp
+   • Xiangli Yao               → Xiangli_Yao_Card.webp
+   • Yangyang                  → Yangyang_Card.webp
+   • Yinlin                    → Yinlin_Card.webp
+   • Youhu                     → Youhu_Card.webp
+   • Yuanwu                    → Yuanwu_Card.webp
+   • Zani                      → Zani_Card.webp
+   • Zhezhi                    → Zhezhi_Card.webp
+
+📊 Completion: 45/45 (100%)
+
+📁 Checking path: gacha-images/gs
+============================================================
+
+✅ Found (101):
+   • Albedo                    → Albedo_Card.webp
+   • Alhaitham                 → Alhaitham_Card.webp
+   • Amber                     → Amber_Card.webp
+   • Arlecchino                → Arlecchino_Card.webp
+   • Baizhu                    → Baizhu_Card.webp
+   • Barbara                   → Barbara_Card.webp
+   • Beidou                    → Beidou_Card.webp
+   • Bennett                   → Bennett_Card.webp
+   • Candace                   → Candace_Card.webp
+   • Charlotte                 → Charlotte_Card.webp
+   • Chasca                    → Chasca_Card.webp
+   • Chevreuse                 → Chevreuse_Card.webp
+   • Chiori                    → Chiori_Card.webp
+   • Chongyun                  → Chongyun_Card.webp
+   • Citlali                   → Citlali_Card.webp
+   • Clorinde                  → Clorinde_Card.webp
+   • Collei                    → Collei_Card.webp
+   • Columbina                 → Columbina_Card.webp
+   • Cyno                      → Cyno_Card.webp
+   • Dahlia                    → Dahlia_Card.webp
+   • Dehya                     → Dehya_Card.webp
+   • Diluc                     → Diluc_Card.webp
+   • Diona                     → Diona_Card.webp
+   • Dori                      → Dori_Card.webp
+   • Durin                     → Durin_Card.webp
+   • Emilie                    → Emilie_Card.webp
+   • Escoffier                 → Escoffier_Card.webp
+   • Eula                      → Eula_Card.webp
+   • Faruzan                   → Faruzan_Card.webp
+   • Fischl                    → Fischl_Card.webp
+   • Flins                     → Flins_Card.webp
+   • Freminet                  → Freminet_Card.webp
+   • Furina                    → Furina_Card.webp
+   • Gaming                    → Gaming_Card.webp
+   • Ganyu                     → Ganyu_Card.webp
+   • Gorou                     → Gorou_Card.webp
+   • Hu Tao                    → Hu_Tao_Card.webp
+   • Iansan                    → Iansan_Card.webp
+   • Ineffa                    → Ineffa_Card.webp
+   • Jean                      → Jean_Card.webp
+   • Kachina                   → Kachina_Card.webp
+   • Kaedehara Kazuha          → Kaedehara_Kazuha_Card.webp
+   • Kaeya                     → Kaeya_Card.webp
+   • Kamisato Ayaka            → Kamisato_Ayaka_Card.webp
+   • Kamisato Ayato            → Kamisato_Ayato_Card.webp
+   • Kaveh                     → Kaveh_Card.webp
+   • Keqing                    → Keqing_Card.webp
+   • Kinich                    → Kinich_Card.webp
+   • Kirara                    → Kirara_Card.webp
+   • Klee                      → Klee_Card.webp
+   • Kujou Sara                → Kujou_Sara_Card.webp
+   • Kuki Shinobu              → Kuki_Shinobu_Card.webp
+   • Lan Yan                   → Lan_Yan_Card.webp
+   • Lauma                     → Lauma_Card.webp
+   • Layla                     → Layla_Card.webp
+   • Lisa                      → Lisa_Card.webp
+   • Lynette                   → Lynette_Card.webp
+   • Lyney                     → Lyney_Card.webp
+   • Mavuika                   → Mavuika_Card.webp
+   • Mika                      → Mika_Card.webp
+   • Mona                      → Mona_Card.webp
+   • Mualani                   → Mualani_Card.webp
+   • Nahida                    → Nahida_Card.webp
+   • Navia                     → Navia_Card.webp
+   • Neuvillette               → Neuvillette_Card.webp
+   • Nilou                     → Nilou_Card.webp
+   • Ningguang                 → Ningguang_Card.webp
+   • Noelle                    → Noelle_Card.webp
+   • Ororon                    → Ororon_Card.webp
+   • Qiqi                      → Qiqi_Card.webp
+   • Raiden Shogun             → Raiden_Shogun_Card.webp
+   • Razor                     → Razor_Card.webp
+   • Rosaria                   → Rosaria_Card.webp
+   • Sangonomiya Kokomi        → Sangonomiya_Kokomi_Card.webp
+   • Sayu                      → Sayu_Card.webp
+   • Sethos                    → Sethos_Card.webp
+   • Shenhe                    → Shenhe_Card.webp
+   • Shikanoin Heizou          → Shikanoin_Heizou_Card.webp
+   • Sigewinne                 → Sigewinne_Card.webp
+   • Skirk                     → Skirk_Card.webp
+   • Sucrose                   → Sucrose_Card.webp
+   • Tartaglia                 → Tartaglia_Card.webp
+   • Thoma                     → Thoma_Card.webp
+   • Tighnari                  → Tighnari_Card.webp
+   • Varka                     → Varka_Card.webp
+   • Venti                     → Venti_Card.webp
+   • Wanderer                  → Wanderer_Card.webp
+   • Wriothesley               → Wriothesley_Card.webp
+   • Xiangling                 → Xiangling_Card.webp
+   • Xianyun                   → Xianyun_Card.webp
+   • Xiao                      → Xiao_Card.webp
+   • Xilonen                   → Xilonen_Card.webp
+   • Xingqiu                   → Xingqiu_Card.webp
+   • Xinyan                    → Xinyan_Card.webp
+   • Yae Miko                  → Yae_Miko_Card.webp
+   • Yanfei                    → Yanfei_Card.webp
+   • Yaoyao                    → Yaoyao_Card.webp
+   • Yelan                     → Yelan_Card.webp
+   • Yoimiya                   → Yoimiya_Card.webp
+   • Yun Jin                   → Yun_Jin_Card.webp
+   • Zhongli                   → Zhongli_Card.webp
+
+📊 Completion: 101/101 (100.0%)
+
+📁 Checking path : gacha-images/hsr
+============================================================
+
+✅ Found (69):
+   • Acheron                   → Acheron_Render.webp
+   • Aglaea                    → Aglaea_Render.webp
+   • Anaxa                     → Anaxa_Render.webp
+   • Archer                    → Archer_Render.webp
+   • Argenti                   → Argenti_Render.webp
+   • Arlan                     → Arlan_Render.webp
+   • Asta                      → Asta_Render.webp
+   • Aventurine                → Aventurine_Render.webp
+   • Bailu                     → Bailu_Render.webp
+   • Black Swan                → Black_Swan_Render.webp
+   • Blade                     → Blade_Render.webp
+   • Boothill                  → Boothill_Render.webp
+   • Bronya                    → Bronya_Render.webp
+   • Castorice                 → Castorice_Render.webp
+   • Cerydra                   → Cerydra_Render.webp
+   • Cipher                    → Cipher_Render.webp
+   • Clara                     → Clara_Render.webp
+   • Dan Heng • IL             → Dan_Heng_IL_Imbibitor_Lunae_Render.webp
+   • Dan Heng                  → Dan_Heng_Render.webp
+   • Dr. Ratio                 → Dr._Ratio_Render.webp
+   • Feixiao                   → Feixiao_Render.webp
+   • Firefly                   → Firefly_Render.webp
+   • Fu Xuan                   → Fu_Xuan_Render.webp
+   • Fugue                     → Fugue_Render.webp
+   • Gallagher                 → Gallagher_Render.webp
+   • Gepard                    → Gepard_Render.webp
+   • Guinaifen                 → Guinaifen_Render.webp
+   • Hanya                     → Hanya_Render.webp
+   • Herta                     → Herta_Render.webp
+   • Himeko                    → Himeko_Render.webp
+   • Hook                      → Hook_Render.webp
+   • Huohuo                    → Huohuo_Render.webp
+   • Hyacine                   → Hyacine_Render.webp
+   • Jade                      → Jade_Render.webp
+   • Jiaoqiu                   → Jiaoqiu_Render.webp
+   • Jing Yuan                 → Jing_Yuan_Render.webp
+   • Jingliu                   → Jingliu_Render.webp
+   • Kafka                     → Kafka_Render.webp
+   • Lingsha                   → Lingsha_Render.webp
+   • Luka                      → Luka_Render.webp
+   • Luocha                    → Luocha_Render.webp
+   • Lynx                      → Lynx_Render.webp
+   • March 7th                 → March_7th_Render.webp
+   • Misha                     → Misha_Render.webp
+   • Moze                      → Moze_Render.webp
+   • Natasha                   → Natasha_Render.webp
+   • Pela                      → Pela_Render.webp
+   • Phainon                   → Phainon_Render.webp
+   • Qingque                   → Qingque_Render.webp
+   • Rappa                     → Rappa_Render.webp
+   • Robin                     → Robin_Render.webp
+   • Ruan Mei                  → Ruan_Mei_Render.webp
+   • Sampo                     → Sampo_Render.webp
+   • Seele                     → Seele_Render.webp
+   • Serval                    → Serval_Render.webp
+   • Silver Wolf               → Silver_Wolf_Render.webp
+   • Sparkle                   → Sparkle_Render.webp
+   • Sparxie                   → Sparxie_Render.webp
+   • Sunday                    → Sunday_Render.webp
+   • Sushang                   → Sushang_Render.webp
+   • The Herta                 → The_Herta_Render.webp
+   • Tingyun                   → Tingyun_Render.webp
+   • Topaz & Numby             → Topaz_and_Numby_Render.webp
+   • Tribbie                   → Tribbie_Render.webp
+   • Welt                      → Welt_Render.webp
+   • Xueyi                     → Xueyi_Render.webp
+   • Yanqing                   → Yanqing_Render.webp
+   • Yao Guang                 → Yao_Guang_Render.webp
+   • Yukong                    → Yukong_Render.webp
+
+📊 Completion: 69/69 (100.0%)
+
+📁 Checking path : gacha-images/zzz
+============================================================
+
+✅ Found (49):
+   • Rina                      → Alexandrina_Sebastiane_Portrait.webp
+   • Alice Thymefield          → Alice_Thymefield_Portrait.webp
+   • Anby Demara               → Anby_Demara_Portrait.webp
+   • Anton Ivanov              → Anton_Ivanov_Portrait.webp
+   • Aria                      → Aria_Portrait.webp
+   • Astra Yao                 → Astra_Yao_Portrait.webp
+   • Banyue                    → Banyue_Portrait.webp
+   • Ben Bigger                → Ben_Bigger_Portrait.webp
+   • Billy Kid                 → Billy_Kid_Portrait.webp
+   • Burnice White             → Burnice_White_Portrait.webp
+   • Caesar King               → Caesar_King_Portrait.webp
+   • Cissia                    → Cissia_Portrait.webp
+   • Corin Wickes              → Corin_Wickes_Portrait.webp
+   • Dialyn                    → Dialyn_Portrait.webp
+   • Ellen Joe                 → Ellen_Joe_Portrait.webp
+   • Evelyn Chevalier          → Evelyn_Chevalier_Portrait.webp
+   • Grace Howard              → Grace_Howard_Portrait.webp
+   • Hoshimi Miyabi            → Hoshimi_Miyabi_Portrait.webp
+   • Hugo Vlad                 → Hugo_Vlad_Portrait.webp
+   • Jane Doe                  → Jane_Doe_Portrait.webp
+   • Ju Fufu                   → Ju_Fufu_Portrait.webp
+   • Koleda Belobog            → Koleda_Belobog_Portrait.webp
+   • Manato                    → Komano_Manato_Portrait.webp
+   • Lighter                   → Lighter_Portrait.webp
+   • Lucia Elowen              → Lucia_Elowen_Portrait.webp
+   • Lucy                      → Luciana_de_Montefio_Portrait.webp
+   • Nangong Yu                → Nangong_Yu_Portrait.webp
+   • Nekomata                  → Nekomiya_Mana_Portrait.webp
+   • Nicole Demara             → Nicole_Demara_Portrait.webp
+   • Orphie & Magus            → Orphie_Magnusson_and_Magus_Portrait.webp
+   • Pan Yinhu                 → Pan_Yinhu_Portrait.webp
+   • Piper Wheel               → Piper_Wheel_Portrait.webp
+   • Pulchra                   → Pulchra_Fellini_Portrait.webp
+   • Qingyi                    → Qingyi_Portrait.webp
+   • Seed                      → Seed_Portrait.webp
+   • Seth Lowell               → Seth_Lowell_Portrait.webp
+   • Soldier 11                → Soldier_11_Portrait.webp
+   • Soukaku                   → Soukaku_Portrait.webp
+   • Sunna                     → Sunna_Portrait.webp
+   • Trigger                   → Trigger_Portrait.webp
+   • Yanagi                    → Tsukishiro_Yanagi_Portrait.webp
+   • Yuzuha                    → Ukinami_Yuzuha_Portrait.webp
+   • Vivian Banshee            → Vivian_Banshee_Portrait.webp
+   • Von Lycaon                → Von_Lycaon_Portrait.webp
+   • Ye Shunguang              → Ye_Shunguang_Portrait.webp
+   • Yidhari Murphy            → Yidhari_Murphy_Portrait.webp
+   • Yixuan                    → Yixuan_Portrait.webp
+   • Zhao                      → Zhao_Portrait.webp
+   • Zhu Yuan                  → Zhu_Yuan_Portrait.webp
+
+📊 Completion: 49/49 (100.0%)
+
+================================================================================
+📈 OVERALL SUMMARY
+================================================================================
+Total Characters: 264/264 (100%)

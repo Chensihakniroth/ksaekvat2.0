@@ -1,0 +1,956 @@
+🎮 Character Role Analysis Report
+Generated: March 7, 2026
+Total Characters: 263/265 (99.2%)
+
+================================================================================
+📊 ROLE DISTRIBUTION BY GAME
+================================================================================
+
+📁 Wuthering Waves (44/46 characters found)
+============================================================
+⚔️ DPS (Main DPS): 18 characters
+   • Aemeath (Main DPS)
+   • Augusta (Main DPS)
+   • Brant (Main DPS)
+   • Calcharo (Main DPS)
+   • Camellya (Main DPS)
+   • Carlotta (Main DPS)
+   • Cartethyia (Main DPS)
+   • Chisa (Main DPS)
+   • Chixia (Main DPS)
+   • Ciaccona (Main DPS)
+   • Danjin (Main DPS)
+   • Galbrena (Main DPS)
+   • Iuno (Main DPS)
+   • Jinhsi (Main DPS)
+   • Jiyan (Main DPS)
+   • Lingyang (Main DPS)
+   • Lupa (Main DPS)
+   • Lynae (Main DPS)
+   • Mornye (Main DPS)
+   • Phoebe (Main DPS)
+   • Phrolova (Main DPS)
+   • Qiuyuan (Main DPS)
+   • Roccia (Main DPS)
+   • Sanhua (Main DPS)
+   • Shorekeeper (Main DPS)
+   • Sigrika (Main DPS)
+   • Taoqi (Main DPS)
+   • Verina (Main DPS)
+   • Yangyang (Main DPS)
+   • Youhu (Main DPS)
+   • Yuanwu (Main DPS)
+   • Zani (Main DPS)
+   • Zhezhi (Main DPS)
+
+🛡️ S-DPS (Sub-DPS): 6 characters
+   • Aalto (Sub-DPS)
+   • Buling (Sub-DPS)
+   • Lumi (Sub-DPS)
+   • Mortefi (Sub-DPS)
+   • Luuk Herssen (Sub-DPS)
+   • Rover (Sub-DPS) ❌ MISSING
+
+💚 SUPPORT (Buffer/Stunner): 8 characters
+   • Baizhi (Buffer/Stunner)
+   • Chisa (Buffer/Stunner)
+   • Encore (Buffer/Stunner)
+   • Jianxin (Buffer/Stunner)
+   • Luuk Herssen (Buffer/Stunner)
+   • Rover (Buffer/Stunner) ❌ MISSING
+   • Yangyang (Buffer/Stunner)
+   • Youhu (Buffer/Stunner)
+
+❤️ HEAL (Rejuvenating/Healer): 4 characters
+   • Aalto (Rejuvenating/Healer)
+   • Buling (Rejuvenating/Healer)
+   • Lumi (Rejuvenating/Healer)
+   • Mortefi (Rejuvenating/Healer)
+
+🛡️ TANK (Shielders): 2 characters
+   • Changli (Shielders) ❌ MISSING
+   • Luuk Herssen (Shielders)
+
+📁 Genshin Impact (101/101 characters found)
+============================================================
+⚔️ DPS (Main DPS): 45 characters
+   • Albedo (Shielders) → TANK
+   • Alhaitham (Main DPS)
+   • Amber (Main DPS)
+   • Arlecchino (Main DPS)
+   • Baizhu (Healers) → HEAL
+   • Barbara (Healers) → HEAL
+   • Beidou (Main DPS)
+   • Bennett (Healers) → HEAL
+   • Candace (Healers) → HEAL
+   • Charlotte (Healers) → HEAL
+   • Chasca (Main DPS)
+   • Chevreuse (Main DPS)
+   • Chiori (Main DPS)
+   • Chongyun (Main DPS)
+   • Citlali (Main DPS)
+   • Clorinde (Main DPS)
+   • Collei (Main DPS)
+   • Columbina (Main DPS)
+   • Cyno (Main DPS)
+   • Diluc (Main DPS)
+   • Diona (Healers) → HEAL
+   • Dori (Main DPS)
+   • Durin (Main DPS)
+   • Emilie (Main DPS)
+   • Escoffier (Main DPS)
+   • Eula (Main DPS)
+   • Faruzan (Buffers/Crowd Control) → SUPPORT
+   • Fischl (Main DPS)
+   • Flins (Main DPS)
+   • Freminet (Main DPS)
+   • Furina (Healers) → HEAL
+   • Gaming (Main DPS)
+   • Ganyu (Main DPS)
+   • Gorou (Buffers/Crowd Control) → SUPPORT
+   • Hu Tao (Main DPS)
+   • Iansan (Main DPS)
+   • Ineffa (Main DPS)
+   • Jean (Healers) → HEAL
+   • Kachina (Main DPS)
+   • Kaedehara Kazuha (Buffers/Crowd Control) → SUPPORT
+   • Kaeya (Main DPS)
+   • Kamisato Ayaka (Main DPS)
+   • Kamisato Ayato (Main DPS)
+   • Kaveh (Main DPS)
+   • Keqing (Main DPS)
+   • Kinich (Main DPS)
+   • Kirara (Healers) → HEAL
+   • Klee (Main DPS)
+   • Kujou Sara (Buffers/Crowd Control) → SUPPORT
+   • Kuki Shinobu (Healers) → HEAL
+   • Lan Yan (Main DPS)
+   • Lauma (Main DPS)
+   • Layla (Healers) → HEAL
+   • Lisa (Main DPS)
+   • Lynette (Buffers/Crowd Control) → SUPPORT
+   • Lyney (Main DPS)
+   • Mavuika (Main DPS)
+   • Mika (Healers) → HEAL
+   • Mona (Healers) → HEAL
+   • Mualani (Main DPS)
+   • Nahida (Main DPS)
+   • Navia (Main DPS)
+   • Neuvillette (Main DPS)
+   • Nilou (Main DPS)
+   • Ningguang (Main DPS)
+   • Noelle (Healers) → HEAL
+   • Ororon (Main DPS)
+   • Qiqi (Healers) → HEAL
+   • Raiden Shogun (Main DPS)
+   • Razor (Main DPS)
+   • Rosaria (Main DPS)
+   • Sangonomiya Kokomi (Healers) → HEAL
+   • Sayu (Healers) → HEAL
+   • Sethos (Main DPS)
+   • Shenhe (Main DPS)
+   • Shikanoin Heizou (Buffers/Crowd Control) → SUPPORT
+   • Sigewinne (Main DPS)
+   • Skirk (Main DPS)
+   • Sucrose (Buffers/Crowd Control) → SUPPORT
+   • Tartaglia (Main DPS)
+   • Thoma (Healers) → HEAL
+   • Tighnari (Main DPS)
+   • Varka (Main DPS)
+   • Venti (Buffers/Crowd Control) → SUPPORT
+   • Wanderer (Main DPS)
+   • Wriothesley (Main DPS)
+   • Xiangling (Main DPS)
+   • Xianyun (Main DPS)
+   • Xiao (Main DPS)
+   • Xilonen (Main DPS)
+   • Xingqiu (Healers) → HEAL
+   • Xinyan (Main DPS)
+   • Yae Miko (Main DPS)
+   • Yanfei (Main DPS)
+   • Yaoyao (Healers) → HEAL
+   • Yelan (Main DPS)
+   • Yoimiya (Main DPS)
+   • Yun Jin (Healers) → HEAL
+   • Zhongli (Shielders) → TANK
+
+🛡️ S-DPS (Sub-DPS): 18 characters
+   • Albedo (Shielders) → TANK
+   • Alhaitham (Main DPS) → DPS
+   • Amber (Main DPS) → DPS
+   • Arlecchino (Main DPS) → DPS
+   • Baizhu (Healers) → HEAL
+   • Barbara (Healers) → HEAL
+   • Beidou (Main DPS) → DPS
+   • Bennett (Healers) → HEAL
+   • Candace (Healers) → HEAL
+   • Charlotte (Healers) → HEAL
+   • Chasca (Main DPS) → DPS
+   • Chevreuse (Main DPS) → DPS
+   • Chiori (Main DPS) → DPS
+   • Chongyun (Main DPS) → DPS
+   • Citlali (Main DPS) → DPS
+   • Clorinde (Main DPS) → DPS
+   • Collei (Main DPS) → DPS
+   • Columbina (Main DPS) → DPS
+   • Cyno (Main DPS) → DPS
+   • Diluc (Main DPS) → DPS
+   • Diona (Healers) → HEAL
+   • Dori (Main DPS) → DPS
+   • Durin (Main DPS) → DPS
+   • Emilie (Main DPS) → DPS
+   • Escoffier (Main DPS) → DPS
+   • Eula (Main DPS) → DPS
+   • Faruzan (Buffers/Crowd Control) → SUPPORT
+   • Fischl (Main DPS) → DPS
+   • Flins (Main DPS) → DPS
+   • Freminet (Main DPS) → DPS
+   • Furina (Healers) → HEAL
+   • Gaming (Main DPS) → DPS
+   • Ganyu (Main DPS) → DPS
+   • Gorou (Buffers/Crowd Control) → SUPPORT
+   • Hu Tao (Main DPS) → DPS
+   • Iansan (Main DPS) → DPS
+   • Ineffa (Main DPS) → DPS
+   • Jean (Healers) → HEAL
+   • Kachina (Main DPS) → DPS
+   • Kaedehara Kazuha (Buffers/Crowd Control) → SUPPORT
+   • Kaeya (Main DPS) → DPS
+   • Kamisato Ayaka (Main DPS) → DPS
+   • Kamisato Ayato (Main DPS) → DPS
+   • Kaveh (Main DPS) → DPS
+   • Keqing (Main DPS) → DPS
+   • Kinich (Main DPS) → DPS
+   • Kirara (Healers) → HEAL
+   • Klee (Main DPS) → DPS
+   • Kujou Sara (Buffers/Crowd Control) → SUPPORT
+   • Kuki Shinobu (Healers) → HEAL
+   • Lan Yan (Main DPS) → DPS
+   • Lauma (Main DPS) → DPS
+   • Layla (Healers) → HEAL
+   • Lisa (Main DPS) → DPS
+   • Lynette (Buffers/Crowd Control) → SUPPORT
+   • Lyney (Main DPS) → DPS
+   • Mavuika (Main DPS) → DPS
+   • Mika (Healers) → HEAL
+   • Mona (Healers) → HEAL
+   • Mualani (Main DPS) → DPS
+   • Nahida (Main DPS) → DPS
+   • Navia (Main DPS) → DPS
+   • Neuvillette (Main DPS) → DPS
+   • Nilou (Main DPS) → DPS
+   • Ningguang (Main DPS) → DPS
+   • Noelle (Healers) → HEAL
+   • Ororon (Main DPS) → DPS
+   • Qiqi (Healers) → HEAL
+   • Raiden Shogun (Main DPS) → DPS
+   • Razor (Main DPS) → DPS
+   • Rosaria (Main DPS) → DPS
+   • Sangonomiya Kokomi (Healers) → HEAL
+   • Sayu (Healers) → HEAL
+   • Sethos (Main DPS) → DPS
+   • Shenhe (Main DPS) → DPS
+   • Shikanoin Heizou (Buffers/Crowd Control) → SUPPORT
+   • Sigewinne (Main DPS) → DPS
+   • Skirk (Main DPS) → DPS
+   • Sucrose (Buffers/Crowd Control) → SUPPORT
+   • Tartaglia (Main DPS) → DPS
+   • Thoma (Healers) → HEAL
+   • Tighnari (Main DPS) → DPS
+   • Varka (Main DPS) → DPS
+   • Venti (Buffers/Crowd Control) → SUPPORT
+   • Wanderer (Main DPS) → DPS
+   • Wriothesley (Main DPS) → DPS
+   • Xiangling (Main DPS) → DPS
+   • Xianyun (Main DPS) → DPS
+   • Xiao (Main DPS) → DPS
+   • Xilonen (Main DPS) → DPS
+   • Xingqiu (Healers) → HEAL
+   • Xinyan (Main DPS) → DPS
+   • Yae Miko (Main DPS) → DPS
+   • Yanfei (Main DPS) → DPS
+   • Yaoyao (Healers) → HEAL
+   • Yelan (Main DPS) → DPS
+   • Yoimiya (Main DPS) → DPS
+   • Yun Jin (Healers) → HEAL
+   • Zhongli (Shielders) → TANK
+
+💚 SUPPORT (Buffers/Crowd Control): 16 characters
+   • Albedo (Shielders) → TANK
+   • Alhaitham (Main DPS) → DPS
+   • Amber (Main DPS) → DPS
+   • Arlecchino (Main DPS) → DPS
+   • Baizhu (Healers) → HEAL
+   • Barbara (Healers) → HEAL
+   • Beidou (Main DPS) → DPS
+   • Bennett (Healers) → HEAL
+   • Candace (Healers) → HEAL
+   • Charlotte (Healers) → HEAL
+   • Chasca (Main DPS) → DPS
+   • Chevreuse (Main DPS) → DPS
+   • Chiori (Main DPS) → DPS
+   • Chongyun (Main DPS) → DPS
+   • Citlali (Main DPS) → DPS
+   • Clorinde (Main DPS) → DPS
+   • Collei (Main DPS) → DPS
+   • Columbina (Main DPS) → DPS
+   • Cyno (Main DPS) → DPS
+   • Diluc (Main DPS) → DPS
+   • Diona (Healers) → HEAL
+   • Dori (Main DPS) → DPS
+   • Durin (Main DPS) → DPS
+   • Emilie (Main DPS) → DPS
+   • Escoffier (Main DPS) → DPS
+   • Eula (Main DPS) → DPS
+   • Faruzan (Buffers/Crowd Control)
+   • Fischl (Main DPS) → DPS
+   • Flins (Main DPS) → DPS
+   • Freminet (Main DPS) → DPS
+   • Furina (Healers) → HEAL
+   • Gaming (Main DPS) → DPS
+   • Ganyu (Main DPS) → DPS
+   • Gorou (Buffers/Crowd Control)
+   • Hu Tao (Main DPS) → DPS
+   • Iansan (Main DPS) → DPS
+   • Ineffa (Main DPS) → DPS
+   • Jean (Healers) → HEAL
+   • Kachina (Main DPS) → DPS
+   • Kaedehara Kazuha (Buffers/Crowd Control)
+   • Kaeya (Main DPS) → DPS
+   • Kamisato Ayaka (Main DPS) → DPS
+   • Kamisato Ayato (Main DPS) → DPS
+   • Kaveh (Main DPS) → DPS
+   • Keqing (Main DPS) → DPS
+   • Kinich (Main DPS) → DPS
+   • Kirara (Healers) → HEAL
+   • Klee (Main DPS) → DPS
+   • Kujou Sara (Buffers/Crowd Control)
+   • Kuki Shinobu (Healers) → HEAL
+   • Lan Yan (Main DPS) → DPS
+   • Lauma (Main DPS) → DPS
+   • Layla (Healers) → HEAL
+   • Lisa (Main DPS) → DPS
+   • Lynette (Buffers/Crowd Control)
+   • Lyney (Main DPS) → DPS
+   • Mavuika (Main DPS) → DPS
+   • Mika (Healers) → HEAL
+   • Mona (Healers) → HEAL
+   • Mualani (Main DPS) → DPS
+   • Nahida (Main DPS) → DPS
+   • Navia (Main DPS) → DPS
+   • Neuvillette (Main DPS) → DPS
+   • Nilou (Main DPS) → DPS
+   • Ningguang (Main DPS) → DPS
+   • Noelle (Healers) → HEAL
+   • Ororon (Main DPS) → DPS
+   • Qiqi (Healers) → HEAL
+   • Raiden Shogun (Main DPS) → DPS
+   • Razor (Main DPS) → DPS
+   • Rosaria (Main DPS) → DPS
+   • Sangonomiya Kokomi (Healers) → HEAL
+   • Sayu (Healers) → HEAL
+   • Sethos (Main DPS) → DPS
+   • Shenhe (Main DPS) → DPS
+   • Shikanoin Heizou (Buffers/Crowd Control)
+   • Sigewinne (Main DPS) → DPS
+   • Skirk (Main DPS) → DPS
+   • Sucrose (Buffers/Crowd Control)
+   • Tartaglia (Main DPS) → DPS
+   • Thoma (Healers) → HEAL
+   • Tighnari (Main DPS) → DPS
+   • Varka (Main DPS) → DPS
+   • Venti (Buffers/Crowd Control)
+   • Wanderer (Main DPS) → DPS
+   • Wriothesley (Main DPS) → DPS
+   • Xiangling (Main DPS) → DPS
+   • Xianyun (Main DPS) → DPS
+   • Xiao (Main DPS) → DPS
+   • Xilonen (Main DPS) → DPS
+   • Xingqiu (Healers) → HEAL
+   • Xinyan (Main DPS) → DPS
+   • Yae Miko (Main DPS) → DPS
+   • Yanfei (Main DPS) → DPS
+   • Yaoyao (Healers) → HEAL
+   • Yelan (Main DPS) → DPS
+   • Yoimiya (Main DPS) → DPS
+   • Yun Jin (Healers) → HEAL
+   • Zhongli (Shielders) → TANK
+
+❤️ HEAL (Healers): 18 characters
+   • Albedo (Shielders) → TANK
+   • Alhaitham (Main DPS) → DPS
+   • Amber (Main DPS) → DPS
+   • Arlecchino (Main DPS) → DPS
+   • Baizhu (Healers)
+   • Barbara (Healers)
+   • Beidou (Main DPS) → DPS
+   • Bennett (Healers)
+   • Candace (Healers)
+   • Charlotte (Healers)
+   • Chasca (Main DPS) → DPS
+   • Chevreuse (Main DPS) → DPS
+   • Chiori (Main DPS) → DPS
+   • Chongyun (Main DPS) → DPS
+   • Citlali (Main DPS) → DPS
+   • Clorinde (Main DPS) → DPS
+   • Collei (Main DPS) → DPS
+   • Columbina (Main DPS) → DPS
+   • Cyno (Main DPS) → DPS
+   • Diluc (Main DPS) → DPS
+   • Diona (Healers)
+   • Dori (Main DPS) → DPS
+   • Durin (Main DPS) → DPS
+   • Emilie (Main DPS) → DPS
+   • Escoffier (Main DPS) → DPS
+   • Eula (Main DPS) → DPS
+   • Faruzan (Buffers/Crowd Control) → SUPPORT
+   • Fischl (Main DPS) → DPS
+   • Flins (Main DPS) → DPS
+   • Freminet (Main DPS) → DPS
+   • Furina (Healers)
+   • Gaming (Main DPS) → DPS
+   • Ganyu (Main DPS) → DPS
+   • Gorou (Buffers/Crowd Control) → SUPPORT
+   • Hu Tao (Main DPS) → DPS
+   • Iansan (Main DPS) → DPS
+   • Ineffa (Main DPS) → DPS
+   • Jean (Healers)
+   • Kachina (Main DPS) → DPS
+   • Kaedehara Kazuha (Buffers/Crowd Control) → SUPPORT
+   • Kaeya (Main DPS) → DPS
+   • Kamisato Ayaka (Main DPS) → DPS
+   • Kamisato Ayato (Main DPS) → DPS
+   • Kaveh (Main DPS) → DPS
+   • Keqing (Main DPS) → DPS
+   • Kinich (Main DPS) → DPS
+   • Kirara (Healers)
+   • Klee (Main DPS) → DPS
+   • Kujou Sara (Buffers/Crowd Control) → SUPPORT
+   • Kuki Shinobu (Healers)
+   • Lan Yan (Main DPS) → DPS
+   • Lauma (Main DPS) → DPS
+   • Layla (Healers)
+   • Lisa (Main DPS) → DPS
+   • Lynette (Buffers/Crowd Control) → SUPPORT
+   • Lyney (Main DPS) → DPS
+   • Mavuika (Main DPS) → DPS
+   • Mika (Healers)
+   • Mona (Healers)
+   • Mualani (Main DPS) → DPS
+   • Nahida (Main DPS) → DPS
+   • Navia (Main DPS) → DPS
+   • Neuvillette (Main DPS) → DPS
+   • Nilou (Main DPS) → DPS
+   • Ningguang (Main DPS) → DPS
+   • Noelle (Healers)
+   • Ororon (Main DPS) → DPS
+   • Qiqi (Healers)
+   • Raiden Shogun (Main DPS) → DPS
+   • Razor (Main DPS) → DPS
+   • Rosaria (Main DPS) → DPS
+   • Sangonomiya Kokomi (Healers)
+   • Sayu (Healers)
+   • Sethos (Main DPS) → DPS
+   • Shenhe (Main DPS) → DPS
+   • Shikanoin Heizou (Buffers/Crowd Control) → SUPPORT
+   • Sigewinne (Main DPS) → DPS
+   • Skirk (Main DPS) → DPS
+   • Sucrose (Buffers/Crowd Control) → SUPPORT
+   • Tartaglia (Main DPS) → DPS
+   • Thoma (Healers)
+   • Tighnari (Main DPS) → DPS
+   • Varka (Main DPS) → DPS
+   • Venti (Buffers/Crowd Control) → SUPPORT
+   • Wanderer (Main DPS) → DPS
+   • Wriothesley (Main DPS) → DPS
+   • Xiangling (Main DPS) → DPS
+   • Xianyun (Main DPS) → DPS
+   • Xiao (Main DPS) → DPS
+   • Xilonen (Main DPS) → DPS
+   • Xingqiu (Healers)
+   • Xinyan (Main DPS) → DPS
+   • Yae Miko (Main DPS) → DPS
+   • Yanfei (Main DPS) → DPS
+   • Yaoyao (Healers)
+   • Yelan (Main DPS) → DPS
+   • Yoimiya (Main DPS) → DPS
+   • Yun Jin (Healers)
+   • Zhongli (Shielders) → TANK
+
+🛡️ TANK (Shielders): 4 characters
+   • Albedo (Shielders)
+   • Zhongli (Shielders)
+
+📁 Honkai: Star Rail (69/69 characters found)
+============================================================
+⚔️ DPS (Hunt/Erudition/Destruction): 28 characters
+   • Acheron (Destruction)
+   • Aglaea (Destruction)
+   • Anaxa (Destruction)
+   • Archer (Hunt)
+   • Argenti (Destruction)
+   • Arlan (Destruction)
+   • Asta (Erudition)
+   • Aventurine (Destruction)
+   • Bailu (Abundance)
+   • Black Swan (Nihility)
+   • Blade (Destruction)
+   • Boothill (Hunt)
+   • Bronya (Preservation)
+   • Castorice (Destruction)
+   • Cerydra (Destruction)
+   • Cipher (Destruction)
+   • Clara (Destruction)
+   • Dan Heng • IL (Erudition)
+   • Dan Heng (Hunt)
+   • Dr. Ratio (Destruction)
+   • Feixiao (Hunt)
+   • Firefly (Destruction)
+   • Fu Xuan (Preservation)
+   • Fugue (Destruction)
+   • Gallagher (Destruction)
+   • Gepard (Preservation)
+   • Guinaifen (Destruction)
+   • Hanya (Destruction)
+   • Herta (Destruction)
+   • Himeko (Destruction)
+   • Hook (Hunt)
+   • Huohuo (Abundance)
+   • Hyacine (Destruction)
+   • Jade (Destruction)
+   • Jiaoqiu (Destruction)
+   • Jing Yuan (Hunt)
+   • Jingliu (Destruction)
+   • Kafka (Nihility)
+   • Lingsha (Destruction)
+   • Luka (Preservation)
+   • Luocha (Nihility)
+   • Lynx (Abundance)
+   • March 7th (Preservation)
+   • Misha (Preservation)
+   • Moze (Destruction)
+   • Natasha (Abundance)
+   • Pela (Preservation)
+   • Phainon (Destruction)
+   • Qingque (Harmony)
+   • Rappa (Destruction)
+   • Robin (Harmony)
+   • Ruan Mei (Nihility)
+   • Sampo (Preservation)
+   • Seele (Hunt)
+   • Serval (Erudition)
+   • Silver Wolf (Nihility)
+   • Sparkle (Destruction)
+   • Sparxie (Destruction)
+   • Sunday (Destruction)
+   • Sushang (Hunt)
+   • The Herta (Destruction)
+   • Tingyun (Harmony)
+   • Topaz & Numby (Destruction)
+   • Tribbie (Destruction)
+   • Welt (Destruction)
+   • Xueyi (Destruction)
+   • Yanqing (Destruction)
+   • Yao Guang (Destruction)
+   • Yukong (Hunt)
+
+🛡️ S-DPS (Nihility DoT): 5 characters
+   • Acheron (Destruction) → DPS
+   • Aglaea (Destruction) → DPS
+   • Anaxa (Destruction) → DPS
+   • Archer (Hunt) → DPS
+   • Argenti (Destruction) → DPS
+   • Arlan (Destruction) → DPS
+   • Asta (Erudition) → DPS
+   • Aventurine (Destruction) → DPS
+   • Bailu (Abundance) → HEAL
+   • Black Swan (Nihility)
+   • Blade (Destruction) → DPS
+   • Boothill (Hunt) → DPS
+   • Bronya (Preservation) → TANK
+   • Castorice (Destruction) → DPS
+   • Cerydra (Destruction) → DPS
+   • Cipher (Destruction) → DPS
+   • Clara (Destruction) → DPS
+   • Dan Heng • IL (Erudition) → DPS
+   • Dan Heng (Hunt) → DPS
+   • Dr. Ratio (Destruction) → DPS
+   • Feixiao (Hunt) → DPS
+   • Firefly (Destruction) → DPS
+   • Fu Xuan (Preservation) → TANK
+   • Fugue (Destruction) → DPS
+   • Gallagher (Destruction) → DPS
+   • Gepard (Preservation) → TANK
+   • Guinaifen (Destruction) → DPS
+   • Hanya (Destruction) → DPS
+   • Herta (Destruction) → DPS
+   • Himeko (Destruction) → DPS
+   • Hook (Hunt) → DPS
+   • Huohuo (Abundance) → HEAL
+   • Hyacine (Destruction) → DPS
+   • Jade (Destruction) → DPS
+   • Jiaoqiu (Destruction) → DPS
+   • Jing Yuan (Hunt) → DPS
+   • Jingliu (Destruction) → DPS
+   • Kafka (Nihility)
+   • Lingsha (Destruction) → DPS
+   • Luka (Preservation) → TANK
+   • Luocha (Nihility)
+   • Lynx (Abundance) → HEAL
+   • March 7th (Preservation) → TANK
+   • Misha (Preservation) → TANK
+   • Moze (Destruction) → DPS
+   • Natasha (Abundance) → HEAL
+   • Pela (Preservation) → TANK
+   • Phainon (Destruction) → DPS
+   • Qingque (Harmony) → SUPPORT
+   • Rappa (Destruction) → DPS
+   • Robin (Harmony) → SUPPORT
+   • Ruan Mei (Nihility)
+   • Sampo (Preservation) → TANK
+   • Seele (Hunt) → DPS
+   • Serval (Erudition) → DPS
+   • Silver Wolf (Nihility)
+   • Sparkle (Destruction) → DPS
+   • Sparxie (Destruction) → DPS
+   • Sunday (Destruction) → DPS
+   • Sushang (Hunt) → DPS
+   • The Herta (Destruction) → DPS
+   • Tingyun (Harmony) → SUPPORT
+   • Topaz & Numby (Destruction) → DPS
+   • Tribbie (Destruction) → DPS
+   • Welt (Destruction) → DPS
+   • Xueyi (Destruction) → DPS
+   • Yanqing (Destruction) → DPS
+   • Yao Guang (Destruction) → DPS
+   • Yukong (Hunt) → DPS
+
+💚 SUPPORT (Harmony/Nihility Debuff): 8 characters
+   • Acheron (Destruction) → DPS
+   • Aglaea (Destruction) → DPS
+   • Anaxa (Destruction) → DPS
+   • Archer (Hunt) → DPS
+   • Argenti (Destruction) → DPS
+   • Arlan (Destruction) → DPS
+   • Asta (Erudition) → DPS
+   • Aventurine (Destruction) → DPS
+   • Bailu (Abundance) → HEAL
+   • Black Swan (Nihility)
+   • Blade (Destruction) → DPS
+   • Boothill (Hunt) → DPS
+   • Bronya (Preservation) → TANK
+   • Castorice (Destruction) → DPS
+   • Cerydra (Destruction) → DPS
+   • Cipher (Destruction) → DPS
+   • Clara (Destruction) → DPS
+   • Dan Heng • IL (Erudition) → DPS
+   • Dan Heng (Hunt) → DPS
+   • Dr. Ratio (Destruction) → DPS
+   • Feixiao (Hunt) → DPS
+   • Firefly (Destruction) → DPS
+   • Fu Xuan (Preservation) → TANK
+   • Fugue (Destruction) → DPS
+   • Gallagher (Destruction) → DPS
+   • Gepard (Preservation) → TANK
+   • Guinaifen (Destruction) → DPS
+   • Hanya (Destruction) → DPS
+   • Herta (Destruction) → DPS
+   • Himeko (Destruction) → DPS
+   • Hook (Hunt) → DPS
+   • Huohuo (Abundance) → HEAL
+   • Hyacine (Destruction) → DPS
+   • Jade (Destruction) → DPS
+   • Jiaoqiu (Destruction) → DPS
+   • Jing Yuan (Hunt) → DPS
+   • Jingliu (Destruction) → DPS
+   • Kafka (Nihility)
+   • Lingsha (Destruction) → DPS
+   • Luka (Preservation) → TANK
+   • Luocha (Nihility)
+   • Lynx (Abundance) → HEAL
+   • March 7th (Preservation) → TANK
+   • Misha (Preservation) → TANK
+   • Moze (Destruction) → DPS
+   • Natasha (Abundance) → HEAL
+   • Pela (Preservation) → TANK
+   • Phainon (Destruction) → DPS
+   • Qingque (Harmony)
+   • Rappa (Destruction) → DPS
+   • Robin (Harmony)
+   • Ruan Mei (Nihility)
+   • Sampo (Preservation) → TANK
+   • Seele (Hunt) → DPS
+   • Serval (Erudition) → DPS
+   • Silver Wolf (Nihility)
+   • Sparkle (Destruction) → DPS
+   • Sparxie (Destruction) → DPS
+   • Sunday (Destruction) → DPS
+   • Sushang (Hunt) → DPS
+   • The Herta (Destruction) → DPS
+   • Tingyun (Harmony)
+   • Topaz & Numby (Destruction) → DPS
+   • Tribbie (Destruction) → DPS
+   • Welt (Destruction) → DPS
+   • Xueyi (Destruction) → DPS
+   • Yanqing (Destruction) → DPS
+   • Yao Guang (Destruction) → DPS
+   • Yukong (Hunt) → DPS
+
+❤️ HEAL (Abundance): 4 characters
+   • Bailu (Abundance)
+   • Huohuo (Abundance)
+   • Lynx (Abundance)
+   • Natasha (Abundance)
+
+🛡️ TANK (Preservation): 8 characters
+   • Arlan (Destruction) → DPS
+   • Asta (Erudition) → DPS
+   • Bailu (Abundance) → HEAL
+   • Bronya (Preservation)
+   • Dan Heng (Hunt) → DPS
+   • Fu Xuan (Preservation)
+   • Gepard (Preservation)
+   • Luka (Preservation)
+   • March 7th (Preservation)
+   • Misha (Preservation)
+   • Pela (Preservation)
+   • Sampo (Preservation)
+
+📁 Zenless Zone Zero (49/49 characters found)
+============================================================
+⚔️ DPS (Attack): 28 characters
+   • Alice Thymefield (Attack)
+   • Anby Demara (Attack)
+   • Anton Ivanov (Attack)
+   • Aria (Attack)
+   • Astra Yao (Attack)
+   • Banyue (Attack)
+   • Ben Bigger (Attack)
+   • Billy Kid (Attack)
+   • Burnice White (Attack)
+   • Caesar King (Attack)
+   • Cissia (Attack)
+   • Corin Wickes (Attack)
+   • Dialyn (Attack)
+   • Ellen Joe (Attack)
+   • Evelyn Chevalier (Attack)
+   • Grace Howard (Attack)
+   • Hoshimi Miyabi (Attack)
+   • Hugo Vlad (Attack)
+   • Jane Doe (Attack)
+   • Ju Fufu (Attack)
+   • Koleda Belobog (Attack)
+   • Lucia Elowen (Attack)
+   • Nangong Yu (Attack)
+   • Nekomata (Attack)
+   • Nicole Demara (Attack)
+   • Orphie & Magus (Attack)
+   • Pan Yinhu (Attack)
+   • Piper Wheel (Attack)
+   • Pulchra (Attack)
+   • Qingyi (Attack)
+   • Seed (Attack)
+   • Seth Lowell (Attack)
+   • Soldier 11 (Attack)
+   • Soukaku (Attack)
+   • Sunna (Attack)
+   • Trigger (Attack)
+   • Tsukishiro Yanagi (Attack)
+   • Ukinami Yuzuha (Attack)
+   • Vivian Banshee (Attack)
+   • Von Lycaon (Attack)
+   • Ye Shunguang (Attack)
+   • Yidhari Murphy (Attack)
+   • Yixuan (Attack)
+   • Zhao (Attack)
+   • Zhu Yuan (Attack)
+
+🛡️ S-DPS (Anomaly): 8 characters
+   • Alice Thymefield (Attack) → DPS
+   • Anby Demara (Attack) → DPS
+   • Anton Ivanov (Attack) → DPS
+   • Aria (Attack) → DPS
+   • Astra Yao (Attack) → DPS
+   • Banyue (Attack) → DPS
+   • Ben Bigger (Attack) → DPS
+   • Billy Kid (Attack) → DPS
+   • Burnice White (Attack) → DPS
+   • Caesar King (Attack) → DPS
+   • Cissia (Attack) → DPS
+   • Corin Wickes (Attack) → DPS
+   • Dialyn (Attack) → DPS
+   • Ellen Joe (Attack) → DPS
+   • Evelyn Chevalier (Attack) → DPS
+   • Grace Howard (Attack) → DPS
+   • Hoshimi Miyabi (Attack) → DPS
+   • Hugo Vlad (Attack) → DPS
+   • Jane Doe (Attack) → DPS
+   • Ju Fufu (Attack) → DPS
+   • Koleda Belobog (Attack) → DPS
+   • Lucia Elowen (Attack) → DPS
+   • Nangong Yu (Attack) → DPS
+   • Nekomata (Attack) → DPS
+   • Nicole Demara (Attack) → DPS
+   • Orphie & Magus (Attack) → DPS
+   • Pan Yinhu (Attack) → DPS
+   • Piper Wheel (Attack) → DPS
+   • Pulchra (Attack) → DPS
+   • Qingyi (Attack) → DPS
+   • Seed (Attack) → DPS
+   • Seth Lowell (Attack) → DPS
+   • Soldier 11 (Attack) → DPS
+   • Soukaku (Attack) → DPS
+   • Sunna (Attack) → DPS
+   • Trigger (Attack) → DPS
+   • Tsukishiro Yanagi (Attack) → DPS
+   • Ukinami Yuzuha (Attack) → DPS
+   • Vivian Banshee (Attack) → DPS
+   • Von Lycaon (Attack) → DPS
+   • Ye Shunguang (Attack) → DPS
+   • Yidhari Murphy (Attack) → DPS
+   • Yixuan (Attack) → DPS
+   • Zhao (Attack) → DPS
+   • Zhu Yuan (Attack) → DPS
+
+💚 SUPPORT (Support/Stun): 9 characters
+   • Alice Thymefield (Attack) → DPS
+   • Anby Demara (Attack) → DPS
+   • Anton Ivanov (Attack) → DPS
+   • Aria (Attack) → DPS
+   • Astra Yao (Attack) → DPS
+   • Banyue (Attack) → DPS
+   • Ben Bigger (Attack) → DPS
+   • Billy Kid (Attack) → DPS
+   • Burnice White (Attack) → DPS
+   • Caesar King (Attack) → DPS
+   • Cissia (Attack) → DPS
+   • Corin Wickes (Attack) → DPS
+   • Dialyn (Attack) → DPS
+   • Ellen Joe (Attack) → DPS
+   • Evelyn Chevalier (Attack) → DPS
+   • Grace Howard (Attack) → DPS
+   • Hoshimi Miyabi (Attack) → DPS
+   • Hugo Vlad (Attack) → DPS
+   • Jane Doe (Attack) → DPS
+   • Ju Fufu (Attack) → DPS
+   • Koleda Belobog (Attack) → DPS
+   • Lucia Elowen (Attack) → DPS
+   • Nangong Yu (Attack) → DPS
+   • Nekomata (Attack) → DPS
+   • Nicole Demara (Attack) → DPS
+   • Orphie & Magus (Attack) → DPS
+   • Pan Yinhu (Attack) → DPS
+   • Piper Wheel (Attack) → DPS
+   • Pulchra (Attack) → DPS
+   • Qingyi (Attack) → DPS
+   • Seed (Attack) → DPS
+   • Seth Lowell (Attack) → DPS
+   • Soldier 11 (Attack) → DPS
+   • Soukaku (Attack) → DPS
+   • Sunna (Attack) → DPS
+   • Trigger (Attack) → DPS
+   • Tsukishiro Yanagi (Attack) → DPS
+   • Ukinami Yuzuha (Attack) → DPS
+   • Vivian Banshee (Attack) → DPS
+   • Von Lycaon (Attack) → DPS
+   • Ye Shunguang (Attack) → DPS
+   • Yidhari Murphy (Attack) → DPS
+   • Yixuan (Attack) → DPS
+   • Zhao (Attack) → DPS
+   • Zhu Yuan (Attack) → DPS
+
+❤️ HEAL (None): 0 characters
+
+🛡️ TANK (Defense): 4 characters
+   • Alice Thymefield (Attack) → DPS
+   • Anby Demara (Attack) → DPS
+   • Anton Ivanov (Attack) → DPS
+   • Aria (Attack) → DPS
+   • Astra Yao (Attack) → DPS
+   • Banyue (Attack) → DPS
+   • Ben Bigger (Attack) → DPS
+   • Billy Kid (Attack) → DPS
+   • Burnice White (Attack) → DPS
+   • Caesar King (Attack) → DPS
+   • Cissia (Attack) → DPS
+   • Corin Wickes (Attack) → DPS
+   • Dialyn (Attack) → DPS
+   • Ellen Joe (Attack) → DPS
+   • Evelyn Chevalier (Attack) → DPS
+   • Grace Howard (Attack) → DPS
+   • Hoshimi Miyabi (Attack) → DPS
+   • Hugo Vlad (Attack) → DPS
+   • Jane Doe (Attack) → DPS
+   • Ju Fufu (Attack) → DPS
+   • Koleda Belobog (Attack) → DPS
+   • Lucia Elowen (Attack) → DPS
+   • Nangong Yu (Attack) → DPS
+   • Nekomata (Attack) → DPS
+   • Nicole Demara (Attack) → DPS
+   • Orphie & Magus (Attack) → DPS
+   • Pan Yinhu (Attack) → DPS
+   • Piper Wheel (Attack) → DPS
+   • Pulchra (Attack) → DPS
+   • Qingyi (Attack) → DPS
+   • Seed (Attack) → DPS
+   • Seth Lowell (Attack) → DPS
+   • Soldier 11 (Attack) → DPS
+   • Soukaku (Attack) → DPS
+   • Sunna (Attack) → DPS
+   • Trigger (Attack) → DPS
+   • Tsukishiro Yanagi (Attack) → DPS
+   • Ukinami Yuzuha (Attack) → DPS
+   • Vivian Banshee (Attack) → DPS
+   • Von Lycaon (Attack) → DPS
+   • Ye Shunguang (Attack) → DPS
+   • Yidhari Murphy (Attack) → DPS
+   • Yixuan (Attack) → DPS
+   • Zhao (Attack) → DPS
+   • Zhu Yuan (Attack) → DPS
+
+================================================================================
+📈 ROLE SUMMARY
+================================================================================
+
+⚔️ DPS (Main DPS/Attack): 121 characters
+   • Wuthering Waves: 18 (Main DPS)
+   • Genshin Impact: 45 (Main DPS)
+   • Honkai: Star Rail: 28 (Hunt/Erudition/Destruction)
+   • Zenless Zone Zero: 28 (Attack)
+
+🛡️ S-DPS (Sub-DPS/Anomaly): 31 characters
+   • Wuthering Waves: 6 (Sub-DPS)
+   • Genshin Impact: 18 (Sub-DPS)
+   • Honkai: Star Rail: 5 (Nihility DoT)
+   • Zenless Zone Zero: 8 (Anomaly)
+
+💚 SUPPORT (Buffer/Stunner/Support): 37 characters
+   • Wuthering Waves: 8 (Buffer/Stunner)
+   • Genshin Impact: 16 (Buffers/Crowd Control)
+   • Honkai: Star Rail: 8 (Harmony/Nihility Debuff)
+   • Zenless Zone Zero: 9 (Support/Stun)
+
+❤️ HEAL (Healers/Rejuvenating): 26 characters
+   • Wuthering Waves: 4 (Rejuvenating/Healer)
+   • Genshin Impact: 18 (Healers)
+   • Honkai: Star Rail: 4 (Abundance)
+   • Zenless Zone Zero: 0
+
+🛡️ TANK (Shielders/Defense): 18 characters
+   • Wuthering Waves: 2 (Shielders)
+   • Genshin Impact: 4 (Shielders)
+   • Honkai: Star Rail: 8 (Preservation)
+   • Zenless Zone Zero: 4 (Defense)
+
+================================================================================
+🏆 COLLECTION STATUS
+================================================================================
+✅ Complete Collections:
+   • Genshin Impact: 101/101 (100%)
+   • Honkai: Star Rail: 69/69 (100%)
+   • Zenless Zone Zero: 49/49 (100%)
+
+⚠️  Wuthering Waves: 44/46 (95.7%)
+   ❌ Missing: Changli (Shielders/TANK), Rover (Sub-DPS/SUPPORT)
+
+Your collection shows excellent balance across all combat roles!

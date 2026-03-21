@@ -1,0 +1,270 @@
+GAME            | RARITY   | CHARACTER NAME                           | FILENAME                                           | EXT
+-----------------------------------------------------------------------------------------------------------------------------
+genshin         | 4        | Amber                                    | Amber.png                                          | .png
+genshin         | 4        | Barbara                                  | Barbara.png                                        | .png
+genshin         | 4        | Beidou                                   | Beidou.png                                         | .png
+genshin         | 4        | Bennett                                  | Bennett.png                                        | .png
+genshin         | 4        | Candace                                  | Candace.png                                        | .png
+genshin         | 4        | Charlotte                                | Charlotte.png                                      | .png
+genshin         | 4        | Chevreuse                                | Chevreuse.png                                      | .png
+genshin         | 4        | Chongyun                                 | Chongyun.png                                       | .png
+genshin         | 4        | Collei                                   | Collei.png                                         | .png
+genshin         | 4        | Dahlia                                   | Dahlia.png                                         | .png
+genshin         | 4        | Diona                                    | Diona.png                                          | .png
+genshin         | 4        | Dori                                     | Dori.png                                           | .png
+genshin         | 4        | Faruzan                                  | Faruzan.png                                        | .png
+genshin         | 4        | Fischl                                   | Fischl.png                                         | .png
+genshin         | 4        | Freminet                                 | Freminet.png                                       | .png
+genshin         | 4        | Gaming                                   | Gaming.png                                         | .png
+genshin         | 4        | Gorou                                    | Gorou.png                                          | .png
+genshin         | 4        | Iansan                                   | Iansan.png                                         | .png
+genshin         | 4        | Kachina                                  | Kachina.png                                        | .png
+genshin         | 4        | Kaeya                                    | Kaeya.png                                          | .png
+genshin         | 4        | Kaveh                                    | Kaveh.png                                          | .png
+genshin         | 4        | Kirara                                   | Kirara.png                                         | .png
+genshin         | 4        | Kujou Sara                               | Kujou_Sara.png                                     | .png
+genshin         | 4        | Kuki Shinobu                             | Kuki_Shinobu.png                                   | .png
+genshin         | 4        | Lan Yan                                  | Lan_Yan.png                                        | .png
+genshin         | 4        | Layla                                    | Layla.png                                          | .png
+genshin         | 4        | Lisa                                     | Lisa.png                                           | .png
+genshin         | 4        | Lynette                                  | Lynette.png                                        | .png
+genshin         | 4        | Mika                                     | Mika.png                                           | .png
+genshin         | 4        | Ningguang                                | Ningguang.png                                      | .png
+genshin         | 4        | Noelle                                   | Noelle.png                                         | .png
+genshin         | 4        | Ororon                                   | Ororon.png                                         | .png
+genshin         | 4        | Razor                                    | Razor.png                                          | .png
+genshin         | 4        | Rosaria                                  | Rosaria.png                                        | .png
+genshin         | 4        | Sayu                                     | Sayu.png                                           | .png
+genshin         | 4        | Sethos                                   | Sethos.png                                         | .png
+genshin         | 4        | Shikanoin Heizou                         | Shikanoin_Heizou.png                               | .png
+genshin         | 4        | Sucrose                                  | Sucrose.png                                        | .png
+genshin         | 4        | Thoma                                    | Thoma.png                                          | .png
+genshin         | 4        | Xiangling                                | Xiangling.png                                      | .png
+genshin         | 4        | Xingqiu                                  | Xingqiu.png                                        | .png
+genshin         | 4        | Xinyan                                   | Xinyan.png                                         | .png
+genshin         | 4        | Yanfei                                   | Yanfei.png                                         | .png
+genshin         | 4        | Yaoyao                                   | Yaoyao.png                                         | .png
+genshin         | 4        | Yun Jin                                  | Yun_Jin.png                                        | .png
+genshin         | 5        | Albedo                                   | Albedo.png                                         | .png
+genshin         | 5        | Alhaitham                                | Alhaitham.png                                      | .png
+genshin         | 5        | Arlecchino                               | Arlecchino.png                                     | .png
+genshin         | 5        | Baizhu                                   | Baizhu.png                                         | .png
+genshin         | 5        | Chasca                                   | Chasca.png                                         | .png
+genshin         | 5        | Chiori                                   | Chiori.png                                         | .png
+genshin         | 5        | Citlali                                  | Citlali.png                                        | .png
+genshin         | 5        | Clorinde                                 | Clorinde.png                                       | .png
+genshin         | 5        | Columbina                                | Columbina.png                                      | .png
+genshin         | 5        | Cyno                                     | Cyno.png                                           | .png
+genshin         | 5        | Dehya                                    | Dehya.png                                          | .png
+genshin         | 5        | Diluc                                    | Diluc.png                                          | .png
+genshin         | 5        | Durin                                    | Durin.png                                          | .png
+genshin         | 5        | Emilie                                   | Emilie.png                                         | .png
+genshin         | 5        | Escoffier                                | Escoffier.png                                      | .png
+genshin         | 5        | Eula                                     | Eula.png                                           | .png
+genshin         | 5        | Flins                                    | Flins.png                                          | .png
+genshin         | 5        | Furina                                   | Furina.png                                         | .png
+genshin         | 5        | Ganyu                                    | Ganyu.png                                          | .png
+genshin         | 5        | Hu Tao                                   | Hu_Tao.png                                         | .png
+genshin         | 5        | Ineffa                                   | Ineffa.png                                         | .png
+genshin         | 5        | Jean                                     | Jean.png                                           | .png
+genshin         | 5        | Kaedehara Kazuha                         | Kaedehara_Kazuha.png                               | .png
+genshin         | 5        | Kamisato Ayaka                           | Kamisato_Ayaka.png                                 | .png
+genshin         | 5        | Kamisato Ayato                           | Kamisato_Ayato.png                                 | .png
+genshin         | 5        | Keqing                                   | Keqing.png                                         | .png
+genshin         | 5        | Kinich                                   | Kinich.png                                         | .png
+genshin         | 5        | Klee                                     | Klee.png                                           | .png
+genshin         | 5        | Lauma                                    | Lauma.png                                          | .png
+genshin         | 5        | Lyney                                    | Lyney.png                                          | .png
+genshin         | 5        | Mavuika                                  | Mavuika.png                                        | .png
+genshin         | 5        | Mona                                     | Mona.png                                           | .png
+genshin         | 5        | Mualani                                  | Mualani.png                                        | .png
+genshin         | 5        | Nahida                                   | Nahida.png                                         | .png
+genshin         | 5        | Navia                                    | Navia.png                                          | .png
+genshin         | 5        | Neuvillette                              | Neuvillette.png                                    | .png
+genshin         | 5        | Nilou                                    | Nilou.png                                          | .png
+genshin         | 5        | Qiqi                                     | Qiqi.png                                           | .png
+genshin         | 5        | Raiden Shogun                            | Raiden_Shogun.png                                  | .png
+genshin         | 5        | Sangonomiya Kokomi                       | Sangonomiya_Kokomi.png                             | .png
+genshin         | 5        | Shenhe                                   | Shenhe.png                                         | .png
+genshin         | 5        | Sigewinne                                | Sigewinne.png                                      | .png
+genshin         | 5        | Skirk                                    | Skirk.png                                          | .png
+genshin         | 5        | Tartaglia                                | Tartaglia.png                                      | .png
+genshin         | 5        | Tighnari                                 | Tighnari.png                                       | .png
+genshin         | 5        | Varka                                    | Varka.png                                          | .png
+genshin         | 5        | Venti                                    | Venti.png                                          | .png
+genshin         | 5        | Wanderer                                 | Wanderer.png                                       | .png
+genshin         | 5        | Wriothesley                              | Wriothesley.png                                    | .png
+genshin         | 5        | Xianyun                                  | Xianyun.png                                        | .png
+genshin         | 5        | Xiao                                     | Xiao.png                                           | .png
+genshin         | 5        | Xilonen                                  | Xilonen.png                                        | .png
+genshin         | 5        | Yae Miko                                 | Yae_Miko.png                                       | .png
+genshin         | 5        | Yelan                                    | Yelan.png                                          | .png
+genshin         | 5        | Yoimiya                                  | Yoimiya.png                                        | .png
+genshin         | 5        | Zhongli                                  | Zhongli.png                                        | .png
+hsr             | 4        | Arlan                                    | Arlan.png                                          | .png
+hsr             | 4        | Asta                                     | Asta.png                                           | .png
+hsr             | 4        | Dan Heng                                 | Dan_Heng.png                                       | .png
+hsr             | 4        | Gallagher                                | Gallagher.png                                      | .png
+hsr             | 4        | Guinaifen                                | Guinaifen.png                                      | .png
+hsr             | 4        | Hanya                                    | Hanya.png                                          | .png
+hsr             | 4        | Herta                                    | Herta.png                                          | .png
+hsr             | 4        | Hook                                     | Hook.png                                           | .png
+hsr             | 4        | Luka                                     | Luka.png                                           | .png
+hsr             | 4        | Lynx                                     | Lynx.png                                           | .png
+hsr             | 4        | March 7th                                | March_7th.png                                      | .png
+hsr             | 4        | Misha                                    | Misha.png                                          | .png
+hsr             | 4        | Moze                                     | Moze.png                                           | .png
+hsr             | 4        | Natasha                                  | Natasha.png                                        | .png
+hsr             | 4        | Pela                                     | Pela.png                                           | .png
+hsr             | 4        | Qingque                                  | Qingque.png                                        | .png
+hsr             | 4        | Sampo                                    | Sampo.png                                          | .png
+hsr             | 4        | Serval                                   | Serval.png                                         | .png
+hsr             | 4        | Sushang                                  | Sushang.png                                        | .png
+hsr             | 4        | Tingyun                                  | Tingyun.png                                        | .png
+hsr             | 4        | Xueyi                                    | Xueyi.png                                          | .png
+hsr             | 4        | Yukong                                   | Yukong.png                                         | .png
+hsr             | 5        | Acheron                                  | Acheron.png                                        | .png
+hsr             | 5        | Aglaea                                   | Aglaea.png                                         | .png
+hsr             | 5        | Anaxa                                    | Anaxa.png                                          | .png
+hsr             | 5        | Archer                                   | Archer.png                                         | .png
+hsr             | 5        | Argenti                                  | Argenti.png                                        | .png
+hsr             | 5        | Aventurine                               | Aventurine.png                                     | .png
+hsr             | 5        | Bailu                                    | Bailu.png                                          | .png
+hsr             | 5        | Black Swan                               | Black_Swan.png                                     | .png
+hsr             | 5        | Blade                                    | Blade.png                                          | .png
+hsr             | 5        | Boothill                                 | Boothill.png                                       | .png
+hsr             | 5        | Bronya                                   | Bronya.png                                         | .png
+hsr             | 5        | Castorice                                | Castorice.png                                      | .png
+hsr             | 5        | Cerydra                                  | Cerydra.png                                        | .png
+hsr             | 5        | Cipher                                   | Cipher.png                                         | .png
+hsr             | 5        | Clara                                    | Clara.png                                          | .png
+hsr             | 5        | Dan Heng Imbibitor Lunae                 | Dan_Heng_Imbibitor_Lunae.png                       | .png
+hsr             | 5        | Dr. Ratio                                | Dr_Ratio.png                                       | .png
+hsr             | 5        | Dr  Ratio                                | Dr__Ratio.png                                      | .png
+hsr             | 5        | Feixiao                                  | Feixiao.png                                        | .png
+hsr             | 5        | Firefly                                  | Firefly.png                                        | .png
+hsr             | 5        | Fugue                                    | Fugue.png                                          | .png
+hsr             | 5        | Fu Xuan                                  | Fu_Xuan.png                                        | .png
+hsr             | 5        | Gepard                                   | Gepard.png                                         | .png
+hsr             | 5        | Himeko                                   | Himeko.png                                         | .png
+hsr             | 5        | Huohuo                                   | Huohuo.png                                         | .png
+hsr             | 5        | Hyacine                                  | Hyacine.png                                        | .png
+hsr             | 5        | Jade                                     | Jade.png                                           | .png
+hsr             | 5        | Jiaoqiu                                  | Jiaoqiu.png                                        | .png
+hsr             | 5        | Jingliu                                  | Jingliu.png                                        | .png
+hsr             | 5        | Jing Yuan                                | Jing_Yuan.png                                      | .png
+hsr             | 5        | Kafka                                    | Kafka.png                                          | .png
+hsr             | 5        | Lingsha                                  | Lingsha.png                                        | .png
+hsr             | 5        | Luocha                                   | Luocha.png                                         | .png
+hsr             | 5        | Phainon                                  | Phainon.png                                        | .png
+hsr             | 5        | Rappa                                    | Rappa.png                                          | .png
+hsr             | 5        | Robin                                    | Robin.png                                          | .png
+hsr             | 5        | Ruan Mei                                 | Ruan_Mei.png                                       | .png
+hsr             | 5        | Seele                                    | Seele.png                                          | .png
+hsr             | 5        | Silver Wolf                              | Silver_Wolf.png                                    | .png
+hsr             | 5        | Sparkle                                  | Sparkle.png                                        | .png
+hsr             | 5        | Sparxie                                  | Sparxie.png                                        | .png
+hsr             | 5        | Sunday                                   | Sunday.png                                         | .png
+hsr             | 5        | The Herta                                | The_Herta.png                                      | .png
+hsr             | 5        | Topaz & Numby                            | Topaz_Numby.png                                    | .png
+hsr             | 5        | Topaz   Numby                            | Topaz___Numby.png                                  | .png
+hsr             | 5        | Tribbie                                  | Tribbie.png                                        | .png
+hsr             | 5        | Welt                                     | Welt.png                                           | .png
+hsr             | 5        | Yanqing                                  | Yanqing.png                                        | .png
+hsr             | 5        | Yao Guang                                | Yao_Guang.png                                      | .png
+wuwa            | 4        | Aalto                                    | Aalto.png                                          | .png
+wuwa            | 4        | Baizhi                                   | Baizhi.png                                         | .png
+wuwa            | 4        | Buling                                   | Buling.png                                         | .png
+wuwa            | 4        | Chixia                                   | Chixia.png                                         | .png
+wuwa            | 4        | Danjin                                   | Danjin.png                                         | .png
+wuwa            | 4        | Lumi                                     | Lumi.png                                           | .png
+wuwa            | 4        | Mortefi                                  | Mortefi.png                                        | .png
+wuwa            | 4        | Sanhua                                   | Sanhua.png                                         | .png
+wuwa            | 4        | Taoqi                                    | Taoqi.png                                          | .png
+wuwa            | 4        | Yangyang                                 | Yangyang.png                                       | .png
+wuwa            | 4        | Youhu                                    | Youhu.png                                          | .png
+wuwa            | 4        | Yuanwu                                   | Yuanwu.png                                         | .png
+wuwa            | 5        | Aemeath                                  | Aemeath.png                                        | .png
+wuwa            | 5        | Augusta                                  | Augusta.png                                        | .png
+wuwa            | 5        | Brant                                    | Brant.png                                          | .png
+wuwa            | 5        | Calcharo                                 | Calcharo.png                                       | .png
+wuwa            | 5        | Camellya                                 | Camellya.png                                       | .png
+wuwa            | 5        | Cantarella                               | Cantarella.png                                     | .png
+wuwa            | 5        | Carlotta                                 | Carlotta.png                                       | .png
+wuwa            | 5        | Cartethyia                               | Cartethyia.png                                     | .png
+wuwa            | 5        | Changli                                  | Changli.png                                        | .png
+wuwa            | 5        | Chisa                                    | Chisa.png                                          | .png
+wuwa            | 5        | Ciaccona                                 | Ciaccona.png                                       | .png
+wuwa            | 5        | Encore                                   | Encore.png                                         | .png
+wuwa            | 5        | Galbrena                                 | Galbrena.png                                       | .png
+wuwa            | 5        | Iuno                                     | Iuno.png                                           | .png
+wuwa            | 5        | Jianxin                                  | Jianxin.png                                        | .png
+wuwa            | 5        | Jinhsi                                   | Jinhsi.png                                         | .png
+wuwa            | 5        | Jiyan                                    | Jiyan.png                                          | .png
+wuwa            | 5        | Lingyang                                 | Lingyang.png                                       | .png
+wuwa            | 5        | Lupa                                     | Lupa.png                                           | .png
+wuwa            | 5        | Luuk Herssen                             | Luuk_Herssen.png                                   | .png
+wuwa            | 5        | Lynae                                    | Lynae.png                                          | .png
+wuwa            | 5        | Mornye                                   | Mornye.png                                         | .png
+wuwa            | 5        | Phoebe                                   | Phoebe.png                                         | .png
+wuwa            | 5        | Phrolova                                 | Phrolova.png                                       | .png
+wuwa            | 5        | Qiuyuan                                  | Qiuyuan.png                                        | .png
+wuwa            | 5        | Roccia                                   | Roccia.png                                         | .png
+wuwa            | 5        | Shorekeeper                              | Shorekeeper.png                                    | .png
+wuwa            | 5        | Sigrika                                  | Sigrika.png                                        | .png
+wuwa            | 5        | Verina                                   | Verina.png                                         | .png
+wuwa            | 5        | Xiangli Yao                              | Xiangli_Yao.png                                    | .png
+wuwa            | 5        | Yinlin                                   | Yinlin.png                                         | .png
+wuwa            | 5        | Zani                                     | Zani.png                                           | .png
+wuwa            | 5        | Zhezhi                                   | Zhezhi.png                                         | .png
+zzz             | 4        | Anby Demara                              | Anby_Demara.png                                    | .png
+zzz             | 4        | Anton Ivanov                             | Anton_Ivanov.png                                   | .png
+zzz             | 4        | Banyue                                   | Banyue.png                                         | .png
+zzz             | 4        | Ben Bigger                               | Ben_Bigger.png                                     | .png
+zzz             | 4        | Billy Kid                                | Billy_Kid.png                                      | .png
+zzz             | 4        | Corin Wickes                             | Corin_Wickes.png                                   | .png
+zzz             | 4        | Hugo Vlad                                | Hugo_Vlad.png                                      | .png
+zzz             | 4        | Lucy                                     | Lucy.png                                           | .png
+zzz             | 4        | Manato                                   | Manato.png                                         | .png
+zzz             | 4        | Nicole Demara                            | Nicole_Demara.png                                  | .png
+zzz             | 4        | Pan Yinhu                                | Pan_Yinhu.png                                      | .png
+zzz             | 4        | Piper Wheel                              | Piper_Wheel.png                                    | .png
+zzz             | 4        | Pulchra                                  | Pulchra.png                                        | .png
+zzz             | 4        | Seth Lowell                              | Seth_Lowell.png                                    | .png
+zzz             | 4        | Soukaku                                  | Soukaku.png                                        | .png
+zzz             | 5        | Alice Thymefield                         | Alice_Thymefield.png                               | .png
+zzz             | 5        | Aria                                     | Aria.png                                           | .png
+zzz             | 5        | Astra Yao                                | Astra_Yao.png                                      | .png
+zzz             | 5        | Burnice White                            | Burnice_White.png                                  | .png
+zzz             | 5        | Caesar King                              | Caesar_King.png                                    | .png
+zzz             | 5        | Cissia                                   | Cissia.png                                         | .png
+zzz             | 5        | Dialyn                                   | Dialyn.png                                         | .png
+zzz             | 5        | Ellen Joe                                | Ellen_Joe.png                                      | .png
+zzz             | 5        | Evelyn Chevalier                         | Evelyn_Chevalier.png                               | .png
+zzz             | 5        | Grace Howard                             | Grace_Howard.png                                   | .png
+zzz             | 5        | Hoshimi Miyabi                           | Hoshimi_Miyabi.png                                 | .png
+zzz             | 5        | Jane Doe                                 | Jane_Doe.png                                       | .png
+zzz             | 5        | Ju Fufu                                  | Ju_Fufu.png                                        | .png
+zzz             | 5        | Koleda Belobog                           | Koleda_Belobog.png                                 | .png
+zzz             | 5        | Lighter                                  | Lighter.png                                        | .png
+zzz             | 5        | Lucia Elowen                             | Lucia_Elowen.png                                   | .png
+zzz             | 5        | Nangong Yu                               | Nangong_Yu.png                                     | .png
+zzz             | 5        | Nekomata                                 | Nekomata.png                                       | .png
+zzz             | 5        | Orphie & Magus                           | Orphie_Magus.png                                   | .png
+zzz             | 5        | Qingyi                                   | Qingyi.png                                         | .png
+zzz             | 5        | Rina                                     | Rina.png                                           | .png
+zzz             | 5        | Seed                                     | Seed.png                                           | .png
+zzz             | 5        | Soldier 0 - Anby                         | Soldier_0_Anby.png                                 | .png
+zzz             | 5        | Soldier 0   Anby                         | Soldier_0___Anby.png                               | .png
+zzz             | 5        | Soldier 11                               | Soldier_11.png                                     | .png
+zzz             | 5        | Sunna                                    | Sunna.png                                          | .png
+zzz             | 5        | Trigger                                  | Trigger.png                                        | .png
+zzz             | 5        | Vivian Banshee                           | Vivian_Banshee.png                                 | .png
+zzz             | 5        | Von Lycaon                               | Von_Lycaon.png                                     | .png
+zzz             | 5        | Yanagi                                   | Yanagi.png                                         | .png
+zzz             | 5        | Ye Shunguang                             | Ye_Shunguang.png                                   | .png
+zzz             | 5        | Yidhari Murphy                           | Yidhari_Murphy.png                                 | .png
+zzz             | 5        | Yixuan                                   | Yixuan.png                                         | .png
+zzz             | 5        | Yuzuha                                   | Yuzuha.png                                         | .png
+zzz             | 5        | Zhao                                     | Zhao.png                                           | .png
+zzz             | 5        | Zhu Yuan                                 | Zhu_Yuan.png                                       | .png
