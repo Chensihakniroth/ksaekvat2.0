@@ -13,11 +13,19 @@ router.get('/:userId', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
-    // Try finding by Discord ID first, then by MongoDB _id
+    // 1. Try finding by Discord ID (Numeric string)
     let user = await User.findOne({ id: userId }).lean();
     
+    // 2. Try finding by MongoDB _id
     if (!user && mongoose.Types.ObjectId.isValid(userId)) {
       user = await User.findById(userId).lean();
+    }
+
+    // 3. Try finding by Username (Case-insensitive)
+    if (!user) {
+      user = await User.findOne({ 
+        username: { $regex: new RegExp(`^${userId}$`, 'i') } 
+      }).lean();
     }
 
     if (!user) {

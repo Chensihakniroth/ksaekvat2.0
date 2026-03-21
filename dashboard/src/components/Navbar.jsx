@@ -81,7 +81,7 @@ export default function Navbar() {
               <button onClick={() => navigate('/dashboard')} className="zen-action-btn">
                 EDIT
               </button>
-              <div className="zen-avatar-wrap" onClick={() => navigate(`/profile/${user.id}`)}>
+              <div className="zen-avatar-wrap" onClick={() => navigate(`/profile/${user.username}`)}>
                 <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '/assets/default-avatar.png'} alt="" />
               </div>
               <button onClick={logout} className="zen-logout-btn" title="Logout">
@@ -110,6 +110,7 @@ export default function Navbar() {
                   <Link to="/shop" onClick={() => setMobileMenuOpen(false)}>SHOP</Link>
                   {user ? (
                     <>
+                      <Link to={`/profile/${user.username}`} onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--cyber-cyan)' }}>PROFILE</Link>
                       <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--cyber-yellow)' }}>EDIT PROFILE</Link>
                       <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="zen-mobile-logout">LOGOUT</button>
                     </>

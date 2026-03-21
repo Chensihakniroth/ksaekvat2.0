@@ -101,6 +101,7 @@ export default function ProfilePage() {
 
   const [copied, setCopied] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const audioRef = useRef(null);
 
   const isOwner = authUser?.id === userId;
@@ -128,11 +129,26 @@ export default function ProfilePage() {
   const spotifyEmbedUrl = spotifyTrackId ? `https://open.spotify.com/embed/track/${spotifyTrackId}?utm_source=generator&theme=0` : null;
 
   useEffect(() => {
-    if (!loading && theme.music && !isSpotify && audioRef.current) {
+    if (!loading && theme.music && !isSpotify && audioRef.current && hasInteracted) {
         audioRef.current.volume = 0.15;
         audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
     }
-  }, [loading, theme.music, isSpotify]);
+  }, [loading, theme.music, isSpotify, hasInteracted]);
+
+  const toggleMusic = (e) => {
+    e.stopPropagation();
+    if (!audioRef.current) return;
+    
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+        if (!hasInteracted) setHasInteracted(true);
+      }).catch(() => {});
+    }
+  };
 
   const getSocialHandle = (url) => {
     if (!url) return '';
@@ -157,7 +173,7 @@ export default function ProfilePage() {
   );
 
   return (
-    <div className="portfolio-minimal" onClick={() => !isSpotify && !isPlaying && audioRef.current?.play().then(()=>setIsPlaying(true))} style={{ 
+    <div className="portfolio-minimal" onClick={() => !hasInteracted && setHasInteracted(true)} style={{ 
       '--accent': accent,
       backgroundImage: `url(${theme.background || DEFAULT_BG})`,
       backgroundSize: 'cover',
@@ -197,7 +213,13 @@ export default function ProfilePage() {
                 <span>EDIT PROFILE</span>
               </Link>
             )}
-            <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(window.location.href); setCopied(true); setTimeout(()=>setCopied(false), 2000); }} className="btn-v3 btn-v3-ghost">
+            <button onClick={(e) => { 
+              e.stopPropagation(); 
+              const url = `${window.location.origin}/profile/${p.username}`;
+              navigator.clipboard.writeText(url); 
+              setCopied(true); 
+              setTimeout(()=>setCopied(false), 2000); 
+            }} className="btn-v3 btn-v3-ghost">
               <Share2 size={20} />
               <span>{copied ? 'COPIED' : 'SHARE'}</span>
             </button>
@@ -290,7 +312,7 @@ export default function ProfilePage() {
 
       {theme.music && !isSpotify && (
         <div className="music-control-fb">
-          <button onClick={() => { if(audioRef.current) { if(isPlaying) audioRef.current.pause(); else audioRef.current.play(); setIsPlaying(!isPlaying); }}} className="music-btn-fb">
+          <button onClick={toggleMusic} className="music-btn-fb">
             <AudioSpectrum isPlaying={isPlaying} />
             <span style={{ color: isPlaying ? 'var(--cyber-cyan)' : 'var(--text-dim)' }}>{isPlaying ? 'TRANSMITTING' : 'MUTED'}</span>
           </button>
