@@ -74,6 +74,21 @@ function CharacterModal({ char, onClose }) {
   );
 }
 
+function AudioSpectrum({ isPlaying }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '2px', height: '14px' }}>
+      {[1, 2, 3, 4].map(i => (
+        <motion.div 
+          key={i}
+          animate={isPlaying ? { height: [4, 14, 6, 12, 4] } : { height: 4 }}
+          transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15, ease: "easeInOut" }}
+          style={{ width: '2px', background: 'var(--cyber-cyan)', borderRadius: '10px' }}
+        />
+      ))}
+    </div>
+  );
+}
+
 export default function ProfilePage() {
   const { userId } = useParams();
   const navigate = useNavigate();
@@ -276,8 +291,8 @@ export default function ProfilePage() {
       {theme.music && !isSpotify && (
         <div className="music-control-fb">
           <button onClick={() => { if(audioRef.current) { if(isPlaying) audioRef.current.pause(); else audioRef.current.play(); setIsPlaying(!isPlaying); }}} className="music-btn-fb">
-            {isPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}
-            <span>{isPlaying ? 'TRANSMITTING' : 'MUTED'}</span>
+            <AudioSpectrum isPlaying={isPlaying} />
+            <span style={{ color: isPlaying ? 'var(--cyber-cyan)' : 'var(--text-dim)' }}>{isPlaying ? 'TRANSMITTING' : 'MUTED'}</span>
           </button>
           <audio ref={audioRef} src={theme.music} loop />
         </div>
