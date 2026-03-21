@@ -15,6 +15,7 @@ router.get('/', async (req: Request, res: Response) => {
       const mongoSort: Record<string, any> = {};
       if (sort === 'balance') mongoSort.balance = -1;
       else if (sort === 'level') { mongoSort.level = -1; mongoSort.experience = -1; }
+      else if (sort === 'donations') { mongoSort['stats.totalDonated'] = -1; }
       else mongoSort.balance = -1; // Default
 
       // 2. Fetch only what we need (The Scale Fix!)
@@ -47,6 +48,7 @@ router.get('/', async (req: Request, res: Response) => {
           characterCount: Array.isArray(u.gacha_inventory) ? u.gacha_inventory.length : 0,
           pokemonCount,
           commandsUsed: u.stats?.commandsUsed || 0,
+          totalDonated: u.stats?.totalDonated || 0,
         };
       });
 
@@ -56,6 +58,7 @@ router.get('/', async (req: Request, res: Response) => {
         level: (a, b) => b.level - a.level || b.experience - a.experience,
         pokemon: (a, b) => b.pokemonCount - a.pokemonCount,
         characters: (a, b) => b.characterCount - a.characterCount,
+        donations: (a, b) => b.totalDonated - a.totalDonated,
       };
 
       const sorted = withCounts

@@ -168,8 +168,8 @@ class DatabaseService {
     }
     async logGachaPull(userId, username, itemName, game, rarity) {
         try {
-            if (rarity < 5)
-                return; // Only log legendaries for the ticker! (｡♥‿♥｡)
+            if (rarity < 4)
+                return; // Only log high-rarity (4* and 5*) for the ticker! (｡♥‿♥｡)
             await GachaHistory_1.default.create({ userId, username, itemName, game, rarity });
         }
         catch (err) {

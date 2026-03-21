@@ -14,7 +14,7 @@ export default function Footer() {
         <div className="footer-brand">
           <Link to="/" className="brand-wrap">
             <div className="footer-logo">✦</div>
-            <span className="footer-name">KOHI</span>
+            <span className="footer-name">KSAEKVAT</span>
           </Link>
           <p className="footer-tagline">
             High-performance Discord utility designed for elite collectors and strategic competitors.
@@ -56,7 +56,7 @@ export default function Footer() {
       <div className="footer-bottom">
         <div className="wrap bottom-inner">
           <div className="copyright">
-            © {currentYear} KOHI Terminal. Synthesized with <Heart size={10} className="text-red animate-pulse" /> for operatives worldwide.
+            © {currentYear} KSAEKVAT Terminal. Synthesized with <Heart size={10} className="text-red animate-pulse" /> for operatives worldwide.
           </div>
           <div className="bottom-meta">
             <span className="ver">VER_3.4.0_STABLE</span>

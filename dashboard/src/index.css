@@ -759,3 +759,77 @@ h1, h2, h3, .glitch-text { font-family: 'Outfit', sans-serif; font-weight: 900; 
 .mobile-btn-v3 { display: flex; align-items: center; gap: 16px; padding: 16px 24px; border-radius: 16px; font-size: 14px; font-weight: 900; text-transform: uppercase; color: var(--text-dim); transition: all 0.3s; border: 1px solid transparent; }
 .mobile-btn-v3.active { background: rgba(168,85,247,0.1); border-color: var(--purple); color: #fff; }
 .drawer-footer { margin-top: auto; font-size: 8px; font-weight: 900; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.2em; text-align: center; opacity: 0.5; }
+
+/* --- Zoo V4 High-Tech UI --- */
+.zoo-hero-v4 { display: flex; flex-direction: column; gap: 2rem; margin-bottom: 4rem; position: relative; z-index: 10; }
+@media (min-width: 1024px) { .zoo-hero-v4 { flex-direction: row; justify-content: space-between; align-items: flex-end; } }
+.zoo-title-wrap { position: relative; display: inline-block; }
+.zoo-title-v4 { font-size: clamp(3rem, 8vw, 5rem); line-height: 1; font-style: italic; font-weight: 900; background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.4) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 20px rgba(34,211,238,0.3)); position: relative; }
+.zoo-hud-stats { display: flex; gap: 1rem; flex-wrap: wrap; }
+.hud-box { background: rgba(0,0,0,0.6); border: 1px solid rgba(34,211,238,0.2); backdrop-filter: blur(10px); padding: 1rem 1.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.25rem; min-width: 120px; box-shadow: inset 0 0 20px rgba(34,211,238,0.05); position: relative; overflow: hidden; }
+.hud-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+.hud-label { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-dark); }
+.hud-val { font-size: 1.5rem; font-weight: 900; color: #fff; font-family: monospace; }
+.hud-val.legendary { color: var(--gold); text-shadow: 0 0 10px rgba(251,191,36,0.4); }
+.hud-val.priceless { color: var(--red); text-shadow: 0 0 10px rgba(239,68,68,0.4); }
+
+.filter-bar-v4 { display: flex; flex-direction: column; gap: 1rem; padding: 1rem; background: rgba(10,10,15,0.8); border: 1px solid rgba(255,255,255,0.05); border-radius: 20px; backdrop-filter: blur(20px); margin-bottom: 3rem; }
+@media (min-width: 1024px) { .filter-bar-v4 { flex-direction: row; align-items: center; } }
+.search-input-v4 { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); padding: 1rem 1.5rem 1rem 3rem; border-radius: 12px; font-size: 0.9rem; color: #fff; outline: none; transition: all 0.3s; }
+.search-input-v4:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(34,211,238,0.1); }
+.search-icon-v4-wrap { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-dark); pointer-events: none; }
+.search-wrapper { position: relative; flex: 1; min-width: 250px; }
+.rarity-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; padding: 0.5rem; border-left: none; }
+@media (min-width: 1024px) { .rarity-pills { border-left: 2px solid rgba(255,255,255,0.05); padding-left: 1rem; } }
+.rarity-pill { padding: 0.5rem 1rem; border-radius: 10px; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); border: 1px solid transparent; transition: all 0.3s; background: rgba(255,255,255,0.02); }
+.rarity-pill:hover { background: rgba(255,255,255,0.05); color: #fff; }
+.rarity-pill.active { background: rgba(255,255,255,0.1); border-color: currentColor; box-shadow: 0 0 15px currentColor; color: inherit; }
+
+.specimen-card { background: rgba(15,15,20,0.8); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; height: 100%; aspect-ratio: 1; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+.specimen-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, var(--card-glow) 0%, transparent 60%); opacity: 0; transition: opacity 0.4s; z-index: 0; pointer-events: none; }
+.specimen-card:hover { transform: translateY(-8px) scale(1.02); border-color: var(--card-glow); box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px var(--card-glow-dim); }
+.specimen-card:hover::before { opacity: 0.15; }
+.specimen-visual { position: relative; z-index: 10; width: 120px; height: 120px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; }
+.specimen-visual img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 15px 20px rgba(0,0,0,0.6)); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.specimen-card:hover .specimen-visual img { transform: scale(1.15) translateY(-5px); }
+.specimen-ring { position: absolute; inset: -10%; border: 1px dashed rgba(255,255,255,0.1); border-radius: 50%; opacity: 0; transform: scale(0.8); transition: all 0.5s; animation: spin 20s linear infinite; }
+.specimen-card:hover .specimen-ring { opacity: 1; transform: scale(1); border-color: var(--card-glow); }
+
+.specimen-info { text-align: center; position: relative; z-index: 10; width: 100%; }
+.specimen-name { font-size: 1rem; font-weight: 900; color: #fff; text-transform: uppercase; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-style: italic; }
+.specimen-meta { display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 0.65rem; font-weight: 900; color: var(--text-dark); letter-spacing: 0.1em; }
+
+.rarity-badge-v4 { position: absolute; top: 1rem; left: 1rem; z-index: 20; padding: 0.25rem 0.75rem; border-radius: 6px; font-size: 0.55rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; border: 1px solid currentColor; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+
+/* Bioscan Modal */
+.bioscan-modal { position: fixed; inset: 0; z-index: 999; display: flex; align-items: center; justify-content: center; padding: 1rem; background: rgba(0,0,0,0.85); backdrop-filter: blur(25px); perspective: 1000px; }
+.bioscan-panel { width: 100%; max-width: 1000px; background: rgba(10,10,15,0.9); border: 1px solid rgba(255,255,255,0.1); border-radius: 32px; overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 100px rgba(0,0,0,0.5); }
+@media (min-width: 768px) { .bioscan-panel { flex-direction: row; min-height: 500px; } }
+
+.bioscan-display { flex: 1.2; position: relative; display: flex; align-items: center; justify-content: center; padding: 3rem; background: radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, transparent 70%); border-right: 1px solid rgba(255,255,255,0.05); overflow: hidden; }
+.bioscan-display::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 4px); pointer-events: none; }
+.bioscan-target { position: relative; z-index: 20; width: 100%; max-width: 300px; filter: drop-shadow(0 0 30px var(--modal-glow)); animation: float-target 6s ease-in-out infinite; }
+@keyframes float-target { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+.radar-ring { position: absolute; top: 50%; left: 50%; width: 120%; aspect-ratio: 1; transform: translate(-50%, -50%) rotateX(60deg); border-radius: 50%; border: 2px solid rgba(255,255,255,0.05); box-shadow: inset 0 0 60px rgba(255,255,255,0.02); }
+.radar-ring::before { content: ''; position: absolute; inset: 20px; border-radius: 50%; border: 1px dashed rgba(255,255,255,0.1); animation: spin-slow 30s linear infinite reverse; }
+.radar-ring::after { content: ''; position: absolute; inset: 60px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.05); animation: spin-slow 20s linear infinite; }
+.scan-line { position: absolute; left: 0; right: 0; height: 100px; background: linear-gradient(to bottom, transparent, var(--modal-glow) 50%, transparent); opacity: 0.2; top: -100px; animation: scan-down 3s ease-in-out infinite; pointer-events: none; z-index: 30; }
+@keyframes scan-down { 0% { top: -100px; } 100% { top: 100%; } }
+
+.bioscan-details { flex: 1; padding: 3rem; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 10; }
+.bs-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
+.bs-tag { padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.65rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.2em; border: 1px solid currentColor; }
+.bs-subtitle { font-size: 0.65rem; font-weight: 900; color: var(--text-dark); letter-spacing: 0.5em; text-transform: uppercase; margin-bottom: 0.5rem; }
+.bs-title { font-size: 2.5rem; font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 2rem; font-style: italic; }
+
+.bs-databox { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; position: relative; overflow: hidden; }
+.bs-databox::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--modal-glow); opacity: 0.5; }
+.bs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+.bs-stat { display: flex; flex-direction: column; gap: 0.25rem; }
+.bs-stat-label { font-size: 0.55rem; font-weight: 900; color: var(--text-dark); letter-spacing: 0.2em; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem; }
+.bs-stat-val { font-size: 1.25rem; font-weight: 900; color: #fff; font-family: monospace; }
+.bs-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.6; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); font-style: italic; }
+
+.bs-close { position: absolute; top: 1.5rem; right: 1.5rem; width: 2.5rem; height: 2.5rem; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; color: var(--text-dim); transition: all 0.3s; z-index: 100; cursor: pointer;}
+.bs-close:hover { background: rgba(239,68,68,0.2); color: var(--red); border-color: var(--red); transform: rotate(90deg); }
+@keyframes spin-slow { 100% { transform: rotate(360deg); } }

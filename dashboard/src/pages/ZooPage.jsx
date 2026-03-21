@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Sparkles, PawPrint, Info, X, Shield, Zap, TrendingUp, ChevronRight, Activity } from 'lucide-react';
+import { Search, Sparkles, PawPrint, Shield, Activity, X } from 'lucide-react';
 
 const RARITY_COLORS = { priceless: '#ef4444', legendary: '#f59e0b', epic: '#a855f7', rare: '#3b82f6', uncommon: '#22c55e', common: '#9ca3af' };
+const RARITIES = ['all', 'common', 'uncommon', 'rare', 'epic', 'legendary', 'priceless'];
 
 export default function ZooPage() {
   const [registry, setRegistry] = useState([]);
@@ -12,7 +13,10 @@ export default function ZooPage() {
   const [filter, setFilter] = useState('all');
 
   useEffect(() => {
-    fetch('/api/zoo/registry').then(r => r.json()).then(res => { setRegistry(res.data || []); setLoading(false); }).catch(() => setLoading(false));
+    fetch('/api/zoo/registry')
+      .then(r => r.json())
+      .then(res => { setRegistry(res.data || []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   const filtered = registry.filter(a =>
@@ -21,134 +25,184 @@ export default function ZooPage() {
 
   return (
     <div className="zoo-container">
-      <div className="wrap">
-        <div className="zoo-header-v3">
-          <div className="header-info">
-            <div className="header-badge">
-              <PawPrint size={16} className="text-green-400" />
-              <span>Biological Research Center</span>
+      <div className="bg-ambience">
+         <div className="bg-orb-cyan" />
+      </div>
+
+      <div className="wrap relative z-10">
+        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="zoo-hero-v4">
+          <div className="zoo-title-wrap">
+            <div className="header-badge mb-4">
+              <PawPrint size={14} className="text-cyan-400" />
+              <span>Bio-Research Facility</span>
             </div>
-            <h1 className="header-title">ZOO <span className="text-gradient">REGISTRY</span></h1>
+            <h1 className="zoo-title-v4">ZOO <span className="text-cyan-400">REGISTRY</span></h1>
           </div>
           
-          <div className="collection-stats glass-panel">
-            <div className="stats-main">
-              <div className="stats-label">GLOBAL_COMPLETION_INDEX</div>
-              <div className="stats-progress-wrap">
-                <div className="stats-progress-bar">
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={{ width: '100%' }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    className="progress-fill shadow-[0_0_15px_var(--green)]" 
-                  />
-                </div>
-                <span className="stats-percent">100%</span>
-              </div>
+          <div className="zoo-hud-stats">
+            <div className="hud-box">
+              <span className="hud-label">Total Species</span>
+              <span className="hud-val text-cyan-400">{registry.length}</span>
             </div>
-            <div className="stats-grid">
-              <div className="stat-mini">
-                <span className="mini-label">SPECIES</span>
-                <span className="mini-val text-green-400">{registry.length}</span>
-              </div>
-              <div className="stat-mini">
-                <span className="mini-label">LEGENDARY</span>
-                <span className="mini-val text-yellow-400">{registry.filter(a => a.rarity === 'legendary').length}</span>
-              </div>
-              <div className="stat-mini">
-                <span className="mini-label">MYTHICAL</span>
-                <span className="mini-val text-red-500">{registry.filter(a => a.rarity === 'priceless').length}</span>
-              </div>
+            <div className="hud-box">
+              <span className="hud-label">Legendary</span>
+              <span className="hud-val legendary">{registry.filter(a => a.rarity === 'legendary').length}</span>
+            </div>
+            <div className="hud-box">
+              <span className="hud-label">Mythical</span>
+              <span className="hud-val priceless">{registry.filter(a => a.rarity === 'priceless').length}</span>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="filter-bar glass-panel">
-          <div className="search-wrap">
-            <Search className="search-icon" size={18} />
-            <input className="search-input" placeholder="Search biological signatures..." value={search} onChange={e => setSearch(e.target.value)} />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="filter-bar-v4">
+          <div className="search-wrapper">
+            <div className="search-icon-v4-wrap">
+              <Search size={18} />
+            </div>
+            <input 
+              className="search-input-v4" 
+              placeholder="Query biological signatures..." 
+              value={search} 
+              onChange={e => setSearch(e.target.value)} 
+            />
           </div>
-          <div className="rarity-filters">
-            {['all', 'common', 'uncommon', 'rare', 'epic', 'legendary', 'priceless'].map(r => (
-              <button key={r} className={`rarity-btn ${filter === r ? 'active' : ''}`} onClick={() => setFilter(r)}>
+          <div className="rarity-pills">
+            {RARITIES.map(r => (
+              <button 
+                key={r} 
+                className={`rarity-pill ${filter === r ? 'active' : ''}`}
+                style={{ color: filter === r ? RARITY_COLORS[r] || '#22d3ee' : '' }}
+                onClick={() => setFilter(r)}
+              >
                 {r}
               </button>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {loading ? (
-          <div className="zoo-grid-loading">
-            {[...Array(10)].map((_, i) => <div key={i} className="skeleton-square glass-panel" />)}
+          <div className="zoo-grid-v3">
+            {[...Array(12)].map((_, i) => <div key={i} className="skeleton-square glass-panel" />)}
           </div>
         ) : (
           <div className="zoo-grid-v3">
             <AnimatePresence mode="popLayout">
-              {filtered.map((animal, i) => (
-                <motion.div layout key={animal._id} initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ delay: (i % 20) * 0.02 }} className="animal-card-wrap" onClick={() => setSelectedAnimal(animal)}>
-                  <div className="animal-card-v3 glass-panel">
-                    <div className="animal-visual-v3">
-                      <img src={`/api/zoo/image/${animal.key}`} alt={animal.name} className="animal-img-v3 animate-float" loading="lazy" />
+              {filtered.map((animal, i) => {
+                const color = RARITY_COLORS[animal.rarity] || '#ffffff';
+                return (
+                  <motion.div 
+                    layout 
+                    key={animal._id} 
+                    initial={{ opacity: 0, scale: 0.8, y: 30 }} 
+                    animate={{ opacity: 1, scale: 1, y: 0 }} 
+                    exit={{ opacity: 0, scale: 0.8 }} 
+                    transition={{ delay: (i % 20) * 0.03, type: 'spring', damping: 20 }} 
+                    onClick={() => setSelectedAnimal(animal)}
+                  >
+                    <div 
+                      className="specimen-card"
+                      style={{ 
+                        '--card-glow': color, 
+                        '--card-glow-dim': `${color}44` 
+                      }}
+                    >
+                      <div className="rarity-badge-v4" style={{ color: color }}>
+                        {animal.rarity}
+                      </div>
+
+                      <div className="specimen-visual">
+                        <div className="specimen-ring"></div>
+                        <img src={`/api/zoo/image/${animal.key}`} alt={animal.name} loading="lazy" />
+                      </div>
+
+                      <div className="specimen-info">
+                         <h3 className="specimen-name">{animal.name}</h3>
+                         <div className="specimen-meta">
+                            <Activity size={10} style={{ color }} />
+                            <span>VALUE / {animal.value.toLocaleString()}</span>
+                         </div>
+                      </div>
                     </div>
-                    <div className="animal-rarity-tag" style={{ color: RARITY_COLORS[animal.rarity] }}>{animal.rarity}</div>
-                    <div className="animal-info-v3">
-                       <h3 className="animal-name-v3">{animal.name}</h3>
-                       <div className="animal-meta-v3">
-                          <span>VALUE: {animal.value.toLocaleString()}</span>
-                          <ChevronRight size={12} />
-                       </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </div>
         )}
       </div>
 
       <AnimatePresence>
-        {selectedAnimal && <AnimalModal animal={selectedAnimal} onClose={() => setSelectedAnimal(null)} />}
+        {selectedAnimal && <BioScanModal animal={selectedAnimal} onClose={() => setSelectedAnimal(null)} />}
       </AnimatePresence>
     </div>
   );
 }
 
-function AnimalModal({ animal, onClose }) {
+function BioScanModal({ animal, onClose }) {
+  const color = RARITY_COLORS[animal.rarity] || '#fff';
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay" onClick={onClose}>
-      <motion.div initial={{ y: 100, opacity: 0, scale: 0.9 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 100, opacity: 0, scale: 0.9 }} className="glass-panel modal-panel-lg neon-border" onClick={e => e.stopPropagation()}>
-        <button className="modal-close-btn" onClick={onClose}><X size={24} /></button>
-        <div className="modal-content-split">
-          <div className="modal-visual-side">
-             <div className="visual-bg-glow" style={{ background: `radial-gradient(circle, ${RARITY_COLORS[animal.rarity]}33, transparent 70%)` }} />
-             <div className="visual-animal">
-                <img src={`/api/zoo/image/${animal.key}`} alt={animal.name} className="modal-animal-img" />
-             </div>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="bioscan-modal" onClick={onClose}>
+      <motion.div 
+        initial={{ y: 50, opacity: 0, scale: 0.95, rotateX: 10 }} 
+        animate={{ y: 0, opacity: 1, scale: 1, rotateX: 0 }} 
+        exit={{ y: 20, opacity: 0, scale: 0.95 }} 
+        transition={{ type: 'spring', damping: 25 }}
+        className="bioscan-panel" 
+        onClick={e => e.stopPropagation()}
+        style={{ '--modal-glow': color }}
+      >
+        <button className="bs-close" onClick={onClose}><X size={20} /></button>
+        
+        <div className="bioscan-display">
+           <div className="scan-line" />
+           <div className="radar-ring" />
+           <img src={`/api/zoo/image/${animal.key}`} alt={animal.name} className="bioscan-target" />
+        </div>
+        
+        <div className="bioscan-details">
+          <div className="bs-header">
+            <span className="bs-tag" style={{ color: color, background: `${color}22` }}>
+              {animal.rarity} CLASS
+            </span>
+            <span className="bs-tag" style={{ color: '#22d3ee', background: 'rgba(34,211,238,0.1)' }}>
+              ETHEREAL
+            </span>
           </div>
-          <div className="modal-details-side">
-            <div className="details-header">
-              <span className="rarity-tag-v3" style={{ background: `${RARITY_COLORS[animal.rarity]}22`, color: RARITY_COLORS[animal.rarity], border: `1px solid ${RARITY_COLORS[animal.rarity]}44` }}>{animal.rarity.toUpperCase()}</span>
-              <span className="type-tag">ETHEREAL</span>
-            </div>
-            <h2 className="details-subtitle">Biological Data</h2>
-            <div className="details-grid">
-              <div className="spec-box glass-panel">
-                <div className="spec-label"><TrendingUp size={14} /> MARKET VALUE</div>
-                <div className="spec-val">{animal.value.toLocaleString()} Credits</div>
+
+          <p className="bs-subtitle">Specimen Designation</p>
+          <h2 className="bs-title" style={{ textShadow: `0 0 20px ${color}66` }}>
+             {animal.name}
+          </h2>
+
+          <div className="bs-databox">
+            <div className="bs-grid">
+              <div className="bs-stat">
+                <span className="bs-stat-label">
+                  <Activity size={12} color={color} /> THREAT LEVEL
+                </span>
+                <span className="bs-stat-val">CLASS-S</span>
               </div>
-              <div className="spec-box glass-panel">
-                <div className="spec-label"><Shield size={14} /> THREAT</div>
-                <div className="spec-val">CLASS-S</div>
+              <div className="bs-stat">
+                <span className="bs-stat-label">
+                  <Shield size={12} color="#22d3ee" /> MARKET EST.
+                </span>
+                <span className="bs-stat-val">{animal.value.toLocaleString()} CR</span>
               </div>
             </div>
-            <div className="details-bio glass-panel">
-              <p>"Biological signature confirmed. This unique lifeform originates from the KOHI wild zones. High concentration of ethereal energy detected within its core."</p>
-            </div>
-            <button className="btn-v3 btn-v3-primary w-full" onClick={onClose}>
-              <span>Finalize Observation</span>
-              <Sparkles size={18} />
-            </button>
+
+            <p className="bs-desc">
+              "Biological signature confirmed. This unique lifeform originates from the 
+              <span className="text-cyan-400"> KSAEKVAT</span> wild zones. 
+              High concentration of ethereal energy detected within its core matrix."
+            </p>
           </div>
+
+          <button className="btn-v3 w-full" style={{ background: color, border: 'none', color: '#fff', boxShadow: `0 10px 30px ${color}66` }} onClick={onClose}>
+            <span>Log Observation</span>
+            <Sparkles size={16} />
+          </button>
         </div>
       </motion.div>
     </motion.div>

@@ -2,6 +2,7 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Trophy, Users, PawPrint, Menu, X, Search, Clock, Shield, Activity } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -10,6 +11,8 @@ export default function Navbar() {
   const [results, setResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [currentTime, setCurrentClock] = useState(new Date());
+  
+  const { user, login, logout } = useAuth();
   
   const searchRef = useRef(null);
   const navigate = useNavigate();
@@ -60,7 +63,7 @@ export default function Navbar() {
               ✦
             </div>
             <div className="brand-info">
-              <span className="brand-name">KOHI</span>
+              <span className="brand-name">KSAEKVAT</span>
               <span className="brand-status"><Activity size={8} /> SYSTEM_ONLINE</span>
             </div>
           </Link>
@@ -118,6 +121,34 @@ export default function Navbar() {
             <Clock size={12} className="text-cyan" />
             <span>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</span>
           </div>
+
+          {user ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginLeft: '8px' }}>
+              <img 
+                src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '/assets/default-avatar.png'} 
+                alt="Profile" 
+                style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid rgba(34,211,238,0.5)', cursor: 'pointer' }}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  navigate(`/profile/${user.id}`);
+                }}
+              />
+              <button 
+                onClick={logout} 
+                className="nav-logout-btn" 
+                style={{ fontSize: '10px', fontWeight: 900, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'transparent', border: 'none', cursor: 'pointer' }}
+              >
+                Logout
+              </button>
+            </div>
+          ) : (
+            <button 
+              onClick={login} 
+              style={{ fontSize: '10px', fontWeight: 900, color: '#22d3ee', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.3)', padding: '6px 12px', borderRadius: '12px', cursor: 'pointer', marginLeft: '8px' }}
+            >
+              Authorize
+            </button>
+          )}
 
           <button className="mobile-toggle-v3" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}

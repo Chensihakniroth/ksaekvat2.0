@@ -42,8 +42,9 @@ router.use('/characters', require('./routes/characters'));
 router.use('/stats', require('./routes/stats'));
 router.use('/gacha', require('./routes/gacha'));
 router.use('/zoo', require('./routes/zoo'));
+router.use('/auth', require('./routes/auth'));
 
 // --- Health ---
-router.get('/ping', (_req, res) => res.json({ success: true, message: 'KOHI API is alive! ヽ(>∀<☆)ノ' }));
+router.get('/ping', (_req, res) => res.json({ success: true, message: 'KSAEKVAT API is alive! ヽ(>∀<☆)ノ' }));
 
 module.exports = router;

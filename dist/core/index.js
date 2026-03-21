@@ -58,6 +58,7 @@ logger.header('System Boot Sequence');
 const client = new discord_js_1.Client({
     intents: [
         discord_js_1.GatewayIntentBits.Guilds,
+        discord_js_1.GatewayIntentBits.GuildMembers,
         discord_js_1.GatewayIntentBits.GuildMessages,
         discord_js_1.GatewayIntentBits.MessageContent,
         discord_js_1.GatewayIntentBits.DirectMessages,
@@ -70,45 +71,6 @@ const client = new discord_js_1.Client({
     }
 });
 client.commands = new discord_js_1.Collection();
-client.slashCommands = new discord_js_1.Collection();
-// Auto-deploy slash commands
-async function deployCommands() {
-    const { REST, Routes } = require('discord.js');
-    logger.section('Slash Deployment');
-    const prog = logger.loader('Preparing slash commands');
-    try {
-        const commands = [];
-        const commandsPath = path.join(__dirname, '../commands/slash');
-        if (!fs.existsSync(commandsPath)) {
-            prog.fail('Folder missing');
-            return;
-        }
-        const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
-        for (const file of commandFiles) {
-            try {
-                delete require.cache[require.resolve(`../commands/slash/${file}`)];
-                const command = require(`../commands/slash/${file}`);
-                if (command.data) {
-                    commands.push(command.data.toJSON());
-                }
-            }
-            catch (error) {
-                logger.warn(`Error loading ${file}: ${error.message}`);
-            }
-        }
-        if (commands.length === 0) {
-            prog.fail('No commands found');
-            return;
-        }
-        const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN || '');
-        await rest.put(Routes.applicationCommands(config.clientId), { body: commands });
-        prog.done();
-        logger.item('Deployed', commands.length, '\x1b[32m');
-    }
-    catch (error) {
-        prog.fail(error.message);
-    }
-}
 // Database Connection
 async function connectDB() {
     logger.section('Database');
@@ -135,12 +97,12 @@ async function bootstrap() {
     // 2. Load Handlers
     require('../handlers/commandHandler.js')(client);
     require('../handlers/eventHandler.js')(client);
-    // 3. Deploy Slash
-    await deployCommands();
     // 4. HTTP server + API + Dashboard
     logger.section('Web Server');
     const app = express();
     app.use(express.json());
+    const cookieParser = require('cookie-parser');
+    app.use(cookieParser());
     // API Routes
     app.use('/api', require('../api/index'));
     // Serve dashboard static build
@@ -154,10 +116,10 @@ async function bootstrap() {
         logger.success('Dashboard static files served from dashboard/dist');
     }
     else {
-        app.get('/', (_req, res) => res.send('KsaeKvat Bot API — dashboard not built yet.'));
+        app.get('/', (_req, res) => res.send('KSAEKVAT Bot API — dashboard not built yet.'));
         logger.warn('dashboard/dist not found. Run: cd dashboard && npm run build');
     }
-    const port = process.env.PORT || 8080;
+    const port = env.PORT || 8080;
     app.listen(port, '0.0.0.0', () => {
         logger.success(`Server active on port ${port}`);
     });

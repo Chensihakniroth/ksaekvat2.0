@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Coins, Star, Dog, Users, Terminal, Zap, Activity, ChevronRight } from 'lucide-react';
+import { Trophy, Coins, Star, Dog, Users, Terminal, Zap, Activity, ChevronRight, Gift } from 'lucide-react';
 
 const TABS = [
   { key: 'balance',    label: 'Economy',      icon: Coins,   field: 'balance',        fmt: v => v.toLocaleString() + ' CC', color: 'text-gold' },
   { key: 'level',      label: 'Prestige',     icon: Star,    field: 'level',          fmt: v => 'Level ' + v, color: 'text-purple-400' },
   { key: 'pokemon',    label: 'Bio-Data',      icon: Dog,     field: 'pokemonCount',   fmt: v => v.toLocaleString() + ' Units', color: 'text-green-400' },
   { key: 'characters', label: 'Roster',   icon: Users,   field: 'characterCount', fmt: v => v + ' Assets', color: 'text-cyan-400' },
+  { key: 'donations',  label: 'Donators', icon: Gift,    field: 'totalDonated',   fmt: v => (v || 0).toLocaleString() + ' CC', color: 'text-red' },
 ];
 
 const MEDAL_COLORS = ['text-gold', 'text-text-dim', 'text-red'];

@@ -4,6 +4,9 @@ module.exports = {
   prefix: ['k', 'K'],
   clientId: process.env.CLIENT_ID || '1399459454889754805',
   guildId: process.env.GUILD_ID || '1240627007340150785',
+  clientSecret: process.env.DISCORD_CLIENT_SECRET || '',
+  redirectUri: process.env.DISCORD_REDIRECT_URI || 'http://localhost:8080/api/auth/discord/callback',
+  jwtSecret: process.env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls',
 
   // Short prefixes for specific commands
   shortPrefixes: {
@@ -23,8 +26,8 @@ module.exports = {
     wish: 'gacha',
     chars: 'char',
     item: 'item',
-    kkk: 'kohi',
-    kk: 'kohi',
+    kkk: 'kaskeavat',
+    kk: 'kaskeavat',
     h: 'coinflip heads',
     t: 'coinflip tails',
   },
@@ -125,7 +128,7 @@ module.exports = {
 
   // Bot Information
   botInfo: {
-    name: 'KOHI Bot',
+    name: 'KSAEKVAT Bot',
     version: '69.69.420',
     description: 'bot jes tah tver tver lg ng hah',
     author: '@_callme_.mo',

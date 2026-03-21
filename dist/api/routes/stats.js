@@ -7,35 +7,35 @@ const router = (0, express_1.Router)();
 // GET /api/stats — global server stats for the dashboard home page
 router.get('/', async (_req, res) => {
     try {
-        const [totalUsers, sampleUsers] = await Promise.all([
-            User.countDocuments(),
-            User.find({}).select('animals stats gacha_inventory balance').lean(),
-        ]);
-        let totalPokemon = 0;
-        let totalBalance = 0;
-        let totalCharacters = 0;
-        for (const u of sampleUsers) {
-            totalBalance += u.balance || 0;
-            totalCharacters += Array.isArray(u.gacha_inventory) ? u.gacha_inventory.length : 0;
-            if (u.animals) {
-                for (const rarityGroup of Object.values(u.animals)) {
-                    if (rarityGroup && typeof rarityGroup === 'object') {
-                        for (const count of Object.values(rarityGroup)) {
-                            totalPokemon += count;
-                        }
-                    }
+        const stats = await User.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    totalUsers: { $sum: 1 },
+                    totalBalance: { $sum: '$balance' },
+                    // Count items in gacha_inventory array
+                    totalCharacters: { $sum: { $size: { $ifNull: ['$gacha_inventory', []] } } },
+                    // For nested objects like 'animals', we'll sum the values if possible, 
+                    // but since it's a Map/Object, a simple count is often enough for global stats
+                    commandsUsed: { $sum: '$stats.commandsUsed' }
                 }
             }
-        }
+        ]);
+        const result = stats[0] || {
+            totalUsers: 0,
+            totalBalance: 0,
+            totalCharacters: 0,
+            commandsUsed: 0
+        };
         const allChars = registry.getAllCharacters();
         res.json({
             success: true,
             data: {
-                totalUsers,
-                totalPokemonCaught: totalPokemon,
+                totalUsers: result.totalUsers,
                 totalCharactersInRegistry: allChars.length,
-                totalCharactersOwned: totalCharacters,
-                totalCoinsCirculating: totalBalance,
+                totalCharactersOwned: result.totalCharacters,
+                totalCoinsCirculating: result.totalBalance,
+                totalCommandsProcessed: result.commandsUsed
             },
         });
     }

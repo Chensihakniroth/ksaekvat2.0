@@ -144,6 +144,8 @@ const UserSchema: Schema = new Schema({
     commandsUsed: { type: Number, default: 0 },
     won_riel: { type: Number, default: 0 },
     lost_riel: { type: Number, default: 0 },
+    totalDonated: { type: Number, default: 0 },
+    totalReceived: { type: Number, default: 0 },
   },
 
   // Custom per-user prefix settings

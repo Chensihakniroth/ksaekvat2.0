@@ -41,7 +41,7 @@ const mongoose_1 = __importStar(require("mongoose"));
 const CharacterSchema = new mongoose_1.Schema({
     name: { type: String, required: true },
     game: { type: String, required: true },
-    rarity: { type: String, enum: ['3', '4', '5'], required: true },
+    rarity: { type: String, enum: ['3', '4', '5'], required: true, index: true },
     emoji: { type: String, default: '✨' },
     element: { type: String },
     role: { type: String },

@@ -4,7 +4,7 @@ const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 const database = require('../../services/DatabaseService');
 module.exports = {
-    name: 'ksaekvat',
+    name: 'kaskeavat',
     aliases: ['kk', 'kkk', 'beksloy'],
     description: 'Send beksloy vibes with an action GIF',
     usage: 'kkk <@user> [message]',
@@ -40,21 +40,21 @@ module.exports = {
                     {
                         color: colors.warning,
                         title: '🤖 ah nis ngang men ?',
-                        description: 'juii chlery, c ksae kvat lv ai! 🤖',
+                        description: 'juii chlery, c KSAEKVAT lv ai! 🤖',
                     },
                 ],
             });
         }
         const loadingEmbed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('ksae kvat lerng knorng !')
+            .setTitle('KSAEKVAT lerng knorng !')
             .setDescription('ANH KAB ALL! 😎');
         message.reply({ embeds: [loadingEmbed] }).then(async (sentMessage) => {
             try {
                 const beksloyGifs = ['https://c.tenor.com/0jxMoG6W1KcAAAAd/tenor.gif'];
                 const gifUrl = beksloyGifs[Math.floor(Math.random() * beksloyGifs.length)];
                 const beksloyMessages = [
-                    `🔥 **${message.author.username}** ksae kvat lerng klun lv aii ${target}!`,
+                    `🔥 **${message.author.username}** KSAEKVAT lerng klun lv aii ${target}!`,
                 ];
                 const randomMessage = beksloyMessages[Math.floor(Math.random() * beksloyMessages.length)];
                 const beksloyEmbed = new EmbedBuilder()

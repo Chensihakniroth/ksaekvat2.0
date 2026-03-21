@@ -40,9 +40,16 @@ module.exports = {
         }
         // Process the transaction
         const targetData = await database.getUser(target.id, target.username);
-        // Update balances
+        // Update balances and stats
         senderData.balance -= amount;
         targetData.balance += amount;
+        // Initialize stats if they don't exist
+        if (!senderData.stats)
+            senderData.stats = {};
+        if (!targetData.stats)
+            targetData.stats = {};
+        senderData.stats.totalDonated = (senderData.stats.totalDonated || 0) + amount;
+        targetData.stats.totalReceived = (targetData.stats.totalReceived || 0) + amount;
         await database.saveUser(senderData);
         await database.saveUser(targetData);
         const embed = new EmbedBuilder()

@@ -18,7 +18,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(colors.primary)
-      .setTitle('🤖 reab rorb pi ah pov KOHI')
+      .setTitle('🤖 reab rorb pi ah pov KSAEKVAT')
       .setThumbnail(client.user.displayAvatarURL())
       .addFields(
         {

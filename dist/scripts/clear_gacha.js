@@ -11,7 +11,7 @@ async function wipeGachaData() {
         process.env.MONGODB_URL ||
         process.env.MONGO_URI ||
         process.env.MONGO_URL ||
-        'mongodb://127.0.0.1:27017/ksae_bot';
+        'mongodb://127.0.0.1:27017/kohi_bot';
     console.log('✨ Mommy is connecting to the database... (｡♥‿♥｡)');
     try {
         await mongoose.connect(uri);

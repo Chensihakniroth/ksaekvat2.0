@@ -7,12 +7,15 @@ const express_1 = require("express");
 const AnimalRegistry_1 = __importDefault(require("../../models/AnimalRegistry"));
 const AnimalService_1 = __importDefault(require("../../services/AnimalService"));
 const axios_1 = __importDefault(require("axios"));
+const cache = require('../../utils/cache');
 const router = (0, express_1.Router)();
-// GET /api/zoo/registry — returns the full animal registry
+// GET /api/zoo/registry — returns all possible animals
 router.get('/registry', async (_req, res) => {
     try {
-        const registry = await AnimalRegistry_1.default.find({}).sort({ value: 1 }).lean();
-        res.json({ success: true, data: registry });
+        const data = await cache.get('zoo_registry', 600_000, async () => {
+            return await AnimalRegistry_1.default.find({}).sort({ rarity: 1, name: 1 }).lean();
+        });
+        res.json({ success: true, data });
     }
     catch (err) {
         res.status(500).json({ success: false, error: err.message });

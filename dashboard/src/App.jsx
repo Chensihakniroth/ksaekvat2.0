@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import GlobalTicker from './components/GlobalTicker';
+import { AuthProvider } from './context/AuthContext';
 
 // Page Components (Lazy Loaded for Performance) ✂️
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -14,6 +15,7 @@ const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const CharactersPage = lazy(() => import('./pages/CharactersPage'));
 const ZooPage = lazy(() => import('./pages/ZooPage'));
+const LoginPage = lazy(() => import('./pages/LoginPage'));
 
 /**
  * HIGH-END LOADING GATEWAY
@@ -37,8 +39,9 @@ function App() {
   console.log('[App] Initializing High-End Dashboard OS...');
   
   return (
-    <BrowserRouter>
-      <div className="app-wrapper">
+    <AuthProvider>
+      <BrowserRouter>
+        <div className="app-wrapper">
         <div className="cyber-grid" />
         <div className="bg-ambience">
           <div className="bg-orb-purple" />
@@ -57,6 +60,7 @@ function App() {
               <Route path="/profile/:userId" element={<ProfilePage />} />
               <Route path="/characters" element={<CharactersPage />} />
               <Route path="/zoo" element={<ZooPage />} />
+              <Route path="/login" element={<LoginPage />} />
             </Routes>
           </Suspense>
         </main>
@@ -65,6 +69,7 @@ function App() {
         <GlobalTicker />
       </div>
     </BrowserRouter>
+    </AuthProvider>
   );
 }
 

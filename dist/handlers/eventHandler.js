@@ -6,7 +6,7 @@ module.exports = (client) => {
     const eventsPath = path.join(__dirname, '..', 'events');
     let loadedCount = 0;
     logger.section('Event Loader');
-    const loadProgress = logger.loader('Registering event listeners');
+    const loadProgress = logger.loader('Registering hooks');
     try {
         if (fs.existsSync(eventsPath)) {
             const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith('.js'));
@@ -22,12 +22,9 @@ module.exports = (client) => {
                     }
                     loadedCount++;
                 }
-                else {
-                    logger.warn(`Skipped event ${file}: Missing name/execute`);
-                }
             }
             loadProgress.done();
-            logger.item('Total Events', loadedCount, '\x1b[32m');
+            logger.item('Events', loadedCount, '\x1b[32m');
         }
         else {
             loadProgress.fail('Directory not found');

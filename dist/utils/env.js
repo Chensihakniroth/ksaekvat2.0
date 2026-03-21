@@ -14,9 +14,12 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const envSchema = zod_1.z.object({
     // Discord Configuration
-    DISCORD_TOKEN: zod_1.z.string().min(50, 'Sweetie, your DISCORD_TOKEN looks too short! (｡•́︿•̀｡)'),
+    DISCORD_TOKEN: zod_1.z.string().min(1, 'Discord token is required'),
     CLIENT_ID: zod_1.z.string().default('1399459454889754805'),
     GUILD_ID: zod_1.z.string().default('1240627007340150785'),
+    DISCORD_CLIENT_SECRET: zod_1.z.string().optional(),
+    DISCORD_REDIRECT_URI: zod_1.z.string().default('http://localhost:8080/api/auth/discord/callback'),
+    JWT_SECRET: zod_1.z.string().default('ksaekvat-super-secret-jwt-key-change-me-in-prod-pls'),
     // Database (Handling multiple possible names)
     MONGODB_URI: zod_1.z.string().url('Sweetie, your MONGODB_URI must be a valid URL!').optional(),
     MONGODB_URL: zod_1.z.string().url().optional(),
@@ -52,6 +55,6 @@ const getMongoURI = () => {
         exports.env.MONGODB_URL ||
         exports.env.MONGO_URI ||
         exports.env.MONGO_URL ||
-        'mongodb://127.0.0.1:27017/ksae_bot');
+        'mongodb://127.0.0.1:27017/kohi_bot');
 };
 exports.getMongoURI = getMongoURI;

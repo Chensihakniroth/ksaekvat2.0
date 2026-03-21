@@ -18,7 +18,7 @@ const Character = require('../models/Character').default || require('../models/C
 function fetchJson(url) {
     return new Promise((resolve, reject) => {
         const req = https.get(url, {
-            headers: { 'User-Agent': 'KsaeKvat-Bot/2.0 (Discord bot; icon updater)' },
+            headers: { 'User-Agent': 'KOHI-Bot/2.0 (Discord bot; icon updater)' },
             timeout: 15000,
         }, (res) => {
             let data = '';
@@ -121,7 +121,7 @@ async function sleep(ms) {
     return new Promise((r) => setTimeout(r, ms));
 }
 async function updateCharacterIcons() {
-    const mongoUri = process.env.MONGO_URL || process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/ksae_bot';
+    const mongoUri = process.env.MONGO_URL || process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/kohi_bot';
     console.log('🔌 Connecting to MongoDB...');
     await mongoose.connect(mongoUri);
     console.log('✅ Connected!\n');

@@ -16,7 +16,7 @@ module.exports = {
         const uptimeString = `${days}d ${hours}h ${minutes}m ${seconds}s`;
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('🤖 reab rorb pi ah pov Ksaekvat')
+            .setTitle('🤖 reab rorb pi ah pov KSAEKVAT')
             .setThumbnail(client.user.displayAvatarURL())
             .addFields({
             name: '📊 Bek Stats',

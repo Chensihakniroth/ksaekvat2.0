@@ -13,12 +13,12 @@ const { env, getMongoURI } = require('../utils/env.js');
 logger.blank();
 logger.ascii(
   `
- ██╗  ██╗ ██████╗ ██╗  ██╗ ██╗
- ██║ ██╔╝██╔═══██╗██║  ██║ ██║
- █████╔╝ ██║   ██║███████║ ██║
- ██╔═██╗ ██║   ██║██╔══██║ ██║
- ██║  ██╗╚██████╔╝██║  ██║ ██║
- ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═╝
+ ██╗  ██╗███████╗ █████╗ ███████╗██╗  ██╗██╗   ██╗ █████╗ ████████╗
+ ██║ ██╔╝██╔════╝██╔══██╗██╔════╝██║ ██╔╝██║   ██║██╔══██╗╚══██╔══╝
+ █████╔╝ ███████╗███████║█████╗  █████╔╝ ██║   ██║███████║   ██║   
+ ██╔═██╗ ╚════██║██╔══██║██╔══╝  ██╔═██╗ ╚██╗ ██╔╝██╔══██║   ██║   
+ ██║  ██╗███████║██║  ██║███████╗██║  ██╗ ╚████╔╝ ██║  ██║   ██║   
+ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝  ╚═╝   ╚═╝   
                                             REVAMP EDITION v2.0
 `,
   '\x1b[36m'
@@ -34,6 +34,7 @@ export interface ExtendedClient extends Client {
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
     GatewayIntentBits.DirectMessages,
@@ -81,6 +82,9 @@ async function bootstrap() {
   logger.section('Web Server');
   const app = express();
   app.use(express.json());
+  
+  const cookieParser = require('cookie-parser');
+  app.use(cookieParser());
 
   // API Routes
   app.use('/api', require('../api/index'));
@@ -95,7 +99,7 @@ async function bootstrap() {
     });
     logger.success('Dashboard static files served from dashboard/dist');
   } else {
-    app.get('/', (_req: any, res: any) => res.send('KOHI Bot API — dashboard not built yet.'));
+    app.get('/', (_req: any, res: any) => res.send('KSAEKVAT Bot API — dashboard not built yet.'));
     logger.warn('dashboard/dist not found. Run: cd dashboard && npm run build');
   }
 

@@ -11,9 +11,12 @@ dotenv.config();
 
 const envSchema = z.object({
   // Discord Configuration
-  DISCORD_TOKEN: z.string().min(50, 'Sweetie, your DISCORD_TOKEN looks too short! (｡•́︿•̀｡)'),
+  DISCORD_TOKEN: z.string().min(1, 'Discord token is required'),
   CLIENT_ID: z.string().default('1399459454889754805'),
   GUILD_ID: z.string().default('1240627007340150785'),
+  DISCORD_CLIENT_SECRET: z.string().optional(),
+  DISCORD_REDIRECT_URI: z.string().default('http://localhost:8080/api/auth/discord/callback'),
+  JWT_SECRET: z.string().default('ksaekvat-super-secret-jwt-key-change-me-in-prod-pls'),
 
   // Database (Handling multiple possible names)
   MONGODB_URI: z.string().url('Sweetie, your MONGODB_URI must be a valid URL!').optional(),

@@ -49,11 +49,11 @@ const QuestSchema = new mongoose_1.Schema({
 const UserSchema = new mongoose_1.Schema({
     id: { type: String, required: true, unique: true, index: true }, // Discord ID
     username: { type: String, default: 'Unknown Traveler' }, // Discord Username
-    balance: { type: Number, default: 1000 },
+    balance: { type: Number, default: 1000, index: true },
     star_dust: { type: Number, default: 0 },
-    level: { type: Number, default: 1 },
+    level: { type: Number, default: 1, index: true },
     worldLevel: { type: Number, default: 1 },
-    experience: { type: Number, default: 0 },
+    experience: { type: Number, default: 0, index: true },
     // Rewards & Gacha
     dailyClaimed: { type: Boolean, default: false },
     weeklyClaimed: { type: Boolean, default: false },
@@ -100,6 +100,8 @@ const UserSchema = new mongoose_1.Schema({
         commandsUsed: { type: Number, default: 0 },
         won_riel: { type: Number, default: 0 },
         lost_riel: { type: Number, default: 0 },
+        totalDonated: { type: Number, default: 0 },
+        totalReceived: { type: Number, default: 0 },
     },
     // Custom per-user prefix settings
     customPrefix: { type: String, default: null },

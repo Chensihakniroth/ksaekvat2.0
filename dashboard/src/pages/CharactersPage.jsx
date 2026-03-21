@@ -153,10 +153,9 @@ export default function CharactersPage() {
             </div>
 
             {displayCount < filtered.length && (
-              <div className="flex justify-center mt-12 pb-12">
-                <button 
-                  className="btn-v3 btn-v3-ghost group neon-border"
-                  onClick={() => setDisplayCount(prev => prev + 30)}
+              <div className="flex justify-center mt-32 pb-24">
+                <button
+                  className="btn-v3 btn-v3-ghost group neon-border"                  onClick={() => setDisplayCount(prev => prev + 30)}
                 >
                   <Activity size={16} className="text-cyan group-hover:animate-pulse" />
                   <span>Synchronize More Assets ({filtered.length - displayCount} Remaining)</span>

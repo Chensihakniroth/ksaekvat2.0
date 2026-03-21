@@ -36,7 +36,7 @@ module.exports = {
                 if (category === 'expressions' && cmd.description && cmd.description.toLowerCase().includes('nsfw')) {
                     category = 'nsfw';
                 }
-                if (category === 'expressions' && ['amongustwerk', 'beksloy', 'ksaekvat'].includes(cmd.name)) {
+                if (category === 'expressions' && ['amongustwerk', 'beksloy', 'kaskeavat'].includes(cmd.name)) {
                     category = 'special';
                 }
                 if (!categories[category])

@@ -42,7 +42,7 @@ module.exports = {
           category = 'nsfw';
         }
 
-        if (category === 'expressions' && ['amongustwerk', 'beksloy', 'kohi'].includes(cmd.name)) {
+        if (category === 'expressions' && ['amongustwerk', 'beksloy', 'kaskeavat'].includes(cmd.name)) {
           category = 'special';
         }
 
