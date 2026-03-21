@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { 
@@ -53,6 +53,7 @@ export default function DashboardPage() {
               bio: pt.bio || '',
               accentColor: pt.accentColor || '#22d3ee',
               avatar: pt.avatar || '',
+              slug: pt.slug || '',
               background: pt.background || '',
               banner: pt.banner || '',
               bannerPosition: pt.bannerPosition || '50%',
@@ -242,15 +243,35 @@ export default function DashboardPage() {
           <section className="glass-panel" style={{ padding: '20px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.03)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px', opacity: 0.8 }}>
               <User size={16} />
-              <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Identity Bio</h3>
+              <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Identity & Access</h3>
             </div>
-            <textarea 
-              placeholder="Tell the world about yourself..." 
-              value={formData.bio}
-              onChange={e => setFormData({...formData, bio: e.target.value})}
-              className="dash-input"
-              style={{ minHeight: '80px', resize: 'vertical', background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px', fontSize: '0.8rem' }}
-            />
+
+            <div className="input-group" style={{ marginBottom: '20px', gap: '4px' }}>
+              <label style={{ fontSize: '0.65rem' }}>Custom Profile URL Slug</label>
+              <div className="icon-input">
+                <span style={{ position: 'absolute', left: '15px', fontSize: '0.75rem', opacity: 0.3 }}>/profile/</span>
+                <input 
+                  type="text" 
+                  placeholder="your-unique-slug" 
+                  value={formData.slug} 
+                  onChange={e => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '')})} 
+                  className="dash-input" 
+                  style={{ paddingLeft: '75px', fontSize: '0.75rem' }} 
+                />
+              </div>
+              <p style={{ fontSize: '0.6rem', opacity: 0.4, marginTop: '5px' }}>Example: ksaekvat.up.railway.app/profile/{formData.slug || 'username'}</p>
+            </div>
+
+            <div className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
+              <label style={{ fontSize: '0.65rem' }}>About Me (Bio)</label>
+              <textarea 
+                placeholder="Tell the world about yourself..." 
+                value={formData.bio}
+                onChange={e => setFormData({...formData, bio: e.target.value})}
+                className="dash-input"
+                style={{ minHeight: '80px', resize: 'vertical', background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '12px', fontSize: '0.8rem' }}
+              />
+            </div>
           </section>
 
           <section className="glass-panel" style={{ padding: '20px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.03)' }}>
