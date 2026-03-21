@@ -58,6 +58,7 @@ export default function ProfilePage() {
   const [rarityFilter, setRarityFilter] = useState('all');
   const [copied, setCopied] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [entered, setEntered] = useState(false);
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -139,8 +140,6 @@ export default function ProfilePage() {
       </motion.div>
     </div>
   );
-
-  const [entered, setEntered] = useState(false);
 
   const handleEnter = () => {
     setEntered(true);
