@@ -26,9 +26,13 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (err) {
+      console.error('Logout request failed:', err);
+    }
     setUser(null);
-    window.location.href = '/';
+    window.location.replace('/');
   };
 
   return (

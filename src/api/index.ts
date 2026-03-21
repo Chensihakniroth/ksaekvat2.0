@@ -9,9 +9,9 @@ router.use(compression());
 // --- CORS and basic headers ---
 router.use((_req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Cache-Control', 'public, max-age=60'); // 1 minute browser cache
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   next();
 });
 

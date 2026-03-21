@@ -79,14 +79,22 @@ router.get('/me', async (req: any, res) => {
       }
     });
   } catch (err) {
-    res.clearCookie('ksaekvat_session');
+    res.clearCookie('ksaekvat_session', {
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production'
+    });
     res.status(401).json({ success: false, error: 'Invalid token' });
   }
 });
 
 // Logout
 router.post('/logout', (req, res) => {
-  res.clearCookie('ksaekvat_session');
+  res.clearCookie('ksaekvat_session', {
+    path: '/',
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production'
+  });
   res.json({ success: true });
 });
 
