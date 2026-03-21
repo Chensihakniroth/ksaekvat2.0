@@ -15,7 +15,7 @@ const envSchema = z.object({
   CLIENT_ID: z.string().default('1399459454889754805'),
   GUILD_ID: z.string().default('1240627007340150785'),
   DISCORD_CLIENT_SECRET: z.string().optional(),
-  DISCORD_REDIRECT_URI: z.string().default('http://localhost:8080/api/auth/discord/callback'),
+  DISCORD_REDIRECT_URI: z.string().default('https://ksaekvat.up.railway.app/api/auth/discord/callback'),
   JWT_SECRET: z.string().default('ksaekvat-super-secret-jwt-key-change-me-in-prod-pls'),
 
   // Database (Handling multiple possible names)

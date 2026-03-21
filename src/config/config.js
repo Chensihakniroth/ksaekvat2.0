@@ -5,7 +5,7 @@ module.exports = {
   clientId: process.env.CLIENT_ID || '1399459454889754805',
   guildId: process.env.GUILD_ID || '1240627007340150785',
   clientSecret: process.env.DISCORD_CLIENT_SECRET || '',
-  redirectUri: process.env.DISCORD_REDIRECT_URI || 'http://localhost:8080/api/auth/discord/callback',
+  redirectUri: process.env.DISCORD_REDIRECT_URI || 'https://ksaekvat.up.railway.app/api/auth/discord/callback',
   jwtSecret: process.env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls',
 
   // Short prefixes for specific commands
