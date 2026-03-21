@@ -166,68 +166,75 @@ export default function DashboardPage() {
     };
   };
 
-  if (loading) return <div className="p-8 text-center opacity-50">Synchronizing Data...</div>;
+  if (loading) return <div className="p-8 text-center opacity-50" style={{ letterSpacing: '0.2em', fontSize: '0.8rem', marginTop: '100px' }}>SYNCHRONIZING...</div>;
 
   return (
-    <div className="dashboard-v3 wrap">
-      <header className="dash-header">
-        <div className="dash-title-wrap">
-          <Settings className="text-cyan animate-spin-slow" size={24} />
-          <h1 className="dash-title glitch-text">Terminal Configuration</h1>
-        </div>
-        <p className="dash-subtitle">Personalize your digital footprint and network presence.</p>
+    <div className="wrap" style={{ paddingTop: '160px', paddingBottom: '120px', maxWidth: '1000px' }}>
+      <header style={{ marginBottom: '60px', textAlign: 'center' }}>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', opacity: 0.5, marginBottom: '20px' }}>
+          <Settings size={16} />
+          <span style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.4em' }}>Profile Settings</span>
+        </motion.div>
+        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 900, letterSpacing: '-0.05em', marginBottom: '20px' }}>
+          YOUR ARCHIVE
+        </motion.h1>
+        <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem', fontWeight: 300 }}>Shape your digital presence and manage your synced assets.</p>
       </header>
 
-      <div className="dash-grid">
-        {/* --- LEFT: PREVIEW & QUICK STATS --- */}
-        <div className="dash-sidebar">
-          <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="glass-panel preview-card neon-border">
-            <div className="preview-banner" style={{ backgroundColor: formData.accentColor, backgroundImage: formData.banner ? `url(${formData.banner})` : 'none' }}>
-              <div className="preview-avatar">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px', alignItems: 'start' }}>
+        {/* --- LEFT: PREVIEW --- */}
+        <div style={{ position: 'sticky', top: '120px' }}>
+          <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="glass-panel" style={{ padding: 0, overflow: 'hidden', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.03)' }}>
+            <div style={{ height: '150px', backgroundColor: formData.accentColor, backgroundImage: formData.banner ? `url(${formData.banner})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+              <div style={{ position: 'absolute', bottom: '-40px', left: '30px', width: '90px', height: '90px', borderRadius: '50%', border: '4px solid var(--bg-deep)', overflow: 'hidden', background: 'var(--bg-deep)', boxShadow: '0 10px 20px rgba(0,0,0,0.5)' }}>
                 {user?.avatar ? 
-                  <img src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`} alt="Avatar" /> :
-                  <div className="avatar-placeholder">{user?.username[0]}</div>
+                  <img src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 300, opacity: 0.5 }}>{user?.username[0]}</div>
                 }
               </div>
             </div>
-            <div className="preview-info">
-              <h3 className="preview-name">{user?.username}</h3>
-              <p className="preview-bio">{formData.bio || 'No bio set...'}</p>
-              <div className="preview-accent" style={{ color: formData.accentColor }}>{formData.accentColor}</div>
+            <div style={{ padding: '60px 30px 30px' }}>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 900, letterSpacing: '-0.02em', marginBottom: '10px' }}>{user?.username}</h3>
+              <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)', lineHeight: 1.6, marginBottom: '20px' }}>{formData.bio || 'No bio set...'}</p>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: '50px', fontSize: '0.7rem', fontWeight: 800, color: formData.accentColor }}>
+                <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: formData.accentColor, boxShadow: `0 0 10px ${formData.accentColor}` }} />
+                {formData.accentColor}
+              </div>
             </div>
           </motion.div>
 
-          <div className="glass-panel status-card mt-4">
-            <div className="status-item">
-              <Globe size={14} className="text-cyan" />
-              <span>Network Status: <span className="text-green">ONLINE</span></span>
+          <div className="glass-panel" style={{ padding: '20px 30px', borderRadius: '24px', marginTop: '20px', border: '1px solid rgba(255,255,255,0.03)', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', fontSize: '0.85rem', fontWeight: 600 }}>
+              <Globe size={16} color="var(--cyber-cyan)" />
+              <span>Network Status: <span style={{ color: 'var(--cyber-green)' }}>ONLINE</span></span>
             </div>
-            <div className="status-item">
-              <CheckCircle2 size={14} className="text-purple" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', fontSize: '0.85rem', fontWeight: 600 }}>
+              <CheckCircle2 size={16} color="var(--cyber-purple)" />
               <span>Identity Verified</span>
             </div>
           </div>
         </div>
 
         {/* --- RIGHT: SETTINGS FORM --- */}
-        <div className="dash-main">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
           {message && (
-            <motion.div initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className={`alert-v3 ${message.type}`}>
-              {message.type === 'success' ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
+            <motion.div initial={{ y: -10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} style={{ padding: '20px', borderRadius: '16px', background: message.type === 'success' ? 'rgba(5, 255, 161, 0.1)' : 'rgba(255, 0, 60, 0.1)', border: `1px solid ${message.type === 'success' ? 'var(--cyber-green)' : 'var(--cyber-pink)'}`, color: message.type === 'success' ? 'var(--cyber-green)' : 'var(--cyber-pink)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', fontWeight: 800 }}>
+              {message.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
               <span>{message.text}</span>
             </motion.div>
           )}
 
-          <section className="settings-section glass-panel">
-            <div className="section-header">
-              <User size={18} className="text-cyan" />
-              <h3>Identity Bio</h3>
+          <section className="glass-panel" style={{ padding: '40px', borderRadius: '32px', border: '1px solid rgba(255,255,255,0.03)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '30px', opacity: 0.8 }}>
+              <User size={18} />
+              <h3 style={{ fontSize: '0.8rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em' }}>Identity Bio</h3>
             </div>
             <textarea 
               placeholder="Tell the world about yourself..." 
               value={formData.bio}
               onChange={e => setFormData({...formData, bio: e.target.value})}
-              className="dash-input textarea-v3"
+              className="dash-input"
+              style={{ minHeight: '120px', resize: 'vertical', background: 'rgba(255,255,255,0.02)', padding: '20px', borderRadius: '16px' }}
             />
           </section>
 
