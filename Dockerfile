@@ -12,11 +12,11 @@ RUN apk add --no-cache fontconfig ttf-dejavu
 
 # 4. Copy ROOT dependency definitions and install
 COPY package*.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # 5. Copy DASHBOARD dependency definitions and install
 COPY dashboard/package*.json ./dashboard/
-RUN cd dashboard && npm install
+RUN cd dashboard && npm install --legacy-peer-deps
 
 # 6. Copy the rest of the application code
 COPY . .
