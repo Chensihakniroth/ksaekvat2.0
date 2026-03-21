@@ -3,8 +3,8 @@ import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { 
   Settings, Palette, User, Globe, Music, Save, 
-  ChevronRight, AlertCircle, CheckCircle2, Link as LinkIcon,
-  Eye, EyeOff, Image as ImageIcon, Plus, Trash2, Github, Image, Upload, Heart
+  AlertCircle, CheckCircle2, Link as LinkIcon,
+  Eye, EyeOff, Image as ImageIcon, Plus, Trash2, Github, Upload, Heart
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -19,8 +19,10 @@ export default function DashboardPage() {
   const [formData, setFormData] = useState({
     bio: '',
     accentColor: '#22d3ee',
+    avatar: '',
     background: '',
     banner: '',
+    bannerPosition: '50%',
     music: '',
     showStats: true,
     showInventory: true,
@@ -31,6 +33,9 @@ export default function DashboardPage() {
       instagram: '',
       twitter: '',
       github: '',
+      facebook: '',
+      spotify: '',
+      linkedin: '',
       website: ''
     }
   });
@@ -46,14 +51,25 @@ export default function DashboardPage() {
             setFormData({
               bio: pt.bio || '',
               accentColor: pt.accentColor || '#22d3ee',
+              avatar: pt.avatar || '',
               background: pt.background || '',
               banner: pt.banner || '',
+              bannerPosition: pt.bannerPosition || '50%',
               music: pt.music || '',
               showStats: pt.showStats !== undefined ? pt.showStats : true,
               showInventory: pt.showInventory !== undefined ? pt.showInventory : true,
               portfolio: pt.portfolio || [],
               favorites: pt.favorites || [],
-              socials: pt.socials || {}
+              socials: pt.socials || {
+                discord: '',
+                instagram: '',
+                twitter: '',
+                github: '',
+                facebook: '',
+                spotify: '',
+                linkedin: '',
+                website: ''
+              }
             });
           }
           setLoading(false);
@@ -181,11 +197,13 @@ export default function DashboardPage() {
         {/* --- LEFT: PREVIEW --- */}
         <div style={{ position: 'sticky', top: '100px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
           <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="glass-panel" style={{ padding: 0, overflow: 'hidden', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.03)' }}>
-            <div style={{ height: '100px', backgroundColor: formData.accentColor, backgroundImage: formData.banner ? `url(${formData.banner})` : 'none', backgroundSize: 'cover', backgroundPosition: 'center', position: 'relative' }}>
+            <div style={{ height: '100px', backgroundColor: formData.accentColor, backgroundImage: formData.banner ? `url(${formData.banner})` : 'none', backgroundSize: 'cover', backgroundPosition: `center ${formData.bannerPosition}`, position: 'relative' }}>
               <div style={{ position: 'absolute', bottom: '-30px', left: '20px', width: '60px', height: '60px', borderRadius: '50%', border: '3px solid var(--bg-deep)', overflow: 'hidden', background: 'var(--bg-deep)', boxShadow: '0 5px 15px rgba(0,0,0,0.5)' }}>
-                {user?.avatar ? 
-                  <img src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontWeight: 300, opacity: 0.5 }}>{user?.username[0]}</div>
+                {formData.avatar ? 
+                  <img src={formData.avatar} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
+                  user?.avatar ? 
+                    <img src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> :
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontWeight: 300, opacity: 0.5 }}>{user?.username[0]}</div>
                 }
               </div>
             </div>
@@ -248,19 +266,43 @@ export default function DashboardPage() {
                 </div>
               </div>
               <div className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
+                <label style={{ fontSize: '0.65rem' }}>Profile Picture URL</label>
+                <div className="icon-input">
+                  <ImageIcon size={12} />
+                  <input type="text" placeholder="https://..." value={formData.avatar} onChange={e => setFormData({...formData, avatar: e.target.value})} className="dash-input" style={{ padding: '6px 12px 6px 35px', fontSize: '0.75rem' }} />
+                </div>
+              </div>
+            </div>
+            <div className="input-row" style={{ gap: '15px', marginBottom: '10px' }}>
+              <div className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
                 <label style={{ fontSize: '0.65rem' }}>Background URL</label>
                 <div className="icon-input">
                   <ImageIcon size={12} />
                   <input type="text" placeholder="https://..." value={formData.background} onChange={e => setFormData({...formData, background: e.target.value})} className="dash-input" style={{ padding: '6px 12px 6px 35px', fontSize: '0.75rem' }} />
                 </div>
               </div>
+              <div className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
+                <label style={{ fontSize: '0.65rem' }}>Banner URL</label>
+                <div className="icon-input">
+                  <ImageIcon size={12} />
+                  <input type="text" placeholder="https://..." value={formData.banner} onChange={e => setFormData({...formData, banner: e.target.value})} className="dash-input" style={{ padding: '6px 12px 6px 35px', fontSize: '0.75rem' }} />
+                </div>
+              </div>
             </div>
             <div className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
-              <label style={{ fontSize: '0.65rem' }}>Banner Image URL</label>
-              <div className="icon-input">
-                <ImageIcon size={12} />
-                <input type="text" placeholder="https://..." value={formData.banner} onChange={e => setFormData({...formData, banner: e.target.value})} className="dash-input" style={{ padding: '6px 12px 6px 35px', fontSize: '0.75rem' }} />
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <label style={{ fontSize: '0.65rem' }}>Banner Vertical Position</label>
+                <span style={{ fontSize: '0.65rem', opacity: 0.5 }}>{formData.bannerPosition}</span>
               </div>
+              <input 
+                type="range" 
+                min="0" 
+                max="100" 
+                step="1" 
+                value={formData.bannerPosition.replace('%', '')} 
+                onChange={e => setFormData({...formData, bannerPosition: e.target.value + '%'})}
+                style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--cyber-cyan)' }}
+              />
             </div>
           </section>
 
@@ -303,7 +345,7 @@ export default function DashboardPage() {
               <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Social Uplinks</h3>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>
-              {['discord', 'instagram', 'twitter', 'github', 'website'].map(s => (
+              {['discord', 'instagram', 'twitter', 'github', 'facebook', 'spotify', 'linkedin', 'website'].map(s => (
                 <div key={s} className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
                   <label style={{ textTransform: 'capitalize', fontSize: '0.65rem' }}>{s}</label>
                   <input 

@@ -72,50 +72,12 @@ export default function Navbar() {
 
         {/* --- RIGHT ACTIONS --- */}
         <div className="nav-right">
-          <div className="zen-search" ref={searchRef}>
-            <div className={`zen-search-box ${search.length > 0 ? 'active' : ''}`}>
-              <Search size={14} className="zen-search-icon" />
-              <input 
-                type="text" 
-                placeholder="Search..." 
-                value={search} 
-                onChange={e => setSearch(e.target.value)} 
-                onFocus={() => search.length >= 2 && setShowResults(true)} 
-              />
-            </div>
-
-            <AnimatePresence>
-              {showResults && (
-                <motion.div initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.98 }} className="zen-search-results">
-                  <div className="zen-results-list">
-                    {results.length === 0 ? (
-                      <div className="zen-empty">NO RECORDS FOUND</div>
-                    ) : (
-                      results.map(r => (
-                        <div key={r.userId} className="zen-res-item" onClick={() => handleSelect(r.userId)}>
-                          <div className="zen-res-avatar">{r.username[0]}</div>
-                          <div className="zen-res-info">
-                            <span className="zen-res-name">{r.username}</span>
-                            <span className="zen-res-lvl">LVL {r.level}</span>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
           <div className="zen-clock">
             {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
           </div>
 
           {user ? (
             <div className="zen-user-section">
-              <button onClick={() => navigate(`/profile/${user.id}`)} className="zen-action-btn">
-                PROFILE
-              </button>
               <button onClick={() => navigate('/dashboard')} className="zen-action-btn">
                 EDIT
               </button>
@@ -148,7 +110,6 @@ export default function Navbar() {
                   <Link to="/shop" onClick={() => setMobileMenuOpen(false)}>SHOP</Link>
                   {user ? (
                     <>
-                      <Link to={`/profile/${user.id}`} onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--cyber-cyan)' }}>PROFILE</Link>
                       <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--cyber-yellow)' }}>EDIT PROFILE</Link>
                       <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="zen-mobile-logout">LOGOUT</button>
                     </>

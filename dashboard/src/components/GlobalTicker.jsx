@@ -29,54 +29,55 @@ export default function GlobalTicker() {
 
   return (
     <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
       className="ticker-container"
+      style={{ borderTop: '1px solid var(--cyber-cyan)', boxShadow: '0 -10px 30px rgba(0, 243, 255, 0.1)' }}
     >
       <div className="flex items-center h-full">
         {/* --- LABEL --- */}
-        <div className="ticker-label">
-          <Sparkles size={14} className="text-cyan animate-pulse" />
-          <span className="ticker-label-text">Live Neural Feeds</span>
+        <div className="ticker-label" style={{ background: 'var(--bg-deep)', borderRight: '1px solid var(--cyber-cyan)' }}>
+          <Sparkles size={14} style={{ color: 'var(--cyber-cyan)' }} className="animate-pulse" />
+          <span className="ticker-label-text" style={{ color: 'var(--cyber-cyan)', textShadow: '0 0 10px rgba(0, 243, 255, 0.5)' }}>LIVE GACHA FEED</span>
         </div>
         
         {/* --- TRACK --- */}
         <div className="ticker-track-viewport">
-          {loading && history.length === 0 ? (
+          {loading ? (
             <div className="ticker-status">
-              <Activity size={12} />
-              <span>Establishing_Sync_With_Mainframe...</span>
+              <Activity size={12} className="animate-spin" />
+              <span>SYNCHRONIZING WITH ARCHIVE...</span>
             </div>
           ) : history.length === 0 ? (
-            <div className="ticker-status">
+            <div className="ticker-status" style={{ color: 'var(--cyber-pink)' }}>
               <Terminal size={12} />
-              <span>No_Active_Signals_Detected_In_Sector</span>
+              <span>NO HIGH-RARITY SIGNALS DETECTED IN SECTOR...</span>
             </div>
           ) : (
             <div className="animate-ticker">
               {/* Triple the array to ensure seamless looping */}
               {[...history, ...history, ...history].map((pull, idx) => {
                 const isFiveStar = pull?.rarity === 5;
-                const rarityColor = isFiveStar ? '#FFB13F' : '#A256FF';
-                const rarityShadow = isFiveStar ? 'rgba(250,177,63,0.6)' : 'rgba(162,86,255,0.6)';
+                const rarityColor = isFiveStar ? 'var(--cyber-yellow)' : 'var(--cyber-purple)';
+                const rarityShadow = isFiveStar ? 'rgba(252, 238, 10, 0.4)' : 'rgba(188, 19, 254, 0.4)';
 
                 return (
                   <div key={`${pull.id || pull._id}-${idx}`} className="ticker-item">
                     <div 
                       className="ticker-dot" 
-                      style={{ backgroundColor: rarityColor, boxShadow: `0 0 8px ${rarityShadow}` }}
+                      style={{ backgroundColor: rarityColor, boxShadow: `0 0 10px ${rarityShadow}` }}
                     />
                     <span className="ticker-content">
-                      <span className="ticker-username" style={{ '--hover-color': rarityColor }}>
-                        {pull?.username || 'Traveler'}
+                      <span className="ticker-username" style={{ '--hover-color': rarityColor, fontWeight: 900 }}>
+                        {pull?.username || 'OPR_UNKNOWN'}
                       </span>
-                      <span className="ticker-action">INTERCEPTED</span> 
-                      <span className="ticker-item-name" style={{ color: rarityColor }}>
-                        {pull?.emoji || '✨'} {pull?.itemName || (isFiveStar ? 'LEGENDARY' : 'EPIC')}
+                      <span className="ticker-action" style={{ opacity: 0.4 }}>RESONATED</span> 
+                      <span className="ticker-item-name" style={{ color: rarityColor, textShadow: `0 0 8px ${rarityShadow}` }}>
+                        {pull?.emoji || '✦'} {pull?.itemName || (isFiveStar ? 'LEGENDARY' : 'EPIC')}
                       </span>
                     </span>
-                    <span className="ticker-game-badge">
-                      {pull?.game?.toUpperCase() || 'SYS'}
+                    <span className="ticker-game-badge" style={{ borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.3)' }}>
+                      {pull?.game?.toUpperCase() || 'RES'}
                     </span>
                   </div>
                 );
@@ -86,9 +87,9 @@ export default function GlobalTicker() {
         </div>
 
         {/* --- VERSION --- */}
-        <div className="ticker-version">
+        <div className="ticker-version" style={{ background: 'var(--bg-deep)', borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
           <Terminal size={12} />
-          <span>Sync_v3.0.4</span>
+          <span>V_4.0.2</span>
         </div>
       </div>
 

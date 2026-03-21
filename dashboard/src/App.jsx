@@ -57,14 +57,29 @@ function AppContent() {
   console.log('[App] Initializing High-End Dashboard OS...');
 
   return (
-    <div className="app-wrapper">
+    <div className="app-wrapper" style={{ position: 'relative', minHeight: '100vh', background: '#050505' }}>
       {!isProfile && (
         <>
           <div className="cyber-grid" />
-          <motion.div className="bg-ambience" style={{ y: yBg }}>
-            <div style={{ position: 'absolute', top: '-15%', left: 0, right: 0, bottom: '-15%', height: '130vh', width: '100vw', backgroundImage: 'url("/bg-cyberpunk.jpg")', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.2, zIndex: -1 }} />
+          <motion.div 
+            style={{ 
+              position: 'fixed', 
+              inset: 0, 
+              zIndex: 0, 
+              y: yBg,
+              pointerEvents: 'none'
+            }}
+          >
+            <div style={{ 
+              position: 'absolute', 
+              inset: '-10%', 
+              backgroundImage: 'url("/bg-cyberpunk.jpg")', 
+              backgroundSize: 'cover', 
+              backgroundPosition: 'center', 
+              opacity: 0.3 
+            }} />
           </motion.div>
-          <header className="fixed-top-section">
+          <header className="fixed-top-section" style={{ zIndex: 100 }}>
             <Navbar />
           </header>
         </>
