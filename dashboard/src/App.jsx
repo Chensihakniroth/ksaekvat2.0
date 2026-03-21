@@ -17,6 +17,7 @@ const ProfilePage = lazy(() => import('./pages/ProfilePage'));
 const CharactersPage = lazy(() => import('./pages/CharactersPage'));
 const ZooPage = lazy(() => import('./pages/ZooPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
+const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 
 /**
  * HIGH-END LOADING GATEWAY
@@ -63,6 +64,7 @@ function App() {
               <Route path="/characters" element={<CharactersPage />} />
               <Route path="/zoo" element={<ZooPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
             </Routes>
           </Suspense>
         </main>

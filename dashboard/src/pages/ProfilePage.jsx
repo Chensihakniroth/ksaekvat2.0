@@ -1,16 +1,25 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   User, Trophy, Coins, Star, Dog, Sparkles, ArrowLeft,
   Share2, Zap, Heart, History, Box, Filter, Terminal,
-  Layers, BarChart3, Globe, Award, Crosshair, Activity, PawPrint
+  Layers, BarChart3, Globe, Award, Crosshair, Activity, PawPrint,
+  Instagram, Twitter, Github, ExternalLink, Music, Volume2, VolumeX
 } from 'lucide-react';
 import CharIcon from '../components/CharIcon';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, 
   Tooltip as ReTooltip
 } from 'recharts';
+
+const SOCIAL_ICONS = {
+  instagram: <Instagram size={14} />,
+  twitter: <Twitter size={14} />,
+  github: <Github size={14} />,
+  website: <ExternalLink size={14} />,
+  discord: <span className="text-[10px] font-bold">DSP</span>
+};
 
 const GAME_LABEL = { 
   genshin: 'Genshin Impact', 
@@ -48,6 +57,8 @@ export default function ProfilePage() {
   const [gameFilter, setGameFilter] = useState('all');
   const [rarityFilter, setRarityFilter] = useState('all');
   const [copied, setCopied] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
 
   useEffect(() => {
     console.log(`[Profile] Requesting data for UID: ${userId}...`);
@@ -70,6 +81,16 @@ export default function ProfilePage() {
         setLoading(false); 
       });
   }, [userId]);
+
+  const toggleMusic = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play().catch(e => console.error("Autoplay blocked:", e));
+    }
+    setIsPlaying(!isPlaying);
+  };
 
   const handleShare = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -119,25 +140,51 @@ export default function ProfilePage() {
     </div>
   );
 
+  const theme = p.profileTheme || {};
+  const accent = theme.accentColor || '#22d3ee';
   const xpProgress = (p.experience % 1000) / 10;
   const nextXp = 1000 - (p.experience % 1000);
 
   return (
-    <div className="profile-container">
+    <div className="profile-container" style={{ 
+      '--accent-color': accent,
+      backgroundImage: theme.background ? `url(${theme.background})` : 'none',
+      backgroundSize: 'cover',
+      backgroundAttachment: 'fixed',
+      backgroundPosition: 'center'
+    }}>
       <div className="wrap">
+        {theme.music && (
+          <div className="profile-music-player glass-panel">
+            <button onClick={toggleMusic} className="music-toggle-btn">
+              {isPlaying ? <Volume2 size={16} /> : <VolumeX size={16} />}
+              <span className="now-playing">{isPlaying ? 'TRANSMITTING AUDIO' : 'AUDIO MUTED'}</span>
+            </button>
+            <audio ref={audioRef} src={theme.music} loop />
+          </div>
+        )}
+
         <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="profile-nav">
            <Link to="/leaderboard" className="nav-back-btn"><ArrowLeft size={14} /> <span>Leaderboard</span></Link>
            <button onClick={handleShare} className={`share-btn ${copied ? 'copied' : ''}`}><Share2 size={14} /><span>{copied ? 'Uplink Copied!' : 'Share Profile'}</span></button>
         </motion.div>
 
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="glass-panel profile-hero neon-border">
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="glass-panel profile-hero neon-border" style={{ borderColor: `${accent}40` }}>
+          {theme.banner && (
+            <div className="hero-banner-image" style={{ backgroundImage: `url(${theme.banner})` }} />
+          )}
           <div className="hero-grid-layout">
             <div className="hero-avatar-section">
               <div className="avatar-ring-wrap">
-                <div className="avatar-ring animate-spin-slow">
-                  <div className="avatar-core"><span className="avatar-initial">{p.username[0]?.toUpperCase()}</span></div>
+                <div className="avatar-ring animate-spin-slow" style={{ borderColor: accent }}>
+                  <div className="avatar-core">
+                    {theme.avatar ? 
+                      <img src={theme.avatar} alt="Avatar" className="custom-avatar" /> :
+                      <span className="avatar-initial">{p.username[0]?.toUpperCase()}</span>
+                    }
+                  </div>
                 </div>
-                <div className="rank-tag"><span className="label">RANK</span><span className="val">{p.level}</span></div>
+                <div className="rank-tag" style={{ backgroundColor: accent }}><span className="label">RANK</span><span className="val">{p.level}</span></div>
               </div>
               <div className="world-level-badge"><Globe size={12} /> <span>World Level {p.worldLevel || 1}</span></div>
             </div>
@@ -145,9 +192,20 @@ export default function ProfilePage() {
             <div className="hero-info-section">
               <div className="info-header">
                 <div className="info-titles">
-                  <h1 className="profile-username glitch-text">{p.username}</h1>
+                  <h1 className="profile-username glitch-text" style={{ color: accent, textShadow: `0 0 20px ${accent}40` }}>{p.username}</h1>
                   <div className="profile-id-tag"><Zap size={12} className="text-gold" /> <span>Operative ID: <span className="id-val">{userId}</span></span></div>
                 </div>
+                
+                <div className="profile-socials">
+                   {theme.socials && Object.entries(theme.socials).map(([key, val]) => (
+                     val && (
+                       <a key={key} href={val.startsWith('http') ? val : '#'} target="_blank" rel="noreferrer" className="social-link-v3 glass-panel" title={key}>
+                         {SOCIAL_ICONS[key] || <LinkIcon size={12}/>}
+                       </a>
+                     )
+                   ))}
+                </div>
+
                 <div className="profile-balances">
                   <div className="balance-item glass-panel">
                     <div className="label"><Coins size={12} className="text-gold" /> Credits</div>
@@ -159,41 +217,48 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </div>
+
+              {theme.bio && <p className="profile-bio-v3 glass-panel">{theme.bio}</p>}
+
               <div className="xp-section">
                 <div className="xp-labels"><span className="xp-title">Combat Experience</span><span className="xp-total">{p.experience.toLocaleString()} <span className="dim">TOTAL</span></span></div>
-                <div className="xp-bar-container"><motion.div initial={{ width: 0 }} animate={{ width: `${xpProgress}%` }} className="xp-bar-fill" /></div>
+                <div className="xp-bar-container"><motion.div initial={{ width: 0 }} animate={{ width: `${xpProgress}%` }} className="xp-bar-fill" style={{ backgroundColor: accent, boxShadow: `0 0 15px ${accent}` }} /></div>
                 <div className="xp-footer">{nextXp} XP UNTIL PROMOTION</div>
               </div>
             </div>
           </div>
         </motion.div>
 
-        <div className="profile-quick-stats">
-          <QuickStat icon={<Layers />} label="Arsenal" value={p.characterCount} color="purple" />
-          <QuickStat icon={<Dog />} label="Bestiary" value={p.pokemonCount} color="cyan" />
-          <QuickStat icon={<Zap />} label="Operations" value={(p.stats?.commandsUsed ?? 0).toLocaleString()} color="gold" />
-          <QuickStat icon={<Trophy />} label="5★ Pity" value={`${p.pity ?? 0}/90`} color="pink" sub="Guar. at 90" />
-        </div>
+        {theme.showStats !== false && (
+          <div className="profile-quick-stats">
+            <QuickStat icon={<Layers />} label="Arsenal" value={p.characterCount} color="purple" />
+            <QuickStat icon={<Dog />} label="Bestiary" value={p.pokemonCount} color="cyan" />
+            <QuickStat icon={<Zap />} label="Operations" value={(p.stats?.commandsUsed ?? 0).toLocaleString()} color="gold" />
+            <QuickStat icon={<Trophy />} label="5★ Pity" value={`${p.pity ?? 0}/90`} color="pink" sub="Guar. at 90" />
+          </div>
+        )}
 
         <div className="profile-tabs-container">
           <div className="tabs-track glass-panel">
             {['units', 'zoo', 'stats'].map(tab => (
-              <button key={tab} onClick={() => setActiveTab(tab)} className={`profile-tab-btn ${activeTab === tab ? 'active' : ''}`}>
-                {TAB_ICONS[tab]} <span>{tab}</span>
-                {activeTab === tab && <motion.div layoutId="profileActiveTab" className="active-tab-bg" />}
-              </button>
+              (tab !== 'stats' || theme.showStats !== false) && (tab !== 'units' || theme.showInventory !== false) && (
+                <button key={tab} onClick={() => setActiveTab(tab)} className={`profile-tab-btn ${activeTab === tab ? 'active' : ''}`} style={activeTab === tab ? { color: accent } : {}}>
+                  {TAB_ICONS[tab]} <span>{tab}</span>
+                  {activeTab === tab && <motion.div layoutId="profileActiveTab" className="active-tab-bg" style={{ backgroundColor: `${accent}20`, borderBottom: `2px solid ${accent}` }} />}
+                </button>
+              )
             ))}
           </div>
         </div>
 
         <div className="profile-content-area">
           <AnimatePresence mode="wait">
-            {activeTab === 'units' && (
+            {activeTab === 'units' && theme.showInventory !== false && (
               <motion.div key="units" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }}>
                 <div className="tactical-filters glass-panel">
                   <div className="filter-group">
                     {['all', 'genshin', 'hsr', 'wuwa', 'zzz'].map(g => (
-                      <button key={g} onClick={() => setGameFilter(g)} className={`filter-btn ${gameFilter === g ? 'active' : ''}`}>{g === 'all' ? 'All Realms' : g.toUpperCase()}</button>
+                      <button key={g} onClick={() => setGameFilter(g)} className={`filter-btn ${gameFilter === g ? 'active' : ''}`} style={gameFilter === g ? { backgroundColor: accent } : {}}>{g === 'all' ? 'All Realms' : g.toUpperCase()}</button>
                     ))}
                   </div>
                   <div className="select-wrap">
@@ -209,7 +274,7 @@ export default function ProfilePage() {
 
                 <motion.div variants={containerVariants} initial="hidden" animate="visible" className="units-grid">
                   {filteredChars.length > 0 ? filteredChars.map((c, i) => (
-                    <UnitCard key={`${c.name}-${i}`} char={c} />
+                    <UnitCard key={`${c.name}-${i}`} char={c} accent={accent} />
                   )) : (
                     <div className="empty-state-panel glass-panel col-span-full">
                        <Box size={48} className="empty-icon" />
@@ -226,7 +291,7 @@ export default function ProfilePage() {
                   const order = { 'priceless': 0, 'mythic': 1, 'legendary': 2, 'rare': 3, 'uncommon': 4, 'common': 5 };
                   return (order[a[0]] ?? 99) - (order[b[0]] ?? 99);
                 }).map(([rarity, animals]) => (
-                  <div key={rarity} className="zoo-tier-section glass-panel neon-border">
+                  <div key={rarity} className="zoo-tier-section glass-panel neon-border" style={{ borderColor: `${getRarityColor(rarity)}40` }}>
                     <div className="tier-header">
                        <div className="tier-marker" style={{ backgroundColor: getRarityColor(rarity) }} />
                        <h3 className="tier-title">{rarity} TIER</h3>
@@ -255,20 +320,20 @@ export default function ProfilePage() {
               </motion.div>
             )}
 
-            {activeTab === 'stats' && (
+            {activeTab === 'stats' && theme.showStats !== false && (
               <motion.div key="stats" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} className="stats-tab-v3">
                  
                  {/* --- LEFT: COMPOSITION ANALYTICS --- */}
                  <div className="stats-panel-v3 glass-panel neon-border">
                     <div className="panel-header-v3">
                        <div className="panel-title-wrap">
-                          <Crosshair size={18} className="text-purple" />
+                          <Crosshair size={18} style={{ color: accent }} />
                           <h3 className="panel-title">Tactical Composition</h3>
                        </div>
                        <div className="neural-sync-v3">
                           <span className="sync-label">NEURAL_SYNC</span>
                           <div className="sync-bar-wrap">
-                             <div className="sync-bar-fill" style={{ width: `${Math.min(100, 80 + p.level)}%` }} />
+                             <div className="sync-bar-fill" style={{ width: `${Math.min(100, 80 + p.level)}%`, backgroundColor: accent }} />
                           </div>
                           <span className="sync-val">{Math.min(100, 80 + p.level)}%</span>
                        </div>
@@ -303,7 +368,7 @@ export default function ProfilePage() {
                         </ResponsiveContainer>
                         <div className="chart-overlay-v3">
                           <div className="overlay-scanline" />
-                          <span className="total-count">{p.characterCount}</span>
+                          <span className="total-count" style={{ color: accent }}>{p.characterCount}</span>
                           <span className="total-label">ACTIVE_UNITS</span>
                         </div>
                       </div>
@@ -333,7 +398,7 @@ export default function ProfilePage() {
                     {/* Log Grid */}
                     <div className="ops-log-v3 glass-panel neon-border">
                        <div className="ops-header-v3">
-                          <Activity size={18} className="text-cyan" />
+                          <Activity size={18} style={{ color: accent }} />
                           <h3 className="panel-title">Operations Log</h3>
                        </div>
                        <div className="log-grid-v3">
@@ -387,19 +452,6 @@ function QuickStat({ icon, label, value, color, sub }) {
   );
 }
 
-function StatLogBlock({ label, value, icon, glow, sub }) {
-  return (
-    <div className={`log-block glass-panel hover-${glow}`}>
-      <div className="log-icon">{icon}</div>
-      <div className="log-info">
-        <div className="log-label">{label}</div>
-        <div className="log-value">{value}</div>
-        {sub && <div className="stat-log-block-sub">{sub}</div>}
-      </div>
-    </div>
-  );
-}
-
 function LogData({ label, val, sub, icon, color }) {
   return (
     <div className={`log-data-v3 glass-panel border-${color}/20`}>
@@ -415,10 +467,10 @@ function LogData({ label, val, sub, icon, color }) {
   );
 }
 
-function UnitCard({ char }) {
+function UnitCard({ char, accent }) {
   return (
     <motion.div variants={{ hidden: { opacity: 0, scale: 0.9 }, visible: { opacity: 1, scale: 1 } }} whileHover={{ y: -8 }} className="char-card-wrap">
-      <div className={`char-card glass-panel ${char.rarity === '5' ? 'rarity-5' : ''}`}>
+      <div className={`char-card glass-panel ${char.rarity === '5' ? 'rarity-5' : ''}`} style={char.rarity === '5' ? { borderColor: `${accent}80`, boxShadow: `0 0 20px ${accent}20` } : {}}>
         <div className="char-card-visual">
            <CharIcon name={char.name} game={char.game?.toLowerCase()} rarity={char.rarity} emoji={char.emoji} />
         </div>

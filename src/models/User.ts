@@ -51,7 +51,24 @@ export interface IUser extends Document {
     affinity: number;
     marriedAt: Date;
   } | null;
-  profileTheme: string | null;
+  profileTheme: {
+    theme: string;
+    background: string | null;
+    accentColor: string | null;
+    bio: string | null;
+    banner: string | null;
+    avatar: string | null;
+    music: string | null;
+    socials: {
+      discord?: string;
+      instagram?: string;
+      twitter?: string;
+      github?: string;
+      website?: string;
+    };
+    showStats: boolean;
+    showInventory: boolean;
+  };
   unlockedThemes: string[];
   quests: {
     questId: string;
@@ -131,7 +148,24 @@ const UserSchema: Schema = new Schema({
     affinity: { type: Number, default: 0 },
     marriedAt: { type: Date, default: null },
   },
-  profileTheme: { type: String, default: 'default' },
+  profileTheme: {
+    theme: { type: String, default: 'default' },
+    background: { type: String, default: null },
+    accentColor: { type: String, default: '#22d3ee' }, // Cyan default
+    bio: { type: String, default: 'Exploring the digital realm.' },
+    banner: { type: String, default: null },
+    avatar: { type: String, default: null },
+    music: { type: String, default: null },
+    socials: {
+      discord: { type: String, default: null },
+      instagram: { type: String, default: null },
+      twitter: { type: String, default: null },
+      github: { type: String, default: null },
+      website: { type: String, default: null },
+    },
+    showStats: { type: Boolean, default: true },
+    showInventory: { type: Boolean, default: true },
+  },
   unlockedThemes: { type: [String], default: ['default'] },
 
   quests: [QuestSchema],

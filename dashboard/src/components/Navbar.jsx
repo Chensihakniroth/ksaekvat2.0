@@ -124,6 +124,9 @@ export default function Navbar() {
 
           {user ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '8px' }}>
+              <Link to="/dashboard" className="nav-dash-link" title="Configuration">
+                <Shield size={18} className="text-cyan hover:text-white transition-colors" />
+              </Link>
               <img 
                 src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '/assets/default-avatar.png'} 
                 alt="Profile" 

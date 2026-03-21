@@ -89,10 +89,57 @@ router.get('/:userId', async (req: Request, res: Response) => {
         characterCount: hydratedInventory.length,
         pokemon: animalMap,
         pokemonCount: totalPokemon,
+        profileTheme: user.profileTheme || {
+          theme: 'default',
+          accentColor: '#22d3ee',
+          bio: 'Exploring the digital realm.',
+          showStats: true,
+          showInventory: true,
+          socials: {}
+        }
       },
     });
   } catch (err: any) {
     console.error(`[Backend] Profile fetch error for ${req.params.userId}:`, err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/profile/update
+router.post('/update', async (req: any, res: Response) => {
+  const token = req.cookies?.ksaekvat_session;
+  if (!token) return res.status(401).json({ success: false, error: 'Unauthorized' });
+
+  try {
+    const jwt = require('jsonwebtoken');
+    const { env } = require('../../utils/env.js');
+    const decoded: any = jwt.verify(token, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls');
+    
+    const { bio, accentColor, background, music, socials, banner, avatar, showStats, showInventory } = req.body;
+
+    const user = await User.findOne({ id: decoded.id });
+    if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+
+    // Update profile theme object
+    user.profileTheme = {
+      ...user.profileTheme,
+      bio: bio !== undefined ? bio : user.profileTheme.bio,
+      accentColor: accentColor !== undefined ? accentColor : user.profileTheme.accentColor,
+      background: background !== undefined ? background : user.profileTheme.background,
+      music: music !== undefined ? music : user.profileTheme.music,
+      banner: banner !== undefined ? banner : user.profileTheme.banner,
+      avatar: avatar !== undefined ? avatar : user.profileTheme.avatar,
+      showStats: showStats !== undefined ? showStats : user.profileTheme.showStats,
+      showInventory: showInventory !== undefined ? showInventory : user.profileTheme.showInventory,
+      socials: {
+        ...user.profileTheme.socials,
+        ...(socials || {})
+      }
+    };
+
+    await user.save();
+    res.json({ success: true, message: 'Profile updated successfully! (◕‿◕✿)' });
+  } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }
 });
