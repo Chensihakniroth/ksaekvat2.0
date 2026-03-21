@@ -11,11 +11,11 @@ import {
 import CharIcon from '../components/CharIcon';
 
 const SOCIAL_ICONS = {
-  instagram: <Instagram size={18} />,
-  twitter: <Twitter size={18} />,
-  github: <Github size={18} />,
-  website: <ExternalLink size={18} />,
-  discord: <MessageSquare size={18} />
+  instagram: <Instagram size={20} />,
+  twitter: <Twitter size={20} />,
+  github: <Github size={20} />,
+  website: <ExternalLink size={20} />,
+  discord: <MessageSquare size={20} />
 };
 
 const DEFAULT_BG = "https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop";
@@ -146,97 +146,142 @@ export default function ProfilePage() {
       backgroundImage: `url(${theme.background || DEFAULT_BG})`,
     }}>
       
-      <AnimatePresence>
-        {canGoBack && (
-          <motion.button 
+      {canGoBack && (
+        <button onClick={() => navigate(-1)} className="portfolio-back-fb">
+          <ArrowLeft size={20} />
+        </button>
+      )}
+
+      {/* HERO SECTION: FB STYLE */}
+      <div className="portfolio-hero-container">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="portfolio-banner-wrap"
+        >
+          {theme.banner ? 
+            <img src={theme.banner} className="portfolio-banner-img" alt="Banner" /> : 
+            <div className="banner-placeholder" style={{ background: `linear-gradient(135deg, ${accent}20, #000)` }} />
+          }
+        </motion.div>
+
+        <div className="portfolio-identity-bar">
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="portfolio-avatar-fb"
+          >
+            {theme.avatar ? <img src={theme.avatar} alt="Avatar" /> : <div className="avatar-initial-fb">{p.username[0]}</div>}
+          </motion.div>
+
+          <div className="portfolio-name-bio">
+            <motion.h1 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+              className="portfolio-name-fb"
+            >
+              {p.username}
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="portfolio-bio-fb"
+            >
+              {theme.bio}
+            </motion.p>
+          </div>
+
+          <div className="portfolio-actions-fb">
+            <button onClick={handleShare} className="share-btn-sidebar">
+              <Share2 size={20} />
+              <span>{copied ? 'COPIED' : 'SHARE'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* MAIN CONTENT WRAPPER */}
+      <div className="portfolio-content-wrap">
+        
+        {/* LEFT: INFO SIDEBAR */}
+        <aside className="portfolio-zen-sidebar">
+          <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            onClick={() => navigate(-1)} 
-            className="portfolio-back-btn"
+            transition={{ delay: 0.5 }}
+            className="zen-info-card"
           >
-            <ArrowLeft size={18} />
-            <span>BACK</span>
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      <div className="portfolio-grid-layout">
-        
-        {/* LEFT COLUMN: FIXED IDENTITY (ZEN) */}
-        <aside className="portfolio-left">
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-            className="portfolio-hero-sidebar"
-          >
-            <div className="avatar-main-sidebar">
-              {theme.avatar ? <img src={theme.avatar} alt="Avatar" /> : <div className="avatar-initial-sidebar">{p.username[0]}</div>}
-            </div>
-
-            <h1 className="name-main-sidebar">{p.username}</h1>
-            <p className="bio-main-sidebar">{theme.bio}</p>
-            
-            <div className="social-links-wrap-sidebar">
+            <h3 className="zen-card-title">Intro</h3>
+            <div className="zen-social-list">
               {theme.socials && Object.entries(theme.socials).map(([key, val]) => (
                 val && (
-                  <a key={key} href={val.startsWith('http') ? val : '#'} target="_blank" rel="noreferrer" className="social-icon-btn">
-                    {SOCIAL_ICONS[key] || <ExternalLink size={16}/>}
+                  <a key={key} href={val.startsWith('http') ? val : '#'} target="_blank" rel="noreferrer" className="zen-social-item">
+                    {SOCIAL_ICONS[key] || <ExternalLink size={20}/>}
+                    <span className="capitalize">{key}</span>
                   </a>
                 )
               ))}
+              <div className="zen-social-item">
+                <Globe size={20} />
+                <span>Level {p.level} Operative</span>
+              </div>
             </div>
-
-            <button onClick={handleShare} className="share-btn-sidebar">
-              <Share2 size={12} />
-              <span>{copied ? 'COPIED' : 'SHARE'}</span>
-            </button>
           </motion.div>
         </aside>
 
-        {/* RIGHT COLUMN: SCROLLABLE CONTENT */}
-        <main className="portfolio-right">
-          <div className="portfolio-tabs-sticky">
-             <button onClick={() => setActiveTab('portfolio')} className={`p-tab ${activeTab === 'portfolio' ? 'active' : ''}`}>PORTFOLIO</button>
-             {theme.showInventory !== false && <button onClick={() => setActiveTab('inventory')} className={`p-tab ${activeTab === 'inventory' ? 'active' : ''}`}>ARSENAL</button>}
-             {theme.showStats !== false && <button onClick={() => setActiveTab('stats')} className={`p-tab ${activeTab === 'stats' ? 'active' : ''}`}>DATA</button>}
+        {/* RIGHT: TABS & CONTENT */}
+        <main className="portfolio-zen-main">
+          <div className="portfolio-tabs-fb">
+             <button onClick={() => setActiveTab('portfolio')} className={`p-tab-fb ${activeTab === 'portfolio' ? 'active' : ''}`}>Portfolio</button>
+             {theme.showInventory !== false && <button onClick={() => setActiveTab('inventory')} className={`p-tab-fb ${activeTab === 'inventory' ? 'active' : ''}`}>Arsenal</button>}
+             {theme.showStats !== false && <button onClick={() => setActiveTab('stats')} className={`p-tab-fb ${activeTab === 'stats' ? 'active' : ''}`}>Data</button>}
           </div>
 
-          <div className="portfolio-content-view">
+          <div className="portfolio-tab-content">
             <AnimatePresence mode="wait">
               {activeTab === 'portfolio' && (
                 <motion.div 
                   key="portfolio" 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="portfolio-items-grid"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  className="portfolio-items-grid-zen"
                 >
                   {portfolio.length > 0 ? portfolio.map((item, idx) => (
-                    <div key={idx} className="portfolio-item-card-new">
+                    <motion.div 
+                      key={idx} 
+                      variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}
+                      className="zen-portfolio-card"
+                    >
                        {item.type === 'art' ? (
-                         <div className="art-preview-new">
+                         <div className="zen-art-display">
                            <img src={item.url} alt={item.title} />
-                           <div className="art-overlay-new">
-                              <a href={item.url} target="_blank" rel="noreferrer" className="view-link-new"><ExternalLink size={16} /></a>
-                           </div>
                          </div>
                        ) : (
-                         <div className="repo-preview-new">
+                         <div className="zen-card-info">
                             <div className="repo-header-new">
-                               <Code size={18} />
-                               <span className="item-title-new">{item.title}</span>
+                               <Code size={20} style={{ color: accent }} />
+                               <span className="zen-card-name">{item.title}</span>
                             </div>
-                            <p className="item-desc-new">{item.description || 'Access terminal protocols.'}</p>
+                            <p className="zen-card-desc">{item.description || 'Source protocols established.'}</p>
                             <a href={item.url} target="_blank" rel="noreferrer" className="repo-link-new">
                                VIEW_SOURCE
                             </a>
                          </div>
                        )}
-                       {item.type === 'art' && <span className="item-title-new">{item.title}</span>}
-                    </div>
+                       {item.type === 'art' && (
+                         <div className="zen-card-info">
+                            <span className="zen-card-name">{item.title}</span>
+                            <a href={item.url} target="_blank" rel="noreferrer" className="repo-link-new">OPEN_ARCHIVE</a>
+                         </div>
+                       )}
+                    </motion.div>
                   )) : (
-                    <div className="empty-portfolio-new" style={{ gridColumn: '1/-1', padding: '100px 0', opacity: 0.1 }}>
+                    <div className="empty-portfolio-new" style={{ gridColumn: '1/-1', opacity: 0.1 }}>
                        <p style={{ letterSpacing: '0.5em', fontSize: '0.7rem', fontWeight: 600 }}>ARCHIVE_EMPTY</p>
                     </div>
                   )}
@@ -249,31 +294,18 @@ export default function ProfilePage() {
                   initial={{ opacity: 0 }} 
                   animate={{ opacity: 1 }} 
                   exit={{ opacity: 0 }} 
-                  className="inventory-view-new"
+                  className="inventory-grid-container"
                 >
-                   <div className="tactical-filters-new" style={{ display: 'flex', gap: '24px', marginBottom: '48px', opacity: 0.3 }}>
-                      {['all', 'genshin', 'hsr', 'wuwa', 'zzz'].map(g => (
-                        <button 
-                          key={g} 
-                          onClick={() => setGameFilter(g)} 
-                          className={`filter-btn-new ${gameFilter === g ? 'active' : ''}`} 
-                          style={{ 
-                            fontSize: '0.6rem', 
-                            fontWeight: 700, 
-                            letterSpacing: '0.2em',
-                            color: gameFilter === g ? '#fff' : 'inherit',
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          {g.toUpperCase()}
-                        </button>
-                      ))}
-                   </div>
-                   <div className="units-grid-new">
+                   <div className="units-grid-fb">
                       {filteredChars.map((c, i) => (
-                        <UnitCard key={i} char={c} />
+                        <motion.div 
+                          key={i}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ delay: i * 0.03 }}
+                        >
+                          <UnitCard char={c} />
+                        </motion.div>
                       ))}
                    </div>
                 </motion.div>
@@ -282,17 +314,15 @@ export default function ProfilePage() {
               {activeTab === 'stats' && (
                 <motion.div 
                   key="stats" 
-                  initial={{ opacity: 0 }} 
-                  animate={{ opacity: 1 }} 
-                  exit={{ opacity: 0 }} 
-                  className="stats-view-new"
+                  initial={{ opacity: 0, y: 20 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  exit={{ opacity: 0, y: -20 }} 
+                  className="stats-grid-fb"
                 >
-                   <div className="stats-grid-new">
-                      <StatBox label="LEVEL" value={p.level} />
-                      <StatBox label="CREDITS" value={p.balance.toLocaleString()} />
-                      <StatBox label="OPERATIONS" value={p.stats?.commandsUsed || 0} />
-                      <StatBox label="RESONANCE" value={`${p.pity}/90`} />
-                   </div>
+                   <StatBox label="Neural Level" value={p.level} />
+                   <StatBox label="Network Credits" value={p.balance.toLocaleString()} />
+                   <StatBox label="Operations" value={p.stats?.commandsUsed || 0} />
+                   <StatBox label="Resonance" value={`${p.pity}/90`} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -301,10 +331,10 @@ export default function ProfilePage() {
       </div>
 
       {theme.music && (
-        <div className="music-control-fixed">
-          <button onClick={toggleMusic} className="music-btn-minimal">
-            {isPlaying ? <Volume2 size={14} /> : <VolumeX size={14} />}
-            <span className="music-status-text">{isPlaying ? 'LIVE' : 'MUTED'}</span>
+        <div className="music-control-fb">
+          <button onClick={toggleMusic} className="music-btn-fb">
+            {isPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}
+            <span>{isPlaying ? 'TRANSMITTING' : 'MUTED'}</span>
           </button>
           <audio ref={audioRef} src={theme.music} loop />
         </div>
@@ -315,20 +345,20 @@ export default function ProfilePage() {
 
 function StatBox({ label, value }) {
   return (
-    <div className="stat-box-new">
-       <span className="stat-label-new">{label}</span>
-       <span className="stat-value-new">{value}</span>
+    <div className="stat-box-fb">
+       <span className="stat-lbl-fb">{label}</span>
+       <span className="stat-val-fb">{value}</span>
     </div>
   );
 }
 
 function UnitCard({ char }) {
   return (
-    <div className="char-card-new">
-       <div className="char-visual-new">
+    <div className={`char-card-fb ${char.rarity === '5' ? 'r5' : ''}`}>
+       <div className="char-visual-fb">
           <CharIcon name={char.name} game={char.game?.toLowerCase()} rarity={char.rarity} emoji={char.emoji} />
        </div>
-       <div className="char-name-tag-new">{char.name}</div>
+       <div className="char-name-fb">{char.name}</div>
     </div>
   );
 }

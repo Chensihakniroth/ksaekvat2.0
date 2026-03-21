@@ -1293,279 +1293,339 @@ h1, h2, h3, .glitch-text { font-family: 'Outfit', sans-serif; font-weight: 900; 
 .profile-main {
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-/* --- ZEN MODE PORTFOLIO (ULTRA MINIMAL) --- */
+/* --- ZEN FB-STYLE PORTFOLIO (ULTRA MINIMAL) --- */
 .portfolio-minimal {
-  height: 100vh;
+  min-height: 100vh;
   background-color: #000;
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
   color: rgba(255, 255, 255, 0.9);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .portfolio-minimal::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(20px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(25px);
   z-index: 1;
 }
 
-.portfolio-grid-layout {
+/* HERO SECTION (FB STYLE) */
+.portfolio-hero-container {
+  width: 100%;
+  max-width: 1200px;
   position: relative;
   z-index: 10;
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  height: 100vh;
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-/* MINIMAL BACK BUTTON */
-.portfolio-back-btn {
-  position: fixed;
-  top: 32px;
-  left: 32px;
-  z-index: 1000;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 8px 16px;
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-}
-.portfolio-back-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-/* LEFT COLUMN - ZEN SIDEBAR */
-.portfolio-left {
-  height: 100vh;
-  padding: 80px 40px;
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-.portfolio-hero-sidebar { 
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-}
-
-.avatar-main-sidebar {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 32px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.02);
-  transition: transform 0.5s ease;
-}
-.avatar-main-sidebar:hover { transform: scale(1.05); }
-.avatar-main-sidebar img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
-.avatar-initial-sidebar { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 300; opacity: 0.5; }
-
-.name-main-sidebar { 
-  font-size: 2.2rem; 
-  font-weight: 300; 
-  margin-bottom: 8px; 
-  letter-spacing: -0.02em;
-  color: #fff;
-}
-
-.bio-main-sidebar { 
-  font-size: 0.85rem; 
-  opacity: 0.4; 
-  line-height: 1.8; 
   margin-bottom: 40px;
+}
+
+.portfolio-banner-wrap {
+  width: 100%;
+  height: 350px;
+  border-radius: 0 0 24px 24px;
+  overflow: hidden;
+  position: relative;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.portfolio-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+  transition: transform 1s ease;
+}
+.portfolio-banner-wrap:hover .portfolio-banner-img { transform: scale(1.05); }
+
+.portfolio-identity-bar {
+  display: flex;
+  align-items: flex-end;
+  padding: 0 40px;
+  margin-top: -80px;
+  gap: 30px;
+  width: 100%;
+}
+
+.portfolio-avatar-fb {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  border: 6px solid #000;
+  background: #111;
+  overflow: hidden;
+  position: relative;
+  z-index: 20;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+.portfolio-avatar-fb img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-initial-fb { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 4rem; font-weight: 200; opacity: 0.3; }
+
+.portfolio-name-bio {
+  padding-bottom: 20px;
+  flex: 1;
+}
+
+.portfolio-name-fb {
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.portfolio-bio-fb {
+  font-size: 1rem;
+  opacity: 0.4;
   font-weight: 400;
+  max-width: 600px;
 }
 
-.social-links-wrap-sidebar {
+.portfolio-actions-fb {
   display: flex;
-  gap: 16px;
-  margin-bottom: auto;
+  gap: 15px;
+  padding-bottom: 25px;
 }
 
-.social-icon-btn {
-  color: rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-}
-.social-icon-btn:hover { color: var(--accent); transform: translateY(-2px); }
-
-.share-btn-sidebar {
-  background: none;
-  border: none;
-  padding: 0;
-  color: rgba(255, 255, 255, 0.2);
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-.share-btn-sidebar:hover { color: #fff; }
-
-/* RIGHT COLUMN - ZEN CONTENT */
-.portfolio-right {
-  height: 100vh;
-  overflow-y: auto;
-  padding: 80px 80px;
-}
-
-.portfolio-right::-webkit-scrollbar { width: 2px; }
-.portfolio-right::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.05); }
-
-.portfolio-tabs-sticky {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  display: flex;
-  gap: 32px;
-  margin-bottom: 64px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-.p-tab {
-  background: none;
-  border: none;
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.3em;
-  color: rgba(255, 255, 255, 0.2);
-  cursor: pointer;
-  transition: all 0.4s ease;
-}
-
-.p-tab.active { color: #fff; }
-.p-tab::after {
-  content: '';
-  position: absolute;
-  bottom: -13px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: var(--accent);
-  transition: all 0.4s ease;
-}
-.p-tab.active::after { width: 100%; }
-
-/* GRID ITEMS - ULTRA TRANSPARENT */
-.portfolio-items-grid {
+/* CONTENT CONTAINER */
+.portfolio-content-wrap {
+  width: 100%;
+  max-width: 1200px;
+  position: relative;
+  z-index: 10;
+  padding: 0 40px 80px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: 350px 1fr;
   gap: 40px;
 }
 
-.portfolio-item-card-new { 
-  border-radius: 0;
-  border: none;
-  background: transparent !important;
-  transition: opacity 0.4s ease;
+/* LEFT SIDEBAR (Socials & Info) */
+.portfolio-zen-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
-.portfolio-item-card-new:hover { opacity: 0.7; }
 
-.art-preview-new { 
-  position: relative; 
-  aspect-ratio: 1/1; 
-  overflow: hidden;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.02);
+.zen-info-card {
+  padding: 24px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
 }
-.art-preview-new img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(0.2); transition: all 0.6s ease; }
-.art-preview-new:hover img { transform: scale(1.05); filter: grayscale(0); }
 
-.item-title-new { font-weight: 400; font-size: 0.8rem; letter-spacing: 0.1em; color: rgba(255, 255, 255, 0.8); margin-top: 16px; display: block; }
-
-.repo-preview-new { 
-  padding: 0; 
-}
-.repo-header-new { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; opacity: 0.5; }
-.item-desc-new { font-size: 0.75rem; opacity: 0.3; margin-bottom: 16px; line-height: 1.6; }
-.repo-link-new {
-  display: inline-block;
-  font-size: 0.6rem;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.4);
-  text-decoration: none;
+.zen-card-title {
+  font-size: 0.7rem;
+  font-weight: 800;
   letter-spacing: 0.2em;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 4px;
-  transition: all 0.3s;
+  opacity: 0.3;
+  margin-bottom: 20px;
+  text-transform: uppercase;
 }
-.repo-link-new:hover { color: #fff; border-color: #fff; }
 
-/* INVENTORY - ZEN GRID */
-.units-grid-new { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 24px; }
-.char-card-new { 
-  padding: 0;
-  background: transparent !important;
-  border: none !important;
-  opacity: 0.4;
-  transition: opacity 0.3s ease;
+.zen-social-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
-.char-card-new:hover { opacity: 1; }
-.char-visual-new { width: 60px; height: 60px; margin-bottom: 8px; filter: grayscale(1); transition: filter 0.3s; }
-.char-card-new:hover .char-visual-new { filter: grayscale(0); }
-.char-name-tag-new { font-size: 0.55rem; font-weight: 500; opacity: 0.5; letter-spacing: 0.05em; }
 
-/* STATS - MINIMAL BOXES */
-.stats-grid-new { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
-.stat-box-new { padding: 0; border: none !important; display: flex; flex-direction: column; gap: 4px; }
-.stat-label-new { font-size: 0.6rem; font-weight: 600; opacity: 0.2; letter-spacing: 0.3em; }
-.stat-value-new { font-size: 2.5rem; font-weight: 200; letter-spacing: -0.02em; color: #fff !important; }
-
-/* MUSIC - FIXED MINIMAL */
-.music-control-fixed {
-  position: fixed;
-  bottom: 32px;
-  right: 32px;
-  z-index: 1000;
-}
-.music-btn-minimal {
-  background: none;
-  border: none;
-  color: rgba(255, 255, 255, 0.2);
+.zen-social-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  font-size: 0.55rem;
+  gap: 15px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.9rem;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  transition: all 0.3s;
+}
+.zen-social-item:hover { color: var(--accent); transform: translateX(5px); }
+.zen-social-item svg { width: 20px; height: 20px; }
+
+/* RIGHT MAIN CONTENT */
+.portfolio-zen-main {
+  min-width: 0;
+}
+
+.portfolio-tabs-fb {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding-bottom: 10px;
+}
+
+.p-tab-fb {
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  padding: 10px 0;
+  position: relative;
   transition: color 0.3s;
+  text-transform: uppercase;
 }
-.music-btn-minimal:hover { color: #fff; }
+.p-tab-fb.active { color: #fff; }
+.p-tab-fb::after {
+  content: '';
+  position: absolute;
+  bottom: -11px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+.p-tab-fb.active::after { width: 100%; }
 
+/* PORTFOLIO GRID */
+.portfolio-items-grid-zen {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.zen-portfolio-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.zen-portfolio-card:hover { transform: translateY(-10px); background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+
+.zen-art-display { position: relative; aspect-ratio: 16/10; overflow: hidden; }
+.zen-art-display img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+.zen-portfolio-card:hover .zen-art-display img { transform: scale(1.1); }
+
+.zen-card-info { padding: 24px; }
+.zen-card-name { font-size: 1.1rem; font-weight: 300; color: #fff; margin-bottom: 8px; display: block; }
+.zen-card-desc { font-size: 0.8rem; opacity: 0.3; line-height: 1.6; }
+
+/* ARSENAL GRID (CHARACTERS) - FIXED */
+.units-grid-fb {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 20px;
+}
+
+.char-card-fb {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.char-card-fb:hover { background: rgba(255,255,255,0.05); border-color: var(--accent); transform: scale(1.05); }
+.char-card-fb.r5 { border-color: rgba(251, 191, 36, 0.2); box-shadow: 0 0 20px rgba(251, 191, 36, 0.05); }
+
+.char-visual-fb {
+  width: 90px;
+  height: 90px;
+  margin: 0 auto 15px;
+  position: relative;
+  z-index: 2;
+}
+
+.char-name-fb {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+  text-transform: uppercase;
+}
+
+/* DATA STATS (ZEN) */
+.stats-grid-fb {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.stat-box-fb {
+  padding: 30px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.stat-lbl-fb { font-size: 0.65rem; font-weight: 800; opacity: 0.2; letter-spacing: 0.2em; text-transform: uppercase; }
+.stat-val-fb { font-size: 3rem; font-weight: 800; color: #fff; }
+
+/* FLOATING CONTROLS */
+.portfolio-back-fb {
+  position: fixed;
+  top: 30px;
+  left: 30px;
+  z-index: 1000;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: all 0.3s;
+}
+.portfolio-back-fb:hover { background: var(--accent); color: #000; transform: scale(1.1); }
+
+.music-control-fb {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+}
+
+.music-btn-fb {
+  padding: 10px 20px;
+  border-radius: 30px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  color: rgba(255,255,255,0.4);
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.music-btn-fb:hover { color: #fff; border-color: rgba(255,255,255,0.3); }
+
+/* Responsive */
 @media (max-width: 1000px) {
-  .portfolio-grid-layout { grid-template-columns: 1fr; }
-  .portfolio-left { height: auto; border-right: none; border-bottom: 1px solid rgba(255, 255, 255, 0.03); padding: 60px 32px; }
-  .portfolio-right { height: auto; padding: 40px 32px; }
+  .portfolio-content-wrap { grid-template-columns: 1fr; }
+  .portfolio-identity-bar { flex-direction: column; align-items: center; text-align: center; margin-top: -100px; }
+  .portfolio-avatar-fb { width: 150px; height: 180px; }
+  .portfolio-actions-fb { padding-bottom: 0; margin-top: 20px; }
 }
 
-/* DISABLE GLITCH FOR ZEN */
-.glitch-text { animation: none !important; text-shadow: none !important; }
+@media (max-width: 600px) {
+  .portfolio-banner-wrap { height: 200px; }
+  .portfolio-name-fb { font-size: 2rem; }
+  .portfolio-identity-bar { padding: 0 20px; }
+}
+
 
