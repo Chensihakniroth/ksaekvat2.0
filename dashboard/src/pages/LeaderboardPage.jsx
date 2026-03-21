@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Coins, Star, Dog, Users, Terminal, Zap, Activity, ChevronRight, Gift } from 'lucide-react';
+import { Trophy, Coins, Star, Users, Gift, Activity, ChevronRight, BarChart2 } from 'lucide-react';
 
 const TABS = [
-  { key: 'balance',    label: 'Economy',      icon: Coins,   field: 'balance',        fmt: v => v.toLocaleString() + ' CC', color: 'text-gold' },
-  { key: 'level',      label: 'Prestige',     icon: Star,    field: 'level',          fmt: v => 'Level ' + v, color: 'text-purple-400' },
-  { key: 'pokemon',    label: 'Bio-Data',      icon: Dog,     field: 'pokemonCount',   fmt: v => v.toLocaleString() + ' Units', color: 'text-green-400' },
-  { key: 'characters', label: 'Roster',   icon: Users,   field: 'characterCount', fmt: v => v + ' Assets', color: 'text-cyan-400' },
-  { key: 'donations',  label: 'Donators', icon: Gift,    field: 'totalDonated',   fmt: v => (v || 0).toLocaleString() + ' CC', color: 'text-red' },
+  { key: 'balance',    label: 'RESOURCES',    icon: Coins,   field: 'balance',        fmt: v => v.toLocaleString() + ' CC', color: 'var(--cyber-yellow)' },
+  { key: 'level',      label: 'PRESTIGE',     icon: Star,    field: 'level',          fmt: v => 'Level ' + v, color: 'var(--cyber-purple)' },
+  { key: 'collection', label: 'COLLECTION',   icon: Users,   field: 'collectionCount',fmt: v => v.toLocaleString() + ' Units', color: 'var(--cyber-cyan)' },
+  { key: 'donations',  label: 'PATRONS',      icon: Gift,    field: 'totalDonated',   fmt: v => (v || 0).toLocaleString() + ' CC', color: 'var(--cyber-pink)' },
 ];
-
-const MEDAL_COLORS = ['text-gold', 'text-text-dim', 'text-red'];
 
 export default function LeaderboardPage() {
   const [sort, setSort] = useState('balance');
@@ -23,153 +20,153 @@ export default function LeaderboardPage() {
   useEffect(() => {
     setLoading(true);
     setErr(null);
-    fetch(`/api/leaderboard?sort=${sort}&limit=20`)
+    fetch(`/api/leaderboard?sort=${sort}&limit=10`)
       .then(r => r.json())
       .then(res => {
         if (res.success) { setData(res.data); setTotal(res.total || 0); }
-        else setErr(res.error || 'Failed to sync with terminal.');
+        else setErr(res.error || 'Failed to synchronize archives.');
         setLoading(false);
       })
-      .catch(() => { setErr('Terminal connection lost.'); setLoading(false); });
+      .catch(() => { setErr('Connection to archive lost.'); setLoading(false); });
   }, [sort]);
 
   const activeTab = TABS.find(t => t.key === sort);
 
   return (
-    <div className="leaderboard-container">
-      <div className="wrap">
-        {/* --- HEADER --- */}
-        <div className="terminal-header">
-          <div className="terminal-badge">
-            <Terminal size={16} />
-            <span>Global Rankings Terminal</span>
-          </div>
+    <div className="leaderboard-container" style={{ paddingBottom: '120px' }}>
+      <div className="wrap" style={{ maxWidth: '1000px' }}>
+        
+        <header style={{ marginBottom: '80px', textAlign: 'center', position: 'relative' }}>
+          <div style={{ position: 'absolute', top: '-50px', left: '50%', transform: 'translateX(-50%)', width: '200px', height: '200px', background: 'var(--cyber-cyan)', filter: 'blur(150px)', opacity: 0.1, zIndex: -1 }} />
           
-          <div className="header-main">
-            <div className="header-titles">
-              <h1 className="terminal-title">
-                RANKINGS <span className="text-gradient">TERMINAL</span>
-              </h1>
-              <div className="terminal-stats">
-                <div className="stat-item">
-                  <Activity size={12} className="text-green-400" />
-                  <span>{total.toLocaleString()} Operatives Indexed</span>
-                </div>
-                <div className="stat-item">
-                  <Zap size={12} className="text-purple-400" />
-                  <span>Neural Sync Active</span>
-                </div>
-              </div>
-            </div>
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', opacity: 0.8, marginBottom: '20px' }}
+          >
+            <BarChart2 size={16} color="var(--cyber-cyan)" />
+            <span style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.4em', color: 'var(--cyber-cyan)', textShadow: '0 0 10px rgba(0,243,255,0.5)' }}>Global Resonance</span>
+          </motion.div>
+          
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            style={{ fontSize: 'clamp(3rem, 8vw, 6rem)', fontWeight: 900, letterSpacing: '-0.06em', marginBottom: '50px', color: '#fff', textShadow: '0 0 20px rgba(255,255,255,0.2)' }}
+          >
+            ARCHIVES
+          </motion.h1>
 
-            <div className="terminal-tabs glass-panel">
-              {TABS.map(t => {
-                const Icon = t.icon;
-                const isActive = sort === t.key;
-                return (
-                  <button 
-                    key={t.key} 
-                    onClick={() => setSort(t.key)}
-                    className={`tab-btn ${isActive ? 'active' : ''}`}
-                  >
-                    <Icon size={14} className={isActive ? t.color : ''} />
-                    <span className="tab-label">{t.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', flexWrap: 'wrap' }}>
+            {TABS.map(t => {
+              const Icon = t.icon;
+              const isActive = sort === t.key;
+              return (
+                <button 
+                  key={t.key} 
+                  onClick={() => setSort(t.key)}
+                  style={{
+                    padding: '14px 28px',
+                    borderRadius: '50px',
+                    fontSize: '0.75rem',
+                    fontWeight: 900,
+                    letterSpacing: '0.15em',
+                    background: isActive ? 'var(--cyber-cyan)' : 'rgba(255,255,255,0.02)',
+                    color: isActive ? '#000' : 'var(--text-dim)',
+                    border: `1px solid ${isActive ? 'transparent' : 'rgba(255,255,255,0.05)'}`,
+                    boxShadow: isActive ? '0 0 20px rgba(0,243,255,0.3)' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}
+                >
+                  <Icon size={16} />
+                  <span>{t.label}</span>
+                </button>
+              );
+            })}
           </div>
-        </div>
+        </header>
 
-        {/* --- TABLE --- */}
-        <div className="glass-panel terminal-card neon-border">
+        <div className="roster-list" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           {loading ? (
-            <div className="terminal-loading">
-              <div className="spinner" />
-              <div className="loading-text">Syncing Neural Database...</div>
+            <div style={{ padding: '100px', textAlign: 'center', opacity: 0.5 }}>
+              <Activity className="animate-pulse" style={{ margin: '0 auto 20px', color: 'var(--cyber-cyan)' }} size={32} />
+              <div style={{ fontWeight: 900, fontSize: '0.75rem', letterSpacing: '0.4em', color: 'var(--cyber-cyan)' }}>SYNCHRONIZING DATABANKS...</div>
             </div>
           ) : err ? (
-            <div className="terminal-error">
-              <div className="error-msg">CRITICAL ERROR: {err}</div>
-              <button onClick={() => window.location.reload()} className="btn-v3 btn-v3-ghost">Reboot Terminal</button>
+            <div style={{ padding: '100px', textAlign: 'center' }}>
+              <div style={{ color: 'var(--cyber-pink)', fontWeight: 900, fontSize: '1.2rem', marginBottom: '20px', letterSpacing: '0.1em' }}>{err}</div>
+              <button onClick={() => window.location.reload()} className="btn-v3" style={{ background: 'rgba(255,0,60,0.1)', border: '1px solid var(--cyber-pink)', color: 'var(--cyber-pink)' }}>Retry Uplink</button>
             </div>
           ) : (
-            <div className="table-responsive">
-              <table className="terminal-table">
-                <thead>
-                  <tr>
-                    <th className="col-pos">Pos</th>
-                    <th className="col-op">Operative</th>
-                    <th className="col-rank">Rank</th>
-                    <th className="col-score">{activeTab?.label}</th>
-                    <th className="col-dust">Star Dust</th>
-                    <th className="col-action"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <AnimatePresence mode="popLayout">
-                    {data.map((u, i) => (
-                      <motion.tr 
-                        layout
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        key={u.userId} 
-                        className="table-row"
-                      >
-                        <td>
-                          <div className={`pos-id ${i < 3 ? MEDAL_COLORS[i] : ''}`}>
-                            {i < 3 ? `0${i+1}` : i + 1}
-                          </div>
-                        </td>
-                        <td>
-                          <Link to={`/profile/${u.userId}`} className="op-link">
-                            <div className="op-avatar">
-                              {u.username[0].toUpperCase()}
-                            </div>
-                            <div className="op-info">
-                              <span className="op-name">{u.username}</span>
-                              <span className="op-id">ID_{u.userId}</span>
-                            </div>
-                          </Link>
-                        </td>
-                        <td className="text-center">
-                          <div className="rank-badge">Level {u.level}</div>
-                        </td>
-                        <td className="text-right">
-                          <div className={`score-val ${activeTab?.color || ''}`}>
-                            {activeTab?.fmt(u[activeTab.field] ?? 0)}
-                          </div>
-                        </td>
-                        <td className="text-right">
-                          <div className="dust-val">
-                            <Star size={14} className="text-gold" />
-                            <span>{u.star_dust.toLocaleString()}</span>
-                          </div>
-                        </td>
-                        <td>
-                          <Link to={`/profile/${u.userId}`} className="row-action">
-                            <ChevronRight size={18} />
-                          </Link>
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </AnimatePresence>
-                </tbody>
-              </table>
-            </div>
+            <AnimatePresence mode="popLayout">
+              {data.map((u, i) => (
+                <motion.div 
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.04, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  key={u.userId}
+                >
+                  <Link to={`/profile/${u.userId}`} style={{ display: 'block' }}>
+                    <div className="roster-card">
+                      {/* Rank Number */}
+                      <div className="roster-rank" style={{ 
+                        color: i === 0 ? 'var(--cyber-yellow)' : i === 1 ? '#e2e8f0' : i === 2 ? '#cd7f32' : 'rgba(255,255,255,0.1)',
+                        textShadow: i < 3 ? `0 0 15px ${i === 0 ? 'var(--cyber-yellow)' : 'rgba(255,255,255,0.5)'}` : 'none',
+                      }}>
+                        {String(i + 1).padStart(2, '0')}
+                      </div>
+
+                      {/* Operative Info */}
+                      <div className="roster-info">
+                        <div className="roster-avatar">
+                          {u.username[0].toUpperCase()}
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontWeight: 900, fontSize: '1.1rem', letterSpacing: '-0.02em', color: '#fff' }}>{u.username}</span>
+                          <span style={{ fontSize: '0.65rem', opacity: 0.4, fontWeight: 900, letterSpacing: '0.2em', textTransform: 'uppercase' }}>LVL {u.level} // OPR_{u.userId.slice(-4)}</span>
+                        </div>
+                      </div>
+
+                      {/* Primary Stat */}
+                      <div className="roster-stat">
+                        <div style={{ fontSize: '0.6rem', fontWeight: 900, opacity: 0.3, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '4px' }}>{activeTab?.label}</div>
+                        <div style={{ fontSize: '1.4rem', fontWeight: 800, color: activeTab?.color, textShadow: `0 0 15px ${activeTab?.color}40` }}>
+                          {activeTab?.fmt(u[activeTab.field] ?? 0)}
+                        </div>
+                      </div>
+
+                      {/* Star Dust */}
+                      <div className="roster-dust">
+                        <div style={{ fontSize: '0.6rem', fontWeight: 900, opacity: 0.3, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '4px' }}>DUST</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-dim)' }}>
+                          <Star size={12} color="var(--cyber-yellow)" />
+                          <span style={{ fontSize: '1rem', fontWeight: 700 }}>{u.star_dust.toLocaleString()}</span>
+                        </div>
+                      </div>
+
+                      {/* Action */}
+                      <div className="roster-action">
+                        <ChevronRight size={24} />
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           )}
         </div>
 
-        <div className="terminal-footer">
-          <div className="footer-meta">
-            <span>Security_Clearance: Level_03</span>
-            <span className="separator">|</span>
-            <span>Encryption: AES-256</span>
+        <footer style={{ marginTop: '80px', display: 'flex', justifyContent: 'center', alignItems: 'center', opacity: 0.2 }}>
+          <div style={{ fontSize: '0.65rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.4em' }}>
+            Data Integrity Verified // {total.toLocaleString()} Operatives Indexed // {new Date().toLocaleDateString()}
           </div>
-          <div className="footer-timestamp">Transmission // {new Date().toLocaleTimeString()}</div>
-        </div>
+        </footer>
       </div>
     </div>
   );
 }
+

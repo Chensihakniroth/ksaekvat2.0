@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { 
   Settings, Palette, User, Globe, Music, Save, 
   ChevronRight, AlertCircle, CheckCircle2, Link as LinkIcon,
-  Eye, EyeOff, Image as ImageIcon, Plus, Trash2, Github, Image, Upload
+  Eye, EyeOff, Image as ImageIcon, Plus, Trash2, Github, Image, Upload, Heart
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -25,6 +25,7 @@ export default function DashboardPage() {
     showStats: true,
     showInventory: true,
     portfolio: [],
+    favorites: [],
     socials: {
       discord: '',
       instagram: '',
@@ -51,6 +52,7 @@ export default function DashboardPage() {
               showStats: pt.showStats !== undefined ? pt.showStats : true,
               showInventory: pt.showInventory !== undefined ? pt.showInventory : true,
               portfolio: pt.portfolio || [],
+              favorites: pt.favorites || [],
               socials: pt.socials || {}
             });
           }
@@ -58,6 +60,28 @@ export default function DashboardPage() {
         });
     }
   }, [user]);
+
+  const addFavorite = () => {
+    setFormData(prev => ({
+      ...prev,
+      favorites: [...prev.favorites, { type: 'character', name: '' }]
+    }));
+  };
+
+  const updateFavorite = (index, field, value) => {
+    setFormData(prev => {
+      const newF = [...prev.favorites];
+      newF[index] = { ...newF[index], [field]: value };
+      return { ...prev, favorites: newF };
+    });
+  };
+
+  const removeFavorite = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      favorites: prev.favorites.filter((_, i) => i !== index)
+    }));
+  };
 
   const addPortfolioItem = () => {
     setFormData(prev => ({
@@ -242,7 +266,7 @@ export default function DashboardPage() {
               <Music size={18} className="text-pink" />
               <h3>Atmospheric Audio</h3>
             </div>
-            <div className="flex flex-col gap-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div className="icon-input">
                 <Music size={14} />
                 <input 
@@ -254,13 +278,13 @@ export default function DashboardPage() {
                 />
               </div>
               
-              <div className="flex items-center gap-4">
-                <label className={`btn-v3 btn-v3-ghost flex-1 ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                <label className={`btn-v3 btn-v3-ghost ${uploading ? 'opacity-50 pointer-events-none' : ''}`} style={{ flex: '1 1 auto', cursor: 'pointer' }}>
                   <Upload size={16} />
                   <span>{uploading ? 'UPLOADING...' : 'UPLOAD OWN MP3'}</span>
                   <input type="file" accept="audio/mpeg" onChange={handleAudioUpload} hidden />
                 </label>
-                {formData.music && <span className="text-xs opacity-30 truncate max-w-[200px]">{formData.music}</span>}
+                {formData.music && <span style={{ fontSize: '0.75rem', opacity: 0.3, maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{formData.music}</span>}
               </div>
             </div>
             <p className="hint-text mt-4">
@@ -274,10 +298,10 @@ export default function DashboardPage() {
               <LinkIcon size={18} className="text-gold" />
               <h3>Social Uplinks</h3>
             </div>
-            <div className="social-grid">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
               {['discord', 'instagram', 'twitter', 'github', 'website'].map(s => (
-                <div key={s} className="input-group">
-                  <label className="capitalize">{s}</label>
+                <div key={s} className="input-group" style={{ marginBottom: 0 }}>
+                  <label style={{ textTransform: 'capitalize' }}>{s}</label>
                   <input 
                     type="text" 
                     placeholder={`${s} handle/link`} 
@@ -292,20 +316,65 @@ export default function DashboardPage() {
 
           <section className="settings-section glass-panel">
             <div className="section-header">
+              <Heart size={18} className="text-red" />
+              <h3>Favorite Assets</h3>
+              <button onClick={addFavorite} style={{ marginLeft: 'auto', fontSize: '0.7rem', background: 'rgba(255, 0, 60, 0.2)', color: 'var(--cyber-pink)', padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', border: '1px solid rgba(255, 0, 60, 0.3)', cursor: 'pointer', transition: '0.3s' }}>
+                <Plus size={12} /> Add Favorite
+              </button>
+            </div>
+            <div className="portfolio-list">
+              {formData.favorites.map((item, idx) => (
+                <div key={idx} className="portfolio-item-edit glass-panel" style={{ marginBottom: '16px', padding: '16px', border: '1px solid rgba(255,255,255,0.05)', position: 'relative' }}>
+                  <button onClick={() => removeFavorite(idx)} style={{ position: 'absolute', top: '16px', right: '16px', color: 'var(--cyber-pink)', opacity: 0.5, background: 'none', border: 'none', cursor: 'pointer', transition: '0.3s' }} onMouseEnter={e => e.currentTarget.style.opacity = 1} onMouseLeave={e => e.currentTarget.style.opacity = 0.5}>
+                    <Trash2 size={14} />
+                  </button>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px', marginTop: '10px' }}>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                      <label>Asset Type</label>
+                      <select 
+                        value={item.type} 
+                        onChange={e => updateFavorite(idx, 'type', e.target.value)}
+                        className="dash-input select-v3"
+                      >
+                        <option value="character">Resonator (Character)</option>
+                        <option value="animal">Specimen (Animal)</option>
+                      </select>
+                    </div>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                      <label>Asset Name</label>
+                      <input 
+                        type="text" 
+                        placeholder="Exact Name" 
+                        value={item.name} 
+                        onChange={e => updateFavorite(idx, 'name', e.target.value)}
+                        className="dash-input"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {formData.favorites.length === 0 && (
+                <p style={{ textAlign: 'center', opacity: 0.3, padding: '20px 0', fontSize: '0.75rem', fontStyle: 'italic' }}>No favorite assets indexed yet.</p>
+              )}
+            </div>
+          </section>
+
+          <section className="settings-section glass-panel">
+            <div className="section-header">
               <LinkIcon size={18} className="text-cyan" />
               <h3>Portfolio Assets</h3>
-              <button onClick={addPortfolioItem} className="ml-auto text-xs bg-cyan/20 text-cyan px-2 py-1 rounded-md flex items-center gap-1 hover:bg-cyan/30 transition-colors">
+              <button onClick={addPortfolioItem} style={{ marginLeft: 'auto', fontSize: '0.7rem', background: 'rgba(0, 243, 255, 0.1)', color: 'var(--cyber-cyan)', padding: '6px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px', border: '1px solid rgba(0, 243, 255, 0.3)', cursor: 'pointer', transition: '0.3s' }}>
                 <Plus size={12} /> Add Item
               </button>
             </div>
             <div className="portfolio-list">
               {formData.portfolio.map((item, idx) => (
-                <div key={idx} className="portfolio-item-edit glass-panel mb-3 p-3 border border-white/5 relative group">
-                  <button onClick={() => removePortfolioItem(idx)} className="absolute top-2 right-2 text-red/50 hover:text-red transition-colors opacity-0 group-hover:opacity-100">
+                <div key={idx} className="portfolio-item-edit glass-panel" style={{ marginBottom: '16px', padding: '16px', border: '1px solid rgba(255,255,255,0.05)', position: 'relative' }}>
+                  <button onClick={() => removePortfolioItem(idx)} style={{ position: 'absolute', top: '16px', right: '16px', color: 'var(--cyber-pink)', opacity: 0.5, background: 'none', border: 'none', cursor: 'pointer', transition: '0.3s' }} onMouseEnter={e => e.currentTarget.style.opacity = 1} onMouseLeave={e => e.currentTarget.style.opacity = 0.5}>
                     <Trash2 size={14} />
                   </button>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="input-group">
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px', marginTop: '10px' }}>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
                       <label>Type</label>
                       <select 
                         value={item.type} 
@@ -316,7 +385,7 @@ export default function DashboardPage() {
                         <option value="art">Artwork / Image</option>
                       </select>
                     </div>
-                    <div className="input-group">
+                    <div className="input-group" style={{ marginBottom: 0 }}>
                       <label>Title</label>
                       <input 
                         type="text" 
@@ -327,7 +396,7 @@ export default function DashboardPage() {
                       />
                     </div>
                   </div>
-                  <div className="input-group mt-2">
+                  <div className="input-group" style={{ marginTop: '16px', marginBottom: 0 }}>
                     <label>URL</label>
                     <input 
                       type="text" 
@@ -340,7 +409,7 @@ export default function DashboardPage() {
                 </div>
               ))}
               {formData.portfolio.length === 0 && (
-                <p className="text-center opacity-30 py-4 text-xs italic">No portfolio items added yet.</p>
+                <p style={{ textAlign: 'center', opacity: 0.3, padding: '20px 0', fontSize: '0.75rem', fontStyle: 'italic' }}>No portfolio items added yet.</p>
               )}
             </div>
           </section>

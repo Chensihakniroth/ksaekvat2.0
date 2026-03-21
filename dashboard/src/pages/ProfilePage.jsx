@@ -6,7 +6,7 @@ import {
   Share2, Zap, Heart, History, Box, Filter, Terminal,
   Layers, BarChart3, Globe, Award, Crosshair, Activity, PawPrint,
   Instagram, Twitter, Github, ExternalLink, Music, Volume2, VolumeX,
-  Code, Image as ImageIcon, Mail, MessageSquare, ShoppingBag, ChevronLeft, ChevronRight, Edit3
+  Code, Image as ImageIcon, Mail, MessageSquare, ShoppingBag, ChevronLeft, ChevronRight, Edit3, X
 } from 'lucide-react';
 import CharIcon from '../components/CharIcon';
 import { useAuth } from '../context/AuthContext';
@@ -29,6 +29,53 @@ const containerVariants = {
   }
 };
 
+// --- MODULAR COMPONENTS ---
+
+function CharacterModal({ char, onClose }) {
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="modal-overlay" onClick={onClose}>
+      <motion.div initial={{ y: 50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="glass-panel modal-panel-lg" onClick={e => e.stopPropagation()}>
+        <button className="bs-close" onClick={onClose}><X size={24} /></button>
+        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          <div style={{ flex: '1', minWidth: '300px', padding: '60px', background: 'rgba(255,255,255,0.02)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+             <div style={{ width: '200px', height: '200px', marginBottom: '30px' }}>
+                <CharIcon name={char.name} game={char.game?.toLowerCase()} rarity={char.rarity} />
+             </div>
+             <div style={{ textAlign: 'center' }}>
+                <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', marginBottom: '10px' }}>
+                   {[...Array(parseInt(char.rarity))].map((_, i) => <Star key={i} size={16} fill="#fbbf24" color="#fbbf24" />)}
+                </div>
+                <h1 style={{ fontSize: '2.5rem', fontWeight: 900, letterSpacing: '-0.02em' }}>{char.name}</h1>
+             </div>
+          </div>
+          <div style={{ flex: '1.2', minWidth: '300px', padding: '60px' }}>
+            <div style={{ display: 'flex', gap: '15px', marginBottom: '30px' }}>
+              <span style={{ background: 'rgba(34,211,238,0.1)', color: 'var(--accent)', padding: '5px 15px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 900 }}>{char.game?.toUpperCase()}</span>
+              <span style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', padding: '5px 15px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 900 }}>{char.element || 'NEUTRAL'}</span>
+            </div>
+            <h2 style={{ fontSize: '0.75rem', fontWeight: 900, opacity: 0.3, textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '20px' }}>Technical Specs</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '40px' }}>
+               <div className="glass-panel" style={{ padding: '20px' }}>
+                  <div style={{ fontSize: '0.6rem', fontWeight: 900, opacity: 0.4, marginBottom: '5px' }}>ROLE</div>
+                  <div style={{ fontWeight: 800 }}>{char.role || 'ASSET'}</div>
+               </div>
+               <div className="glass-panel" style={{ padding: '20px' }}>
+                  <div style={{ fontSize: '0.6rem', fontWeight: 900, opacity: 0.4, marginBottom: '5px' }}>TIER</div>
+                  <div style={{ fontWeight: 800, color: 'var(--accent)' }}>LEVEL {char.rarity}</div>
+               </div>
+            </div>
+            <button className="btn-v3 btn-v3-primary w-full" onClick={onClose}>
+              <span>CLOSE ARCHIVE</span>
+            </button>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// --- MAIN PAGE ---
+
 export default function ProfilePage() {
   const { userId } = useParams();
   const navigate = useNavigate();
@@ -37,13 +84,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState('portfolio');
-  
-  // Shop State
-  const [shopData, setShopData] = useState([]);
-  const [shopPage, setShopPage] = useState(1);
-  const [shopPages, setShopPages] = useState(1);
-  const [shopLoading, setShopLoading] = useState(false);
-  const [shopFilter, setShopFilter] = useState({ game: 'all', rarity: 'all', search: '' });
+  const [selectedChar, setSelectedChar] = useState(null);
 
   const [copied, setCopied] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -64,34 +105,13 @@ export default function ProfilePage() {
       .catch(() => { setNotFound(true); setLoading(false); });
   }, [userId]);
 
-  // Load Shop Data
-  useEffect(() => {
-    if (activeTab === 'shop') {
-      setShopLoading(true);
-      const params = new URLSearchParams({
-        page: shopPage.toString(),
-        game: shopFilter.game,
-        rarity: shopFilter.rarity,
-        search: shopFilter.search
-      });
-      fetch(`/api/shop/characters?${params}`)
-        .then(r => r.json())
-        .then(res => {
-          if (res.success) {
-            setShopData(res.data);
-            setShopPages(res.pages);
-          }
-          setShopLoading(false);
-        });
-    }
-  }, [activeTab, shopPage, shopFilter]);
-
   const theme = p?.profileTheme || {};
   const accent = theme.accentColor || '#22d3ee';
   const portfolio = theme.portfolio || [];
+  const favorites = theme.favorites || [];
 
-  const isSpotify = theme.music?.includes('spotify.com');
-  const spotifyTrackId = isSpotify ? theme.music.split('/').pop()?.split('?')[0] : null;
+  const isSpotify = theme.music && typeof theme.music === 'string' && theme.music.includes('spotify.com');
+  const spotifyTrackId = isSpotify ? theme.music.split('/').filter(Boolean).pop()?.split('?')[0] : null;
   const spotifyEmbedUrl = spotifyTrackId ? `https://open.spotify.com/embed/track/${spotifyTrackId}?utm_source=generator&theme=0` : null;
 
   useEffect(() => {
@@ -101,33 +121,24 @@ export default function ProfilePage() {
     }
   }, [loading, theme.music, isSpotify]);
 
-  const handleBuy = async (charName) => {
-    if (!window.confirm(`Exchange Star Dust for ${charName}?`)) return;
-    try {
-      const res = await fetch('/api/shop/buy', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ characterName: charName })
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert(data.message);
-        setP(prev => ({ ...prev, star_dust: data.newBalance }));
-      } else {
-        alert(data.error);
-      }
-    } catch (err) {
-      alert("Network error protocols failed.");
-    }
-  };
-
   const getSocialHandle = (url) => {
     if (!url) return '';
     if (!url.includes('/')) return url;
     return url.split('/').filter(Boolean).pop();
   };
 
-  if (loading) return <div className="profile-loading-screen"><div className="glitch-text">SYNCING_UPLINK...</div></div>;
+  if (loading) return (
+    <div style={{ position: 'fixed', inset: 0, background: 'var(--bg-deep)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <motion.div 
+        animate={{ rotate: 360 }} 
+        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+        style={{ width: '80px', height: '80px', border: '2px dashed rgba(0, 243, 255, 0.2)', borderTopColor: 'var(--cyber-cyan)', borderRadius: '50%', marginBottom: '40px' }}
+      />
+      <div style={{ fontSize: '0.85rem', fontWeight: 900, letterSpacing: '0.4em', color: 'var(--cyber-cyan)', textTransform: 'uppercase', textShadow: '0 0 15px rgba(0, 243, 255, 0.5)' }}>
+        SYNCING UPLINK...
+      </div>
+    </div>
+  );
   if (notFound || !p) return <div className="profile-not-found wrap"><h2 className="error-title">ID_NOT_FOUND</h2><Link to="/leaderboard" className="btn-v3 btn-v3-ghost">RETURN</Link></div>;
 
   return (
@@ -155,12 +166,12 @@ export default function ProfilePage() {
 
           <div className="portfolio-actions-fb">
             {isOwner && (
-              <Link to="/dashboard" className="share-btn-sidebar" style={{ backgroundColor: accent, color: '#000', borderColor: accent }}>
+              <Link to="/dashboard" className="btn-v3" style={{ backgroundColor: accent, color: '#000', borderColor: accent }}>
                 <Edit3 size={18} />
                 <span>EDIT PROFILE</span>
               </Link>
             )}
-            <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(window.location.href); setCopied(true); setTimeout(()=>setCopied(false), 2000); }} className="share-btn-sidebar">
+            <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(window.location.href); setCopied(true); setTimeout(()=>setCopied(false), 2000); }} className="btn-v3 btn-v3-ghost">
               <Share2 size={20} />
               <span>{copied ? 'COPIED' : 'SHARE'}</span>
             </button>
@@ -170,7 +181,7 @@ export default function ProfilePage() {
 
       <div className="portfolio-content-wrap">
         <aside className="portfolio-zen-sidebar">
-          <div className="zen-info-card">
+          <div className="zen-info-card glass-panel">
             <h3 className="zen-card-title">Intro</h3>
             <div className="zen-social-list">
               {theme.socials && Object.entries(theme.socials).map(([key, val]) => (
@@ -202,7 +213,7 @@ export default function ProfilePage() {
         <main className="portfolio-zen-main">
           <div className="portfolio-tabs-fb">
              <button onClick={() => setActiveTab('portfolio')} className={`p-tab-fb ${activeTab === 'portfolio' ? 'active' : ''}`}>Portfolio</button>
-             <button onClick={() => setActiveTab('shop')} className={`p-tab-fb ${activeTab === 'shop' ? 'active' : ''}`}>Resonator Shop</button>
+             <button onClick={() => setActiveTab('favorites')} className={`p-tab-fb ${activeTab === 'favorites' ? 'active' : ''}`}>Favorites</button>
           </div>
 
           <div className="portfolio-tab-content">
@@ -213,47 +224,36 @@ export default function ProfilePage() {
                     <motion.div key={idx} variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }} className="zen-portfolio-card">
                        {item.type === 'art' ? <div className="zen-art-display"><img src={item.url} alt={item.title} /></div> : 
                          <div className="zen-card-info">
-                            <div className="repo-header-new"><Code size={20} style={{ color: accent }} /><span className="zen-card-name">{item.title}</span></div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}><Code size={20} style={{ color: accent }} /><span className="zen-card-name">{item.title}</span></div>
                             <p className="zen-card-desc">{item.description || 'Source protocols established.'}</p>
-                            <a href={item.url} target="_blank" rel="noreferrer" className="repo-link-new">VIEW_SOURCE</a>
+                            <a href={item.url} target="_blank" rel="noreferrer" className="btn-v3 btn-v3-ghost" style={{ marginTop: '20px', width: '100%' }}>VIEW_SOURCE</a>
                          </div>
                        }
-                       {item.type === 'art' && <div className="zen-card-info"><span className="zen-card-name">{item.title}</span><a href={item.url} target="_blank" rel="noreferrer" className="repo-link-new">OPEN_ARCHIVE</a></div>}
+                       {item.type === 'art' && <div className="zen-card-info"><span className="zen-card-name">{item.title}</span><a href={item.url} target="_blank" rel="noreferrer" className="btn-v3 btn-v3-ghost" style={{ marginTop: '15px', width: '100%' }}>OPEN_ARCHIVE</a></div>}
                     </motion.div>
-                  )) : <div className="empty-portfolio-new" style={{ gridColumn: '1/-1', opacity: 0.1 }}><p>ARCHIVE_EMPTY</p></div>}
+                  )) : <div className="glass-panel empty-state-zen"><p>ARCHIVE_EMPTY</p></div>}
                 </motion.div>
               )}
 
-              {activeTab === 'shop' && (
-                <motion.div key="shop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                   <div className="shop-filters" style={{ display: 'flex', gap: '15px', marginBottom: '30px', opacity: 0.5 }}>
-                      <input type="text" placeholder="Search operatives..." value={shopFilter.search} onChange={e => { setShopFilter({...shopFilter, search: e.target.value}); setShopPage(1); }} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', padding: '10px 20px', borderRadius: '10px', color: '#fff', fontSize: '0.8rem' }} />
-                      <select value={shopFilter.game} onChange={e => { setShopFilter({...shopFilter, game: e.target.value}); setShopPage(1); }} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', padding: '10px', borderRadius: '10px', color: '#fff' }}>
-                        <option value="all">All Games</option>
-                        <option value="genshin">Genshin</option>
-                        <option value="hsr">HSR</option>
-                        <option value="wuwa">WuWa</option>
-                        <option value="zzz">ZZZ</option>
-                      </select>
-                   </div>
-
-                   <div className="units-grid-fb">
-                      {shopData.map((c, i) => (
-                        <div key={i} className={`char-card-fb ${c.rarity === '5' ? 'r5' : ''}`}>
-                           <div className="char-visual-fb"><CharIcon name={c.name} game={c.game?.toLowerCase()} rarity={c.rarity} /></div>
-                           <div className="char-name-fb">{c.name}</div>
-                           <button onClick={() => handleBuy(c.name)} className="repo-link-new" style={{ marginTop: '15px', width: '100%', borderColor: c.rarity === '5' ? '#fbbf24' : accent }}>
-                              {c.price} DUST
-                           </button>
+              {activeTab === 'favorites' && (
+                <motion.div key="favorites" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="units-grid-fb">
+                   {favorites.length > 0 ? favorites.map((fav, i) => (
+                     <div key={i} className={`char-card-fb ${fav.rarity === '5' ? 'r5' : ''}`} onClick={() => fav.type === 'character' && setSelectedChar(fav)} style={{ cursor: fav.type === 'character' ? 'pointer' : 'default' }}>
+                        <div className="char-visual-fb">
+                           {fav.type === 'character' ? (
+                             <CharIcon name={fav.name} game={fav.game?.toLowerCase()} rarity={fav.rarity} />
+                           ) : (
+                             <img src={fav.sprite} alt={fav.name} className="char-icon-img" />
+                           )}
                         </div>
-                      ))}
-                   </div>
-
-                   <div className="shop-pagination" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', marginTop: '50px' }}>
-                      <button disabled={shopPage === 1} onClick={() => setShopPage(p => p - 1)} className="p-tab-fb"><ChevronLeft size={20} /></button>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 800, opacity: 0.3 }}>PAGE {shopPage} / {shopPages}</span>
-                      <button disabled={shopPage === shopPages} onClick={() => setShopPage(p => p + 1)} className="p-tab-fb"><ChevronRight size={20} /></button>
-                   </div>
+                        <div className="char-name-fb">{fav.name}</div>
+                        <div className="zen-type-tag">{fav.type}</div>
+                     </div>
+                   )) : (
+                     <div className="glass-panel empty-state-zen">
+                        <p>NO_FAVORITES_INDEXED</p>
+                     </div>
+                   )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -270,19 +270,10 @@ export default function ProfilePage() {
           <audio ref={audioRef} src={theme.music} loop />
         </div>
       )}
-    </div>
-  );
-}
 
-function StatBox({ label, value }) {
-  return <div className="stat-box-fb"><span className="stat-lbl-fb">{label}</span><span className="stat-val-fb">{value}</span></div>;
-}
-
-function UnitCard({ char }) {
-  return (
-    <div className={`char-card-fb ${char.rarity === '5' ? 'r5' : ''}`}>
-       <div className="char-visual-fb"><CharIcon name={char.name} game={char.game?.toLowerCase()} rarity={char.rarity} emoji={char.emoji} /></div>
-       <div className="char-name-fb">{char.name}</div>
+      <AnimatePresence>
+        {selectedChar && <CharacterModal char={selectedChar} onClose={() => setSelectedChar(null)} />}
+      </AnimatePresence>
     </div>
   );
 }

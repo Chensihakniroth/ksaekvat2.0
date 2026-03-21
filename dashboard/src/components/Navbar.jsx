@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Trophy, Users, PawPrint, Menu, X, Search, Clock, Shield, Activity } from 'lucide-react';
+import { Menu, X, Search, LogOut } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
@@ -18,7 +18,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
     const timer = setInterval(() => setCurrentClock(new Date()), 1000);
     
     window.addEventListener('scroll', handleScroll);
@@ -52,40 +52,32 @@ export default function Navbar() {
   };
 
   return (
-    <header className={`navbar-v3 ${isScrolled ? 'scrolled' : ''}`}>
-      <div className="wrap navbar-inner">
+    <header className={`zen-nav-wrap ${isScrolled ? 'scrolled' : ''}`}>
+      <div className="zen-nav-inner wrap">
         
         {/* --- BRANDING --- */}
         <div className="nav-left">
-          <Link to="/" className="navbar-brand" onClick={() => setMobileMenuOpen(false)}>
-            <div className="brand-logo-v3">
-              <div className="logo-pulse" />
-              ✦
-            </div>
-            <div className="brand-info">
-              <span className="brand-name">KSAEKVAT</span>
-              <span className="brand-status"><Activity size={8} /> SYSTEM_ONLINE</span>
-            </div>
+          <Link to="/" className="zen-brand" onClick={() => setMobileMenuOpen(false)}>
+            <div className="zen-logo-mark">✦</div>
+            <span className="zen-brand-name">KSAEKVAT</span>
           </Link>
         </div>
 
-        {/* --- DESKTOP NAV --- */}
-        <nav className="desktop-nav-v3">
-          <NavBtn to="/" icon={<LayoutDashboard size={16} />} label="Mission" />
-          <NavBtn to="/leaderboard" icon={<Trophy size={16} />} label="Rankings" />
-          <NavBtn to="/characters" icon={<Users size={16} />} label="Arsenal" />
-          <NavBtn to="/zoo" icon={<PawPrint size={16} />} label="Bio-Data" />
+        {/* --- CENTERED NAV --- */}
+        <nav className="zen-desktop-nav">
+          <NavBtn to="/" label="HOME" />
+          <NavBtn to="/leaderboard" label="RANK" />
+          <NavBtn to="/shop" label="SHOP" />
         </nav>
 
-        {/* --- ACTIONS & SEARCH --- */}
+        {/* --- RIGHT ACTIONS --- */}
         <div className="nav-right">
-          <div className="navbar-search-v3" ref={searchRef}>
-            <div className={`search-box-v4 ${search.length > 0 ? 'active' : ''}`}>
-              <Search className="search-icon-v4" size={14} />
+          <div className="zen-search" ref={searchRef}>
+            <div className={`zen-search-box ${search.length > 0 ? 'active' : ''}`}>
+              <Search size={14} className="zen-search-icon" />
               <input 
                 type="text" 
-                className="search-input-v4" 
-                placeholder="Find Operative..." 
+                placeholder="Search..." 
                 value={search} 
                 onChange={e => setSearch(e.target.value)} 
                 onFocus={() => search.length >= 2 && setShowResults(true)} 
@@ -94,20 +86,18 @@ export default function Navbar() {
 
             <AnimatePresence>
               {showResults && (
-                <motion.div initial={{ opacity: 0, y: 15, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.95 }} className="search-results-v4 glass-panel neon-border">
-                  <div className="results-header">BIOMETRIC_SCAN_RESULTS</div>
-                  <div className="results-list">
+                <motion.div initial={{ opacity: 0, y: 10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10, scale: 0.98 }} className="zen-search-results">
+                  <div className="zen-results-list">
                     {results.length === 0 ? (
-                      <div className="search-empty">NO_MATCH_FOUND</div>
+                      <div className="zen-empty">NO RECORDS FOUND</div>
                     ) : (
                       results.map(r => (
-                        <div key={r.userId} className="search-result-v4" onClick={() => handleSelect(r.userId)}>
-                          <div className="res-avatar">{r.username[0]}</div>
-                          <div className="res-info">
-                            <div className="res-name">{r.username}</div>
-                            <div className="res-meta">LVL_{r.level} // UID_{r.userId.slice(-6)}</div>
+                        <div key={r.userId} className="zen-res-item" onClick={() => handleSelect(r.userId)}>
+                          <div className="zen-res-avatar">{r.username[0]}</div>
+                          <div className="zen-res-info">
+                            <span className="zen-res-name">{r.username}</span>
+                            <span className="zen-res-lvl">LVL {r.level}</span>
                           </div>
-                          <Shield size={12} className="res-icon" />
                         </div>
                       ))
                     )}
@@ -117,88 +107,237 @@ export default function Navbar() {
             </AnimatePresence>
           </div>
 
-          <div className="nav-clock glass-panel">
-            <Clock size={12} className="text-cyan" />
-            <span>{currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</span>
+          <div className="zen-clock">
+            {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
           </div>
 
           {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '8px' }}>
-              <Link to="/dashboard" className="nav-dash-link" title="Configuration">
-                <Shield size={18} className="text-cyan hover:text-white transition-colors" />
-              </Link>
-              <img 
-                src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '/assets/default-avatar.png'} 
-                alt="Profile" 
-                style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid rgba(34,211,238,0.5)', cursor: 'pointer' }}
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  navigate(`/profile/${user.id}`);
-                }}
-              />
-              <button 
-                onClick={logout} 
-                className="nav-logout-btn" 
-                style={{ fontSize: '9px', fontWeight: 900, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'transparent', border: 'none', cursor: 'pointer' }}
-              >
-                Logout
+            <div className="zen-user-section">
+              <button onClick={() => navigate(`/profile/${user.id}`)} className="zen-action-btn">
+                PROFILE
+              </button>
+              <button onClick={() => navigate('/dashboard')} className="zen-action-btn">
+                EDIT
+              </button>
+              <div className="zen-avatar-wrap" onClick={() => navigate(`/profile/${user.id}`)}>
+                <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '/assets/default-avatar.png'} alt="" />
+              </div>
+              <button onClick={logout} className="zen-logout-btn" title="Logout">
+                <LogOut size={16} />
               </button>
             </div>
           ) : (
-            <button 
-              onClick={login} 
-              style={{ fontSize: '10px', fontWeight: 900, color: '#22d3ee', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.3)', padding: '4px 10px', borderRadius: '8px', cursor: 'pointer', marginLeft: '8px' }}
-            >
-              Authorize
+            <button onClick={login} className="zen-login-btn">
+              LOGIN
             </button>
           )}
 
-          <button className="mobile-toggle-v3" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          <button className="zen-mobile-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
 
-        {/* --- MOBILE OVERLAY --- */}
+        {/* --- MOBILE DRAWER --- */}
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mobile-overlay-v3" onClick={() => setMobileMenuOpen(false)}>
-              <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25 }} className="mobile-drawer glass-panel" onClick={e => e.stopPropagation()}>
-                <div className="drawer-header">COMMAND_MENU</div>
-                <div className="mobile-links-v3">
-                  <MobileLink to="/" label="Mission Control" icon={<LayoutDashboard/>} onClick={() => setMobileMenuOpen(false)} />
-                  <MobileLink to="/leaderboard" label="Rankings Terminal" icon={<Trophy/>} onClick={() => setMobileMenuOpen(false)} />
-                  <MobileLink to="/characters" label="Arsenal Database" icon={<Users/>} onClick={() => setMobileMenuOpen(false)} />
-                  <MobileLink to="/zoo" label="Bio-Registry" icon={<PawPrint/>} onClick={() => setMobileMenuOpen(false)} />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="zen-mobile-overlay" onClick={() => setMobileMenuOpen(false)}>
+              <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="zen-mobile-menu" onClick={e => e.stopPropagation()}>
+                <div className="zen-mobile-links">
+                  <Link to="/" onClick={() => setMobileMenuOpen(false)}>HOME</Link>
+                  <Link to="/leaderboard" onClick={() => setMobileMenuOpen(false)}>RANK</Link>
+                  <Link to="/shop" onClick={() => setMobileMenuOpen(false)}>SHOP</Link>
+                  {user ? (
+                    <>
+                      <Link to={`/profile/${user.id}`} onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--cyber-cyan)' }}>PROFILE</Link>
+                      <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--cyber-yellow)' }}>EDIT PROFILE</Link>
+                      <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="zen-mobile-logout">LOGOUT</button>
+                    </>
+                  ) : (
+                    <button onClick={() => { login(); setMobileMenuOpen(false); }} className="zen-mobile-login">LOGIN</button>
+                  )}
                 </div>
-                <div className="drawer-footer">Authorized Personnel Only</div>
               </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      <style>{`
+        .zen-nav-wrap {
+          position: fixed; top: 0; left: 0; right: 0; height: 100px; z-index: 1000;
+          display: flex; align-items: center; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          font-family: 'Outfit', sans-serif;
+        }
+        .zen-nav-wrap.scrolled {
+          height: 80px;
+        }
+        .zen-nav-inner {
+          display: flex; justify-content: space-between; align-items: center;
+          padding: 0 40px; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          width: 100%;
+        }
+        .zen-nav-wrap.scrolled .zen-nav-inner {
+          background: rgba(10, 10, 10, 0.6);
+          backdrop-filter: blur(20px);
+          border: 1px solid rgba(255, 255, 255, 0.03);
+          border-radius: 50px;
+          margin-top: 15px;
+          height: 60px;
+          width: calc(100% - 40px);
+          max-width: 1200px;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+          padding: 0 25px;
+        }
+
+        .zen-logo-mark {
+          width: 32px; height: 32px; background: var(--cyber-yellow); color: #000;
+          border-radius: 50%; display: flex; align-items: center; justify-content: center;
+          font-weight: 900; font-size: 1.2rem; box-shadow: 0 0 15px rgba(252, 238, 10, 0.3);
+          flex-shrink: 0;
+        }
+        .zen-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .zen-brand-name { font-weight: 900; font-size: 1.1rem; letter-spacing: -0.04em; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+
+        .zen-desktop-nav { display: flex; gap: 40px; position: absolute; left: 50%; transform: translateX(-50%); }
+        .zen-nav-item { 
+          font-size: 0.75rem; font-weight: 900; color: rgba(255,255,255,0.4); 
+          letter-spacing: 0.2em; position: relative; transition: color 0.4s; text-decoration: none;
+        }
+        .zen-nav-item:hover, .zen-nav-item.active { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+
+        .zen-search { position: relative; }
+        .zen-search-box {
+          background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
+          border-radius: 50px; padding: 8px 15px 8px 40px; position: relative; width: 160px;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .zen-search-box:focus-within { width: 220px; border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+        .zen-search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.3; transition: opacity 0.4s; }
+        .zen-search-box:focus-within .zen-search-icon { opacity: 0.8; }
+        .zen-search-box input { 
+          background: transparent; border: none; outline: none; color: #fff; 
+          font-size: 0.75rem; font-weight: 600; width: 100%; letter-spacing: 0.05em;
+        }
+        .zen-search-box input::placeholder { color: rgba(255,255,255,0.2); }
+
+        .zen-search-results {
+          position: absolute; top: 55px; right: 0; width: 280px;
+          background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(25px);
+          border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px;
+          padding: 8px; z-index: 100; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+        .zen-res-item {
+          display: flex; align-items: center; gap: 12px; padding: 10px;
+          border-radius: 12px; transition: 0.3s; cursor: pointer;
+        }
+        .zen-res-item:hover { background: rgba(255,255,255,0.03); }
+        .zen-res-avatar { 
+          width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.05); 
+          display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
+          color: #fff; font-weight: bold;
+        }
+        .zen-res-info { display: flex; flex-direction: column; }
+        .zen-res-name { font-weight: 800; font-size: 0.85rem; color: #fff; }
+        .zen-res-lvl { font-size: 0.65rem; opacity: 0.4; font-weight: 900; letter-spacing: 0.1em; }
+        .zen-empty { padding: 15px; font-size: 0.75rem; color: rgba(255,255,255,0.3); text-align: center; font-weight: 800; letter-spacing: 0.1em; }
+
+        .zen-clock { font-size: 0.75rem; font-weight: 300; opacity: 0.4; letter-spacing: 0.1em; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+
+        .zen-user-section { display: flex; align-items: center; gap: 12px; }
+        .zen-action-btn {
+          background: none; border: none; color: rgba(255,255,255,0.4);
+          font-size: 0.65rem; font-weight: 900; letter-spacing: 0.15em;
+          cursor: pointer; transition: color 0.3s; padding: 4px 8px;
+        }
+        .zen-action-btn:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        
+        .zen-avatar-wrap { 
+          width: 34px; height: 34px; border-radius: 50%; overflow: hidden; 
+          border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.4s;
+          flex-shrink: 0;
+        }
+        .zen-avatar-wrap:hover { transform: scale(1.1); border-color: var(--cyber-cyan); box-shadow: 0 0 15px rgba(0,243,255,0.2); }
+        .zen-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .zen-logout-btn { 
+          opacity: 0.3; color: var(--cyber-pink); transition: 0.3s; background: none; border: none; padding: 5px; cursor: pointer; 
+        }
+        .zen-logout-btn:hover { opacity: 1; transform: scale(1.1); }
+
+        .zen-login-btn {
+          padding: 10px 24px; background: #fff; color: #000; border-radius: 50px;
+          font-size: 0.7rem; font-weight: 900; letter-spacing: 0.15em; border: none;
+          transition: 0.4s; cursor: pointer;
+        }
+        .zen-login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.15); }
+
+        .zen-mobile-toggle { 
+          display: none; background: none; border: none; color: #fff; padding: 5px; cursor: pointer;
+          opacity: 0.6; transition: 0.3s;
+        }
+        .zen-mobile-toggle:hover { opacity: 1; }
+
+        .zen-mobile-overlay {
+          position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+          z-index: 999; display: flex; align-items: center; justify-content: center;
+        }
+        .zen-mobile-menu { text-align: center; width: 100%; }
+        .zen-mobile-links { display: flex; flex-direction: column; gap: 30px; align-items: center; }
+        .zen-mobile-links a { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.15em; color: #fff; opacity: 0.4; transition: 0.4s; text-decoration: none; }
+        .zen-mobile-links a:hover { opacity: 1; letter-spacing: 0.25em; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        .zen-mobile-logout {
+          background: none; border: none; font-size: 1.5rem; font-weight: 900; letter-spacing: 0.15em; 
+          opacity: 0.5; color: var(--cyber-pink); cursor: pointer; margin-top: 20px; transition: 0.4s;
+        }
+        .zen-mobile-logout:hover { opacity: 1; letter-spacing: 0.2em; text-shadow: 0 0 20px rgba(255,0,60,0.3); }
+        .zen-mobile-login {
+          background: #fff; color: #000; border: none; padding: 15px 40px; border-radius: 50px;
+          font-size: 1.2rem; font-weight: 900; letter-spacing: 0.15em; cursor: pointer; margin-top: 20px; transition: 0.4s;
+        }
+
+        @media (max-width: 1100px) {
+          .zen-desktop-nav { display: none; }
+          .zen-mobile-toggle { display: block; }
+          .zen-clock { display: none; }
+          .zen-nav-inner { padding: 0 25px; }
+          .zen-action-btn { display: none; }
+        }
+
+        @media (max-width: 600px) {
+          .zen-brand-name { display: none; }
+          .zen-search { display: none; }
+          .zen-nav-wrap.scrolled .zen-nav-inner {
+             width: calc(100% - 20px);
+             margin-top: 10px;
+             padding: 0 15px;
+          }
+          .nav-right { gap: 15px; }
+        }
+      `}</style>
     </header>
   );
 }
 
-function NavBtn({ to, icon, label }) {
+function NavBtn({ to, label }) {
   return (
-    <NavLink to={to} end={to === '/'} className={({isActive}) => `nav-item-v3 ${isActive ? 'active' : ''}`}>
+    <NavLink to={to} end={to === '/'} className={({isActive}) => `zen-nav-item ${isActive ? 'active' : ''}`}>
       {({ isActive }) => (
         <>
-          <div className="nav-icon-wrap">{icon}</div>
-          <span className="nav-label-v3">{label}</span>
-          {isActive && <motion.div layoutId="navGlow" className="nav-active-glow" />}
+          <span>{label}</span>
+          {isActive && (
+            <motion.div 
+              layoutId="navDot" 
+              style={{ 
+                position: 'absolute', bottom: '-15px', left: '50%', 
+                transform: 'translateX(-50%)', width: '4px', height: '4px', 
+                background: '#fff', borderRadius: '50%', boxShadow: '0 0 10px #fff'
+              }} 
+            />
+          )}
         </>
       )}
     </NavLink>
   );
 }
 
-function MobileLink({ to, label, icon, onClick }) {
-  return (
-    <NavLink to={to} end={to === '/'} className={({isActive}) => `mobile-btn-v3 ${isActive ? 'active' : ''}`} onClick={onClick}>
-      {icon}
-      <span>{label}</span>
-    </NavLink>
-  );
-}

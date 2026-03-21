@@ -72,6 +72,10 @@ export interface IUser extends Document {
       url: string;
       description?: string;
     }[];
+    favorites?: {
+      type: 'character' | 'animal';
+      name: string;
+    }[];
     showStats: boolean;
     showInventory: boolean;
   };
@@ -175,6 +179,12 @@ const UserSchema: Schema = new Schema({
         title: String,
         url: String,
         description: String,
+      },
+    ],
+    favorites: [
+      {
+        type: { type: String, enum: ['character', 'animal'] },
+        name: String,
       },
     ],
     showStats: { type: Boolean, default: true },

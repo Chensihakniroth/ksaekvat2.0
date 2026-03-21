@@ -72,6 +72,27 @@ router.get('/:userId', async (req: Request, res: Response) => {
       return acc + Object.values(rarityGroup).reduce((s, c) => s + (c.count || 0), 0);
     }, 0);
 
+    // Hydrate Favorites
+    const hydratedFavorites = await Promise.all((user.profileTheme?.favorites || []).map(async (fav: any) => {
+      if (fav.type === 'character') {
+        const char = registry.getCharacter(fav.name);
+        return {
+          type: 'character',
+          name: fav.name,
+          rarity: char?.rarity || '4',
+          game: char?.game || 'unknown',
+          emoji: char?.emoji || '✨'
+        };
+      } else {
+        const sprite = await animalService.getPokemonSprite(fav.name);
+        return {
+          type: 'animal',
+          name: fav.name,
+          sprite: sprite || null
+        };
+      }
+    }));
+
     res.json({
       success: true,
       data: {
@@ -89,14 +110,17 @@ router.get('/:userId', async (req: Request, res: Response) => {
         characterCount: hydratedInventory.length,
         pokemon: animalMap,
         pokemonCount: totalPokemon,
-        profileTheme: user.profileTheme || {
-          theme: 'default',
-          accentColor: '#22d3ee',
-          bio: 'Exploring the digital realm.',
+        profileTheme: {
+          ...(user.profileTheme || {
+            theme: 'default',
+            accentColor: '#22d3ee',
+            bio: 'Exploring the digital realm.',
+            showStats: true,
+            showInventory: true,
+            socials: {}
+          }),
           portfolio: user.profileTheme?.portfolio || [],
-          showStats: true,
-          showInventory: true,
-          socials: {}
+          favorites: hydratedFavorites
         }
       },
     });
@@ -116,7 +140,7 @@ router.post('/update', async (req: any, res: Response) => {
     const { env } = require('../../utils/env.js');
     const decoded: any = jwt.verify(token, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls');
     
-    const { bio, accentColor, background, music, socials, banner, avatar, showStats, showInventory, portfolio } = req.body;
+    const { bio, accentColor, background, music, socials, banner, avatar, showStats, showInventory, portfolio, favorites } = req.body;
 
     const user = await User.findOne({ id: decoded.id });
     if (!user) return res.status(404).json({ success: false, error: 'User not found' });
@@ -133,6 +157,7 @@ router.post('/update', async (req: any, res: Response) => {
       showStats: showStats !== undefined ? showStats : user.profileTheme.showStats,
       showInventory: showInventory !== undefined ? showInventory : user.profileTheme.showInventory,
       portfolio: portfolio !== undefined ? portfolio : user.profileTheme.portfolio,
+      favorites: favorites !== undefined ? favorites : user.profileTheme.favorites,
       socials: {
         ...user.profileTheme.socials,
         ...(socials || {})
