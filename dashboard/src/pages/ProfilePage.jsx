@@ -146,48 +146,57 @@ export default function ProfilePage() {
       backgroundImage: `url(${theme.background || DEFAULT_BG})`,
     }}>
       
-      {canGoBack && (
-        <button onClick={() => navigate(-1)} className="portfolio-back-btn">
-          <ArrowLeft size={18} />
-          <span>BACK</span>
-        </button>
-      )}
+      <AnimatePresence>
+        {canGoBack && (
+          <motion.button 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            onClick={() => navigate(-1)} 
+            className="portfolio-back-btn"
+          >
+            <ArrowLeft size={18} />
+            <span>BACK</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
 
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="portfolio-grid-layout">
+      <div className="portfolio-grid-layout">
         
         {/* LEFT COLUMN: FIXED IDENTITY */}
         <aside className="portfolio-left">
-          <div className="portfolio-hero-sidebar">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="portfolio-hero-sidebar"
+          >
             <div className="banner-wrap-sidebar">
                {theme.banner ? <img src={theme.banner} className="portfolio-banner" alt="Banner" /> : <div className="banner-placeholder" style={{ background: `linear-gradient(to bottom, ${accent}40, transparent)` }} />}
             </div>
             
-            <div className="identity-section-sidebar">
-              <div className="avatar-main-sidebar" style={{ borderColor: accent }}>
-                {theme.avatar ? <img src={theme.avatar} alt="Avatar" /> : <div className="avatar-initial-sidebar">{p.username[0]}</div>}
-              </div>
-              <h1 className="name-main-sidebar glitch-text" data-text={p.username}>{p.username}</h1>
-              <p className="bio-main-sidebar">{theme.bio}</p>
-              
-              <div className="social-links-wrap-sidebar">
-                {theme.socials && Object.entries(theme.socials).map(([key, val]) => (
-                  val && (
-                    <a key={key} href={val.startsWith('http') ? val : '#'} target="_blank" rel="noreferrer" className="social-icon-btn" style={{ '--icon-accent': accent }}>
-                      {SOCIAL_ICONS[key] || <ExternalLink size={18}/>}
-                    </a>
-                  )
-                ))}
-              </div>
-
-              <div className="identity-footer-sidebar">
-                <button onClick={handleShare} className="share-btn-sidebar" title="Copy Uplink">
-                  <Share2 size={16} />
-                  <span>SHARE PROFILE</span>
-                  {copied && <span className="copied-toast-sidebar">COPIED!</span>}
-                </button>
-              </div>
+            <div className="avatar-main-sidebar" style={{ borderColor: accent, boxShadow: `0 0 30px ${accent}40` }}>
+              {theme.avatar ? <img src={theme.avatar} alt="Avatar" /> : <div className="avatar-initial-sidebar">{p.username[0]}</div>}
             </div>
-          </div>
+
+            <h1 className="name-main-sidebar glitch-text" data-text={p.username}>{p.username}</h1>
+            <p className="bio-main-sidebar">{theme.bio}</p>
+            
+            <div className="social-links-wrap-sidebar">
+              {theme.socials && Object.entries(theme.socials).map(([key, val]) => (
+                val && (
+                  <a key={key} href={val.startsWith('http') ? val : '#'} target="_blank" rel="noreferrer" className="social-icon-btn" style={{ '--icon-accent': accent }}>
+                    {SOCIAL_ICONS[key] || <ExternalLink size={18}/>}
+                  </a>
+                )
+              ))}
+            </div>
+
+            <button onClick={handleShare} className="share-btn-sidebar" style={{ borderColor: `${accent}40` }}>
+              <Share2 size={16} />
+              <span>{copied ? 'UPLINK COPIED' : 'SHARE PROFILE'}</span>
+              {copied && <motion.span initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="copied-toast-sidebar" style={{ backgroundColor: accent }}>COPIED!</motion.span>}
+            </button>
+          </motion.div>
         </aside>
 
         {/* RIGHT COLUMN: SCROLLABLE CONTENT */}
@@ -201,44 +210,73 @@ export default function ProfilePage() {
           <div className="portfolio-content-view">
             <AnimatePresence mode="wait">
               {activeTab === 'portfolio' && (
-                <motion.div key="portfolio" variants={containerVariants} initial="hidden" animate="visible" exit="hidden" className="portfolio-items-grid">
+                <motion.div 
+                  key="portfolio" 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="portfolio-items-grid"
+                >
                   {portfolio.length > 0 ? portfolio.map((item, idx) => (
-                    <motion.div key={idx} variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }} className="portfolio-item-card-new glass-panel">
+                    <div key={idx} className="portfolio-item-card-new glass-panel">
                        {item.type === 'art' ? (
                          <div className="art-preview-new">
                            <img src={item.url} alt={item.title} />
                            <div className="art-overlay-new">
                               <span className="item-title-new">{item.title}</span>
-                              <a href={item.url} target="_blank" rel="noreferrer" className="view-link-new"><ExternalLink size={14} /></a>
+                              <a href={item.url} target="_blank" rel="noreferrer" className="view-link-new" style={{ color: accent }}><ExternalLink size={18} /></a>
                            </div>
                          </div>
                        ) : (
                          <div className="repo-preview-new">
                             <div className="repo-header-new">
-                               <Code size={20} style={{ color: accent }} />
+                               <Code size={24} style={{ color: accent }} />
                                <span className="item-title-new">{item.title}</span>
                             </div>
-                            <p className="item-desc-new">{item.description || 'No description provided.'}</p>
+                            <p className="item-desc-new">{item.description || 'Access terminal protocols and source assets via external uplink.'}</p>
                             <a href={item.url} target="_blank" rel="noreferrer" className="repo-link-new" style={{ borderColor: `${accent}40`, color: accent }}>
-                               <Github size={14} /> VIEW REPOSITORY
+                               <Github size={16} /> VIEW REPOSITORY
                             </a>
                          </div>
                        )}
-                    </motion.div>
+                    </div>
                   )) : (
-                    <div className="empty-portfolio-new">
-                       <Award size={48} className="opacity-10 mb-4" />
-                       <p>NO ARCHIVES INDEXED</p>
+                    <div className="empty-portfolio-new" style={{ gridColumn: '1/-1', padding: '100px 0', opacity: 0.2 }}>
+                       <Award size={64} style={{ margin: '0 auto 24px' }} />
+                       <p style={{ letterSpacing: '0.5em', fontSize: '0.8rem', fontWeight: 900 }}>NO ARCHIVES INDEXED</p>
                     </div>
                   )}
                 </motion.div>
               )}
 
               {activeTab === 'inventory' && (
-                <motion.div key="inventory" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="inventory-view-new">
-                   <div className="tactical-filters-new glass-panel">
+                <motion.div 
+                  key="inventory" 
+                  initial={{ opacity: 0 }} 
+                  animate={{ opacity: 1 }} 
+                  exit={{ opacity: 0 }} 
+                  className="inventory-view-new"
+                >
+                   <div className="tactical-filters-new glass-panel" style={{ display: 'flex', gap: '12px', padding: '12px', borderRadius: '16px', marginBottom: '32px', width: 'fit-content' }}>
                       {['all', 'genshin', 'hsr', 'wuwa', 'zzz'].map(g => (
-                        <button key={g} onClick={() => setGameFilter(g)} className={`filter-btn-new ${gameFilter === g ? 'active' : ''}`} style={gameFilter === g ? { backgroundColor: accent } : {}}>{g.toUpperCase()}</button>
+                        <button 
+                          key={g} 
+                          onClick={() => setGameFilter(g)} 
+                          className={`filter-btn-new ${gameFilter === g ? 'active' : ''}`} 
+                          style={{ 
+                            padding: '8px 16px', 
+                            borderRadius: '10px', 
+                            fontSize: '0.65rem', 
+                            fontWeight: 900, 
+                            letterSpacing: '0.1em',
+                            background: gameFilter === g ? accent : 'rgba(255,255,255,0.05)',
+                            color: gameFilter === g ? '#000' : '#fff',
+                            border: 'none',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {g.toUpperCase()}
+                        </button>
                       ))}
                    </div>
                    <div className="units-grid-new">
@@ -250,41 +288,44 @@ export default function ProfilePage() {
               )}
 
               {activeTab === 'stats' && (
-                <motion.div key="stats" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="stats-view-new">
+                <motion.div 
+                  key="stats" 
+                  initial={{ opacity: 0 }} 
+                  animate={{ opacity: 1 }} 
+                  exit={{ opacity: 0 }} 
+                  className="stats-view-new"
+                >
                    <div className="stats-grid-new">
-                      <div className="stat-box-new glass-panel">
-                         <span className="stat-label-new">NEURAL LEVEL</span>
-                         <span className="stat-value-new" style={{ color: accent }}>{p.level}</span>
-                      </div>
-                      <div className="stat-box-new glass-panel">
-                         <span className="stat-label-new">CREDITS</span>
-                         <span className="stat-value-new" style={{ color: '#fbbf24' }}>{p.balance.toLocaleString()}</span>
-                      </div>
-                      <div className="stat-box-new glass-panel">
-                         <span className="stat-label-new">OPERATIONS</span>
-                         <span className="stat-value-new" style={{ color: '#a78bfa' }}>{p.stats?.commandsUsed || 0}</span>
-                      </div>
-                      <div className="stat-box-new glass-panel">
-                         <span className="stat-label-new">5★ RESONANCE</span>
-                         <span className="stat-value-new" style={{ color: '#f472b6' }}>{p.pity}/90</span>
-                      </div>
+                      <StatBox label="NEURAL LEVEL" value={p.level} color={accent} />
+                      <StatBox label="CREDITS" value={p.balance.toLocaleString()} color="#fbbf24" />
+                      <StatBox label="OPERATIONS" value={p.stats?.commandsUsed || 0} color="#a78bfa" />
+                      <StatBox label="5★ RESONANCE" value={`${p.pity}/90`} color="#f472b6" />
                    </div>
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         </main>
-      </motion.div>
+      </div>
 
       {theme.music && (
         <div className="music-control-fixed">
-          <button onClick={toggleMusic} className="music-btn-minimal" style={{ borderColor: accent, color: accent }}>
-            {isPlaying ? <Volume2 size={16} /> : <VolumeX size={16} />}
+          <button onClick={toggleMusic} className="music-btn-minimal" style={{ borderColor: `${accent}40`, color: accent }}>
+            {isPlaying ? <Volume2 size={18} /> : <VolumeX size={18} />}
             <span className="music-status-text">{isPlaying ? 'TRANSMITTING' : 'MUTED'}</span>
           </button>
           <audio ref={audioRef} src={theme.music} loop />
         </div>
       )}
+    </div>
+  );
+}
+
+function StatBox({ label, value, color }) {
+  return (
+    <div className="stat-box-new glass-panel" style={{ borderLeft: `4px solid ${color}` }}>
+       <span className="stat-label-new">{label}</span>
+       <span className="stat-value-new" style={{ color }}>{value}</span>
     </div>
   );
 }
