@@ -31,13 +31,11 @@ const containerVariants = {
 export default function ProfilePage() {
   const { userId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const [p, setP] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState('portfolio');
   const [gameFilter, setGameFilter] = useState('all');
-  const [rarityFilter, setRarityFilter] = useState('all');
   const [copied, setCopied] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
@@ -52,32 +50,38 @@ export default function ProfilePage() {
       .then(r => r.json())
       .then(res => { 
         if (res.success) {
-          console.log(`[Profile] Successfully loaded data for: ${res.data.username}`);
           setP(res.data); 
         } else { 
-          console.error(`[Profile] API Error for ${userId}:`, res.error);
           setNotFound(true); 
         }
         setLoading(false); 
       })
-      .catch((err) => { 
-        console.error(`[Profile] Network error for ${userId}:`, err);
+      .catch(() => { 
         setNotFound(true); 
         setLoading(false); 
       });
   }, [userId]);
 
-  // Attempt to play music on mount/data load
+  const theme = p?.profileTheme || {};
+  const accent = theme.accentColor || '#22d3ee';
+  const portfolio = theme.portfolio || [];
+
+  // Spotify Logic
+  const isSpotify = theme.music?.includes('spotify.com');
+  const spotifyTrackId = isSpotify ? theme.music.split('/').pop()?.split('?')[0] : null;
+  const spotifyEmbedUrl = spotifyTrackId ? `https://open.spotify.com/embed/track/${spotifyTrackId}?utm_source=generator&theme=0` : null;
+
+  // Handle music play on load
   useEffect(() => {
-    if (!loading && p?.profileTheme?.music && audioRef.current) {
-        audioRef.current.volume = 0.5;
+    if (!loading && theme.music && !isSpotify && audioRef.current) {
+        audioRef.current.volume = 0.15; // Ambient background volume
         audioRef.current.play().then(() => {
             setIsPlaying(true);
         }).catch(() => {
-            console.log("[Audio] Autoplay blocked. Waiting for interaction.");
+            console.log("[Audio] Autoplay blocked.");
         });
     }
-  }, [loading, p]);
+  }, [loading, theme.music, isSpotify]);
 
   const toggleMusic = (e) => {
     e.stopPropagation();
@@ -91,7 +95,7 @@ export default function ProfilePage() {
   };
 
   const handleGlobalClick = () => {
-    if (p?.profileTheme?.music && !isPlaying && audioRef.current) {
+    if (theme.music && !isSpotify && !isPlaying && audioRef.current) {
         audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   };
@@ -103,14 +107,19 @@ export default function ProfilePage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const getSocialHandle = (url) => {
+    if (!url) return '';
+    if (!url.includes('/')) return url;
+    return url.split('/').filter(Boolean).pop();
+  };
+
   const filteredChars = useMemo(() => {
     if (!p) return [];
     return p.characters.filter(c => {
       const matchesGame = gameFilter === 'all' || c.game?.toLowerCase() === gameFilter;
-      const matchesRarity = rarityFilter === 'all' || c.rarity === rarityFilter;
-      return matchesGame && matchesRarity;
+      return matchesGame;
     });
-  }, [p, gameFilter, rarityFilter]);
+  }, [p, gameFilter]);
 
   if (loading) return (
     <div className="profile-loading-screen">
@@ -130,15 +139,11 @@ export default function ProfilePage() {
       <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-panel error-card neon-border">
         <div className="error-icon-wrap"><User size={48} /></div>
         <h2 className="error-title">Target Not Found</h2>
-        <p className="error-desc">The specified operative ID does not exist in our central database.</p>
+        <p className="error-desc">The specified operative ID does not exist.</p>
         <Link to="/leaderboard" className="btn-v3 btn-v3-ghost"><ArrowLeft size={16} /> Return to Network</Link>
       </motion.div>
     </div>
   );
-
-  const theme = p.profileTheme || {};
-  const accent = theme.accentColor || '#22d3ee';
-  const portfolio = theme.portfolio || [];
 
   return (
     <div className="portfolio-minimal" onClick={handleGlobalClick} style={{ 
@@ -218,9 +223,9 @@ export default function ProfilePage() {
             <div className="zen-social-list">
               {theme.socials && Object.entries(theme.socials).map(([key, val]) => (
                 val && (
-                  <a key={key} href={val.startsWith('http') ? val : '#'} target="_blank" rel="noreferrer" className="zen-social-item">
+                  <a key={key} href={val.startsWith('http') ? val : `https://${key}.com/${val}`} target="_blank" rel="noreferrer" className="zen-social-item">
                     {SOCIAL_ICONS[key] || <ExternalLink size={20}/>}
-                    <span className="capitalize">{key}</span>
+                    <span>{getSocialHandle(val)}</span>
                   </a>
                 )
               ))}
@@ -229,6 +234,21 @@ export default function ProfilePage() {
                 <span>Level {p.level} Operative</span>
               </div>
             </div>
+
+            {isSpotify && (
+              <div className="spotify-embed-container">
+                <iframe 
+                  style={{ borderRadius: '12px' }} 
+                  src={spotifyEmbedUrl} 
+                  width="100%" 
+                  height="152" 
+                  frameBorder="0" 
+                  allowFullScreen="" 
+                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+                  loading="lazy"
+                ></iframe>
+              </div>
+            )}
           </motion.div>
         </aside>
 
@@ -281,7 +301,7 @@ export default function ProfilePage() {
                        )}
                     </motion.div>
                   )) : (
-                    <div className="empty-portfolio-new" style={{ gridColumn: '1/-1', opacity: 0.1 }}>
+                    <div className="empty-portfolio-new" style={{ gridColumn: '1/-1', padding: '100px 0', opacity: 0.1 }}>
                        <p style={{ letterSpacing: '0.5em', fontSize: '0.7rem', fontWeight: 600 }}>ARCHIVE_EMPTY</p>
                     </div>
                   )}
@@ -302,7 +322,7 @@ export default function ProfilePage() {
                           key={i}
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: i * 0.03 }}
+                          transition={{ delay: i * 0.02 }}
                         >
                           <UnitCard char={c} />
                         </motion.div>
@@ -330,7 +350,7 @@ export default function ProfilePage() {
         </main>
       </div>
 
-      {theme.music && (
+      {theme.music && !isSpotify && (
         <div className="music-control-fb">
           <button onClick={toggleMusic} className="music-btn-fb">
             {isPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}

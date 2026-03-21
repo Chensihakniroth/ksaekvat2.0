@@ -1353,7 +1353,7 @@ h1, h2, h3, .glitch-text { font-family: 'Outfit', sans-serif; font-weight: 900; 
   display: flex;
   align-items: flex-end;
   padding: 0 40px;
-  margin-top: -80px;
+  margin-top: -40px;
   gap: 30px;
   width: 100%;
 }
@@ -1536,12 +1536,20 @@ h1, h2, h3, .glitch-text { font-family: 'Outfit', sans-serif; font-weight: 900; 
 .char-card-fb.r5 { border-color: rgba(251, 191, 36, 0.2); box-shadow: 0 0 20px rgba(251, 191, 36, 0.05); }
 
 .char-visual-fb {
-  width: 90px;
-  height: 90px;
+  width: 100px;
+  height: 100px;
   margin: 0 auto 15px;
   position: relative;
   z-index: 2;
 }
+
+.char-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+.char-card-fb:hover .char-icon-img { transform: scale(1.1); }
 
 .char-name-fb {
   font-size: 0.75rem;

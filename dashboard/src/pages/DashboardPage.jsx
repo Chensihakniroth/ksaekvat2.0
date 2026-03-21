@@ -210,9 +210,18 @@ export default function DashboardPage() {
             </div>
             <div className="icon-input">
               <Music size={14} />
-              <input type="text" placeholder="SoundCloud or Direct Link..." value={formData.music} onChange={e => setFormData({...formData, music: e.target.value})} className="dash-input" />
+              <input 
+                type="text" 
+                placeholder="Spotify Track URL (e.g. https://open.spotify.com/track/ID) or Direct MP3 Link" 
+                value={formData.music} 
+                onChange={e => setFormData({...formData, music: e.target.value})} 
+                className="dash-input" 
+              />
             </div>
-            <p className="hint-text">Music will autoplay (if possible) when others view your profile.</p>
+            <p className="hint-text">
+              <strong>Spotify Tip:</strong> Paste a song link to show a mini-player. <br/>
+              <strong>Autoplay:</strong> Set a direct .mp3 link for automatic background sound (Volume is set to 15% for a low ambient feel).
+            </p>
           </section>
 
           <section className="settings-section glass-panel">
