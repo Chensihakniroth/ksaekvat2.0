@@ -66,6 +66,12 @@ export interface IUser extends Document {
       github?: string;
       website?: string;
     };
+    portfolio?: {
+      type: 'github' | 'art';
+      title: string;
+      url: string;
+      description?: string;
+    }[];
     showStats: boolean;
     showInventory: boolean;
   };
@@ -163,6 +169,14 @@ const UserSchema: Schema = new Schema({
       github: { type: String, default: null },
       website: { type: String, default: null },
     },
+    portfolio: [
+      {
+        type: { type: String, enum: ['github', 'art'] },
+        title: String,
+        url: String,
+        description: String,
+      },
+    ],
     showStats: { type: Boolean, default: true },
     showInventory: { type: Boolean, default: true },
   },

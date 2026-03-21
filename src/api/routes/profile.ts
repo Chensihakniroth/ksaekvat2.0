@@ -93,6 +93,7 @@ router.get('/:userId', async (req: Request, res: Response) => {
           theme: 'default',
           accentColor: '#22d3ee',
           bio: 'Exploring the digital realm.',
+          portfolio: user.profileTheme?.portfolio || [],
           showStats: true,
           showInventory: true,
           socials: {}
@@ -115,7 +116,7 @@ router.post('/update', async (req: any, res: Response) => {
     const { env } = require('../../utils/env.js');
     const decoded: any = jwt.verify(token, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls');
     
-    const { bio, accentColor, background, music, socials, banner, avatar, showStats, showInventory } = req.body;
+    const { bio, accentColor, background, music, socials, banner, avatar, showStats, showInventory, portfolio } = req.body;
 
     const user = await User.findOne({ id: decoded.id });
     if (!user) return res.status(404).json({ success: false, error: 'User not found' });
@@ -131,6 +132,7 @@ router.post('/update', async (req: any, res: Response) => {
       avatar: avatar !== undefined ? avatar : user.profileTheme.avatar,
       showStats: showStats !== undefined ? showStats : user.profileTheme.showStats,
       showInventory: showInventory !== undefined ? showInventory : user.profileTheme.showInventory,
+      portfolio: portfolio !== undefined ? portfolio : user.profileTheme.portfolio,
       socials: {
         ...user.profileTheme.socials,
         ...(socials || {})

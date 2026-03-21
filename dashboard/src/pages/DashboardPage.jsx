@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { 
   Settings, Palette, User, Globe, Music, Save, 
   ChevronRight, AlertCircle, CheckCircle2, Link as LinkIcon,
-  Eye, EyeOff, Image as ImageIcon
+  Eye, EyeOff, Image as ImageIcon, Plus, Trash2, Github, Image
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -23,6 +23,7 @@ export default function DashboardPage() {
     music: '',
     showStats: true,
     showInventory: true,
+    portfolio: [],
     socials: {
       discord: '',
       instagram: '',
@@ -48,6 +49,7 @@ export default function DashboardPage() {
               music: pt.music || '',
               showStats: pt.showStats !== undefined ? pt.showStats : true,
               showInventory: pt.showInventory !== undefined ? pt.showInventory : true,
+              portfolio: pt.portfolio || [],
               socials: pt.socials || {}
             });
           }
@@ -55,6 +57,28 @@ export default function DashboardPage() {
         });
     }
   }, [user]);
+
+  const addPortfolioItem = () => {
+    setFormData(prev => ({
+      ...prev,
+      portfolio: [...prev.portfolio, { type: 'github', title: '', url: '', description: '' }]
+    }));
+  };
+
+  const updatePortfolioItem = (index, field, value) => {
+    setFormData(prev => {
+      const newP = [...prev.portfolio];
+      newP[index] = { ...newP[index], [field]: value };
+      return { ...prev, portfolio: newP };
+    });
+  };
+
+  const removePortfolioItem = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      portfolio: prev.portfolio.filter((_, i) => i !== index)
+    }));
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -209,6 +233,61 @@ export default function DashboardPage() {
                   />
                 </div>
               ))}
+            </div>
+          </section>
+
+          <section className="settings-section glass-panel">
+            <div className="section-header">
+              <LinkIcon size={18} className="text-cyan" />
+              <h3>Portfolio Assets</h3>
+              <button onClick={addPortfolioItem} className="ml-auto text-xs bg-cyan/20 text-cyan px-2 py-1 rounded-md flex items-center gap-1 hover:bg-cyan/30 transition-colors">
+                <Plus size={12} /> Add Item
+              </button>
+            </div>
+            <div className="portfolio-list">
+              {formData.portfolio.map((item, idx) => (
+                <div key={idx} className="portfolio-item-edit glass-panel mb-3 p-3 border border-white/5 relative group">
+                  <button onClick={() => removePortfolioItem(idx)} className="absolute top-2 right-2 text-red/50 hover:text-red transition-colors opacity-0 group-hover:opacity-100">
+                    <Trash2 size={14} />
+                  </button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="input-group">
+                      <label>Type</label>
+                      <select 
+                        value={item.type} 
+                        onChange={e => updatePortfolioItem(idx, 'type', e.target.value)}
+                        className="dash-input select-v3"
+                      >
+                        <option value="github">GitHub Repo</option>
+                        <option value="art">Artwork / Image</option>
+                      </select>
+                    </div>
+                    <div className="input-group">
+                      <label>Title</label>
+                      <input 
+                        type="text" 
+                        placeholder="Project or Art Name" 
+                        value={item.title} 
+                        onChange={e => updatePortfolioItem(idx, 'title', e.target.value)}
+                        className="dash-input"
+                      />
+                    </div>
+                  </div>
+                  <div className="input-group mt-2">
+                    <label>URL</label>
+                    <input 
+                      type="text" 
+                      placeholder={item.type === 'github' ? "https://github.com/..." : "https://..."} 
+                      value={item.url} 
+                      onChange={e => updatePortfolioItem(idx, 'url', e.target.value)}
+                      className="dash-input"
+                    />
+                  </div>
+                </div>
+              ))}
+              {formData.portfolio.length === 0 && (
+                <p className="text-center opacity-30 py-4 text-xs italic">No portfolio items added yet.</p>
+              )}
             </div>
           </section>
 

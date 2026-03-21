@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -37,42 +37,58 @@ function LoadingGateway() {
   );
 }
 
-function App() {
+function AppContent() {
+  const location = useLocation();
+  const isProfile = location.pathname.startsWith('/profile/');
+
   console.log('[App] Initializing High-End Dashboard OS...');
-  
+
+  return (
+    <div className="app-wrapper">
+      {!isProfile && (
+        <>
+          <div className="cyber-grid" />
+          <div className="bg-ambience">
+            <div className="bg-orb-purple" />
+            <div className="bg-orb-cyan" />
+          </div>
+          <header className="fixed-top-section">
+            <Navbar />
+          </header>
+        </>
+      )}
+
+      <main className={isProfile ? "profile-main" : "main-content"}>
+        <Suspense fallback={<LoadingGateway />}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/profile/:userId" element={<ProfilePage />} />
+            <Route path="/characters" element={<CharactersPage />} />
+            <Route path="/zoo" element={<ZooPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+          </Routes>
+        </Suspense>
+      </main>
+
+      {!isProfile && (
+        <>
+          <Footer />
+          <GlobalTicker />
+        </>
+      )}
+    </div>
+  );
+}
+
+function App() {
   return (
     <ReactLenis root options={{ lerp: 0.08, duration: 1.2, smoothWheel: true }}>
       <AuthProvider>
         <BrowserRouter>
-        <div className="app-wrapper">
-        <div className="cyber-grid" />
-        <div className="bg-ambience">
-          <div className="bg-orb-purple" />
-          <div className="bg-orb-cyan" />
-        </div>
-        
-        <header className="fixed-top-section">
-          <Navbar />
-        </header>
-        
-        <main className="main-content">
-          <Suspense fallback={<LoadingGateway />}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/leaderboard" element={<LeaderboardPage />} />
-              <Route path="/profile/:userId" element={<ProfilePage />} />
-              <Route path="/characters" element={<CharactersPage />} />
-              <Route path="/zoo" element={<ZooPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-            </Routes>
-          </Suspense>
-        </main>
-
-        <Footer />
-        <GlobalTicker />
-      </div>
-      </BrowserRouter>
+          <AppContent />
+        </BrowserRouter>
       </AuthProvider>
     </ReactLenis>
   );
