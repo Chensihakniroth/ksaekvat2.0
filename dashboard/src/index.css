@@ -3,220 +3,185 @@
 :root {
   --bg-deep: #000000;
   --bg-zen: rgba(255, 255, 255, 0.02);
+  --bg-zen-hover: rgba(255, 255, 255, 0.05);
   --border-zen: rgba(255, 255, 255, 0.05);
+  --border-zen-bright: rgba(255, 255, 255, 0.1);
   
   --accent: #22d3ee;
-  --text-main: #ffffff;
-  --text-dim: rgba(255, 255, 255, 0.4);
-  --text-dark: rgba(255, 255, 255, 0.1);
+  --accent-glow: rgba(34, 211, 238, 0.3);
+  --purple: #a855f7;
+  --gold: #fbbf24;
+  --pink: #f472b6;
+  --red: #ef4444;
+  --green: #22c55e;
 
-  --radius-zen: 12px;
+  --text-main: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.5);
+  --text-dark: rgba(255, 255, 255, 0.15);
+
+  --radius-zen: 16px;
+  --radius-lg: 32px;
+  
   font-family: 'Outfit', sans-serif;
 }
 
-/* --- Base Zen Reset --- */
+/* --- Global Reset & Scroll --- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: initial; } /* Lenis compatibility */
 body { 
   background-color: var(--bg-deep); 
   color: var(--text-main); 
   min-height: 100vh;
   line-height: 1.6;
   overflow-x: hidden;
+  font-weight: 400;
 }
-a { text-decoration: none; color: inherit; }
+a { text-decoration: none; color: inherit; transition: 0.3s; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; transition: all 0.3s ease; }
 
 /* --- Global Backgrounds --- */
 .cyber-grid {
   position: fixed; inset: 0;
   background-image: linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
-  background-size: 60px 60px; z-index: -1;
+  background-size: 80px 80px; z-index: -1;
 }
+.bg-ambience { position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.bg-orb-purple { position: absolute; top: -10%; left: -10%; width: 60%; height: 60%; background: var(--purple); filter: blur(150px); opacity: 0.05; }
+.bg-orb-cyan { position: absolute; bottom: -10%; right: -10%; width: 60%; height: 60%; background: var(--accent); filter: blur(150px); opacity: 0.05; }
 
-/* --- Layout --- */
+/* --- Shared Layout --- */
 .wrap { width: 100%; max-width: 1400px; margin: 0 auto; padding: 0 40px; }
-.app-main-content { position: relative; z-index: 10; min-height: 100vh; }
+.app-main-content { position: relative; z-index: 10; min-height: 100vh; padding-top: 100px; }
+.app-main-content.profile-main { padding-top: 0; }
 
-/* --- Component Classes (Zen) --- */
+/* --- Component Atoms (Zen) --- */
 .glass-panel {
   background: var(--bg-zen);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(25px);
   border: 1px solid var(--border-zen);
   border-radius: var(--radius-zen);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+.glass-panel:hover { border-color: var(--border-zen-bright); background: var(--bg-zen-hover); }
 
-.glitch-text { letter-spacing: -0.02em; }
-
-/* --- ZEN FB-STYLE PORTFOLIO --- */
-.portfolio-minimal {
-  min-height: 100vh;
-  width: 100%;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.btn-v3 {
+  display: inline-flex; align-items: center; justify-content: center; gap: 12px; 
+  padding: 14px 32px; border-radius: 50px; font-weight: 800; font-size: 0.8rem; 
+  text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255,255,255,0.1);
 }
+.btn-v3-primary { background: #fff; color: #000; border: none; }
+.btn-v3-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(255,255,255,0.2); }
+.btn-v3-ghost { color: #fff; background: rgba(255,255,255,0.03); }
+.btn-v3-ghost:hover { background: rgba(255,255,255,0.08); border-color: var(--accent); color: var(--accent); }
 
-.portfolio-minimal::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(30px);
-  z-index: 1;
+.dash-input {
+  width: 100%; background: rgba(255,255,255,0.02); border: 1px solid var(--border-zen);
+  padding: 14px 20px; border-radius: 12px; color: #fff; font-family: inherit; font-weight: 600; outline: none; transition: 0.3s;
 }
+.dash-input:focus { border-color: var(--accent); background: rgba(255,255,255,0.05); }
 
-.portfolio-hero-container {
-  width: 100%;
-  max-width: 1200px;
-  position: relative;
-  z-index: 10;
-  margin-bottom: 40px;
-}
+/* --- GLOBAL UI --- */
+.navbar-v3 { position: fixed; top: 0; left: 0; right: 0; height: 80px; z-index: 1000; display: flex; align-items: center; transition: all 0.4s; }
+.navbar-v3.scrolled { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); height: 70px; border-bottom: 1px solid var(--border-zen); }
+.nav-item-v3 { font-size: 0.8rem; font-weight: 800; letter-spacing: 0.1em; color: var(--text-dim); padding: 10px 20px; text-transform: uppercase; }
+.nav-item-v3:hover, .nav-item-v3.active { color: #fff; }
 
-.portfolio-banner-wrap {
-  width: 100%;
-  height: 350px;
-  border-radius: 0 0 24px 24px;
-  overflow: hidden;
-  position: relative;
-  border: 1px solid var(--border-zen);
-}
+.footer-v3 { border-top: 1px solid var(--border-zen); padding: 80px 0; position: relative; z-index: 10; }
+.footer-name { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.05em; margin-bottom: 10px; }
+.nav-link-item { font-size: 0.9rem; font-weight: 700; color: var(--text-dim); }
+.nav-link-item:hover { color: var(--accent); }
 
+/* --- PAGE: HOME (ZEN) --- */
+.hero-title { font-size: clamp(3rem, 10vw, 7rem); font-weight: 900; letter-spacing: -0.06em; line-height: 0.85; margin-bottom: 32px; }
+.hero-desc { font-size: 1.25rem; font-weight: 500; color: var(--text-dim); line-height: 1.6; margin-bottom: 48px; max-width: 600px; }
+.stat-main-value { font-size: 4rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+.stat-main-label { font-size: 0.7rem; font-weight: 900; letter-spacing: 0.3em; color: var(--text-dark); text-transform: uppercase; margin-top: 10px; }
+
+/* --- PAGE: LEADERBOARD (ZEN) --- */
+.terminal-title { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 900; letter-spacing: -0.04em; margin-bottom: 40px; }
+.terminal-table { width: 100%; border-collapse: collapse; }
+.table-row { border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.3s; }
+.table-row:hover { background: rgba(255,255,255,0.02); }
+.table-row td { padding: 24px; }
+.op-name { font-weight: 800; font-size: 1.1rem; }
+.score-val { font-weight: 200; font-size: 1.8rem; letter-spacing: -0.02em; }
+
+/* --- PAGE: CHARACTERS & SHOP (ZEN) --- */
+.chars-grid, .units-grid-fb { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 24px; }
+.char-card-fb { background: rgba(255,255,255,0.02); border: 1px solid var(--border-zen); border-radius: 20px; padding: 24px; text-align: center; }
+.char-card-fb:hover { transform: translateY(-5px); border-color: var(--accent); background: rgba(255,255,255,0.04); }
+.char-card-fb.r5 { border-color: rgba(251, 191, 36, 0.3); box-shadow: 0 0 30px rgba(251, 191, 36, 0.05); }
+.char-visual-fb { width: 100px; height: 100px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.char-visual-fb img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5)); }
+.char-name-fb { font-size: 0.8rem; font-weight: 800; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.shop-filters { display: flex; gap: 15px; margin-bottom: 40px; }
+.shop-pagination { display: flex; justify-content: center; align-items: center; gap: 30px; margin-top: 60px; }
+
+/* --- PAGE: PROFILE (FB ZEN) --- */
+.portfolio-minimal { min-height: 100vh; width: 100%; position: relative; display: flex; flex-direction: column; align-items: center; }
+.portfolio-minimal::before { content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(35px); z-index: 1; }
+
+.portfolio-hero-container { width: 100%; max-width: 1200px; position: relative; z-index: 10; margin-bottom: 40px; }
+.portfolio-banner-wrap { width: 100%; height: 350px; border-radius: 0 0 24px 24px; overflow: hidden; border: 1px solid var(--border-zen); }
 .portfolio-banner-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; }
 
-.portfolio-identity-bar {
-  display: flex;
-  align-items: flex-end;
-  padding: 0 40px;
-  margin-top: -40px;
-  gap: 30px;
-  width: 100%;
-}
-
-.portfolio-avatar-fb {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  border: 6px solid #000;
-  background: #111;
-  overflow: hidden;
-  z-index: 20;
-}
+.portfolio-identity-bar { display: flex; align-items: flex-end; padding: 0 40px; margin-top: -40px; gap: 30px; width: 100%; }
+.portfolio-avatar-fb { width: 180px; height: 180px; border-radius: 50%; border: 6px solid #000; background: #111; overflow: hidden; z-index: 20; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
 .portfolio-avatar-fb img { width: 100%; height: 100%; object-fit: cover; }
 
-.portfolio-name-fb { font-size: 3.5rem; font-weight: 800; letter-spacing: -0.04em; color: #fff; margin-bottom: 4px; }
+.portfolio-name-fb { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; letter-spacing: -0.04em; color: #fff; line-height: 1; margin-bottom: 8px; }
 .portfolio-bio-fb { font-size: 1.1rem; opacity: 0.5; font-weight: 400; max-width: 600px; }
 
-.portfolio-content-wrap {
-  width: 100%;
-  max-width: 1200px;
-  position: relative;
-  z-index: 10;
-  padding: 0 40px 100px;
-  display: grid;
-  grid-template-columns: 350px 1fr;
-  gap: 40px;
-}
+.portfolio-content-wrap { width: 100%; max-width: 1200px; position: relative; z-index: 10; padding: 0 40px 100px; display: grid; grid-template-columns: 350px 1fr; gap: 40px; }
 
-.zen-info-card {
-  padding: 32px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--border-zen);
-  border-radius: 20px;
-}
-
+.zen-info-card { padding: 32px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-zen); border-radius: 20px; }
 .zen-card-title { font-size: 0.8rem; font-weight: 900; letter-spacing: 0.2em; opacity: 0.2; margin-bottom: 24px; text-transform: uppercase; }
-.zen-social-item { display: flex; align-items: center; gap: 15px; color: rgba(255,255,255,0.6); font-size: 0.95rem; font-weight: 700; margin-bottom: 20px; transition: all 0.3s; }
+.zen-social-item { display: flex; align-items: center; gap: 15px; color: rgba(255,255,255,0.6); font-size: 0.95rem; font-weight: 700; margin-bottom: 20px; }
 .zen-social-item:hover { color: var(--accent); transform: translateX(5px); }
 .zen-social-item svg { width: 20px; height: 20px; color: #fff; opacity: 0.8; }
 
-.spotify-embed-container { margin-top: 32px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border-zen); }
-
-/* Tabs */
 .portfolio-tabs-fb { display: flex; gap: 40px; margin-bottom: 48px; border-bottom: 1px solid var(--border-zen); }
-.p-tab-fb { font-size: 0.9rem; font-weight: 800; letter-spacing: 0.1em; color: rgba(255,255,255,0.2); padding: 15px 0; position: relative; text-transform: uppercase; }
+.p-tab-fb { font-size: 0.9rem; font-weight: 800; letter-spacing: 0.1em; color: var(--text-dark); padding: 15px 0; position: relative; text-transform: uppercase; }
 .p-tab-fb.active { color: #fff; }
 .p-tab-fb.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--accent); }
 
-/* Character Icons FB Fix */
-.char-card-fb { background: rgba(255,255,255,0.02); border: 1px solid var(--border-zen); border-radius: 20px; padding: 24px; text-align: center; }
-.char-visual-fb { width: 100px; height: 100px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.char-visual-fb img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5)); }
-.char-name-fb { font-size: 0.8rem; font-weight: 800; opacity: 0.7; text-transform: uppercase; }
+.portfolio-items-grid-zen { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 32px; }
+.zen-portfolio-card { border-radius: 20px; overflow: hidden; border: 1px solid var(--border-zen); background: rgba(255,255,255,0.01); }
+.zen-portfolio-card:hover { border-color: var(--border-zen-bright); transform: translateY(-5px); }
+.zen-art-display { aspect-ratio: 16/10; overflow: hidden; }
+.zen-art-display img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; }
+.zen-portfolio-card:hover .zen-art-display img { transform: scale(1.05); }
+.zen-card-info { padding: 24px; }
+.zen-card-name { font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 8px; display: block; }
+.zen-card-desc { font-size: 0.85rem; color: var(--text-dim); }
 
-/* GLOBAL NAVBAR ZEN */
-.navbar-v3 { height: 80px; display: flex; align-items: center; background: transparent; transition: all 0.4s; }
-.navbar-v3.scrolled { background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); height: 70px; border-bottom: 1px solid var(--border-zen); }
-.nav-item-v3 { font-size: 0.8rem; font-weight: 800; letter-spacing: 0.1em; color: rgba(255,255,255,0.4); padding: 10px 20px; text-transform: uppercase; }
-.nav-item-v3:hover, .nav-item-v3.active { color: #fff; }
+/* --- CONTROLS & FLOATING --- */
+.portfolio-back-fb { position: fixed; top: 32px; left: 32px; z-index: 1000; width: 50px; height: 50px; border-radius: 50%; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border: 1px solid var(--border-zen); display: flex; align-items: center; justify-content: center; color: #fff; }
+.portfolio-back-fb:hover { background: #fff; color: #000; transform: scale(1.1); }
 
-/* GLOBAL FOOTER ZEN */
-.footer-v3 { background: transparent; border-top: 1px solid var(--border-zen); padding: 100px 0; }
-.footer-name { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.05em; }
-.nav-link-item { font-size: 0.9rem; font-weight: 700; opacity: 0.4; }
-.nav-link-item:hover { opacity: 1; color: var(--accent); }
-
-/* ZEN HOME OVERHAUL */
-.hero-title { font-size: 6rem; font-weight: 900; letter-spacing: -0.05em; line-height: 0.9; margin-bottom: 32px; }
-.hero-desc { font-size: 1.2rem; font-weight: 500; opacity: 0.4; line-height: 1.6; margin-bottom: 48px; }
-.btn-v3 { padding: 16px 40px; border-radius: 50px; font-weight: 900; font-size: 0.8rem; letter-spacing: 0.1em; }
-.btn-v3-primary { background: #fff; color: #000; }
-.btn-v3-ghost { border: 1px solid rgba(255,255,255,0.1); color: #fff; }
-
-/* TERMINAL ZEN (LEADERBOARD) */
-.terminal-title { font-size: 4rem; font-weight: 900; letter-spacing: -0.04em; }
-.table-row { border-bottom: 1px solid rgba(255,255,255,0.03); transition: all 0.3s; }
-.table-row:hover { background: rgba(255,255,255,0.02); }
-.op-name { font-weight: 800; font-size: 1rem; }
-.score-val { font-weight: 200; font-size: 1.5rem; }
-
-/* CONTROLS */
-.portfolio-back-fb { position: fixed; top: 32px; left: 32px; z-index: 1000; width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border-zen); display: flex; align-items: center; justify-content: center; color: #fff; }
 .music-control-fb { position: fixed; bottom: 32px; right: 32px; z-index: 1000; }
-.music-btn-fb { padding: 12px 24px; border-radius: 50px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-zen); color: rgba(255,255,255,0.5); font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+.music-btn-fb { padding: 12px 24px; border-radius: 50px; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid var(--border-zen); color: var(--text-dim); font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+.music-btn-fb:hover { color: #fff; border-color: #fff; }
 
-/* SHOP & PAGINATION */
-.shop-filters input, .shop-filters select {
-  background: rgba(255,255,255,0.02) !important;
-  border: 1px solid var(--border-zen) !important;
-  padding: 12px 20px;
-  border-radius: 12px;
-  color: #fff;
-  font-family: inherit;
-  font-weight: 600;
-  outline: none;
-  transition: all 0.3s;
-}
-.shop-filters input:focus { border-color: var(--accent); background: rgba(255,255,255,0.05) !important; }
-
-.shop-pagination button:disabled { opacity: 0.1; cursor: not-allowed; }
-
-.char-card-fb.r5 {
-  border-color: rgba(251, 191, 36, 0.3);
-  box-shadow: 0 0 30px rgba(251, 191, 36, 0.05);
-}
-
-.char-card-fb button {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.1);
-  padding: 10px;
-  border-radius: 10px;
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  transition: all 0.3s;
-}
-.char-card-fb button:hover { background: var(--accent); color: #000; border-color: var(--accent); }
-
+/* --- Responsive Helpers --- */
 @media (max-width: 1000px) {
-  .portfolio-content-wrap { grid-template-columns: 1fr; }
-  .portfolio-identity-bar { flex-direction: column; align-items: center; text-align: center; margin-top: -100px; }
-  .portfolio-name-fb { font-size: 2.5rem; }
-  .hero-title { font-size: 3rem; }
-  .shop-filters { flex-direction: column; }
+  .wrap { padding: 0 24px; }
+  .portfolio-content-wrap { grid-template-columns: 1fr; padding: 0 24px 80px; }
+  .portfolio-identity-bar { flex-direction: column; align-items: center; text-align: center; margin-top: -100px; padding: 0 24px; }
+  .portfolio-avatar-fb { width: 150px; height: 150px; }
+  .hero-title { font-size: 3.5rem; }
+  .terminal-title { font-size: 2.5rem; }
 }
+
+@media (max-width: 600px) {
+  .portfolio-name-fb { font-size: 2rem; }
+  .hero-title { font-size: 2.5rem; }
+  .stat-main-value { font-size: 2.5rem; }
+  .p-tab-fb { font-size: 0.7rem; gap: 20px; }
+}
+
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-zen { animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
