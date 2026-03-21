@@ -123,11 +123,11 @@ export default function Navbar() {
           </div>
 
           {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginLeft: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '8px' }}>
               <img 
                 src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '/assets/default-avatar.png'} 
                 alt="Profile" 
-                style={{ width: '32px', height: '32px', borderRadius: '50%', border: '1px solid rgba(34,211,238,0.5)', cursor: 'pointer' }}
+                style={{ width: '28px', height: '28px', borderRadius: '50%', border: '1px solid rgba(34,211,238,0.5)', cursor: 'pointer' }}
                 onClick={() => {
                   setMobileMenuOpen(false);
                   navigate(`/profile/${user.id}`);
@@ -136,7 +136,7 @@ export default function Navbar() {
               <button 
                 onClick={logout} 
                 className="nav-logout-btn" 
-                style={{ fontSize: '10px', fontWeight: 900, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'transparent', border: 'none', cursor: 'pointer' }}
+                style={{ fontSize: '9px', fontWeight: 900, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'transparent', border: 'none', cursor: 'pointer' }}
               >
                 Logout
               </button>
@@ -144,7 +144,7 @@ export default function Navbar() {
           ) : (
             <button 
               onClick={login} 
-              style={{ fontSize: '10px', fontWeight: 900, color: '#22d3ee', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.3)', padding: '6px 12px', borderRadius: '12px', cursor: 'pointer', marginLeft: '8px' }}
+              style={{ fontSize: '10px', fontWeight: 900, color: '#22d3ee', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(34,211,238,0.1)', border: '1px solid rgba(34,211,238,0.3)', padding: '4px 10px', borderRadius: '8px', cursor: 'pointer', marginLeft: '8px' }}
             >
               Authorize
             </button>

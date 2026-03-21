@@ -13,6 +13,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
+    "@studio-freight/react-lenis": "^0.0.47",
     "framer-motion": "^12.38.0",
     "lucide-react": "^0.577.0",
     "react": "^19.1.0",

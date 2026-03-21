@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { ReactLenis } from '@studio-freight/react-lenis';
 
 // Layout Components (Loaded Immediately)
 import Navbar from './components/Navbar';
@@ -39,8 +40,9 @@ function App() {
   console.log('[App] Initializing High-End Dashboard OS...');
   
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <ReactLenis root options={{ lerp: 0.08, duration: 1.2, smoothWheel: true }}>
+      <AuthProvider>
+        <BrowserRouter>
         <div className="app-wrapper">
         <div className="cyber-grid" />
         <div className="bg-ambience">
@@ -68,8 +70,9 @@ function App() {
         <Footer />
         <GlobalTicker />
       </div>
-    </BrowserRouter>
-    </AuthProvider>
+      </BrowserRouter>
+      </AuthProvider>
+    </ReactLenis>
   );
 }
 

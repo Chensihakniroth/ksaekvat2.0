@@ -1,205 +1,179 @@
 import { useState, useEffect } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { Trophy, Star, Shield, Zap, Bot, Sparkles, Sword, PawPrint, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Trophy, Users, Star, ArrowRight, ChevronRight, Activity, Zap, Target } from 'lucide-react';
+
+const INVITE_LINK = "https://discord.com/oauth2/authorize?client_id=1399459454889754805";
 
 export default function HomePage() {
   const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { scrollYProgress } = useScroll();
+  const yBg = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
 
   useEffect(() => {
     fetch('/api/stats')
       .then(r => r.json())
-      .then(res => {
-        if (res.success) setStats(res.data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      .then(res => { if (res.success) setStats(res.data); })
+      .catch(() => {});
   }, []);
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.1 } }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
+  const fadeUp = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { type: 'spring', damping: 20 } } };
 
   return (
-    <div className="home-container">
-      <div className="wrap">
-        {/* --- HERO SECTION --- */}
+    <div className="home-container" style={{ position: 'relative', overflow: 'hidden' }}>
+      
+      {/* Background Ambience */}
+      <motion.div style={{ y: yBg }} className="bg-ambience">
+        <div className="bg-orb-giant bg-orb-1" />
+        <div className="bg-orb-giant bg-orb-2" />
+        <div className="bg-orb-giant bg-orb-3" />
+      </motion.div>
+
+      <div className="wrap relative z-10 p-0 m-0">
+        
+        {/* HERO SECTION */}
         <motion.section 
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="hero-grid"
+          initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.1 } } }}
+          className="landing-hero-v4"
         >
-          <div className="hero-content">
-            <motion.div variants={item} className="status-badge">
-              <Activity size={14} />
-              <span>Strategic Operations Active</span>
+          <div className="landing-text-content">
+            <motion.div variants={fadeUp} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '50px', background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', color: '#818cf8', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', width: 'fit-content', marginBottom: '1rem' }}>
+              <Zap size={14} style={{ animation: 'pulse 2s infinite' }} />
+              Next-Gen Discord Ecosystem
             </motion.div>
             
-            <motion.h1 variants={item} className="hero-title">
-              MISSION <br/>
-              <span className="text-gradient glitch-text">CONTROL</span>
+            <motion.h1 variants={fadeUp} className="landing-title">
+              ELEVATE YOUR <br />
+              <span className="landing-title-grad">SERVER EXPERIENCE</span>
             </motion.h1>
             
-            <motion.p variants={item} className="hero-desc">
-              Initialize your gaming protocols. Collect elite operatives, dominate global rankings, and secure your position in the KSAEKVAT ecosystem.
+            <motion.p variants={fadeUp} className="landing-desc">
+              KSAEKVAT is the ultimate Anime RPG bot. Collect legendary characters, hunt mystical beasts, battle in strategic combat, and dominate global leaderboards.
             </motion.p>
             
-            <motion.div variants={item} className="hero-actions">
-              <Link to="/characters" className="btn-v3 btn-v3-primary">
-                <Target size={18} />
-                <span>Initialize Roster</span>
-                <ChevronRight size={16} />
+            <motion.div variants={fadeUp} className="landing-actions">
+              <a href={INVITE_LINK} target="_blank" rel="noreferrer" className="landing-btn-primary">
+                <Bot size={22} />
+                <span>Add to Discord</span>
+              </a>
+              <Link to="/leaderboard" className="landing-btn-secondary">
+                <Trophy size={20} />
+                <span>View Rankings</span>
               </Link>
-              <Link to="/leaderboard" className="btn-v3 btn-v3-ghost">
-                <Trophy size={18} />
-                <span>Global Rankings</span>
-              </Link>
+            </motion.div>
+
+            <motion.div variants={fadeUp} className="landing-stats-row">
+              <div className="l-stat">
+                <span className="l-stat-val cyan">{stats?.totalUsers?.toLocaleString() || "10,000+"}</span>
+                <span className="l-stat-lbl">Active Operatives</span>
+              </div>
+              <div className="l-stat-div" />
+              <div className="l-stat">
+                <span className="l-stat-val gold">{stats?.totalCharactersOwned?.toLocaleString() || "1M+"}</span>
+                <span className="l-stat-lbl">Characters Rolled</span>
+              </div>
             </motion.div>
           </div>
 
-          <motion.div variants={item} className="hero-visual">
-            <div className="visual-glow" />
-            <div className="glass-panel neon-border status-card">
-              <h3 className="card-title">
-                <Zap className="text-cyan" />
-                SYSTEM STATUS
-              </h3>
-              <div className="status-rows">
-                <StatusRow label="NEURAL NETWORK" value="OPTIMIZED" color="text-green" />
-                <StatusRow label="DATABASE SYNC" value="100% SECURE" color="text-cyan" />
-                <StatusRow label="CORE UPTIME" value="99.98%" color="text-purple" />
-              </div>
-              <div className="status-stats">
-                <div className="mini-stat">
-                  <div className="stat-label">Active Sessions</div>
-                  <div className="stat-value">{stats?.totalUsers?.toLocaleString() || "---"}</div>
+          <motion.div variants={fadeUp} className="landing-visual">
+            <div className="l-vis-card">
+              <div className="l-vis-bg" />
+              <div className="l-vis-header">
+                <div className="l-vis-hlt">
+                  <Shield size={20} color="#22d3ee" />
+                  SYSTEM PREVIEW
                 </div>
-                <div className="mini-stat">
-                  <div className="stat-label">Gacha Pulse</div>
-                  <div className="stat-value text-cyan">HIGH</div>
+                <div className="l-vis-status">ONLINE</div>
+              </div>
+
+              <div className="l-vis-item purple">
+                <div className="l-vis-icon purple"><Star size={20} /></div>
+                <div className="l-vis-text">
+                  <span className="l-vis-title">Genshin & HSR Gacha</span>
+                  <span className="l-vis-subtitle">Over 500+ characters to collect</span>
+                </div>
+              </div>
+              
+              <div className="l-vis-item red">
+                <div className="l-vis-icon red"><Sword size={20} /></div>
+                <div className="l-vis-text">
+                  <span className="l-vis-title">RPG Boss Raids</span>
+                  <span className="l-vis-subtitle">Team up & defeat world bosses</span>
+                </div>
+              </div>
+
+              <div className="l-vis-item green">
+                <div className="l-vis-icon green"><PawPrint size={20} /></div>
+                <div className="l-vis-text">
+                  <span className="l-vis-title">Ecosystem Hunting</span>
+                  <span className="l-vis-subtitle">Catch mystical creatures in the Zoo</span>
                 </div>
               </div>
             </div>
           </motion.div>
         </motion.section>
 
-        {/* --- STATS GRID --- */}
-        <motion.section 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="stats-grid"
-        >
-          <StatBox 
-            icon={<Users size={32} />} 
-            label="Total Operatives" 
-            value={stats?.totalUsers?.toLocaleString() || "10,000+"} 
-            color="purple"
-          />
-          <StatBox 
-            icon={<Star size={32} />} 
-            label="Characters Deployed" 
-            value={stats?.totalCharactersOwned?.toLocaleString() || "1,000,000+"} 
-            color="gold"
-          />
-          <StatBox 
-            icon={<Trophy size={32} />} 
-            label="Credits Circulating" 
-            value={stats?.totalCoinsCirculating?.toLocaleString() || "50,000,000+"} 
-            color="cyan"
-          />
-        </motion.section>
-
-        {/* --- OBJECTIVES --- */}
-        <section className="section-spacer">
-          <div className="section-header">
-            <h2 className="section-title">MISSION <span className="text-cyan">OBJECTIVES</span></h2>
-            <div className="header-line" />
+        {/* FEATURES GRID */}
+        <section style={{ marginBottom: '8rem' }}>
+          <div className="landing-core-title">
+            <h2 className="l-core-h2">CORE <span>MODULES</span></h2>
+            <p className="landing-desc" style={{ margin: '1rem auto' }}>Engage with meticulously crafted game systems right inside your Discord channels.</p>
           </div>
 
-          <div className="objective-grid">
-            <ObjectiveCard 
-              title="ROSTER EXPANSION"
-              desc="Pull legendary operatives from Genshin Impact, Honkai Star Rail, and beyond. Build the ultimate tactical squad."
-              icon={<Target />}
-              link="/characters"
-              linkText="Access Roster"
+          <div className="landing-grid">
+            <FeatureCard 
+              icon={<Star size={32} />}
+              title="Anime Gacha"
+              desc="Pull your favorite characters from wildly popular anime and games with fully simulated pity and drop rates."
+              glowColor="#c084fc"
             />
-            <ObjectiveCard 
-              title="DOMINANCE"
-              desc="Climb the global Rankings Terminal. Prove your strategic superiority and earn your place among the elite."
-              icon={<Trophy />}
-              link="/leaderboard"
-              linkText="View Rankings"
+            <FeatureCard 
+              icon={<PawPrint size={32} />}
+              title="Biological Hunting"
+              desc="Deploy specific commands to capture animals, from common pets to priceless mythological beasts. Build your zoo!"
+              glowColor="#34d399"
+            />
+            <FeatureCard 
+              icon={<Sword size={32} />}
+              title="Tactical RPG"
+              desc="Level up your Discord profile natively. Equip characters, gain EXP, and partake in high-stakes combat."
+              glowColor="#f87171"
             />
           </div>
         </section>
 
-        {/* --- CTA --- */}
+        {/* CALL TO ACTION */}
         <motion.section 
-          initial={{ scale: 0.95, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          viewport={{ once: true }}
-          className="cta-panel glass-panel"
+          initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
+          className="landing-cta"
         >
-          <div className="cta-content">
-            <h2 className="cta-title">Ready for Deployment?</h2>
-            <p className="cta-desc">Join the global network of elite gamers. Initialize the bot and start your mission today.</p>
-            <a href="#" className="btn-v3 btn-v3-primary cta-btn">
-              <span>Invite to Server</span>
-              <ArrowRight size={24} />
-            </a>
-          </div>
+          <div className="l-cta-icon"><Sparkles size={48} /></div>
+          <h2 className="l-cta-title">READY TO INITIATE?</h2>
+          <p className="l-cta-desc">Integrate the system into your own server. It takes precisely 5.4 seconds to establish the uplink.</p>
+          <a href={INVITE_LINK} target="_blank" rel="noreferrer" className="l-cta-btn">
+            <Bot size={24} />
+            <span>Invite KSAEKVAT Now</span>
+            <ChevronRight size={20} />
+          </a>
         </motion.section>
+        
       </div>
     </div>
   );
 }
 
-function StatusRow({ label, value, color }) {
+function FeatureCard({ icon, title, desc, glowColor }) {
   return (
-    <div className="status-row">
-      <span className="row-label">{label}</span>
-      <span className={color}>{value}</span>
-    </div>
-  );
-}
-
-function StatBox({ icon, label, value, color }) {
-  return (
-    <div className={`stat-box glass-panel glow-${color}`}>
-      <div className={`stat-icon-wrap icon-${color}`}>
+    <motion.div 
+      whileHover={{ y: -10 }}
+      className="l-feature-card"
+      style={{ '--fc-glow': glowColor, '--fc-glow-dim': glowColor + '33' }}
+    >
+      <div className="l-feature-icon" style={{ color: glowColor }}>
         {icon}
       </div>
-      <div className="stat-main-value">{value}</div>
-      <div className="stat-main-label">{label}</div>
-    </div>
-  );
-}
-
-function ObjectiveCard({ title, desc, icon, link, linkText }) {
-  return (
-    <div className="objective-card glass-panel">
-      <div className="objective-top">
-        <div className="objective-icon">
-          {icon}
-        </div>
-        <div className="objective-id">OBJ.01</div>
-      </div>
-      <h3 className="objective-title">{title}</h3>
-      <p className="objective-desc">{desc}</p>
-      <Link to={link} className="objective-link">
-        <span>{linkText}</span>
-        <ArrowRight size={16} />
-      </Link>
-    </div>
+      <h3 className="l-feature-title">{title}</h3>
+      <p className="l-feature-desc">{desc}</p>
+    </motion.div>
   );
 }
