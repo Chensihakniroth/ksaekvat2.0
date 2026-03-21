@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { 
   Settings, Palette, User, Globe, Music, Save, 
   ChevronRight, AlertCircle, CheckCircle2, Link as LinkIcon,
-  Eye, EyeOff, Image as ImageIcon, Plus, Trash2, Github, Image
+  Eye, EyeOff, Image as ImageIcon, Plus, Trash2, Github, Image, Upload
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -12,6 +12,7 @@ export default function DashboardPage() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState(null);
 
   // Form State
@@ -106,6 +107,39 @@ export default function DashboardPage() {
       ...prev,
       socials: { ...prev.socials, [key]: val }
     }));
+  };
+
+  const handleAudioUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 15 * 1024 * 1024) {
+      return setMessage({ type: 'error', text: 'File too large! Max 15MB.' });
+    }
+
+    setUploading(true);
+    setMessage({ type: 'success', text: 'Uploading neural audio data... (｡♥‿♥｡)' });
+    
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = async () => {
+      try {
+        const res = await fetch('/api/profile/upload-mp3', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ base64Audio: reader.result })
+        });
+        const data = await res.json();
+        if (data.success) {
+          setFormData(prev => ({ ...prev, music: data.url }));
+          setMessage({ type: 'success', text: 'Audio uploaded successfully!' });
+        } else {
+          setMessage({ type: 'error', text: data.error || 'Upload failed.' });
+        }
+      } catch (err) {
+        setMessage({ type: 'error', text: 'Network error during upload.' });
+      }
+      setUploading(false);
+    };
   };
 
   if (loading) return <div className="p-8 text-center opacity-50">Synchronizing Data...</div>;
@@ -208,19 +242,30 @@ export default function DashboardPage() {
               <Music size={18} className="text-pink" />
               <h3>Atmospheric Audio</h3>
             </div>
-            <div className="icon-input">
-              <Music size={14} />
-              <input 
-                type="text" 
-                placeholder="Spotify Track URL (e.g. https://open.spotify.com/track/ID) or Direct MP3 Link" 
-                value={formData.music} 
-                onChange={e => setFormData({...formData, music: e.target.value})} 
-                className="dash-input" 
-              />
+            <div className="flex flex-col gap-4">
+              <div className="icon-input">
+                <Music size={14} />
+                <input 
+                  type="text" 
+                  placeholder="Spotify Track URL or Direct MP3 Link" 
+                  value={formData.music} 
+                  onChange={e => setFormData({...formData, music: e.target.value})} 
+                  className="dash-input" 
+                />
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <label className={`btn-v3 btn-v3-ghost flex-1 ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <Upload size={16} />
+                  <span>{uploading ? 'UPLOADING...' : 'UPLOAD OWN MP3'}</span>
+                  <input type="file" accept="audio/mpeg" onChange={handleAudioUpload} hidden />
+                </label>
+                {formData.music && <span className="text-xs opacity-30 truncate max-w-[200px]">{formData.music}</span>}
+              </div>
             </div>
-            <p className="hint-text">
-              <strong>Spotify Tip:</strong> Paste a song link to show a mini-player. <br/>
-              <strong>Autoplay:</strong> Set a direct .mp3 link for automatic background sound (Volume is set to 15% for a low ambient feel).
+            <p className="hint-text mt-4">
+              <strong>Spotify Tip:</strong> Paste a track link to show a mini-player. <br/>
+              <strong>Custom Audio:</strong> Upload an MP3 for automatic background sound (15% volume).
             </p>
           </section>
 

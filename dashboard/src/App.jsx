@@ -58,7 +58,7 @@ function AppContent() {
         </>
       )}
 
-      <main className={isProfile ? "profile-main" : "main-content"}>
+      <main className="app-main-content">
         <Suspense fallback={<LoadingGateway />}>
           <Routes>
             <Route path="/" element={<HomePage />} />

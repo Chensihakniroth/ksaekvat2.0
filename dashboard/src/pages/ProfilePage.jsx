@@ -6,9 +6,10 @@ import {
   Share2, Zap, Heart, History, Box, Filter, Terminal,
   Layers, BarChart3, Globe, Award, Crosshair, Activity, PawPrint,
   Instagram, Twitter, Github, ExternalLink, Music, Volume2, VolumeX,
-  Code, Image as ImageIcon, Mail, MessageSquare
+  Code, Image as ImageIcon, Mail, MessageSquare, ShoppingBag, ChevronLeft, ChevronRight, Edit3
 } from 'lucide-react';
 import CharIcon from '../components/CharIcon';
+import { useAuth } from '../context/AuthContext';
 
 const SOCIAL_ICONS = {
   instagram: <Instagram size={20} />,
@@ -31,80 +32,93 @@ const containerVariants = {
 export default function ProfilePage() {
   const { userId } = useParams();
   const navigate = useNavigate();
+  const { user: authUser } = useAuth();
   const [p, setP] = useState(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [activeTab, setActiveTab] = useState('portfolio');
-  const [gameFilter, setGameFilter] = useState('all');
+  
+  // Shop State
+  const [shopData, setShopData] = useState([]);
+  const [shopPage, setShopPage] = useState(1);
+  const [shopPages, setShopPages] = useState(1);
+  const [shopLoading, setShopLoading] = useState(false);
+  const [shopFilter, setShopFilter] = useState({ game: 'all', rarity: 'all', search: '' });
+
   const [copied, setCopied] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
 
-  // Check if we can go back (came from internal link)
+  const isOwner = authUser?.id === userId;
   const canGoBack = window.history.length > 2;
 
   useEffect(() => {
-    console.log(`[Profile] Requesting data for UID: ${userId}...`);
     setLoading(true);
     fetch(`/api/profile/${userId}`)
       .then(r => r.json())
       .then(res => { 
-        if (res.success) {
-          setP(res.data); 
-        } else { 
-          setNotFound(true); 
-        }
+        if (res.success) { setP(res.data); } 
+        else { setNotFound(true); }
         setLoading(false); 
       })
-      .catch(() => { 
-        setNotFound(true); 
-        setLoading(false); 
-      });
+      .catch(() => { setNotFound(true); setLoading(false); });
   }, [userId]);
+
+  // Load Shop Data
+  useEffect(() => {
+    if (activeTab === 'shop') {
+      setShopLoading(true);
+      const params = new URLSearchParams({
+        page: shopPage.toString(),
+        game: shopFilter.game,
+        rarity: shopFilter.rarity,
+        search: shopFilter.search
+      });
+      fetch(`/api/shop/characters?${params}`)
+        .then(r => r.json())
+        .then(res => {
+          if (res.success) {
+            setShopData(res.data);
+            setShopPages(res.pages);
+          }
+          setShopLoading(false);
+        });
+    }
+  }, [activeTab, shopPage, shopFilter]);
 
   const theme = p?.profileTheme || {};
   const accent = theme.accentColor || '#22d3ee';
   const portfolio = theme.portfolio || [];
 
-  // Spotify Logic
   const isSpotify = theme.music?.includes('spotify.com');
   const spotifyTrackId = isSpotify ? theme.music.split('/').pop()?.split('?')[0] : null;
   const spotifyEmbedUrl = spotifyTrackId ? `https://open.spotify.com/embed/track/${spotifyTrackId}?utm_source=generator&theme=0` : null;
 
-  // Handle music play on load
   useEffect(() => {
     if (!loading && theme.music && !isSpotify && audioRef.current) {
-        audioRef.current.volume = 0.15; // Ambient background volume
-        audioRef.current.play().then(() => {
-            setIsPlaying(true);
-        }).catch(() => {
-            console.log("[Audio] Autoplay blocked.");
-        });
+        audioRef.current.volume = 0.15;
+        audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   }, [loading, theme.music, isSpotify]);
 
-  const toggleMusic = (e) => {
-    e.stopPropagation();
-    if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
-    } else {
-      audioRef.current.play().catch(e => console.error("Play failed:", e));
+  const handleBuy = async (charName) => {
+    if (!window.confirm(`Exchange Star Dust for ${charName}?`)) return;
+    try {
+      const res = await fetch('/api/shop/buy', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ characterName: charName })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message);
+        setP(prev => ({ ...prev, star_dust: data.newBalance }));
+      } else {
+        alert(data.error);
+      }
+    } catch (err) {
+      alert("Network error protocols failed.");
     }
-    setIsPlaying(!isPlaying);
-  };
-
-  const handleGlobalClick = () => {
-    if (theme.music && !isSpotify && !isPlaying && audioRef.current) {
-        audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
-    }
-  };
-
-  const handleShare = (e) => {
-    e.stopPropagation();
-    navigator.clipboard.writeText(window.location.href);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const getSocialHandle = (url) => {
@@ -113,94 +127,40 @@ export default function ProfilePage() {
     return url.split('/').filter(Boolean).pop();
   };
 
-  const filteredChars = useMemo(() => {
-    if (!p) return [];
-    return p.characters.filter(c => {
-      const matchesGame = gameFilter === 'all' || c.game?.toLowerCase() === gameFilter;
-      return matchesGame;
-    });
-  }, [p, gameFilter]);
-
-  if (loading) return (
-    <div className="profile-loading-screen">
-      <div className="loading-core">
-        <div className="scanner-circle">
-          <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="ring ring-outer" />
-          <motion.div animate={{ rotate: -360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} className="ring ring-inner" />
-          <div className="core-icon"><Activity size={24} className="animate-pulse" /></div>
-        </div>
-        <div className="loading-text glitch-text">Establishing Uplink...</div>
-      </div>
-    </div>
-  );
-
-  if (notFound || !p) return (
-    <div className="profile-not-found wrap">
-      <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="glass-panel error-card neon-border">
-        <div className="error-icon-wrap"><User size={48} /></div>
-        <h2 className="error-title">Target Not Found</h2>
-        <p className="error-desc">The specified operative ID does not exist.</p>
-        <Link to="/leaderboard" className="btn-v3 btn-v3-ghost"><ArrowLeft size={16} /> Return to Network</Link>
-      </motion.div>
-    </div>
-  );
+  if (loading) return <div className="profile-loading-screen"><div className="glitch-text">SYNCING_UPLINK...</div></div>;
+  if (notFound || !p) return <div className="profile-not-found wrap"><h2 className="error-title">ID_NOT_FOUND</h2><Link to="/leaderboard" className="btn-v3 btn-v3-ghost">RETURN</Link></div>;
 
   return (
-    <div className="portfolio-minimal" onClick={handleGlobalClick} style={{ 
+    <div className="portfolio-minimal" onClick={() => !isSpotify && !isPlaying && audioRef.current?.play().then(()=>setIsPlaying(true))} style={{ 
       '--accent': accent,
       backgroundImage: `url(${theme.background || DEFAULT_BG})`,
     }}>
       
-      {canGoBack && (
-        <button onClick={() => navigate(-1)} className="portfolio-back-fb">
-          <ArrowLeft size={20} />
-        </button>
-      )}
+      {canGoBack && <button onClick={() => navigate(-1)} className="portfolio-back-fb"><ArrowLeft size={20} /></button>}
 
-      {/* HERO SECTION: FB STYLE */}
       <div className="portfolio-hero-container">
-        <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="portfolio-banner-wrap"
-        >
-          {theme.banner ? 
-            <img src={theme.banner} className="portfolio-banner-img" alt="Banner" /> : 
-            <div className="banner-placeholder" style={{ background: `linear-gradient(135deg, ${accent}20, #000)` }} />
-          }
-        </motion.div>
+        <div className="portfolio-banner-wrap">
+          {theme.banner ? <img src={theme.banner} className="portfolio-banner-img" alt="Banner" /> : <div className="banner-placeholder" style={{ background: `linear-gradient(135deg, ${accent}20, #000)` }} />}
+        </div>
 
         <div className="portfolio-identity-bar">
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="portfolio-avatar-fb"
-          >
+          <div className="portfolio-avatar-fb">
             {theme.avatar ? <img src={theme.avatar} alt="Avatar" /> : <div className="avatar-initial-fb">{p.username[0]}</div>}
-          </motion.div>
+          </div>
 
           <div className="portfolio-name-bio">
-            <motion.h1 
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="portfolio-name-fb"
-            >
-              {p.username}
-            </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="portfolio-bio-fb"
-            >
-              {theme.bio}
-            </motion.p>
+            <h1 className="portfolio-name-fb">{p.username}</h1>
+            <p className="portfolio-bio-fb">{theme.bio}</p>
           </div>
 
           <div className="portfolio-actions-fb">
-            <button onClick={handleShare} className="share-btn-sidebar">
+            {isOwner && (
+              <Link to="/dashboard" className="share-btn-sidebar" style={{ backgroundColor: accent, color: '#000', borderColor: accent }}>
+                <Edit3 size={18} />
+                <span>EDIT PROFILE</span>
+              </Link>
+            )}
+            <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(window.location.href); setCopied(true); setTimeout(()=>setCopied(false), 2000); }} className="share-btn-sidebar">
               <Share2 size={20} />
               <span>{copied ? 'COPIED' : 'SHARE'}</span>
             </button>
@@ -208,17 +168,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* MAIN CONTENT WRAPPER */}
       <div className="portfolio-content-wrap">
-        
-        {/* LEFT: INFO SIDEBAR */}
         <aside className="portfolio-zen-sidebar">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-            className="zen-info-card"
-          >
+          <div className="zen-info-card">
             <h3 className="zen-card-title">Intro</h3>
             <div className="zen-social-list">
               {theme.socials && Object.entries(theme.socials).map(([key, val]) => (
@@ -230,6 +182,10 @@ export default function ProfilePage() {
                 )
               ))}
               <div className="zen-social-item">
+                <Star size={20} style={{ color: '#fbbf24' }} />
+                <span>{p.star_dust.toLocaleString()} Star Dust</span>
+              </div>
+              <div className="zen-social-item">
                 <Globe size={20} />
                 <span>Level {p.level} Operative</span>
               </div>
@@ -237,112 +193,67 @@ export default function ProfilePage() {
 
             {isSpotify && (
               <div className="spotify-embed-container">
-                <iframe 
-                  style={{ borderRadius: '12px' }} 
-                  src={spotifyEmbedUrl} 
-                  width="100%" 
-                  height="152" 
-                  frameBorder="0" 
-                  allowFullScreen="" 
-                  allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                  loading="lazy"
-                ></iframe>
+                <iframe style={{ borderRadius: '12px' }} src={spotifyEmbedUrl} width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
               </div>
             )}
-          </motion.div>
+          </div>
         </aside>
 
-        {/* RIGHT: TABS & CONTENT */}
         <main className="portfolio-zen-main">
           <div className="portfolio-tabs-fb">
              <button onClick={() => setActiveTab('portfolio')} className={`p-tab-fb ${activeTab === 'portfolio' ? 'active' : ''}`}>Portfolio</button>
-             {theme.showInventory !== false && <button onClick={() => setActiveTab('inventory')} className={`p-tab-fb ${activeTab === 'inventory' ? 'active' : ''}`}>Arsenal</button>}
-             {theme.showStats !== false && <button onClick={() => setActiveTab('stats')} className={`p-tab-fb ${activeTab === 'stats' ? 'active' : ''}`}>Data</button>}
+             <button onClick={() => setActiveTab('shop')} className={`p-tab-fb ${activeTab === 'shop' ? 'active' : ''}`}>Resonator Shop</button>
           </div>
 
           <div className="portfolio-tab-content">
             <AnimatePresence mode="wait">
               {activeTab === 'portfolio' && (
-                <motion.div 
-                  key="portfolio" 
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  className="portfolio-items-grid-zen"
-                >
+                <motion.div key="portfolio" variants={containerVariants} initial="hidden" animate="visible" exit="hidden" className="portfolio-items-grid-zen">
                   {portfolio.length > 0 ? portfolio.map((item, idx) => (
-                    <motion.div 
-                      key={idx} 
-                      variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}
-                      className="zen-portfolio-card"
-                    >
-                       {item.type === 'art' ? (
-                         <div className="zen-art-display">
-                           <img src={item.url} alt={item.title} />
-                         </div>
-                       ) : (
+                    <motion.div key={idx} variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }} className="zen-portfolio-card">
+                       {item.type === 'art' ? <div className="zen-art-display"><img src={item.url} alt={item.title} /></div> : 
                          <div className="zen-card-info">
-                            <div className="repo-header-new">
-                               <Code size={20} style={{ color: accent }} />
-                               <span className="zen-card-name">{item.title}</span>
-                            </div>
+                            <div className="repo-header-new"><Code size={20} style={{ color: accent }} /><span className="zen-card-name">{item.title}</span></div>
                             <p className="zen-card-desc">{item.description || 'Source protocols established.'}</p>
-                            <a href={item.url} target="_blank" rel="noreferrer" className="repo-link-new">
-                               VIEW_SOURCE
-                            </a>
+                            <a href={item.url} target="_blank" rel="noreferrer" className="repo-link-new">VIEW_SOURCE</a>
                          </div>
-                       )}
-                       {item.type === 'art' && (
-                         <div className="zen-card-info">
-                            <span className="zen-card-name">{item.title}</span>
-                            <a href={item.url} target="_blank" rel="noreferrer" className="repo-link-new">OPEN_ARCHIVE</a>
-                         </div>
-                       )}
+                       }
+                       {item.type === 'art' && <div className="zen-card-info"><span className="zen-card-name">{item.title}</span><a href={item.url} target="_blank" rel="noreferrer" className="repo-link-new">OPEN_ARCHIVE</a></div>}
                     </motion.div>
-                  )) : (
-                    <div className="empty-portfolio-new" style={{ gridColumn: '1/-1', padding: '100px 0', opacity: 0.1 }}>
-                       <p style={{ letterSpacing: '0.5em', fontSize: '0.7rem', fontWeight: 600 }}>ARCHIVE_EMPTY</p>
-                    </div>
-                  )}
+                  )) : <div className="empty-portfolio-new" style={{ gridColumn: '1/-1', opacity: 0.1 }}><p>ARCHIVE_EMPTY</p></div>}
                 </motion.div>
               )}
 
-              {activeTab === 'inventory' && (
-                <motion.div 
-                  key="inventory" 
-                  initial={{ opacity: 0 }} 
-                  animate={{ opacity: 1 }} 
-                  exit={{ opacity: 0 }} 
-                  className="inventory-grid-container"
-                >
+              {activeTab === 'shop' && (
+                <motion.div key="shop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                   <div className="shop-filters" style={{ display: 'flex', gap: '15px', marginBottom: '30px', opacity: 0.5 }}>
+                      <input type="text" placeholder="Search operatives..." value={shopFilter.search} onChange={e => { setShopFilter({...shopFilter, search: e.target.value}); setShopPage(1); }} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', padding: '10px 20px', borderRadius: '10px', color: '#fff', fontSize: '0.8rem' }} />
+                      <select value={shopFilter.game} onChange={e => { setShopFilter({...shopFilter, game: e.target.value}); setShopPage(1); }} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', padding: '10px', borderRadius: '10px', color: '#fff' }}>
+                        <option value="all">All Games</option>
+                        <option value="genshin">Genshin</option>
+                        <option value="hsr">HSR</option>
+                        <option value="wuwa">WuWa</option>
+                        <option value="zzz">ZZZ</option>
+                      </select>
+                   </div>
+
                    <div className="units-grid-fb">
-                      {filteredChars.map((c, i) => (
-                        <motion.div 
-                          key={i}
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: i * 0.02 }}
-                        >
-                          <UnitCard char={c} />
-                        </motion.div>
+                      {shopData.map((c, i) => (
+                        <div key={i} className={`char-card-fb ${c.rarity === '5' ? 'r5' : ''}`}>
+                           <div className="char-visual-fb"><CharIcon name={c.name} game={c.game?.toLowerCase()} rarity={c.rarity} /></div>
+                           <div className="char-name-fb">{c.name}</div>
+                           <button onClick={() => handleBuy(c.name)} className="repo-link-new" style={{ marginTop: '15px', width: '100%', borderColor: c.rarity === '5' ? '#fbbf24' : accent }}>
+                              {c.price} DUST
+                           </button>
+                        </div>
                       ))}
                    </div>
-                </motion.div>
-              )}
 
-              {activeTab === 'stats' && (
-                <motion.div 
-                  key="stats" 
-                  initial={{ opacity: 0, y: 20 }} 
-                  animate={{ opacity: 1, y: 0 }} 
-                  exit={{ opacity: 0, y: -20 }} 
-                  className="stats-grid-fb"
-                >
-                   <StatBox label="Neural Level" value={p.level} />
-                   <StatBox label="Network Credits" value={p.balance.toLocaleString()} />
-                   <StatBox label="Operations" value={p.stats?.commandsUsed || 0} />
-                   <StatBox label="Resonance" value={`${p.pity}/90`} />
+                   <div className="shop-pagination" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '20px', marginTop: '50px' }}>
+                      <button disabled={shopPage === 1} onClick={() => setShopPage(p => p - 1)} className="p-tab-fb"><ChevronLeft size={20} /></button>
+                      <span style={{ fontSize: '0.8rem', fontWeight: 800, opacity: 0.3 }}>PAGE {shopPage} / {shopPages}</span>
+                      <button disabled={shopPage === shopPages} onClick={() => setShopPage(p => p + 1)} className="p-tab-fb"><ChevronRight size={20} /></button>
+                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -352,7 +263,7 @@ export default function ProfilePage() {
 
       {theme.music && !isSpotify && (
         <div className="music-control-fb">
-          <button onClick={toggleMusic} className="music-btn-fb">
+          <button onClick={() => { if(audioRef.current) { if(isPlaying) audioRef.current.pause(); else audioRef.current.play(); setIsPlaying(!isPlaying); }}} className="music-btn-fb">
             {isPlaying ? <Volume2 size={20} /> : <VolumeX size={20} />}
             <span>{isPlaying ? 'TRANSMITTING' : 'MUTED'}</span>
           </button>
@@ -364,20 +275,13 @@ export default function ProfilePage() {
 }
 
 function StatBox({ label, value }) {
-  return (
-    <div className="stat-box-fb">
-       <span className="stat-lbl-fb">{label}</span>
-       <span className="stat-val-fb">{value}</span>
-    </div>
-  );
+  return <div className="stat-box-fb"><span className="stat-lbl-fb">{label}</span><span className="stat-val-fb">{value}</span></div>;
 }
 
 function UnitCard({ char }) {
   return (
     <div className={`char-card-fb ${char.rarity === '5' ? 'r5' : ''}`}>
-       <div className="char-visual-fb">
-          <CharIcon name={char.name} game={char.game?.toLowerCase()} rarity={char.rarity} emoji={char.emoji} />
-       </div>
+       <div className="char-visual-fb"><CharIcon name={char.name} game={char.game?.toLowerCase()} rarity={char.rarity} emoji={char.emoji} /></div>
        <div className="char-name-fb">{char.name}</div>
     </div>
   );

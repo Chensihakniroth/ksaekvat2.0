@@ -146,6 +146,48 @@ router.post('/update', async (req: any, res: Response) => {
   }
 });
 
+// POST /api/profile/upload-mp3
+router.post('/upload-mp3', async (req: any, res: Response) => {
+  const token = req.cookies?.ksaekvat_session;
+  if (!token) return res.status(401).json({ success: false, error: 'Unauthorized' });
+
+  try {
+    const jwt = require('jsonwebtoken');
+    const { env } = require('../../utils/env.js');
+    const fs = require('fs');
+    const path = require('path');
+    const decoded: any = jwt.verify(token, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls');
+    
+    const { base64Audio } = req.body;
+    if (!base64Audio) return res.status(400).json({ success: false, error: 'Audio data missing.' });
+
+    // Ensure audio directory exists
+    const audioDir = path.join(__dirname, '../../../assets/audio');
+    if (!fs.existsSync(audioDir)) {
+      fs.mkdirSync(audioDir, { recursive: true });
+    }
+
+    // Process base64
+    const base64Data = base64Audio.replace(/^data:audio\/mpeg;base64,/, "");
+    const filePath = path.join(audioDir, `user_${decoded.id}.mp3`);
+    
+    fs.writeFileSync(filePath, base64Data, 'base64');
+
+    const publicUrl = `/assets/audio/user_${decoded.id}.mp3?t=${Date.now()}`;
+
+    // Auto-update user profile music
+    const user = await User.findOne({ id: decoded.id });
+    if (user) {
+      user.profileTheme.music = publicUrl;
+      await user.save();
+    }
+
+    res.json({ success: true, url: publicUrl });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // GET /api/profile — lists all users (paginated, public names only)
 router.get('/', async (req: Request, res: Response) => {
   try {
