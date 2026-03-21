@@ -140,6 +140,17 @@ export default function ProfilePage() {
     </div>
   );
 
+  const [entered, setEntered] = useState(false);
+
+  const handleEnter = () => {
+    setEntered(true);
+    if (audioRef.current && theme.music) {
+      audioRef.current.volume = 0.5;
+      audioRef.current.play().catch(e => console.error("Autoplay blocked:", e));
+      setIsPlaying(true);
+    }
+  };
+
   const theme = p.profileTheme || {};
   const accent = theme.accentColor || '#22d3ee';
   const xpProgress = (p.experience % 1000) / 10;
@@ -153,7 +164,16 @@ export default function ProfilePage() {
       backgroundAttachment: 'fixed',
       backgroundPosition: 'center'
     }}>
-      <div className="wrap">
+      <AnimatePresence>
+        {!entered && (
+           <motion.div exit={{ opacity: 0, backdropFilter: 'blur(0px)' }} className="enter-overlay" onClick={handleEnter}>
+              <div className="enter-text" style={{ color: accent, textShadow: `0 0 20px ${accent}` }}>[ Click to Enter ]</div>
+           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {entered && (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="wrap">
         {theme.music && (
           <div className="profile-music-player glass-panel">
             <button onClick={toggleMusic} className="music-toggle-btn">
@@ -169,62 +189,53 @@ export default function ProfilePage() {
            <button onClick={handleShare} className={`share-btn ${copied ? 'copied' : ''}`}><Share2 size={14} /><span>{copied ? 'Uplink Copied!' : 'Share Profile'}</span></button>
         </motion.div>
 
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="glass-panel profile-hero neon-border" style={{ borderColor: `${accent}40` }}>
-          {theme.banner && (
-            <div className="hero-banner-image" style={{ backgroundImage: `url(${theme.banner})` }} />
-          )}
-          <div className="hero-grid-layout">
-            <div className="hero-avatar-section">
-              <div className="avatar-ring-wrap">
-                <div className="avatar-ring animate-spin-slow" style={{ borderColor: accent }}>
-                  <div className="avatar-core">
-                    {theme.avatar ? 
-                      <img src={theme.avatar} alt="Avatar" className="custom-avatar" /> :
-                      <span className="avatar-initial">{p.username[0]?.toUpperCase()}</span>
-                    }
-                  </div>
-                </div>
-                <div className="rank-tag" style={{ backgroundColor: accent }}><span className="label">RANK</span><span className="val">{p.level}</span></div>
-              </div>
-              <div className="world-level-badge"><Globe size={12} /> <span>World Level {p.worldLevel || 1}</span></div>
+        <motion.div initial={{ y: 20, opacity: 0, scale: 0.95 }} animate={{ y: 0, opacity: 1, scale: 1 }} transition={{ delay: 0.1, duration: 0.5 }} className="kofi-hero-card glass-panel neon-border" style={{ borderColor: `${accent}40` }}>
+          {theme.banner ? 
+            <div className="kofi-banner" style={{ backgroundImage: `url(${theme.banner})` }} /> : 
+            <div className="kofi-banner" style={{ background: `linear-gradient(135deg, ${accent}40, transparent)` }} />
+          }
+          
+          <div className="kofi-avatar-wrap" style={{ borderColor: accent, boxShadow: `0 0 30px ${accent}40` }}>
+            {theme.avatar ? 
+                <img src={theme.avatar} alt="Avatar" className="custom-avatar" /> :
+                <span className="avatar-initial" style={{ fontSize: '4rem', fontWeight: 900, color: '#fff' }}>{p.username[0]?.toUpperCase()}</span>
+            }
+          </div>
+
+          <div className="kofi-info">
+            <h1 className="kofi-username glitch-text" style={{ color: accent, textShadow: `0 0 20px ${accent}40` }}>{p.username}</h1>
+            
+            <div className="kofi-badges">
+              <span className="kofi-badge"><Zap size={12} className="text-gold"/> UID: {userId}</span>
+              <span className="kofi-badge"><Globe size={12} className="text-cyan"/> WL {p.worldLevel || 1}</span>
+              <span className="kofi-badge" style={{ color: accent, borderColor: `${accent}40` }}><Trophy size={12}/> LVL {p.level}</span>
             </div>
 
-            <div className="hero-info-section">
-              <div className="info-header">
-                <div className="info-titles">
-                  <h1 className="profile-username glitch-text" style={{ color: accent, textShadow: `0 0 20px ${accent}40` }}>{p.username}</h1>
-                  <div className="profile-id-tag"><Zap size={12} className="text-gold" /> <span>Operative ID: <span className="id-val">{userId}</span></span></div>
-                </div>
-                
-                <div className="profile-socials">
-                   {theme.socials && Object.entries(theme.socials).map(([key, val]) => (
-                     val && (
-                       <a key={key} href={val.startsWith('http') ? val : '#'} target="_blank" rel="noreferrer" className="social-link-v3 glass-panel" title={key}>
-                         {SOCIAL_ICONS[key] || <LinkIcon size={12}/>}
-                       </a>
-                     )
-                   ))}
-                </div>
+            {theme.bio ? (
+              <p className="kofi-bio">{theme.bio}</p>
+            ) : (
+              <p className="kofi-bio" style={{ opacity: 0.5, fontStyle: 'italic' }}>No bio set...</p>
+            )}
 
-                <div className="profile-balances">
-                  <div className="balance-item glass-panel">
-                    <div className="label"><Coins size={12} className="text-gold" /> Credits</div>
-                    <div className="val">{p.balance.toLocaleString()}</div>
-                  </div>
-                  <div className="balance-item glass-panel">
-                    <div className="label"><Sparkles size={12} className="text-cyan" /> Dust</div>
-                    <div className="val">{p.star_dust.toLocaleString()}</div>
-                  </div>
-                </div>
-              </div>
+            <div className="kofi-socials">
+               {theme.socials && Object.entries(theme.socials).map(([key, val]) => (
+                 val && (
+                   <a key={key} href={val.startsWith('http') ? val : '#'} target="_blank" rel="noreferrer" className="social-icon-kofi" style={{ '--hover-color': accent }}>
+                     {SOCIAL_ICONS[key] || <ExternalLink size={18}/>}
+                   </a>
+                 )
+               ))}
+            </div>
 
-              {theme.bio && <p className="profile-bio-v3 glass-panel">{theme.bio}</p>}
-
-              <div className="xp-section">
-                <div className="xp-labels"><span className="xp-title">Combat Experience</span><span className="xp-total">{p.experience.toLocaleString()} <span className="dim">TOTAL</span></span></div>
-                <div className="xp-bar-container"><motion.div initial={{ width: 0 }} animate={{ width: `${xpProgress}%` }} className="xp-bar-fill" style={{ backgroundColor: accent, boxShadow: `0 0 15px ${accent}` }} /></div>
-                <div className="xp-footer">{nextXp} XP UNTIL PROMOTION</div>
-              </div>
+            <div className="kofi-balances-row">
+              <div className="k-bal"><Coins size={16} className="text-gold" /> <span>{p.balance.toLocaleString()} CR</span></div>
+              <div className="k-bal"><Sparkles size={16} className="text-cyan" /> <span>{p.star_dust.toLocaleString()} Dust</span></div>
+            </div>
+            
+            <div className="xp-section" style={{ maxWidth: '600px', margin: '32px auto 0' }}>
+              <div className="xp-labels"><span className="xp-title">Combat Experience</span><span className="xp-total">{p.experience.toLocaleString()} <span className="dim">TOTAL</span></span></div>
+              <div className="xp-bar-container"><motion.div initial={{ width: 0 }} animate={{ width: `${xpProgress}%` }} className="xp-bar-fill" style={{ backgroundColor: accent, boxShadow: `0 0 15px ${accent}` }} /></div>
+              <div className="xp-footer">{nextXp} XP UNTIL PROMOTION</div>
             </div>
           </div>
         </motion.div>
@@ -438,7 +449,8 @@ export default function ProfilePage() {
             )}
           </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
+      )}
     </div>
   );
 }
