@@ -162,39 +162,34 @@ export default function ProfilePage() {
 
       <div className="portfolio-grid-layout">
         
-        {/* LEFT COLUMN: FIXED IDENTITY */}
+        {/* LEFT COLUMN: FIXED IDENTITY (ZEN) */}
         <aside className="portfolio-left">
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
             className="portfolio-hero-sidebar"
           >
-            <div className="banner-wrap-sidebar">
-               {theme.banner ? <img src={theme.banner} className="portfolio-banner" alt="Banner" /> : <div className="banner-placeholder" style={{ background: `linear-gradient(to bottom, ${accent}40, transparent)` }} />}
-            </div>
-            
-            <div className="avatar-main-sidebar" style={{ borderColor: accent, boxShadow: `0 0 30px ${accent}40` }}>
+            <div className="avatar-main-sidebar">
               {theme.avatar ? <img src={theme.avatar} alt="Avatar" /> : <div className="avatar-initial-sidebar">{p.username[0]}</div>}
             </div>
 
-            <h1 className="name-main-sidebar glitch-text" data-text={p.username}>{p.username}</h1>
+            <h1 className="name-main-sidebar">{p.username}</h1>
             <p className="bio-main-sidebar">{theme.bio}</p>
             
             <div className="social-links-wrap-sidebar">
               {theme.socials && Object.entries(theme.socials).map(([key, val]) => (
                 val && (
-                  <a key={key} href={val.startsWith('http') ? val : '#'} target="_blank" rel="noreferrer" className="social-icon-btn" style={{ '--icon-accent': accent }}>
-                    {SOCIAL_ICONS[key] || <ExternalLink size={18}/>}
+                  <a key={key} href={val.startsWith('http') ? val : '#'} target="_blank" rel="noreferrer" className="social-icon-btn">
+                    {SOCIAL_ICONS[key] || <ExternalLink size={16}/>}
                   </a>
                 )
               ))}
             </div>
 
-            <button onClick={handleShare} className="share-btn-sidebar" style={{ borderColor: `${accent}40` }}>
-              <Share2 size={16} />
-              <span>{copied ? 'UPLINK COPIED' : 'SHARE PROFILE'}</span>
-              {copied && <motion.span initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="copied-toast-sidebar" style={{ backgroundColor: accent }}>COPIED!</motion.span>}
+            <button onClick={handleShare} className="share-btn-sidebar">
+              <Share2 size={12} />
+              <span>{copied ? 'COPIED' : 'SHARE'}</span>
             </button>
           </motion.div>
         </aside>
@@ -202,9 +197,9 @@ export default function ProfilePage() {
         {/* RIGHT COLUMN: SCROLLABLE CONTENT */}
         <main className="portfolio-right">
           <div className="portfolio-tabs-sticky">
-             <button onClick={() => setActiveTab('portfolio')} className={`p-tab ${activeTab === 'portfolio' ? 'active' : ''}`} style={activeTab === 'portfolio' ? { color: accent } : {}}>PORTFOLIO</button>
-             {theme.showInventory !== false && <button onClick={() => setActiveTab('inventory')} className={`p-tab ${activeTab === 'inventory' ? 'active' : ''}`} style={activeTab === 'inventory' ? { color: accent } : {}}>ARSENAL</button>}
-             {theme.showStats !== false && <button onClick={() => setActiveTab('stats')} className={`p-tab ${activeTab === 'stats' ? 'active' : ''}`} style={activeTab === 'stats' ? { color: accent } : {}}>DATAPAD</button>}
+             <button onClick={() => setActiveTab('portfolio')} className={`p-tab ${activeTab === 'portfolio' ? 'active' : ''}`}>PORTFOLIO</button>
+             {theme.showInventory !== false && <button onClick={() => setActiveTab('inventory')} className={`p-tab ${activeTab === 'inventory' ? 'active' : ''}`}>ARSENAL</button>}
+             {theme.showStats !== false && <button onClick={() => setActiveTab('stats')} className={`p-tab ${activeTab === 'stats' ? 'active' : ''}`}>DATA</button>}
           </div>
 
           <div className="portfolio-content-view">
@@ -212,38 +207,37 @@ export default function ProfilePage() {
               {activeTab === 'portfolio' && (
                 <motion.div 
                   key="portfolio" 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   className="portfolio-items-grid"
                 >
                   {portfolio.length > 0 ? portfolio.map((item, idx) => (
-                    <div key={idx} className="portfolio-item-card-new glass-panel">
+                    <div key={idx} className="portfolio-item-card-new">
                        {item.type === 'art' ? (
                          <div className="art-preview-new">
                            <img src={item.url} alt={item.title} />
                            <div className="art-overlay-new">
-                              <span className="item-title-new">{item.title}</span>
-                              <a href={item.url} target="_blank" rel="noreferrer" className="view-link-new" style={{ color: accent }}><ExternalLink size={18} /></a>
+                              <a href={item.url} target="_blank" rel="noreferrer" className="view-link-new"><ExternalLink size={16} /></a>
                            </div>
                          </div>
                        ) : (
                          <div className="repo-preview-new">
                             <div className="repo-header-new">
-                               <Code size={24} style={{ color: accent }} />
+                               <Code size={18} />
                                <span className="item-title-new">{item.title}</span>
                             </div>
-                            <p className="item-desc-new">{item.description || 'Access terminal protocols and source assets via external uplink.'}</p>
-                            <a href={item.url} target="_blank" rel="noreferrer" className="repo-link-new" style={{ borderColor: `${accent}40`, color: accent }}>
-                               <Github size={16} /> VIEW REPOSITORY
+                            <p className="item-desc-new">{item.description || 'Access terminal protocols.'}</p>
+                            <a href={item.url} target="_blank" rel="noreferrer" className="repo-link-new">
+                               VIEW_SOURCE
                             </a>
                          </div>
                        )}
+                       {item.type === 'art' && <span className="item-title-new">{item.title}</span>}
                     </div>
                   )) : (
-                    <div className="empty-portfolio-new" style={{ gridColumn: '1/-1', padding: '100px 0', opacity: 0.2 }}>
-                       <Award size={64} style={{ margin: '0 auto 24px' }} />
-                       <p style={{ letterSpacing: '0.5em', fontSize: '0.8rem', fontWeight: 900 }}>NO ARCHIVES INDEXED</p>
+                    <div className="empty-portfolio-new" style={{ gridColumn: '1/-1', padding: '100px 0', opacity: 0.1 }}>
+                       <p style={{ letterSpacing: '0.5em', fontSize: '0.7rem', fontWeight: 600 }}>ARCHIVE_EMPTY</p>
                     </div>
                   )}
                 </motion.div>
@@ -257,20 +251,18 @@ export default function ProfilePage() {
                   exit={{ opacity: 0 }} 
                   className="inventory-view-new"
                 >
-                   <div className="tactical-filters-new glass-panel" style={{ display: 'flex', gap: '12px', padding: '12px', borderRadius: '16px', marginBottom: '32px', width: 'fit-content' }}>
+                   <div className="tactical-filters-new" style={{ display: 'flex', gap: '24px', marginBottom: '48px', opacity: 0.3 }}>
                       {['all', 'genshin', 'hsr', 'wuwa', 'zzz'].map(g => (
                         <button 
                           key={g} 
                           onClick={() => setGameFilter(g)} 
                           className={`filter-btn-new ${gameFilter === g ? 'active' : ''}`} 
                           style={{ 
-                            padding: '8px 16px', 
-                            borderRadius: '10px', 
-                            fontSize: '0.65rem', 
-                            fontWeight: 900, 
-                            letterSpacing: '0.1em',
-                            background: gameFilter === g ? accent : 'rgba(255,255,255,0.05)',
-                            color: gameFilter === g ? '#000' : '#fff',
+                            fontSize: '0.6rem', 
+                            fontWeight: 700, 
+                            letterSpacing: '0.2em',
+                            color: gameFilter === g ? '#fff' : 'inherit',
+                            background: 'none',
                             border: 'none',
                             cursor: 'pointer'
                           }}
@@ -281,7 +273,7 @@ export default function ProfilePage() {
                    </div>
                    <div className="units-grid-new">
                       {filteredChars.map((c, i) => (
-                        <UnitCard key={i} char={c} accent={accent} />
+                        <UnitCard key={i} char={c} />
                       ))}
                    </div>
                 </motion.div>
@@ -296,10 +288,10 @@ export default function ProfilePage() {
                   className="stats-view-new"
                 >
                    <div className="stats-grid-new">
-                      <StatBox label="NEURAL LEVEL" value={p.level} color={accent} />
-                      <StatBox label="CREDITS" value={p.balance.toLocaleString()} color="#fbbf24" />
-                      <StatBox label="OPERATIONS" value={p.stats?.commandsUsed || 0} color="#a78bfa" />
-                      <StatBox label="5★ RESONANCE" value={`${p.pity}/90`} color="#f472b6" />
+                      <StatBox label="LEVEL" value={p.level} />
+                      <StatBox label="CREDITS" value={p.balance.toLocaleString()} />
+                      <StatBox label="OPERATIONS" value={p.stats?.commandsUsed || 0} />
+                      <StatBox label="RESONANCE" value={`${p.pity}/90`} />
                    </div>
                 </motion.div>
               )}
@@ -310,9 +302,9 @@ export default function ProfilePage() {
 
       {theme.music && (
         <div className="music-control-fixed">
-          <button onClick={toggleMusic} className="music-btn-minimal" style={{ borderColor: `${accent}40`, color: accent }}>
-            {isPlaying ? <Volume2 size={18} /> : <VolumeX size={18} />}
-            <span className="music-status-text">{isPlaying ? 'TRANSMITTING' : 'MUTED'}</span>
+          <button onClick={toggleMusic} className="music-btn-minimal">
+            {isPlaying ? <Volume2 size={14} /> : <VolumeX size={14} />}
+            <span className="music-status-text">{isPlaying ? 'LIVE' : 'MUTED'}</span>
           </button>
           <audio ref={audioRef} src={theme.music} loop />
         </div>
@@ -321,18 +313,18 @@ export default function ProfilePage() {
   );
 }
 
-function StatBox({ label, value, color }) {
+function StatBox({ label, value }) {
   return (
-    <div className="stat-box-new glass-panel" style={{ borderLeft: `4px solid ${color}` }}>
+    <div className="stat-box-new">
        <span className="stat-label-new">{label}</span>
-       <span className="stat-value-new" style={{ color }}>{value}</span>
+       <span className="stat-value-new">{value}</span>
     </div>
   );
 }
 
-function UnitCard({ char, accent }) {
+function UnitCard({ char }) {
   return (
-    <div className={`char-card-new glass-panel ${char.rarity === '5' ? 'r5' : ''}`} style={char.rarity === '5' ? { '--card-accent': accent } : {}}>
+    <div className="char-card-new">
        <div className="char-visual-new">
           <CharIcon name={char.name} game={char.game?.toLowerCase()} rarity={char.rarity} emoji={char.emoji} />
        </div>
