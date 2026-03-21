@@ -156,7 +156,7 @@ export default function ProfilePage() {
       
       {canGoBack && <button onClick={() => navigate(-1)} style={{ position: 'fixed', top: '100px', left: '40px', zIndex: 100, width: '50px', height: '50px', borderRadius: '50%', background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backdropFilter: 'blur(10px)' }}><ArrowLeft size={20} /></button>}
 
-      <div className="discord-profile-card" style={{ width: '100%', maxWidth: '700px', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(10,10,10,0.85)', backdropFilter: 'blur(40px)', boxShadow: '0 30px 60px rgba(0,0,0,0.5)' }}>
+      <div className="discord-profile-card" style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: '700px', borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)', background: 'rgba(10,10,10,0.85)', backdropFilter: 'blur(40px)', boxShadow: '0 30px 60px rgba(0,0,0,0.5)' }}>
         {/* Banner */}
         <div style={{ height: '240px', backgroundColor: accent, backgroundImage: theme.banner ? `url(${theme.banner})` : 'none', backgroundSize: 'cover', backgroundPosition: `center ${theme.bannerPosition || '50%'}`, position: 'relative' }}>
           {isOwner && (
