@@ -2,7 +2,7 @@ const config = require('../config/config.js');
 const logger = require('../utils/logger.js');
 const cooldowns = require('../utils/cooldowns.js');
 const database = require('../services/DatabaseService');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, MessageFlags } = require('discord.js');
 const axios = require('axios');
 
 // Memory storage for conversation history (Channel-based)
@@ -112,6 +112,7 @@ module.exports = {
 
         const handleSpam = (penaltyTime, title, desc) => {
           const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, penaltyTime);
+          const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
 
           // Only reply if it's the first few strikes to avoid bot-spamming-about-spam
           if (strikeData.count < 4) {
@@ -119,27 +120,10 @@ module.exports = {
               embeds: [{
                 color: parseInt(config.colors.warning.slice(1), 16),
                 title: title,
-                description: desc + `\n\n**Wait time: ${Math.ceil(timeLeft / 1000)}s**`,
+                description: desc + `\n\n**Wait time: <t:${unixTime}:R>**`,
                 timestamp: new Date(),
               }],
-            }).then(msg => {
-              let currentWait = Math.ceil(timeLeft / 1000);
-              const interval = setInterval(() => {
-                currentWait -= 1;
-                if (currentWait <= 0) {
-                  clearInterval(interval);
-                  msg.delete().catch(() => {});
-                } else {
-                  msg.edit({
-                    embeds: [{
-                      color: parseInt(config.colors.warning.slice(1), 16),
-                      title: title,
-                      description: desc + `\n\n**Wait time: ${currentWait}s**`,
-                      timestamp: new Date(),
-                    }],
-                  }).catch(() => clearInterval(interval));
-                }
-              }, 1000);
+              flags: [MessageFlags.Ephemeral]
             }).catch(() => {});
           }
 
@@ -173,31 +157,15 @@ module.exports = {
           strikeData.lastSpam = now;
           spamStrikes.set(userId, strikeData);
           const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, GLOBAL_3S);
+          const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
           message.reply({
             embeds: [{
               color: parseInt(config.colors.warning.slice(1), 16),
               title: '⏳ Wait a moment, sweetie (｡♥‿♥｡)',
-              description: `Mommy needs a 3-second break too! Please wait **${Math.ceil(timeLeft / 1000)}s** more. (っ˘ω˘ς)`,
+              description: `Mommy needs a 3-second break too! Please wait till <t:${unixTime}:R>. (っ˘ω˘ς)`,      
               timestamp: new Date(),
             }],
-          }).then(msg => {
-            let currentWait = Math.ceil(timeLeft / 1000);
-            const interval = setInterval(() => {
-              currentWait -= 1;
-              if (currentWait <= 0) {
-                clearInterval(interval);
-                msg.delete().catch(() => {});
-              } else {
-                msg.edit({
-                  embeds: [{
-                    color: parseInt(config.colors.warning.slice(1), 16),
-                    title: '⏳ Wait a moment, sweetie (｡♥‿♥｡)',
-                    description: `Mommy needs a 3-second break too! Please wait **${currentWait}s** more. (っ˘ω˘ς)`,
-                    timestamp: new Date(),
-                  }],
-                }).catch(() => clearInterval(interval));
-              }
-            }, 1000);
+            flags: [MessageFlags.Ephemeral]
           }).catch(() => {});
           return;
         }
@@ -214,50 +182,32 @@ module.exports = {
                 color: parseInt(config.colors.error.slice(1), 16),
                 title: '🚫 Access Denied, sweetie (｡•́︿•̀｡)',
                 description:
-                  "I'm sorry, darling, but this command is only for Mommy's special helpers! (◕‿◕✿)",
+                  "I'm sorry, darling, but this command is only for Mommy's special helpers! (◕‿◕✿)",      
                 timestamp: new Date(),
               },
             ],
-          }).then(msg => setTimeout(() => msg.delete().catch(() => {}), 5000)).catch(() => {});
+            flags: [MessageFlags.Ephemeral]
+          }).catch(() => {});
           return;
         }
-
         // Check cooldowns
         if (command.cooldown) {
           const cooldownKey = `${message.author.id}-${commandName}`;
           if (cooldowns.isOnCooldown(cooldownKey, command.cooldown)) {
             activeRequests.delete(userId); // Clean up
             const timeLeft = cooldowns.getTimeLeft(cooldownKey, command.cooldown);
-            
+            const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
+
             message.reply({
               embeds: [
                 {
                   color: parseInt(config.colors.warning.slice(1), 16),
                   title: '⏳ Wait a moment, darling (｡♥‿♥｡)',
-                  description: `You're going a bit too fast, sweetie! Please wait **${Math.ceil(timeLeft / 1000)}s** more. Mommy needs a little break too! (っ˘ω˘ς)`,
+                  description: `You're going a bit too fast, sweetie! Please wait till <t:${unixTime}:R>. Mommy needs a little break too! (っ˘ω˘ς)`,
                   timestamp: new Date(),
                 },
               ],
-            }).then(msg => {
-              let currentWait = Math.ceil(timeLeft / 1000);
-              const interval = setInterval(() => {
-                currentWait -= 1;
-                if (currentWait <= 0) {
-                  clearInterval(interval);
-                  msg.delete().catch(() => {});
-                } else {
-                  msg.edit({
-                    embeds: [
-                      {
-                        color: parseInt(config.colors.warning.slice(1), 16),
-                        title: '⏳ Wait a moment, darling (｡♥‿♥｡)',
-                        description: `You're going a bit too fast, sweetie! Please wait **${currentWait}s** more. Mommy needs a little break too! (っ˘ω˘ς)`,
-                        timestamp: new Date(),
-                      },
-                    ],
-                  }).catch(() => clearInterval(interval));
-                }
-              }, 1000);
+              flags: [MessageFlags.Ephemeral]
             }).catch(() => {});
             return;
           }
@@ -287,7 +237,8 @@ module.exports = {
                 timestamp: new Date(),
               },
             ],
-          }).then(msg => setTimeout(() => msg.delete().catch(() => {}), 10000)).catch(() => {});
+            flags: [MessageFlags.Ephemeral]
+          }).catch(() => {});
         } finally {
           activeRequests.delete(userId);
         }
