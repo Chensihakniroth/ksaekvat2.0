@@ -145,6 +145,7 @@ export default function GlobalTicker() {
           height: 100%;
           align-items: center;
           animation: ticker-swipe 60s linear infinite;
+          width: max-content;
         }
 
         .animate-ticker:hover {

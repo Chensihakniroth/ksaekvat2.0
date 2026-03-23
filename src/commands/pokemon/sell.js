@@ -69,7 +69,8 @@ module.exports = {
           if (animal && count > 0) {
             const { getRarityEmoji } = require('../../utils/images.js');
             const rarityEmoji = getRarityEmoji(rarity, client);
-            const value = animal.value * count;
+            const baseValue = animal.value || config.hunting.rarities[rarity]?.value || 100;
+            const value = baseValue * count;
             totalValue += value;
             pokemonSold += count;
             soldPokemon.push(
@@ -94,6 +95,7 @@ module.exports = {
       // Clear all animals and add money
       userData.animals = new Map();
       userData.balance += totalValue;
+      userData.markModified('animals');
       await database.saveUser(userData);
 
       const embed = new EmbedBuilder()
@@ -181,8 +183,9 @@ module.exports = {
         }
       }
 
-      const sellValue = foundAnimal.value;
+      const sellValue = foundAnimal.value || config.hunting.rarities[foundRarity]?.value || 100;
       userData.balance += sellValue;
+      userData.markModified('animals');
       await database.saveUser(userData);
 
       const imageUrl = await AnimalService.getPokemonImage(foundKey);
