@@ -57,6 +57,7 @@ export interface IUser extends Document {
     accentColor: string | null;
     bio: string | null;
     banner: string | null;
+    bannerPosition: string | null;
     avatar: string | null;
     music: string | null;
     slug: string | null;
@@ -165,6 +166,7 @@ const UserSchema: Schema = new Schema({
     accentColor: { type: String, default: '#22d3ee' }, // Cyan default
     bio: { type: String, default: 'Exploring the digital realm.' },
     banner: { type: String, default: null },
+    bannerPosition: { type: String, default: '50%' },
     avatar: { type: String, default: null },
     music: { type: String, default: null },
     slug: { type: String, default: null, index: true },

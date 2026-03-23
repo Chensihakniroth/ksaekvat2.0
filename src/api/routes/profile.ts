@@ -156,7 +156,7 @@ router.post('/update', async (req: any, res: Response) => {
     const { env } = require('../../utils/env.js');
     const decoded: any = jwt.verify(token, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls');
     
-    const { bio, accentColor, background, music, socials, banner, avatar, showStats, showInventory, portfolio, favorites, slug } = req.body;
+    const { bio, accentColor, background, music, socials, banner, bannerPosition, avatar, showStats, showInventory, portfolio, favorites, slug } = req.body;
 
     const user = await User.findOne({ id: decoded.id });
     if (!user) return res.status(404).json({ success: false, error: 'User not found' });
@@ -178,6 +178,7 @@ router.post('/update', async (req: any, res: Response) => {
       background: background !== undefined ? background : user.profileTheme.background,
       music: music !== undefined ? music : user.profileTheme.music,
       banner: banner !== undefined ? banner : user.profileTheme.banner,
+      bannerPosition: bannerPosition !== undefined ? bannerPosition : user.profileTheme.bannerPosition,
       avatar: avatar !== undefined ? avatar : user.profileTheme.avatar,
       slug: slug !== undefined ? slug : user.profileTheme.slug,
       showStats: showStats !== undefined ? showStats : user.profileTheme.showStats,

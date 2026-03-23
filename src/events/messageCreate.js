@@ -112,6 +112,7 @@ module.exports = {
 
         const handleSpam = (penaltyTime, title, desc) => {
           const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, penaltyTime);
+          const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
           
           // Only reply if it's the first few strikes to avoid bot-spamming-about-spam
           if (strikeData.count < 4) {
@@ -119,10 +120,10 @@ module.exports = {
               embeds: [{
                 color: parseInt(config.colors.warning.slice(1), 16),
                 title: title,
-                description: desc + `\n\n**Wait time: ${(timeLeft / 1000).toFixed(1)}s**`,
+                description: desc + `\n\n**Wait time: <t:${unixTime}:R>**`,
                 timestamp: new Date(),
               }],
-            }).catch(() => {});
+            }).then(msg => setTimeout(() => msg.delete().catch(() => {}), Math.min(timeLeft, 5000))).catch(() => {});
           }
 
           strikeData.count++;
@@ -156,14 +157,16 @@ module.exports = {
           strikeData.lastSpam = now;
           spamStrikes.set(userId, strikeData);
           const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, GLOBAL_3S);
-          return message.reply({
+          const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
+          message.reply({
             embeds: [{
               color: parseInt(config.colors.warning.slice(1), 16),
               title: '⏳ Wait a moment, sweetie (｡♥‿♥｡)',
-              description: `Mommy needs a 3-second break too! Please wait **${(timeLeft / 1000).toFixed(1)}s** more. (っ˘ω˘ς)`,
+              description: `Mommy needs a 3-second break too! Please wait till <t:${unixTime}:R>. (っ˘ω˘ς)`,
               timestamp: new Date(),
             }],
-          });
+          }).then(msg => setTimeout(() => msg.delete().catch(() => {}), Math.min(timeLeft, 5000))).catch(() => {});
+          return;
         }
 
         // 3. Clear to go!
@@ -173,7 +176,7 @@ module.exports = {
         // Check if user is admin for admin-only commands
         if (command.adminOnly && !config.adminIds.includes(message.author.id)) {
           activeRequests.delete(userId); // Important: clean up if denied!
-          return message.reply({
+          message.reply({
             embeds: [
               {
                 color: parseInt(config.colors.error.slice(1), 16),
@@ -183,7 +186,8 @@ module.exports = {
                 timestamp: new Date(),
               },
             ],
-          });
+          }).then(msg => setTimeout(() => msg.delete().catch(() => {}), 5000)).catch(() => {});
+          return;
         }
 
         // Check cooldowns
@@ -192,16 +196,18 @@ module.exports = {
           if (cooldowns.isOnCooldown(cooldownKey, command.cooldown)) {
             activeRequests.delete(userId); // Clean up
             const timeLeft = cooldowns.getTimeLeft(cooldownKey, command.cooldown);
-            return message.reply({
+            const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
+            message.reply({
               embeds: [
                 {
                   color: parseInt(config.colors.warning.slice(1), 16),
                   title: '⏳ Wait a moment, darling (｡♥‿♥｡)',
-                  description: `You're going a bit too fast, sweetie! Please wait **${Math.ceil(timeLeft / 1000)}s** more. Mommy needs a little break too! (っ˘ω˘ς)`,
+                  description: `You're going a bit too fast, sweetie! Please wait till <t:${unixTime}:R>. Mommy needs a little break too! (っ˘ω˘ς)`,
                   timestamp: new Date(),
                 },
               ],
-            });
+            }).then(msg => setTimeout(() => msg.delete().catch(() => {}), Math.min(timeLeft, 5000))).catch(() => {});
+            return;
           }
           cooldowns.setCooldown(cooldownKey);
         }
@@ -229,7 +235,7 @@ module.exports = {
                 timestamp: new Date(),
               },
             ],
-          });
+          }).then(msg => setTimeout(() => msg.delete().catch(() => {}), 10000)).catch(() => {});
         } finally {
           activeRequests.delete(userId);
         }
