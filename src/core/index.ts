@@ -145,6 +145,7 @@ cron.schedule('0 0 * * *', async () => {
     u.dailyClaimed = false;
     // Generate new quests for everyone! (｡♥‿♥｡)
     await QuestService.generateDailyQuests(u.id);
+    await QuestService.generateWeeklyQuests(u.id);
     await database.saveUser(u);
   }
 });

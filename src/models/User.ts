@@ -91,6 +91,15 @@ export interface IUser extends Document {
     rewarded: boolean;
   }[];
   lastQuestReset: Date | null;
+  weeklyQuests: {
+    questId: string;
+    type: string;
+    target: number;
+    current: number;
+    completed: boolean;
+    rewarded: boolean;
+  }[];
+  lastWeeklyQuestReset: Date | null;
   stats: IUserStats;
   joinedAt: Date;
   customPrefix?: string;   // User's personal main prefix (e.g. 'K', '!')
@@ -198,6 +207,10 @@ const UserSchema: Schema = new Schema({
 
   quests: [QuestSchema],
   lastQuestReset: { type: Date, default: null },
+  
+  // Weekly Quests
+  weeklyQuests: [QuestSchema],
+  lastWeeklyQuestReset: { type: Date, default: null },
 
   stats: {
     totalGambled: { type: Number, default: 0 },
