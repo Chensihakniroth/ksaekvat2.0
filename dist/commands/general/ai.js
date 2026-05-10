@@ -36,12 +36,10 @@ module.exports = {
             let processedUserMessage = text;
             const url = `${baseUrl}/chat/completions`;
             // Adjusted the AI prompt for a lowkey, supportive mommy persona
+            // Prioritize the detailed configPrompt (Juicy.ai style) and optionally append DB charCard info
             let finalSystemPrompt = configPrompt;
             if (charCard) {
-                finalSystemPrompt = `Name: ${charCard.name}. Style: ${charCard.style}. Personality: ${charCard.personality}. Rules: Respond ONLY in English. No Khmer script. Keep it nurturing and supportive like a lowkey mommy persona, but stay concise and helpful. Don't overdo the emojis. ${charCard.rules || ''}`;
-            }
-            else {
-                finalSystemPrompt = 'You are a warm, nurturing AI assistant with a subtle mommy persona. Keep responses concise, helpful, and supportive without going overboard on emojis.';
+                finalSystemPrompt += `\n\n[Additional Database Context: Name: ${charCard.name}. Personality: ${charCard.personality}. Style: ${charCard.style}.]`;
             }
             const messages = [
                 { role: 'system', content: finalSystemPrompt },
