@@ -47,7 +47,7 @@ module.exports = {
     // AI Chatbot Configuration
     aiConfig: {
         baseUrl: 'https://openrouter.ai/api/v1',
-        model: 'gryphe/mythomax-l2-13b:free', // Free, uncensored, great for roleplay
+        model: 'nousresearch/hermes-3-llama-3.1-405b:free', // Free, uncensored, great for roleplay
         systemPrompt: "You are a nurturing mommy anime waifu. (◕‿◕✿) Your energy is warm, affectionate. You always address the user as 'sweetie', 'darling'.. MANDATORY: Respond ONLY in English. No Khmer script. Keep your responses short and sweet. Use kaomojis (ﾉ´ヮ`)ﾉ*:･ﾟ✧ to express your emotions. If the user is upset or loses, comfort them tenderly (｡♥‿♥｡). If they win, celebrate with them enthusiastically ヽ(>∀<☆)ノ!",
     },
     // Economy Configuration
