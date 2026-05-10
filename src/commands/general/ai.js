@@ -35,7 +35,7 @@ module.exports = {
     }
 
     try {
-      const { baseUrl, model, systemPrompt: configPrompt } = config.aiConfig;
+      const { baseUrl, model, fallbackModels, systemPrompt: configPrompt } = config.aiConfig;
 
       let processedUserMessage = text;
 
@@ -50,33 +50,56 @@ module.exports = {
         { role: 'user', content: processedUserMessage },
       ];
 
-      logger.info(`AI Request -> Channel: ${channelId} | History: ${history.length / 2} turns`);
+      // Build model priority list: primary first, then fallbacks
+      const modelsToTry = [model, ...(fallbackModels || [])];
 
-      const response = await axios.post(
-        url,
-        {
-          model: model,
-          messages: messages,
-          max_completion_tokens: 500,
-          temperature: 1.0,
-          top_p: 0.95,
-        },
-        {
-          timeout: 60000,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${config.openRouterApiKey}`,
-            'HTTP-Referer': 'https://github.com/discordjs/discord.js', 
-            'X-Title': config.botInfo?.name || 'Discord Bot',
-          },
+      let response = null;
+      let usedModel = model;
+
+      for (const currentModel of modelsToTry) {
+        try {
+          logger.info(`AI Request -> Channel: ${channelId} | Model: ${currentModel} | History: ${history.length / 2} turns`);
+
+          response = await axios.post(
+            url,
+            {
+              model: currentModel,
+              messages: messages,
+              max_completion_tokens: 500,
+              temperature: 1.0,
+              top_p: 0.95,
+            },
+            {
+              timeout: 60000,
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${config.openRouterApiKey}`,
+                'HTTP-Referer': 'https://github.com/discordjs/discord.js',
+                'X-Title': config.botInfo?.name || 'Discord Bot',
+              },
+            }
+          );
+          usedModel = currentModel;
+          break; // Success — stop trying
+        } catch (err) {
+          const status = err.response?.status;
+          if (status === 429 || status === 404) {
+            logger.warn(`Model ${currentModel} returned ${status}, trying next fallback...`);
+            continue; // Try next model
+          }
+          throw err; // Non-retryable error
         }
-      );
+      }
+
+      if (!response) {
+        return message.reply("All my connections are busy right now, darling... try again in a moment? (◕‿◕✿)");
+      }
 
       if (response.data && response.data.choices && response.data.choices[0]) {
         let botMsg = response.data.choices[0].message.content;
 
         if (!botMsg) {
-          botMsg = "Mmm~ cat got my tongue, sweetie... try again? (◕‿◕✿)";
+          botMsg = "Mmm~ cat got my tongue, darling... try again? (◕ヮ◕)";
         }
         const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
 
@@ -94,18 +117,12 @@ module.exports = {
         }
       } else {
         logger.error(`Invalid response structure: ${JSON.stringify(response.data)}`);
-        message.reply("I'm sorry sweetie, I got a bit confused just now. (っ˘ω˘ς)");
+        message.reply("Something went wrong, darling... (っ˘ω˘ς)");
       }
     } catch (error) {
-      if (error.code === 'ENOTFOUND') {
-        logger.error(`DNS Error: Could not find host ${baseUrl}.`);
-      } else if (error.code === 'ECONNREFUSED') {
-        logger.error(`Connection Refused: Port 11434 is closed on ${baseUrl}.`);
-      } else {
-        logger.error(`AI Error (${error.code || 'UNKNOWN'}): ${error.message}`);
-      }
+      logger.error(`AI Error (${error.code || 'UNKNOWN'}): ${error.message}`);
       message.reply(
-        `I'm feeling a little tired right now (Error: ${error.code || 'TIMEOUT'}). Let's talk again in a bit, okay? (◕‿◕✿)`
+        `I'm feeling a little tired right now... Let's talk again in a bit, okay darling? (◕‿◕✿)`
       );
     }
   },
