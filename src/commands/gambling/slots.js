@@ -7,7 +7,7 @@ const EconomyService = require('../../services/EconomyService').default || requi
 module.exports = {
   name: 'slots',
   aliases: ['s', 'slot', 'slotmachine'],
-  description: 'Play the slot machine with Mommy! (◕‿◕✿)',
+  description: 'Play the slot machine.',
   usage: 'slots <amount>',
   cooldown: 5000,
   async execute(message, args, client) {
@@ -16,9 +16,9 @@ module.exports = {
         embeds: [
           {
             color: colors.error,
-            title: '❌ Missing amount',
+            title: '❌ Invalid Amount',
             description:
-              "Please specify how much you'd like to bet. (｡♥‿♥｡) \n**Usage:** `Kslots <amount>`",
+              "Please specify a valid amount to bet.\n**Usage:** `Kslots <amount>`",
           },
         ],
       });
@@ -32,9 +32,9 @@ module.exports = {
 
     if (betAmount <= 0) {
       if (args[0]?.toLowerCase() === 'all' && userData.balance <= 0) {
-        return message.reply({ embeds: [{ color: colors.error, title: '💸 No funds found!', description: `You don't have any money to play right now, sweetie. (◕‿◕✿)` }] });
+        return message.reply({ embeds: [{ color: colors.error, title: '💸 No Funds', description: `You don't have any balance to bet.` }] });
       }
-      return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid amount', description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)' }] });
+      return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid Amount', description: 'Please provide a valid number.' }] });
     }
 
     // If user tries to bet "all" but it would exceed maxBet, use maxBet instead
@@ -43,7 +43,7 @@ module.exports = {
     }
 
     if (betAmount < minBet) {
-      return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet too low', description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)` }] });
+      return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet Too Low', description: `Minimum bet is **${minBet.toLocaleString()}** ${config.economy.currency}.` }] });
     }
 
     if (!(await database.hasBalance(message.author.id, betAmount))) {
@@ -52,8 +52,8 @@ module.exports = {
         embeds: [
           {
             color: colors.error,
-            title: '💸 Insufficient funds',
-            description: `You don't have enough to make that bet, darling! (｡•́︿•̀｡)\n**Current Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`,
+            title: '💸 Insufficient Funds',
+            description: `You don't have enough balance for this bet.\n**Current Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`,
           },
         ],
       });
@@ -68,18 +68,18 @@ module.exports = {
         weight: 2,
         emoji: '💎',
         multiplier: 10,
-        name: 'A big diamond for a big winner! ✨',
+        name: 'Diamond Jackpot! ✨',
       },
-      { type: 'rocket', weight: 5, emoji: '🚀', multiplier: 5, name: 'To the moon, darling! 🚀' },
+      { type: 'rocket', weight: 5, emoji: '🚀', multiplier: 5, name: 'To the moon! 🚀' },
       {
         type: 'coin',
         weight: 31,
         emoji: '🪙',
         multiplier: 2,
-        name: 'You won some money, sweetie! 💰',
+        name: 'Coin Win! 💰',
       },
-      { type: 'draw', weight: 31, emoji: '🤝', multiplier: 1, name: "It's a draw, little one" },
-      { type: 'lose', weight: 31, emoji: '💀', multiplier: 0, name: 'Oh no, you lost, darling' },
+      { type: 'draw', weight: 31, emoji: '🤝', multiplier: 1, name: "It's a Draw" },
+      { type: 'lose', weight: 31, emoji: '💀', multiplier: 0, name: 'You Lost' },
     ];
 
     let outcomePool = [];
@@ -112,7 +112,7 @@ module.exports = {
       .setColor(colors.primary)
       .setTitle('🎰 Slot Machine')
       .setDescription(
-        `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n🎰 ┃ 🎯 ┃ 🎲 ┃\n**Spinning... (ﾉ´ヮ)ﾉ*:･ﾟ✧**`
+        `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n🎰 ┃ 🎯 ┃ 🎲 ┃\n*Spinning...*`
       );
 
     const sentMessage = await message.reply({ embeds: [slotEmbed] });
@@ -179,7 +179,7 @@ module.exports = {
 
       slotEmbed
         .setColor(colors.success)
-        .setTitle(`🎉 You won, my lucky little one! ヽ(>∀<☆)ノ`)
+        .setTitle(`🎉 You Won!`)
         .setDescription(
           `**${selectedOutcome.name}**\n\n` +
           `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
@@ -191,7 +191,7 @@ module.exports = {
       if (expGain && expGain.leveledUp) {
         slotEmbed.addFields({
           name: '🎉 Level Up!',
-          value: `Congratulations! You've reached level **${expGain.newLevel}**, sweetie! (◕‿◕✿)`,
+          value: `You have reached level **${expGain.newLevel}**!`,
           inline: false,
         });
       }
@@ -201,10 +201,10 @@ module.exports = {
 
       slotEmbed
         .setColor(colors.secondary)
-        .setTitle("🤝 It's a draw, little one!")
+        .setTitle("🤝 It's a Draw")
         .setDescription(
           `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-          `**Mommy is giving your money back!**\n\n` +
+          `*Bet refunded.*\n\n` +
           `**Returned:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
           `**Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}`
         );
@@ -214,7 +214,7 @@ module.exports = {
 
       slotEmbed
         .setColor(colors.error)
-        .setTitle('💀 Oh no, you lost, darling (｡•́︿•̀｡)')
+        .setTitle('💥 You Lost')
         .setDescription(
           `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
           `**Loss:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
