@@ -57,7 +57,7 @@ module.exports = {
         {
           model: model,
           messages: messages,
-          max_completion_tokens: 300,
+          max_completion_tokens: 500,
           temperature: 1.0,
           top_p: 0.95,
         },
