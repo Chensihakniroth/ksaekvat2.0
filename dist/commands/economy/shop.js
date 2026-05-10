@@ -28,7 +28,7 @@ module.exports = {
                 embed.setDescription(`Welcome sweetie! Here are all my beautiful characters from **${gameNames[selectedGame]}**! (◕‿◕✿)\n\n*Select a game or browse the pages below.*`);
                 const allChars = registry.getAllCharacters().filter(c => c.game === selectedGame && (c.rarity === '4' || c.rarity === '5'));
                 const totalPages = Math.ceil(allChars.length / itemsPerPage);
-                embed.setFooter({ text: `Page ${currentPage + 1} of ${totalPages} • Each character costs 200 (4★) or 400 (5★) Star Dust` });
+                embed.setFooter({ text: `Page ${currentPage + 1} of ${totalPages} • Each character costs 400 (4★) or 600 (5★) Star Dust` });
             }
             else {
                 embed.setDescription(`Welcome sweetie! What would you like to buy today? (◕‿◕✿)\n\n*Use the menu below to switch categories.*`);
@@ -80,7 +80,7 @@ module.exports = {
                         .addOptions(pageItems.map(c => ({
                         label: `${c.name} (${c.rarity}★)`,
                         value: c.name,
-                        description: `${c.rarity === '5' ? 400 : 200} Star Dust`,
+                        description: `${c.rarity === '5' ? 600 : 400} Star Dust`,
                         emoji: c.emoji || (c.rarity === '5' ? '⭐' : '✨')
                     }))));
                     rows.push(charMenu);
@@ -157,7 +157,7 @@ module.exports = {
                     const charData = registry.getCharacter(value);
                     selectedItem = {
                         name: charData.name,
-                        price: charData.rarity === '5' ? 400 : 200,
+                        price: charData.rarity === '5' ? 600 : 400,
                         emoji: charData.emoji,
                         currency: 'star_dust'
                     };

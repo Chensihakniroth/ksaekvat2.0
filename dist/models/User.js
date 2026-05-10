@@ -89,10 +89,46 @@ const UserSchema = new mongoose_1.Schema({
         affinity: { type: Number, default: 0 },
         marriedAt: { type: Date, default: null },
     },
-    profileTheme: { type: String, default: 'default' },
+    profileTheme: {
+        theme: { type: String, default: 'default' },
+        background: { type: String, default: null },
+        accentColor: { type: String, default: '#22d3ee' }, // Cyan default
+        bio: { type: String, default: 'Exploring the digital realm.' },
+        banner: { type: String, default: null },
+        bannerPosition: { type: String, default: '50%' },
+        avatar: { type: String, default: null },
+        music: { type: String, default: null },
+        slug: { type: String, default: null, index: true },
+        socials: {
+            discord: { type: String, default: null },
+            instagram: { type: String, default: null },
+            twitter: { type: String, default: null },
+            github: { type: String, default: null },
+            website: { type: String, default: null },
+        },
+        portfolio: [
+            {
+                type: { type: String, enum: ['github', 'art'] },
+                title: String,
+                url: String,
+                description: String,
+            },
+        ],
+        favorites: [
+            {
+                type: { type: String, enum: ['character', 'animal'] },
+                name: String,
+            },
+        ],
+        showStats: { type: Boolean, default: true },
+        showInventory: { type: Boolean, default: true },
+    },
     unlockedThemes: { type: [String], default: ['default'] },
     quests: [QuestSchema],
     lastQuestReset: { type: Date, default: null },
+    // Weekly Quests
+    weeklyQuests: [QuestSchema],
+    lastWeeklyQuestReset: { type: Date, default: null },
     stats: {
         totalGambled: { type: Number, default: 0 },
         totalWon: { type: Number, default: 0 },

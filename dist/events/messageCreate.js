@@ -3,7 +3,7 @@ const config = require('../config/config.js');
 const logger = require('../utils/logger.js');
 const cooldowns = require('../utils/cooldowns.js');
 const database = require('../services/DatabaseService');
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, MessageFlags } = require('discord.js');
 const axios = require('axios');
 // Memory storage for conversation history (Channel-based)
 const conversationMemory = new Map();
@@ -103,15 +103,17 @@ module.exports = {
                 }
                 const handleSpam = (penaltyTime, title, desc) => {
                     const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, penaltyTime);
+                    const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
                     // Only reply if it's the first few strikes to avoid bot-spamming-about-spam
                     if (strikeData.count < 4) {
                         message.reply({
                             embeds: [{
                                     color: parseInt(config.colors.warning.slice(1), 16),
                                     title: title,
-                                    description: desc + `\n\n**Wait time: ${(timeLeft / 1000).toFixed(1)}s**`,
+                                    description: desc + `\n\n**Wait time: <t:${unixTime}:R>**`,
                                     timestamp: new Date(),
                                 }],
+                            flags: [MessageFlags.Ephemeral]
                         }).catch(() => { });
                     }
                     strikeData.count++;
@@ -145,14 +147,17 @@ module.exports = {
                     strikeData.lastSpam = now;
                     spamStrikes.set(userId, strikeData);
                     const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, GLOBAL_3S);
-                    return message.reply({
+                    const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
+                    message.reply({
                         embeds: [{
                                 color: parseInt(config.colors.warning.slice(1), 16),
                                 title: '⏳ Wait a moment, sweetie (｡♥‿♥｡)',
-                                description: `Mommy needs a 3-second break too! Please wait **${(timeLeft / 1000).toFixed(1)}s** more. (っ˘ω˘ς)`,
+                                description: `Mommy needs a 3-second break too! Please wait till <t:${unixTime}:R>. (っ˘ω˘ς)`,
                                 timestamp: new Date(),
                             }],
-                    });
+                        flags: [MessageFlags.Ephemeral]
+                    }).catch(() => { });
+                    return;
                 }
                 // 3. Clear to go!
                 cooldowns.setCooldown(`GLOBAL-${userId}`);
@@ -160,7 +165,7 @@ module.exports = {
                 // Check if user is admin for admin-only commands
                 if (command.adminOnly && !config.adminIds.includes(message.author.id)) {
                     activeRequests.delete(userId); // Important: clean up if denied!
-                    return message.reply({
+                    message.reply({
                         embeds: [
                             {
                                 color: parseInt(config.colors.error.slice(1), 16),
@@ -169,7 +174,9 @@ module.exports = {
                                 timestamp: new Date(),
                             },
                         ],
-                    });
+                        flags: [MessageFlags.Ephemeral]
+                    }).catch(() => { });
+                    return;
                 }
                 // Check cooldowns
                 if (command.cooldown) {
@@ -177,16 +184,19 @@ module.exports = {
                     if (cooldowns.isOnCooldown(cooldownKey, command.cooldown)) {
                         activeRequests.delete(userId); // Clean up
                         const timeLeft = cooldowns.getTimeLeft(cooldownKey, command.cooldown);
-                        return message.reply({
+                        const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
+                        message.reply({
                             embeds: [
                                 {
                                     color: parseInt(config.colors.warning.slice(1), 16),
                                     title: '⏳ Wait a moment, darling (｡♥‿♥｡)',
-                                    description: `You're going a bit too fast, sweetie! Please wait **${Math.ceil(timeLeft / 1000)}s** more. Mommy needs a little break too! (っ˘ω˘ς)`,
+                                    description: `You're going a bit too fast, sweetie! Please wait till <t:${unixTime}:R>. Mommy needs a little break too! (っ˘ω˘ς)`,
                                     timestamp: new Date(),
                                 },
                             ],
-                        });
+                            flags: [MessageFlags.Ephemeral]
+                        }).catch(() => { });
+                        return;
                     }
                     cooldowns.setCooldown(cooldownKey);
                 }
@@ -208,7 +218,8 @@ module.exports = {
                                 timestamp: new Date(),
                             },
                         ],
-                    });
+                        flags: [MessageFlags.Ephemeral]
+                    }).catch(() => { });
                 }
                 finally {
                     activeRequests.delete(userId);

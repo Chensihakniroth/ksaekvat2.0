@@ -100,9 +100,11 @@ async function bootstrap() {
     // 4. HTTP server + API + Dashboard
     logger.section('Web Server');
     const app = express();
-    app.use(express.json());
+    app.use(express.json({ limit: '15mb' }));
     const cookieParser = require('cookie-parser');
     app.use(cookieParser());
+    // Static assets
+    app.use('/assets', express.static(path.join(__dirname, '../../assets')));
     // API Routes
     app.use('/api', require('../api/index'));
     // Serve dashboard static build
@@ -153,6 +155,7 @@ cron.schedule('0 0 * * *', async () => {
         u.dailyClaimed = false;
         // Generate new quests for everyone! (｡♥‿♥｡)
         await QuestService.generateDailyQuests(u.id);
+        await QuestService.generateWeeklyQuests(u.id);
         await database.saveUser(u);
     }
 });

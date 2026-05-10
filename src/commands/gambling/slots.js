@@ -26,7 +26,7 @@ module.exports = {
 
     const userData = await database.getUser(message.author.id, message.author.username);
     const { minBet, maxBet } = config.gambling.slots;
-    const betAmount = EconomyService.parseBet(args[0], userData.balance, minBet, maxBet);
+    let betAmount = EconomyService.parseBet(args[0], userData.balance, minBet, maxBet);
 
     let isAllBet = args[0]?.toLowerCase() === 'all';
 

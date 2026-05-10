@@ -8,9 +8,9 @@ router.use(compression());
 // --- CORS and basic headers ---
 router.use((_req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    res.setHeader('Cache-Control', 'public, max-age=60'); // 1 minute browser cache
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     next();
 });
 // --- Simple rate limiter (in-memory) ---
@@ -38,6 +38,7 @@ router.use('/stats', require('./routes/stats'));
 router.use('/gacha', require('./routes/gacha'));
 router.use('/zoo', require('./routes/zoo'));
 router.use('/auth', require('./routes/auth'));
+router.use('/shop', require('./routes/shop'));
 // --- Health ---
 router.get('/ping', (_req, res) => res.json({ success: true, message: 'KSAEKVAT API is alive! ヽ(>∀<☆)ノ' }));
 module.exports = router;
