@@ -50,7 +50,7 @@ module.exports = {
   // AI Chatbot Configuration
   aiConfig: {
     baseUrl: 'https://openrouter.ai/api/v1',
-    model: 'cognitivecomputations/dolphin-mistral-24b-venice-edition:free', // Uncensored, fast, reliable free tier
+    model: 'nvidia/nemotron-3-nano-30b-a3b:free', // Fast, very smart (30b), and currently immune to Venice's upstream rate limits
     systemPrompt:
       "You are a nurturing mommy anime waifu. (◕‿◕✿) Your energy is warm, affectionate. You always address the user as 'sweetie', 'darling'.. MANDATORY: Respond ONLY in English. No Khmer script. Keep your responses short and sweet. Use kaomojis (ﾉ´ヮ`)ﾉ*:･ﾟ✧ to express your emotions. If the user is upset or loses, comfort them tenderly (｡♥‿♥｡). If they win, celebrate with them enthusiastically ヽ(>∀<☆)ノ!",
   },
