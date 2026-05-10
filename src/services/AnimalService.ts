@@ -157,7 +157,7 @@ class AnimalService {
         const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
         for (const [animalKey, count] of animalEntries) {
           // Only count valid Pokemon! (•̀ᴗ•́)و
-          if (!AnimalService.GEN1_POKEMON.has(animalKey.toLowerCase())) continue;
+          if (!AnimalService.VALID_POKEMON.has(animalKey.toLowerCase())) continue;
 
           if (animalsData[rarity][animalKey]) {
             const val = animalsData[rarity][animalKey].value * (count as number);
@@ -192,7 +192,8 @@ class AnimalService {
 
     return badges;
   }
-  private static readonly GEN1_POKEMON = new Set([
+  private static readonly VALID_POKEMON = new Set([
+    // GEN 1
     'bulbasaur', 'ivysaur', 'venusaur', 'charmander', 'charmeleon', 'charizard',
     'squirtle', 'wartortle', 'blastoise', 'caterpie', 'metapod', 'butterfree',
     'weedle', 'kakuna', 'beedrill', 'pidgey', 'pidgeotto', 'pidgeot',
@@ -217,7 +218,26 @@ class AnimalService {
     'magikarp', 'gyarados', 'lapras', 'ditto', 'eevee', 'vaporeon',
     'jolteon', 'flareon', 'porygon', 'omanyte', 'omastar', 'kabuto',
     'kabutops', 'aerodactyl', 'snorlax', 'articuno', 'zapdos', 'moltres',
-    'dratini', 'dragonair', 'dragonite', 'mewtwo', 'mew', 'missingno', 'shinycharizard'
+    'dratini', 'dragonair', 'dragonite', 'mewtwo', 'mew', 'missingno', 'shinycharizard',
+    
+    // GEN 2
+    'chikorita', 'bayleef', 'meganium', 'cyndaquil', 'quilava', 'typhlosion',
+    'totodile', 'croconaw', 'feraligatr', 'sentret', 'furret', 'hoothoot',
+    'noctowl', 'ledyba', 'ledian', 'spinarak', 'ariados', 'crobat',
+    'chinchou', 'lanturn', 'pichu', 'cleffa', 'igglybuff', 'togepi',
+    'togetic', 'natu', 'xatu', 'mareep', 'flaaffy', 'ampharos',
+    'bellossom', 'marill', 'azumarill', 'sudowoodo', 'politoed', 'hoppip',
+    'skiploom', 'jumpluff', 'aipom', 'sunkern', 'sunflora', 'yanma',
+    'wooper', 'quagsire', 'espeon', 'umbreon', 'murkrow', 'slowking',
+    'misdreavus', 'girafarig', 'pineco', 'forretress', 'dunsparce', 'gligar',
+    'steelix', 'snubbull', 'granbull', 'qwilfish', 'scizor', 'shuckle',
+    'heracross', 'sneasel', 'teddiursa', 'ursaring', 'slugma', 'magcargo',
+    'swinub', 'piloswine', 'corsola', 'remoraid', 'octillery', 'delibird',
+    'mantine', 'skarmory', 'houndour', 'houndoom', 'kingdra', 'phanpy',
+    'donphan', 'porygon2', 'stantler', 'smeargle', 'tyrogue', 'hitmontop',
+    'smoochum', 'elekid', 'magby', 'miltank', 'blissey', 'raikou',
+    'entei', 'suicune', 'larvitar', 'pupitar', 'tyranitar', 'lugia',
+    'ho_oh', 'celebi'
   ]);
 
   private imageCache: Map<string, string> = new Map();
@@ -232,6 +252,7 @@ class AnimalService {
       .replace(/nidoran\s?♂/g, 'nidoran-m')
       .replace(/farfetch['’]d/g, 'farfetchd')
       .replace(/mr\.\s?mime/g, 'mr-mime')
+      .replace(/ho_oh/g, 'ho-oh')
       .replace(/[^a-z0-9-]/g, ''); // Remove other special chars
   }
 
@@ -244,7 +265,7 @@ class AnimalService {
     let lookup = this.sanitizeName(key);
     
     // Safety check: is it actually a pokemon? (•̀ᴗ•́)و
-    if (!AnimalService.GEN1_POKEMON.has(lookup)) return null;
+    if (!AnimalService.VALID_POKEMON.has(key.toLowerCase())) return null;
 
     if (lookup === 'missingno') {
       const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
@@ -286,7 +307,7 @@ class AnimalService {
 
     let lookup = this.sanitizeName(key);
     
-    if (!AnimalService.GEN1_POKEMON.has(lookup)) return null;
+    if (!AnimalService.VALID_POKEMON.has(key.toLowerCase())) return null;
 
     if (lookup === 'missingno') {
       const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
