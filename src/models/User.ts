@@ -31,6 +31,8 @@ export interface IUser extends Document {
   experience: number;
   dailyClaimed: boolean;
   weeklyClaimed: boolean;
+  lastDaily: Date | null;
+  lastWeekly: Date | null;
   lastGachaReset: Date | null;
   dailyPulls: number;
   extraPulls: number;
@@ -131,6 +133,8 @@ const UserSchema: Schema = new Schema({
   // Rewards & Gacha
   dailyClaimed: { type: Boolean, default: false },
   weeklyClaimed: { type: Boolean, default: false },
+  lastDaily: { type: Date, default: null },
+  lastWeekly: { type: Date, default: null },
   lastGachaReset: { type: Date, default: null },
   dailyPulls: { type: Number, default: 0 },
   extraPulls: { type: Number, default: 0 },

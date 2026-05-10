@@ -62,19 +62,15 @@ module.exports = {
         const spLower = shortPrefix.toLowerCase();
         let found = false;
 
-        if (contentLower.startsWith(spLower + ' ') || contentLower === spLower) {
-          prefix = message.content.slice(0, shortPrefix.length);
-          found = true;
-        } else {
-          for (const p of userMainPrefixes) {
-            const pLower = p.toLowerCase();
-            if (contentLower.startsWith(pLower + spLower)) {
-              const nextChar = contentLower.charAt(pLower.length + spLower.length);
-              if (nextChar === '' || nextChar === ' ') {
-                prefix = message.content.slice(0, p.length + shortPrefix.length);
-                found = true;
-                break;
-              }
+        // Require main prefix for all short prefixes (including 'w' for weekly)
+        for (const p of userMainPrefixes) {
+          const pLower = p.toLowerCase();
+          if (contentLower.startsWith(pLower + spLower)) {
+            const nextChar = contentLower.charAt(pLower.length + spLower.length);
+            if (nextChar === '' || nextChar === ' ') {
+              prefix = message.content.slice(0, p.length + shortPrefix.length);
+              found = true;
+              break;
             }
           }
         }
