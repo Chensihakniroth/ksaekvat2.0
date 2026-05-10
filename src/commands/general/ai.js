@@ -42,62 +42,6 @@ module.exports = {
 
       let processedUserMessage = text;
 
-      async function callGemini(retryCount = 0, useFlash = false) {
-        const modelName = useFlash ? 'gemini-2.5-flash' : 'gemini-2.5-pro';
-        try {
-          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${config.googleApiKey}`;
-          const geminiResponse = await axios.post(
-            geminiUrl,
-            {
-              contents: [
-                {
-                  parts: [
-                    {
-                      text: `Analyze this message and fix any typos or slang for better understanding. Respond ONLY with the corrected English text. Message: "${text}"`,
-                    },
-                  ],
-                },
-              ],
-              generationConfig: {
-                temperature: 0.1,
-                maxOutputTokens: 200,
-              },
-            },
-            { timeout: 10000 }
-          );
-
-          if (geminiResponse.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
-            return geminiResponse.data.candidates[0].content.parts[0].text.trim();
-          }
-        } catch (error) {
-          if (error.response?.status === 429 && !useFlash) {
-            logger.warn(`Gemini 2.5 Pro Limited. Falling back to 2.5 Flash...`);
-            return callGemini(0, true);
-          }
-
-          if (error.response?.status === 429 && retryCount < 2) {
-            const delay = Math.pow(2, retryCount) * 1000;
-            logger.warn(`Gemini ${modelName} Rate Limited. Retrying in ${delay}ms...`);
-            await new Promise((r) => setTimeout(r, delay));
-            return callGemini(retryCount + 1, useFlash);
-          }
-          throw error;
-        }
-        return text;
-      }
-
-      try {
-        processedUserMessage = await callGemini();
-        if (processedUserMessage !== text) {
-          logger.info(`Gemini Understood: "${text}" -> "${processedUserMessage}"`);
-        }
-      } catch (geminiError) {
-        if (geminiError.response?.status !== 429) {
-          logger.error(`Gemini processing failed: ${geminiError.message}`);
-        }
-        processedUserMessage = text;
-      }
-
       const url = `${baseUrl}/chat/completions`;
 
       // Adjusted the AI prompt for a lowkey, supportive mommy persona
@@ -130,7 +74,9 @@ module.exports = {
           timeout: 60000,
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${config.seaLionApiKey}`,
+            Authorization: `Bearer ${config.openRouterApiKey}`,
+            'HTTP-Referer': 'https://github.com/discordjs/discord.js', 
+            'X-Title': config.botInfo?.name || 'Discord Bot',
           },
         }
       );

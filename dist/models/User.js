@@ -57,6 +57,8 @@ const UserSchema = new mongoose_1.Schema({
     // Rewards & Gacha
     dailyClaimed: { type: Boolean, default: false },
     weeklyClaimed: { type: Boolean, default: false },
+    lastDaily: { type: Date, default: null },
+    lastWeekly: { type: Date, default: null },
     lastGachaReset: { type: Date, default: null },
     dailyPulls: { type: Number, default: 0 },
     extraPulls: { type: Number, default: 0 },

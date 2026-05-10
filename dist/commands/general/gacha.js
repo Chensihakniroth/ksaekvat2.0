@@ -255,7 +255,7 @@ module.exports = {
             finalEmbed.setImage('attachment://gacha-result.png');
             files.push(resultImageAttachment);
         }
-        // --- STEP 3: Wait for GIF to play, then edit the message ---
+        // --- STEP 3: Wait for GIF to play, then show results ---
         let waitTime = 1000;
         if (bannerGifUrl) {
             // Only wait if a GIF was shown
@@ -269,14 +269,14 @@ module.exports = {
                 waitTime = hasFiveStar ? 3200 : 3000;
         }
         await new Promise((r) => setTimeout(r, waitTime));
-        const messagePayload = { embeds: [finalEmbed], files: files };
+        // Send result message - delete GIF message if present to avoid confusion
         try {
-            if (mainMessage) {
-                await mainMessage.edit(messagePayload);
+            if (mainMessage && bannerGifUrl) {
+                // Delete the GIF message first, then send the result
+                await mainMessage.delete().catch(() => { });
             }
-            else {
-                await message.reply(messagePayload);
-            }
+            // Send fresh message with results
+            await message.reply({ embeds: [finalEmbed], files: files });
         }
         catch (err) {
             console.error(`Failed to deliver gacha results (message might be deleted):`, err.message);

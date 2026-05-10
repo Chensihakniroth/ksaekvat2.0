@@ -5,7 +5,7 @@ const QuestService = require('../../services/QuestService').default || require('
 const colors = require('../../utils/colors.js');
 module.exports = {
     name: 'quests',
-    aliases: ['q', 'daily', 'tasks', 'kquests'],
+    aliases: ['q', 'task', 'quest'],
     description: "View your daily tasks from Mommy! Complete them for big rewards! (｡♥‿♥｡)",
     usage: 'quests',
     async execute(message, args, client) {

@@ -6,7 +6,7 @@ const database = require('../../services/DatabaseService');
 module.exports = {
     name: 'help',
     aliases: ['hp', 'commands'],
-    description: "Mommy's guide to all the fun things we can do together! (◕‿◕✿)",
+    description: 'Displays a list of available commands and their usage.',
     usage: 'help [command]',
     category: 'general',
     execute: async (message, args, client) => {
@@ -14,20 +14,20 @@ module.exports = {
         if (args.length === 0) {
             // Get all unique commands (filter out aliases)
             const commands = [...new Set(client.commands.values())];
-            // Category Mapping with Mommy flavor
+            // Category Mapping
             const categoryNames = {
-                admin: "🔨 Mommy's Tools (Admin)",
-                pokemon: '🦊 Our Catchable Friends (Pokémon)',
-                battle: '⚔️ Protect Mommy (Battle)',
-                economy: '💰 Your Allowance (Economy)',
+                admin: '🔨 Admin',
+                pokemon: '🦊 Pokémon',
+                battle: '⚔️ Battle',
+                economy: '💰 Economy',
                 expressions: '😄 Expressions',
-                gambling: "🎰 Let's Play (Gambling)",
-                general: '📁 General Fun',
-                meme: '🎭 Silliness (Meme)',
-                profile: '👤 Your Info (Profile)',
+                gambling: '🎰 Gambling',
+                general: '📁 General',
+                meme: '🎭 Meme',
+                profile: '👤 Profile',
                 slash: '⚡ Slash Commands',
-                nsfw: '🔞 Grown-up Stuff (NSFW)',
-                special: '✨ Special Expressions'
+                nsfw: '🔞 NSFW',
+                special: '✨ Special'
             };
             // Organize commands by category
             const categories = {};
@@ -75,8 +75,8 @@ module.exports = {
             catch (_) { }
             const embed = new EmbedBuilder()
                 .setColor(colors.primary || '#7289da')
-                .setTitle(`(｡♥‿♥｡) Mommy's Little Helper ~ ${config.botInfo.name}`)
-                .setDescription(`Welcome sweetie! Here is everything we can do together. (ﾉ´ヮ\`)ﾉ*:･ﾟ✧\n\nYour current prefix: \`${userPrefix}\` — type \`${userPrefix}help [command]\` to learn more!\nChange your prefix anytime with \`${userPrefix}prefix\`! (◕‿◕✿)`)
+                .setTitle(`Command List ~ ${config.botInfo.name}`)
+                .setDescription(`**Prefix:** \`${userPrefix}\`\nType \`${userPrefix}help [command]\` to view specific details for a command.\nTo change your prefix, use \`${userPrefix}prefix\`.`)
                 .setThumbnail(client.user.displayAvatarURL());
             // Add fields for each category in order
             categoryOrder.forEach((cat) => {
@@ -98,12 +98,12 @@ module.exports = {
                     .map(([short, full]) => `\`${short}\` → \`${full}\``)
                     .join(' | ');
                 embed.addFields({
-                    name: "⌨️ Mommy's Shortcuts",
+                    name: '⌨️ Shortcuts',
                     value: shortPrefixList,
                     inline: false,
                 });
             }
-            embed.setFooter({ text: 'Mommy is always here for you, darling ~ (っ˘ω˘ς)' });
+            embed.setFooter({ text: `Use ${userPrefix}help [command] for more info.` });
             return message.reply({ embeds: [embed] });
         }
         // Detailed info for a specific command
@@ -114,34 +114,33 @@ module.exports = {
                 embeds: [
                     new EmbedBuilder()
                         .setColor(colors.error || '#f04747')
-                        .setTitle('❌ Oh no, darling...')
-                        .setDescription(`Mommy couldn't find the \`${search}\` command. (｡•́︿•̀｡)\nUse \`${prefix}help\` to see everything Mommy can do!`),
+                        .setTitle('❌ Command Not Found')
+                        .setDescription(`Could not find the \`${search}\` command.\nUse \`${prefix}help\` to see a list of all commands.`),
                 ],
             });
         }
         const embed = new EmbedBuilder()
             .setColor(colors.primary || '#7289da')
-            .setTitle(`📖 Let Mommy explain: ${command.name}`)
-            .setDescription(command.description || "Mommy hasn't written a description for this yet! (っ˘ω˘ς)")
+            .setTitle(`📖 Command: ${command.name}`)
+            .setDescription(command.description || "No description provided.")
             .addFields({
-            name: 'How to play',
+            name: 'Usage',
             value: `\`${prefix}${command.usage || command.name}\``,
             inline: true,
         });
         if (command.aliases && command.aliases.length > 0) {
             embed.addFields({
-                name: 'Nicknames',
+                name: 'Aliases',
                 value: command.aliases.map((a) => `\`${a}\``).join(', '),
                 inline: true,
             });
         }
         if (command.cooldown) {
-            embed.addFields({ name: 'Rest Time', value: `${command.cooldown / 1000}s`, inline: true });
+            embed.addFields({ name: 'Cooldown', value: `${command.cooldown / 1000}s`, inline: true });
         }
         if (command.adminOnly) {
-            embed.addFields({ name: 'Permissions', value: '🛡️ Just for Mommy (Admin)', inline: true });
+            embed.addFields({ name: 'Permissions', value: '🛡️ Admin Only', inline: true });
         }
-        embed.setFooter({ text: "You're learning so fast, sweetie! ヽ(>∀<☆)ノ" });
         message.reply({ embeds: [embed] });
     },
 };

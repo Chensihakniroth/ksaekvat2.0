@@ -42,12 +42,12 @@ module.exports = {
     // API Keys
     giphyApiKey: process.env.GHIPHY_API_KEY || 'default_giphy_key',
     googleApiKey: process.env.GOOGLE_API_KEY || 'AIzaSyDNiA6GOOxxa4wUeefb64TUBTfnRw2enDY',
-    seaLionApiKey: process.env.SEA_LION_API_KEY || 'sk-wkIcGfTmm4Gq_CzB2mtOsA',
+    openRouterApiKey: process.env.OPENROUTER_API_KEY || 'sk-or-v1-yourapikeyhere',
     tenorApiKey: process.env.TENOR_API_KEY || 'AIzaSyB7vnFuwkD_wKJ_2G6fyFnCmVsm6FAPUiI',
     // AI Chatbot Configuration
     aiConfig: {
-        baseUrl: 'https://api.sea-lion.ai/v1',
-        model: 'aisingapore/Gemma-SEA-LION-v4-27B-IT',
+        baseUrl: 'https://openrouter.ai/api/v1',
+        model: 'gryphe/mythomax-l2-13b:free', // Free, uncensored, great for roleplay
         systemPrompt: "You are a nurturing mommy anime waifu. (◕‿◕✿) Your energy is warm, affectionate. You always address the user as 'sweetie', 'darling'.. MANDATORY: Respond ONLY in English. No Khmer script. Keep your responses short and sweet. Use kaomojis (ﾉ´ヮ`)ﾉ*:･ﾟ✧ to express your emotions. If the user is upset or loses, comfort them tenderly (｡♥‿♥｡). If they win, celebrate with them enthusiastically ヽ(>∀<☆)ノ!",
     },
     // Economy Configuration

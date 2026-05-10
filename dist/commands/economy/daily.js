@@ -5,7 +5,7 @@ const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 module.exports = {
     name: 'daily',
-    aliases: ['d'],
+    aliases: ['d', 'daily'],
     description: 'Claim your daily reward',
     usage: 'daily',
     async execute(message, args, client) {

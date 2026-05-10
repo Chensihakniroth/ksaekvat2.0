@@ -22,6 +22,7 @@ module.exports = {
         }
         const userData = await database.getUser(target.id, target.username);
         const animalsData = await database.loadAnimals();
+        const flatRegistry = await database.getAnimalRegistry();
         // Theme logic! (｡♥‿♥｡)
         const shopConfig = require('../../config/shopConfig.js');
         let embedColor = colors.primary;
@@ -46,12 +47,14 @@ module.exports = {
         if (userData.animals) {
             const rarityEntries = userData.animals instanceof Map ? userData.animals.entries() : Object.entries(userData.animals);
             for (const [rarity, animals] of rarityEntries) {
-                if (animalsData[rarity]) {
-                    const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
-                    for (const [animalKey, count] of animalEntries) {
-                        if (animalsData[rarity][animalKey]) {
-                            totalPokemonValue += animalsData[rarity][animalKey].value * count;
-                            totalPokemonOwned += count;
+                const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
+                for (const [animalKey, count] of animalEntries) {
+                    const animal = animalsData[rarity]?.[animalKey] || flatRegistry[animalKey];
+                    if (animal && count > 0) {
+                        const baseValue = animal.value || config.hunting.rarities[rarity]?.value || 100;
+                        totalPokemonValue += baseValue * count;
+                        totalPokemonOwned += count;
+                        if (rarityCount[rarity] !== undefined) {
                             rarityCount[rarity] += count;
                         }
                     }
@@ -65,15 +68,18 @@ module.exports = {
             spouseText = `💍 **${userData.spouse.name}**\n${hearts} (Lv. ${Math.floor(userData.spouse.affinity / 100) + 1})`;
         }
         // Calculate gambling stats
-        const totalGambled = userData.totalGambled || 0;
-        const netProfit = (userData.totalWon || 0) - (userData.totalLost || 0);
-        const winRate = totalGambled > 0 ? ((userData.totalWon / totalGambled) * 100).toFixed(1) : '0.0';
+        const stats = userData.stats || {};
+        const totalGambled = stats.totalGambled || 0;
+        const totalWon = stats.totalWon || 0;
+        const totalLost = stats.totalLost || 0;
+        const netProfit = totalWon - totalLost;
+        const winRate = totalGambled > 0 ? ((totalWon / totalGambled) * 100).toFixed(1) : '0.0';
         // Create compact embed
         const embed = new EmbedBuilder()
             .setColor(embedColor)
-            .setTitle(`(◕‿◕✿) ${target.username}'s Trainer Card`)
+            .setTitle(`👤 ${target.username}'s Trainer Card`)
             .setThumbnail(target.displayAvatarURL({ size: 256 }))
-            .setDescription(`Welcome back, sweetie! Here is your progress so far. (｡♥‿♥｡)`)
+            .setDescription(`Here is a summary of your current progress.`)
             .addFields({
             name: '📊 Training Progress',
             value: [
@@ -104,7 +110,7 @@ module.exports = {
                 inline: true,
             });
         }
-        embed.setFooter({ text: "Mommy's so proud of you! ヽ(>∀<☆)ノ" });
+        embed.setFooter({ text: "Trainer Profile" });
         message.reply({ embeds: [embed] });
         // Update command usage statistics
         await database.updateStats(message.author.id, 'command');
