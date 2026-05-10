@@ -31,16 +31,10 @@ module.exports = {
         }
         try {
             const { baseUrl, model, systemPrompt: configPrompt } = config.aiConfig;
-            // Fetch character card from DB
-            const charCard = await database.getCharacterCard();
             let processedUserMessage = text;
             const url = `${baseUrl}/chat/completions`;
-            // Adjusted the AI prompt for a lowkey, supportive mommy persona
-            // Prioritize the detailed configPrompt (Juicy.ai style) and optionally append DB charCard info
-            let finalSystemPrompt = configPrompt;
-            if (charCard) {
-                finalSystemPrompt += `\n\n[Additional Database Context: Name: ${charCard.name}. Personality: ${charCard.personality}. Style: ${charCard.style}.]`;
-            }
+            // Use the raw config prompt directly — no DB overrides, no filters
+            const finalSystemPrompt = configPrompt;
             const messages = [
                 { role: 'system', content: finalSystemPrompt },
                 ...history,
@@ -50,10 +44,9 @@ module.exports = {
             const response = await axios.post(url, {
                 model: model,
                 messages: messages,
-                max_completion_tokens: 150,
-                temperature: 0.7,
-                top_p: 0.9,
-                presence_penalty: 0.6,
+                max_completion_tokens: 300,
+                temperature: 1.0,
+                top_p: 0.95,
             }, {
                 timeout: 60000,
                 headers: {
@@ -66,15 +59,7 @@ module.exports = {
             if (response.data && response.data.choices && response.data.choices[0]) {
                 let botMsg = response.data.choices[0].message.content;
                 if (!botMsg) {
-                    botMsg = "*blushes* I... I don't really know what to say to that, sweetie... (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)";
-                }
-                if (charCard) {
-                    const namePrefix = new RegExp(`^${charCard.name}:\\s*`, 'i');
-                    botMsg = botMsg
-                        .replace(namePrefix, '')
-                        .replace(/^<BOT>:\s*/i, '')
-                        .replace(/^<USER>:\s*.*/s, '')
-                        .trim();
+                    botMsg = "Mmm~ cat got my tongue, sweetie... try again? (◕‿◕✿)";
                 }
                 const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
                 history.push({ role: 'user', content: processedUserMessage });
