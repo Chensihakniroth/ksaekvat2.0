@@ -67,6 +67,9 @@ module.exports = {
             });
             if (response.data && response.data.choices && response.data.choices[0]) {
                 let botMsg = response.data.choices[0].message.content;
+                if (!botMsg) {
+                    botMsg = "*blushes* I... I don't really know what to say to that, sweetie... (⁄ ⁄>⁄ ▽ ⁄<⁄ ⁄)";
+                }
                 if (charCard) {
                     const namePrefix = new RegExp(`^${charCard.name}:\\s*`, 'i');
                     botMsg = botMsg
