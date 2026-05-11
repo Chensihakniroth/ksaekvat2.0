@@ -2,71 +2,48 @@ const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/colors.js');
 const database = require('../../services/DatabaseService');
 const config = require('../../config/config.js');
-// Use built-in fetch (Node.js 18+) or axios as fallback
-const fetch = global.fetch || require('axios').get;
 
-const TENOR_API_KEY = config.tenorApiKey;
-const CLIENT_KEY = 'my_test_app';
+const GIPHY_API_KEY = config.giphyApiKey;
+
+/**
+ * Fetch a random GIF from Giphy by search query.
+ */
+async function getGiphyGif(query) {
+  try {
+    const url = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(query)}&limit=25&rating=pg-13`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data.data && data.data.length > 0) {
+      const pick = data.data[Math.floor(Math.random() * data.data.length)];
+      return pick.images.original.url;
+    }
+  } catch (err) {
+    console.error('[JAIL] Giphy fetch failed:', err.message);
+  }
+  return null;
+}
 
 module.exports = {
   name: 'jail',
-  description: 'Send someone to jail.',
+  description: 'Send someone to jail. (¬‿¬)',
   usage: 'jail [@user] [message]',
   cooldown: 3000,
   async execute(message, args) {
     const mentionedUser = message.mentions.users.first();
     const customMessage = args.slice(1).join(' ');
+
     const sent = await message.reply({
       embeds: [
         new EmbedBuilder()
           .setColor(colors.primary || 0x0099ff)
-          .setTitle('🔒 Preparing jail...')
-          .setDescription('Loading jail animation...'),
+          .setTitle('🔒 Processing arrest...')
+          .setDescription('Fetching jail footage... (・_・ヾ'),
       ],
     });
 
     try {
-      let gifUrl = null;
-      let gifId = null;
-
-      // First try Tenor API with randomization
-      try {
-        const query = 'jail handcuff arrest prison';
-        const url = `https://tenor.googleapis.com/v2/search?key=${TENOR_API_KEY}&client_key=${CLIENT_KEY}&q=${encodeURIComponent(query)}&limit=10&random=true&media_filter=gif`;
-        const response = await fetch(url);
-        const data = global.fetch ? await response.json() : response.data;
-
-        if (data.results && Array.isArray(data.results) && data.results.length > 0) {
-          const randomIndex = Math.floor(Math.random() * data.results.length);
-          const selectedGif = data.results[randomIndex];
-          gifUrl = selectedGif.media_formats.gif.url;
-          gifId = selectedGif.id;
-
-          // Register share for the selected GIF
-          try {
-            const shareUrl = `https://tenor.googleapis.com/v2/registershare?id=${gifId}&key=${TENOR_API_KEY}&client_key=${CLIENT_KEY}&q=${encodeURIComponent(query)}`;
-            await fetch(shareUrl);
-          } catch (shareErr) {
-            console.log('Tenor Register Share failed:', shareErr.message);
-          }
-        }
-      } catch (e) {
-        console.log('Tenor API failed:', e);
-      }
-
-      // Fallback to waifu.pics
-      if (!gifUrl) {
-        try {
-          const res2 = await fetch('https://api.waifu.pics/sfw/kill'); // Using kill as a close match
-          const data2 = global.fetch ? await res2.json() : res2.data;
-          console.log('Waifu.pics kill response:', data2);
-          if (data2 && data2.url) {
-            gifUrl = data2.url;
-          }
-        } catch (e) {
-          console.log('Waifu.pics kill API failed:', e);
-        }
-      }
+      const gifUrl = await getGiphyGif('anime jail handcuff arrest prison');
 
       const targetUser = mentionedUser || message.author;
       const embed = new EmbedBuilder()
@@ -77,10 +54,7 @@ module.exports = {
         );
 
       if (gifUrl) {
-        console.log('Using jail GIF URL:', gifUrl);
         embed.setImage(gifUrl);
-      } else {
-        console.log('No jail GIF found from any API');
       }
 
       await sent.edit({ embeds: [embed] });
@@ -92,7 +66,7 @@ module.exports = {
             .setColor(colors.danger || 0xff4444)
             .setTitle('🔒 JAIL TIME!')
             .setDescription(
-              `**${mentionedUser?.username || message.author.username}** has been sent to jail! (No GIF available)`
+              `**${mentionedUser?.username || message.author.username}** has been sent to jail! (No GIF available) (ಥ﹏ಥ)`
             ),
         ],
       });
