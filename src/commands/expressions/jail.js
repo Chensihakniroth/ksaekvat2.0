@@ -5,21 +5,36 @@ const config = require('../../config/config.js');
 
 const GIPHY_API_KEY = config.giphyApiKey;
 
+// ── Curated jail GIFs for guaranteed relevance ──────────────────────
+const JAIL_GIFS = [
+  'https://media.giphy.com/media/kcCfTKQ2s8its2fGBW/giphy.gif',
+  'https://media.giphy.com/media/3oEjHV0z8S7WM4MwnK/giphy.gif',
+  'https://media.giphy.com/media/YN1eB6slBDeNHr1gjs/giphy.gif',
+  'https://media.giphy.com/media/26gsobowozGM9umBi/giphy.gif',
+  'https://media.giphy.com/media/jmSjPi6soIoQCFwaXJ/giphy.gif',
+  'https://media.giphy.com/media/l4Ep6uxU6aedrYUik/giphy.gif',
+  'https://media.giphy.com/media/3oEjI5VtIhHvK37WYo/giphy.gif',
+];
+
 /**
- * Fetch a random GIF from Giphy by search query.
+ * Get a jail GIF — curated pool first, Giphy random API fallback.
  */
-async function getGiphyGif(query) {
+async function getJailGif() {
+  // Primary: curated pool (instant, always jail-themed)
+  if (JAIL_GIFS.length > 0) {
+    return JAIL_GIFS[Math.floor(Math.random() * JAIL_GIFS.length)];
+  }
+
+  // Fallback: Giphy random endpoint
   try {
-    const url = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(query)}&limit=25&rating=pg-13`;
+    const url = `https://api.giphy.com/v1/gifs/random?api_key=${GIPHY_API_KEY}&tag=jail&rating=pg-13`;
     const res = await fetch(url);
     const data = await res.json();
-
-    if (data.data && data.data.length > 0) {
-      const pick = data.data[Math.floor(Math.random() * data.data.length)];
-      return pick.images.original.url;
+    if (data.data && data.data.images) {
+      return data.data.images.original.url;
     }
   } catch (err) {
-    console.error('[JAIL] Giphy fetch failed:', err.message);
+    console.error('[JAIL] Giphy fallback failed:', err.message);
   }
   return null;
 }
@@ -43,7 +58,7 @@ module.exports = {
     });
 
     try {
-      const gifUrl = await getGiphyGif('anime jail handcuff arrest prison');
+      const gifUrl = await getJailGif();
 
       const targetUser = mentionedUser || message.author;
       const embed = new EmbedBuilder()

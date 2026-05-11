@@ -8,21 +8,54 @@ const GIPHY_API_KEY = config.giphyApiKey;
 // Jail tracker: userId -> timestamp when jail expires
 const jailedUsers = new Map();
 
+// ── Curated GIF pools for guaranteed context relevance ──────────────
+const GIF_POOLS = {
+  rob_success: [
+    'https://media.giphy.com/media/SOmjomEnNHsrK/giphy.gif',
+    'https://media.giphy.com/media/l0HlNQ03J5JxX2rGU/giphy.gif',
+    'https://media.giphy.com/media/dMsh6gRYJDymXSIatd/giphy.gif',
+    'https://media.giphy.com/media/3oEdv22bKDUluFKkxi/giphy.gif',
+    'https://media.giphy.com/media/Y6yRfR88rvP44/giphy.gif',
+    'https://media.giphy.com/media/eKNrUbDJuFuaQ1A37p/giphy.gif',
+  ],
+  rob_fail: [
+    'https://media.giphy.com/media/l2JehQ2GitHGdVG9Y/giphy.gif',
+    'https://media.giphy.com/media/3o7TKnO6Wve3nkSLFm/giphy.gif',
+    'https://media.giphy.com/media/H1LbI7KnGPnFiYljBH/giphy.gif',
+    'https://media.giphy.com/media/3oAt21Fnr4i54uK8vK/giphy.gif',
+    'https://media.giphy.com/media/26ybwvTX7TSe3eoKs/giphy.gif',
+  ],
+  jail: [
+    'https://media.giphy.com/media/kcCfTKQ2s8its2fGBW/giphy.gif',
+    'https://media.giphy.com/media/3oEjHV0z8S7WM4MwnK/giphy.gif',
+    'https://media.giphy.com/media/YN1eB6slBDeNHr1gjs/giphy.gif',
+    'https://media.giphy.com/media/26gsobowozGM9umBi/giphy.gif',
+    'https://media.giphy.com/media/jmSjPi6soIoQCFwaXJ/giphy.gif',
+    'https://media.giphy.com/media/l4Ep6uxU6aedrYUik/giphy.gif',
+  ],
+};
+
 /**
- * Fetch a random GIF from Giphy by search query.
+ * Get a contextual GIF from curated pool, with Giphy random API fallback.
  */
-async function getGiphyGif(query) {
+async function getContextGif(pool) {
+  // Primary: curated pool (instant, always relevant)
+  const curated = GIF_POOLS[pool];
+  if (curated && curated.length > 0) {
+    return curated[Math.floor(Math.random() * curated.length)];
+  }
+
+  // Fallback: Giphy random endpoint with tight tag
   try {
-    const url = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${encodeURIComponent(query)}&limit=25&rating=pg-13`;
+    const tag = pool === 'jail' ? 'jail' : pool === 'rob_success' ? 'robbery' : 'caught';
+    const url = `https://api.giphy.com/v1/gifs/random?api_key=${GIPHY_API_KEY}&tag=${tag}&rating=pg-13`;
     const res = await fetch(url);
     const data = await res.json();
-
-    if (data.data && data.data.length > 0) {
-      const pick = data.data[Math.floor(Math.random() * data.data.length)];
-      return pick.images.original.url;
+    if (data.data && data.data.images) {
+      return data.data.images.original.url;
     }
   } catch (err) {
-    console.error('[ROB] Giphy fetch failed:', err.message);
+    console.error('[ROB] Giphy fallback failed:', err.message);
   }
   return null;
 }
@@ -33,7 +66,8 @@ module.exports = {
   description: 'Attempt to rob another user\'s wallet! 50/50 odds... but you might end up in jail. (¬‿¬)',
   usage: 'rob <@user>',
   category: 'economy',
-  cooldown: 300000, // 5 minutes (300,000 ms)
+  cooldown: 60000, // 1 minute (60,000 ms)
+
   async execute(message, args, client) {
     const robber = message.author;
 
@@ -41,7 +75,7 @@ module.exports = {
     const jailExpiry = jailedUsers.get(robber.id);
     if (jailExpiry && Date.now() < jailExpiry) {
       const remaining = Math.ceil((jailExpiry - Date.now()) / 60000);
-      const jailGif = await getGiphyGif('anime jail prison');
+      const jailGif = await getContextGif('jail');
 
       const embed = new EmbedBuilder()
         .setColor(colors.error)
@@ -109,7 +143,7 @@ module.exports = {
       await database.addBalance(robber.id, stealAmount);
       await database.removeBalance(target.id, stealAmount);
 
-      const robGif = await getGiphyGif('anime steal robbery heist');
+      const robGif = await getContextGif('rob_success');
 
       const embed = new EmbedBuilder()
         .setColor(0x00ff88)
@@ -144,7 +178,7 @@ module.exports = {
       const jailDuration = 20 * 60 * 1000; // 20 minutes
       jailedUsers.set(robber.id, Date.now() + jailDuration);
 
-      const jailGif = await getGiphyGif('anime jail arrested handcuff');
+      const jailGif = await getContextGif('jail');
 
       const embed = new EmbedBuilder()
         .setColor(0xff0000)
@@ -163,7 +197,7 @@ module.exports = {
     }
 
     // ── Regular failure (no jail) ───────────────────────────────────────
-    const failGif = await getGiphyGif('anime fail caught running');
+    const failGif = await getContextGif('rob_fail');
 
     const embed = new EmbedBuilder()
       .setColor(colors.error)
