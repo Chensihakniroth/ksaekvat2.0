@@ -25,6 +25,7 @@ export interface IUser extends Document {
   id: string;
   username: string;
   balance: number;
+  bank: number;
   star_dust: number;
   level: number;
   worldLevel: number;
@@ -125,6 +126,7 @@ const UserSchema: Schema = new Schema({
   id: { type: String, required: true, unique: true, index: true }, // Discord ID
   username: { type: String, default: 'Unknown Traveler' }, // Discord Username
   balance: { type: Number, default: 1000, index: true },
+  bank: { type: Number, default: 0, index: true },
   star_dust: { type: Number, default: 0 },
   level: { type: Number, default: 1, index: true },
   worldLevel: { type: Number, default: 1 },

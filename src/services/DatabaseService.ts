@@ -197,6 +197,37 @@ class DatabaseService {
     return user.balance >= amount;
   }
 
+  async hasBankBalance(userId: string, amount: number) {
+    const user = await this.getUser(userId);
+    return (user.bank || 0) >= amount;
+  }
+
+  async deposit(userId: string, amount: number) {
+    return await User.findOneAndUpdate(
+      { id: userId },
+      { 
+        $inc: { 
+          balance: -amount,
+          bank: amount 
+        } 
+      },
+      { returnDocument: 'after' }
+    );
+  }
+
+  async withdraw(userId: string, amount: number) {
+    return await User.findOneAndUpdate(
+      { id: userId },
+      { 
+        $inc: { 
+          balance: amount,
+          bank: -amount 
+        } 
+      },
+      { returnDocument: 'after' }
+    );
+  }
+
   async updateStats(userId: string, type: string, amount = 1) {
     const update: any = {};
     if (type === 'won') update['stats.totalWon'] = 1;
