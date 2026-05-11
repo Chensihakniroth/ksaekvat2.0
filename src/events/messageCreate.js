@@ -116,10 +116,11 @@ module.exports = {
               embeds: [{
                 color: parseInt(config.colors.warning.slice(1), 16),
                 title: title,
-                description: desc + `\n\n**Wait time: <t:${unixTime}:R>**`,
+                description: desc + `\n\n**Wait time: <t:${unixTime}:R>**\n*(Self-destructing in 5s)*`,
                 timestamp: new Date(),
-              }],
-              flags: [MessageFlags.Ephemeral]
+              }]
+            }).then(msg => {
+              setTimeout(() => msg.delete().catch(() => {}), 5000);
             }).catch(() => {});
           }
 
@@ -158,10 +159,11 @@ module.exports = {
             embeds: [{
               color: parseInt(config.colors.warning.slice(1), 16),
               title: '⏳ Cooldown Active',
-              description: `System is processing. Please wait until <t:${unixTime}:R> before your next command.`,      
+              description: `System is processing. Please wait until <t:${unixTime}:R> before your next command.\n*(Self-destructing in 5s)*`,      
               timestamp: new Date(),
-            }],
-            flags: [MessageFlags.Ephemeral]
+            }]
+          }).then(msg => {
+            setTimeout(() => msg.delete().catch(() => {}), 5000);
           }).catch(() => {});
           return;
         }
@@ -178,11 +180,12 @@ module.exports = {
                 color: parseInt(config.colors.error.slice(1), 16),
                 title: '🚫 Access Denied',
                 description:
-                  "This command is restricted to authorized personnel only.",      
+                  "This command is restricted to authorized personnel only.\n*(Self-destructing in 5s)*",      
                 timestamp: new Date(),
               },
-            ],
-            flags: [MessageFlags.Ephemeral]
+            ]
+          }).then(msg => {
+            setTimeout(() => msg.delete().catch(() => {}), 5000);
           }).catch(() => {});
           return;
         }
@@ -199,11 +202,12 @@ module.exports = {
                 {
                   color: parseInt(config.colors.warning.slice(1), 16),
                   title: '⏳ Cooldown Active',
-                  description: `Command is on cooldown. You can use it again <t:${unixTime}:R>.`,
+                  description: `Command is on cooldown. You can use it again <t:${unixTime}:R>.\n*(Self-destructing in 5s)*`,
                   timestamp: new Date(),
                 },
-              ],
-              flags: [MessageFlags.Ephemeral]
+              ]
+            }).then(msg => {
+              setTimeout(() => msg.delete().catch(() => {}), 5000);
             }).catch(() => {});
             return;
           }
