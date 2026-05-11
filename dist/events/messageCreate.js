@@ -128,13 +128,13 @@ module.exports = {
                 const GLOBAL_20S = 20000;
                 const GLOBAL_60S = 60000;
                 if (strikeData.count >= 3 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_60S)) {
-                    return handleSpam(GLOBAL_60S, '🚫 MOMMY IS ANGRY! (ಠ_ಠ)', 'You are being put in timeout for **60 seconds**, darling. No more spamming! (ಥ﹏ಥ)');
+                    return handleSpam(GLOBAL_60S, '🚫 System Timeout', 'Spam detected. Access has been restricted for **60 seconds**.');
                 }
                 else if (strikeData.count === 2 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_20S)) {
-                    return handleSpam(GLOBAL_20S, '⏳ Really, sweetie? (｡•́︿•̀｡)', "Mommy told you to slow down! Now you have to wait **20 seconds**. Don't make me disappointed! (っ˘ω˘ς)");
+                    return handleSpam(GLOBAL_20S, '⏳ Command Throttled', "You're sending commands too quickly. Please wait **20 seconds**.");
                 }
                 else if (strikeData.count === 1 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_8S)) {
-                    return handleSpam(GLOBAL_8S, '⏳ Slow down, darling! (｡♥‿♥｡)', "You're going a bit too fast! Please wait **8 seconds** before trying again. (◕‿◕✿)");
+                    return handleSpam(GLOBAL_8S, '⏳ Slow Down', "Rate limit exceeded. Please wait **8 seconds** before your next request.");
                 }
                 else if (cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_3S)) {
                     // Strike 0 -> 1
@@ -146,8 +146,8 @@ module.exports = {
                     message.reply({
                         embeds: [{
                                 color: parseInt(config.colors.warning.slice(1), 16),
-                                title: '⏳ Wait a moment, sweetie (｡♥‿♥｡)',
-                                description: `Mommy needs a 3-second break too! Please wait till <t:${unixTime}:R>. (っ˘ω˘ς)`,
+                                title: '⏳ Cooldown Active',
+                                description: `System is processing. Please wait until <t:${unixTime}:R> before your next command.`,
                                 timestamp: new Date(),
                             }],
                         flags: [MessageFlags.Ephemeral]
@@ -164,8 +164,8 @@ module.exports = {
                         embeds: [
                             {
                                 color: parseInt(config.colors.error.slice(1), 16),
-                                title: '🚫 Access Denied, sweetie (｡•́︿•̀｡)',
-                                description: "I'm sorry, darling, but this command is only for Mommy's special helpers! (◕‿◕✿)",
+                                title: '🚫 Access Denied',
+                                description: "This command is restricted to authorized personnel only.",
                                 timestamp: new Date(),
                             },
                         ],
@@ -184,8 +184,8 @@ module.exports = {
                             embeds: [
                                 {
                                     color: parseInt(config.colors.warning.slice(1), 16),
-                                    title: '⏳ Wait a moment, darling (｡♥‿♥｡)',
-                                    description: `You're going a bit too fast, sweetie! Please wait till <t:${unixTime}:R>. Mommy needs a little break too! (っ˘ω˘ς)`,
+                                    title: '⏳ Cooldown Active',
+                                    description: `Command is on cooldown. You can use it again <t:${unixTime}:R>.`,
                                     timestamp: new Date(),
                                 },
                             ],
@@ -208,8 +208,8 @@ module.exports = {
                         embeds: [
                             {
                                 color: parseInt(config.colors.error.slice(1), 16),
-                                title: '❌ Oh no, an error! (｡•́︿•̀｡)',
-                                description: 'Something went wrong, sweetie. Mommy will try to fix it soon! (っ˘ω˘ς)',
+                                title: '❌ Execution Error',
+                                description: 'An unexpected error occurred while processing your request.',
                                 timestamp: new Date(),
                             },
                         ],
