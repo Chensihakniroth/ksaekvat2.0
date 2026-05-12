@@ -80,8 +80,8 @@ module.exports = {
 
       const embed = new EmbedBuilder()
         .setColor(colors.error)
-        .setTitle('🔒 STILL IN JAIL')
-        .setDescription(`You're still locked up! Wait **${remaining} minute(s)** before trying another heist. (ಥ﹏ಥ)`);
+        .setTitle('🔒 Pg jorb kok')
+        .setDescription(` Wait **${remaining} minute(s)** ban plorn ban tt. (ಥ﹏ಥ)`);
 
       if (jailGif) embed.setImage(jailGif);
 
@@ -97,8 +97,8 @@ module.exports = {
         embeds: [
           new EmbedBuilder()
             .setColor(colors.error)
-            .setTitle('⚠️ TARGET REQUIRED')
-            .setDescription('Who are you trying to rob? Mention someone! (・_・ヾ\n**Usage:** `krob @user`')
+            .setTitle('⚠️ Hoch plorn pi na ke?')
+            .setDescription('oun eng plorn na ke? Mention neak ng mao! (・_・ヾ\n**Usage:** `krob @user`')
         ]
       });
     }
@@ -121,8 +121,8 @@ module.exports = {
         embeds: [
           new EmbedBuilder()
             .setColor(colors.warning)
-            .setTitle('💸 NOT WORTH IT')
-            .setDescription(`**${target.username}** barely has anything in their wallet. Find a richer target! (・_・ヾ`)
+            .setTitle('💸 ah oun ng ot luy pg ng ')
+            .setDescription(`**${target.username}** ror luy ma riel kmean. ror neak mean luy jeang ng mao (・_・ヾ`)
         ]
       });
     }
@@ -148,9 +148,9 @@ module.exports = {
 
       const embed = new EmbedBuilder()
         .setColor(0x00ff88)
-        .setTitle('💰 HEIST SUCCESS!')
+        .setTitle('💰 PLON BAN SOMRACH :3')
         .setDescription(
-          `**${robber.username}** just robbed **${stealAmount.toLocaleString()}** ${config.economy.currencySymbol} from **${target.username}**'s wallet! (¬‿¬)\n\n` +
+          `**${robber.username}** plorn **${stealAmount.toLocaleString()}** ${config.economy.currencySymbol} from **${target.username}**'s wallet! (¬‿¬)\n\n` +
           `Their bank was untouchable... but their wallet? Wide open.`
         )
         .addFields(
@@ -165,9 +165,6 @@ module.exports = {
       return message.reply({ embeds: [embed] });
     }
 
-    // ── FAILURE ─────────────────────────────────────────────────────────
-    // (No penalty fine anymore per user request)
-
     // ── JAIL CHECK on failure ───────────────────────────────────────────
     if (Math.random() < jailChance) {
       // JAILED! 20 minute lockout
@@ -178,9 +175,9 @@ module.exports = {
 
       const embed = new EmbedBuilder()
         .setColor(0xff0000)
-        .setTitle('🚨 BUSTED — YOU\'RE GOING TO JAIL!')
+        .setTitle('🚨 JORB KOK 1 - 0 ')
         .setDescription(
-          `**${robber.username}** tried to rob **${target.username}** and got caught by the authorities! (ಥ﹏ಥ)\n\n` +
+          `**${robber.username}** ror plorn **${target.username}** Tae police jab ban! (ಥ﹏ಥ)\n\n` +
           `🔒 **Jail Time:** You can't rob for **20 minutes**!`
         )
         .setTimestamp();
@@ -196,10 +193,10 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(colors.error)
-      .setTitle('❌ HEIST FAILED!')
+      .setTitle('❌ plon ke ot ban haaaa')
       .setDescription(
-        `**${robber.username}** tried to rob **${target.username}** but got caught! (・_・ヾ\n\n` +
-        `Lucky you didn't end up in jail this time...`
+        `**${robber.username}** jong plorn **${target.username}** but ke tarm torn (・_・ヾ\n\n` +
+        `Heng ai ke ot jab dak kok...`
       )
       .setTimestamp();
 

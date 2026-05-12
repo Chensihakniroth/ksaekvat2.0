@@ -119,63 +119,129 @@ module.exports = {
     const animalsData = await database.loadAnimals();
     const flatRegistry = await database.getAnimalRegistry();
     
-    // Support both Map and plain objects for cross-compatibility! (｡♥‿♥｡)
     const animalsObj = userDoc.animals || {};
-
-    const allCaught = [];
+    
+    // Build a map of caught counts
+    const caughtCounts = {};
     const rarityEntries = animalsObj instanceof Map ? animalsObj.entries() : Object.entries(animalsObj);
     for (const [rarity, animalCounts] of rarityEntries) {
       const animalEntries = animalCounts instanceof Map ? animalCounts.entries() : Object.entries(animalCounts || {});
       for (const [key, count] of animalEntries) {
-        const def = animalsData[rarity]?.[key] || flatRegistry[key];
-        if (Number(count) > 0 && def) {
-          allCaught.push({ key, name: def.name, rarity: def.rarity || rarity, count: Number(count) });
-        }
+        if (Number(count) > 0) caughtCounts[key] = Number(count);
       }
     }
 
-    if (allCaught.length === 0) {
-      return message.reply({ embeds: [new EmbedBuilder().setColor(colors.warning).setDescription(`(｡•́︿•̀｡) **${target.username}** has no Pokémon yet! Use \`Khunt\` to start catching~`)] });
+    const allPokemon = [];
+    for (const [key, def] of Object.entries(flatRegistry)) {
+       allPokemon.push({
+         key,
+         name: def.name,
+         rarity: def.rarity,
+         emoji: def.emoji || '🐾',
+         count: caughtCounts[key] || 0,
+         caught: !!caughtCounts[key]
+       });
     }
 
     const RW = {}; RARITY_ORDER.forEach((r, i) => RW[r] = i);
-    allCaught.sort((a, b) => (RW[a.rarity] ?? 99) - (RW[b.rarity] ?? 99) || a.name.localeCompare(b.name));
+    allPokemon.sort((a, b) => (RW[a.rarity] ?? 99) - (RW[b.rarity] ?? 99) || a.name.localeCompare(b.name));
 
-    let startIndex = 0;
-    if (args.length > 0) {
-      const q = args.join(' ').toLowerCase();
-      const f = allCaught.findIndex(p => p.key.toLowerCase() === q || p.name.toLowerCase().includes(q));
-      if (f !== -1) startIndex = f;
-      else return message.reply({ embeds: [new EmbedBuilder().setColor(colors.warning).setDescription(`(¯\\_(ツ)_/¯) Couldn't find **${args.join(' ')}** in ${target.username}'s collection!`)] });
+    const totalCaught = allPokemon.filter(p => p.caught).length;
+    const totalCount = allPokemon.length;
+    const percent = totalCount > 0 ? ((totalCaught / totalCount) * 100).toFixed(1) : '0.0';
+
+    if (args.length > 0 && !message.mentions.users.has(args[0].replace(/[<@!>]/g, ''))) {
+      // Detailed View Mode
+      let qArgs = args;
+      if (message.mentions.users.size > 0) {
+         qArgs = args.filter(a => !a.startsWith('<@'));
+      }
+      if (qArgs.length > 0) {
+        const q = qArgs.join(' ').toLowerCase();
+        const found = allPokemon.find(p => p.key.toLowerCase() === q || p.name.toLowerCase().includes(q));
+        if (!found) {
+          return message.reply({ embeds: [new EmbedBuilder().setColor(colors.warning).setDescription(`(¯\\_(ツ)_/¯) Couldn't find **${q}** in the region's database!`)] });
+        }
+
+        if (!found.caught && target.id === message.author.id) {
+           const { getRarityEmoji } = require('../../utils/images.js');
+           const embed = new EmbedBuilder()
+             .setColor('#2C2F33')
+             .setTitle(`${getRarityEmoji(found.rarity, client)} ??????`)
+             .setDescription(`*No data available. This Pokémon has not been registered in your Pokédex.*`)
+             .addFields(
+               { name: '⭐ Rarity', value: `${getRarityEmoji(found.rarity, client)} ${found.rarity.charAt(0).toUpperCase() + found.rarity.slice(1)}`, inline: true },
+               { name: '📦 Owned', value: `**0×** caught`, inline: true },
+             )
+             .setFooter({ text: `${target.username}'s Pokédex  •  Unregistered` })
+             .setTimestamp();
+           return message.reply({ embeds: [embed] });
+        } else if (!found.caught) {
+           return message.reply({ embeds: [new EmbedBuilder().setColor(colors.warning).setDescription(`(¯\\_(ツ)_/¯) **${target.username}** hasn't caught **${found.name}** yet!`)] });
+        }
+
+        const msg = await message.reply({ content: '📖 Loading Pokédex entry...' });
+        const { embed, files } = await buildPokedexEmbed(target, found, animalsObj, animalsData, 0, totalCaught, client);
+        return msg.edit({ content: null, embeds: [embed], files });
+      }
     }
 
-    let current = startIndex;
-    const msg = await message.reply({ content: '📖 Loading Pokédex entry...' });
+    // List View Mode
+    const PAGE_SIZE = 15;
+    const maxPages = Math.ceil(totalCount / PAGE_SIZE) || 1;
+    let currentPage = 0;
 
-    const createView = async (idx) => {
-      const { embed, files } = await buildPokedexEmbed(target, allCaught[idx], animalsObj, animalsData, idx, allCaught.length, client);
-      const r = new ActionRowBuilder().addComponents(
-        new ButtonBuilder().setCustomId('pdex_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(idx === 0),
-        new ButtonBuilder().setCustomId('pdex_next').setLabel('Next  ▶').setStyle(ButtonStyle.Secondary).setDisabled(idx === allCaught.length - 1),
-      );
-      return { embeds: [embed], files, components: allCaught.length > 1 ? [r] : [] };
+    const generatePageEmbed = (page) => {
+      const start = page * PAGE_SIZE;
+      const end = start + PAGE_SIZE;
+      const items = allPokemon.slice(start, end);
+
+      const description = items.map((p, idx) => {
+        const num = String(start + idx + 1).padStart(3, '0');
+        if (p.caught) {
+          return `\`#${num}\` ${p.emoji} **${p.name}** \`[${p.rarity.toUpperCase()}]\` — ${p.count}×`;
+        } else {
+          return `\`#${num}\` ❔ **???????** \`[${p.rarity.toUpperCase()}]\` — Uncaught`;
+        }
+      }).join('\n');
+
+      return new EmbedBuilder()
+        .setColor(colors.primary || 0x0099ff)
+        .setTitle(`📖 ${target.username}'s Pokédex Logbook`)
+        .setDescription(`**Progress:** ${totalCaught} / ${totalCount} (${percent}%)\n\n${description}`)
+        .setFooter({ text: `Page ${page + 1} of ${maxPages}` });
     };
 
-    const initial = await createView(current);
-    await msg.edit({ content: null, ...initial });
+    const msg = await message.reply({
+      embeds: [generatePageEmbed(currentPage)],
+      components: maxPages > 1 ? [
+        new ActionRowBuilder().addComponents(
+          new ButtonBuilder().setCustomId('pdex_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(true),
+          new ButtonBuilder().setCustomId('pdex_next').setLabel('Next  ▶').setStyle(ButtonStyle.Secondary).setDisabled(maxPages === 1),
+        )
+      ] : []
+    });
 
-    if (allCaught.length > 1) {
+    if (maxPages > 1) {
       const collector = msg.createMessageComponentCollector({ time: 60_000 });
       collector.on('collect', async (i) => {
         if (i.user.id !== message.author.id) return i.reply({ content: "That's not yours! (っ˘ω˘ς)", flags: [MessageFlags.Ephemeral] });
-        if (i.customId === 'pdex_prev' && current > 0) current--;
-        else if (i.customId === 'pdex_next' && current < allCaught.length - 1) current++;
+        if (i.customId === 'pdex_prev' && currentPage > 0) currentPage--;
+        else if (i.customId === 'pdex_next' && currentPage < maxPages - 1) currentPage++;
         await i.deferUpdate();
-        const next = await createView(current);
-        await msg.edit(next);
+        await msg.edit({
+          embeds: [generatePageEmbed(currentPage)],
+          components: [
+            new ActionRowBuilder().addComponents(
+              new ButtonBuilder().setCustomId('pdex_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(currentPage === 0),
+              new ButtonBuilder().setCustomId('pdex_next').setLabel('Next  ▶').setStyle(ButtonStyle.Secondary).setDisabled(currentPage === maxPages - 1),
+            )
+          ]
+        });
       });
       collector.on('end', () => msg.edit({ components: [] }).catch(() => {}));
     }
+    
     await database.updateStats(message.author.id, 'command');
   },
 };
