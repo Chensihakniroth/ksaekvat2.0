@@ -89,12 +89,19 @@ export interface BattleLogEntry {
   type: 'attack' | 'crit' | 'super_effective' | 'not_effective' | 'immune' | 'faint' | 'info';
 }
 
+export interface HpSnapshot {
+  turn: number;
+  teamA: { id: string; hp: number; maxHp: number }[];
+  teamB: { id: string; hp: number; maxHp: number }[];
+}
+
 export interface BattleResult {
   winner: 'A' | 'B';
   log: BattleLogEntry[];
   turns: number;
   teamAState: BattlePokemon[];
   teamBState: BattlePokemon[];
+  snapshots: HpSnapshot[];
 }
 
 // ─── STAT CACHE ────────────────────────────────────────────────────────
@@ -228,6 +235,7 @@ class PokemonBattleService {
    */
   public simulateBattle(teamA: BattlePokemon[], teamB: BattlePokemon[], maxTurns: number = 25): BattleResult {
     const log: BattleLogEntry[] = [];
+    const snapshots: HpSnapshot[] = [];
     let turn = 0;
 
     // Tag sides
@@ -307,15 +315,20 @@ class PokemonBattleService {
         const teamBAlive = teamB.filter(p => p.hp > 0).length;
 
         if (teamAAlive === 0 || teamBAlive === 0) {
+          snapshots.push({ turn, teamA: teamA.map(p => ({ id: p.id, hp: p.hp, maxHp: p.maxHp })), teamB: teamB.map(p => ({ id: p.id, hp: p.hp, maxHp: p.maxHp })) });
           return {
             winner: teamAAlive > 0 ? 'A' : 'B',
             log,
             turns: turn,
             teamAState: teamA,
             teamBState: teamB,
+            snapshots,
           };
         }
       }
+
+      // Snapshot HP at end of this turn
+      snapshots.push({ turn, teamA: teamA.map(p => ({ id: p.id, hp: p.hp, maxHp: p.maxHp })), teamB: teamB.map(p => ({ id: p.id, hp: p.hp, maxHp: p.maxHp })) });
     }
 
     // Timeout: winner is the side with more total HP%
@@ -334,6 +347,7 @@ class PokemonBattleService {
       turns: turn,
       teamAState: teamA,
       teamBState: teamB,
+      snapshots,
     };
   }
 

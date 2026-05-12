@@ -72,7 +72,6 @@ module.exports = {
         .setFooter({ text: 'Battle starting in 3 seconds...' });
 
       const battleMsg = await message.reply({ embeds: [matchupEmbed] });
-      await new Promise((r) => setTimeout(r, 3000));
 
       // ─── RUN SIMULATION ─────────────────────────────────────────────
       const result = PokemonBattleService.simulateBattle(
@@ -108,8 +107,11 @@ module.exports = {
         const chunk = showChunks[i];
         const turnNum = chunk[0]?.turn || i + 1;
 
-        // 🎨 Render visual frame (sprites + HP bars only)
-        const frameBuffer = await BattleRenderer.renderFrame(playerTeam, wildTeam);
+        // Find the matching HP snapshot for this turn
+        const snapshot = result.snapshots.find(s => s.turn === turnNum) || result.snapshots[result.snapshots.length - 1];
+
+        // 🎨 Render visual frame with correct HP for this turn
+        const frameBuffer = await BattleRenderer.renderFrame(playerTeam, wildTeam, snapshot ? { teamA: snapshot.teamA, teamB: snapshot.teamB } : undefined);
         const attachment = new AttachmentBuilder(frameBuffer, { name: `battle_${turnNum}.png` });
 
         // 📜 Battle log goes in the embed text
@@ -127,7 +129,7 @@ module.exports = {
 
         await battleMsg.edit({ embeds: [turnEmbed], files: [attachment] });
         if (i < showChunks.length - 1) {
-          await new Promise((r) => setTimeout(r, config.pokemonBattle.turnDelay));
+          await new Promise((r) => setTimeout(r, 1500));
         }
       }
 

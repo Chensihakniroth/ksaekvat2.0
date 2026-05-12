@@ -179,6 +179,7 @@ class PokemonBattleService {
      */
     simulateBattle(teamA, teamB, maxTurns = 25) {
         const log = [];
+        const snapshots = [];
         let turn = 0;
         // Tag sides
         teamA.forEach(p => p.side = 'A');
@@ -239,15 +240,19 @@ class PokemonBattleService {
                 const teamAAlive = teamA.filter(p => p.hp > 0).length;
                 const teamBAlive = teamB.filter(p => p.hp > 0).length;
                 if (teamAAlive === 0 || teamBAlive === 0) {
+                    snapshots.push({ turn, teamA: teamA.map(p => ({ id: p.id, hp: p.hp, maxHp: p.maxHp })), teamB: teamB.map(p => ({ id: p.id, hp: p.hp, maxHp: p.maxHp })) });
                     return {
                         winner: teamAAlive > 0 ? 'A' : 'B',
                         log,
                         turns: turn,
                         teamAState: teamA,
                         teamBState: teamB,
+                        snapshots,
                     };
                 }
             }
+            // Snapshot HP at end of this turn
+            snapshots.push({ turn, teamA: teamA.map(p => ({ id: p.id, hp: p.hp, maxHp: p.maxHp })), teamB: teamB.map(p => ({ id: p.id, hp: p.hp, maxHp: p.maxHp })) });
         }
         // Timeout: winner is the side with more total HP%
         const teamAHpPct = teamA.reduce((sum, p) => sum + (p.hp / p.maxHp), 0);
@@ -263,6 +268,7 @@ class PokemonBattleService {
             turns: turn,
             teamAState: teamA,
             teamBState: teamB,
+            snapshots,
         };
     }
     // ─── WILD TEAM GENERATOR ───────────────────────────────────────────

@@ -21,7 +21,11 @@ class BattleRenderer {
   private readonly BAR_W = 160;
   private readonly BAR_H = 10;
 
-  public async renderFrame(teamA: BattlePokemon[], teamB: BattlePokemon[]): Promise<Buffer> {
+  public async renderFrame(
+    teamA: BattlePokemon[],
+    teamB: BattlePokemon[],
+    hpOverrides?: { teamA: { id: string; hp: number; maxHp: number }[]; teamB: { id: string; hp: number; maxHp: number }[] }
+  ): Promise<Buffer> {
     // Background
     let base: sharp.Sharp;
     if (fs.existsSync(this.BG_PATH)) {
@@ -49,13 +53,15 @@ class BattleRenderer {
       // Left side stats (Team A) — anchored right of sprite
       if (pA) {
         const sx = this.CARD_X + this.SPRITE + 20;
-        svg += this.statsBlock(pA, sx, cy, 'left');
+        const ov = hpOverrides?.teamA.find(o => o.id === pA.id);
+        svg += this.statsBlock(pA, sx, cy, 'left', ov);
       }
 
       // Right side stats (Team B) — anchored left of sprite
       if (pB) {
         const sx = this.CARD_X + this.CARD_W - this.SPRITE - 20;
-        svg += this.statsBlock(pB, sx, cy, 'right');
+        const ov = hpOverrides?.teamB.find(o => o.id === pB.id);
+        svg += this.statsBlock(pB, sx, cy, 'right', ov);
       }
     }
 
@@ -82,12 +88,14 @@ class BattleRenderer {
     return await base.composite(composites).png().toBuffer();
   }
 
-  private statsBlock(p: BattlePokemon, ax: number, cy: number, side: 'left' | 'right'): string {
-    const pct = Math.max(0, p.hp / p.maxHp);
+  private statsBlock(p: BattlePokemon, ax: number, cy: number, side: 'left' | 'right', hpOv?: { hp: number; maxHp: number }): string {
+    const currentHp = hpOv ? hpOv.hp : p.hp;
+    const maxHp = hpOv ? hpOv.maxHp : p.maxHp;
+    const pct = Math.max(0, currentHp / maxHp);
     const col = pct > 0.5 ? '#22c55e' : pct > 0.2 ? '#eab308' : '#ef4444';
     const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const name = esc(`${p.name.toUpperCase()} Lv.${p.level}`);
-    const hp = esc(`${Math.max(0, p.hp)}/${p.maxHp}`);
+    const hp = esc(`${Math.max(0, currentHp)}/${maxHp}`);
     let s = '';
 
     if (side === 'left') {
