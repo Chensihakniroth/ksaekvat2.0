@@ -221,18 +221,19 @@ module.exports = {
                     for (let i = 0; i < showChunks.length; i++) {
                         const chunk = showChunks[i];
                         const turnNum = chunk[0]?.turn || i + 1;
-                        const lastEntry = chunk[chunk.length - 1];
-                        // 🎨 RENDER VISUAL FRAME
-                        const highlightId = lastEntry?.text.includes('used') ? lastEntry.text.split(' ')[0] : null;
-                        const frameBuffer = await BattleRenderer.renderFrame(teamA, teamB, {
-                            actionText: lastEntry?.text || `Turn ${turnNum}`,
-                            highlightId
-                        });
+                        // 🎨 Render visual frame (sprites + HP bars only)
+                        const frameBuffer = await BattleRenderer.renderFrame(teamA, teamB);
                         const attachment = new AttachmentBuilder(frameBuffer, { name: `duel_${turnNum}.png` });
+                        // 📜 Battle log goes in the embed text
+                        const logText = chunk.map((e) => {
+                            const prefix = e.type === 'faint' ? '💀' : e.type === 'super_effective' ? '⚡' : e.type === 'crit' ? '💥' : '▸';
+                            return `${prefix} ${e.text}`;
+                        }).join('\n');
                         const turnEmbed = new EmbedBuilder()
                             .setColor(0xFF6B35)
                             .setTitle(`⚔️ Duel — Turn ${turnNum}`)
                             .setImage(`attachment://duel_${turnNum}.png`)
+                            .setDescription(logText.slice(0, 1024) || '...')
                             .setFooter({ text: `Turn ${turnNum}/${result.turns}` });
                         await sentMessage.edit({ embeds: [turnEmbed], files: [attachment] });
                         if (i < showChunks.length - 1) {
