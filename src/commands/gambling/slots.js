@@ -62,25 +62,25 @@ module.exports = {
     await database.removeBalance(message.author.id, betAmount);
     await database.updateStats(message.author.id, 'gambled', betAmount);
 
-    const outcomes = [
-      {
-        type: 'diamond',
-        weight: 2,
-        emoji: '💎',
-        multiplier: 10,
-        name: 'Diamond Jackpot! ✨',
-      },
-      { type: 'rocket', weight: 5, emoji: '🚀', multiplier: 5, name: 'To the moon! 🚀' },
-      {
-        type: 'coin',
-        weight: 31,
-        emoji: '🪙',
-        multiplier: 2,
-        name: 'Coin Win! 💰',
-      },
-      { type: 'draw', weight: 31, emoji: '🤝', multiplier: 1, name: "It's a Draw" },
-      { type: 'lose', weight: 31, emoji: '💀', multiplier: 0, name: 'You Lost' },
-    ];
+const outcomes = [
+       {
+         type: 'diamond',
+         weight: 1,
+         emoji: '💎',
+         multiplier: 10,
+         name: 'Diamond Jackpot! ✨',
+       },
+       { type: 'rocket', weight: 4, emoji: '🚀', multiplier: 5, name: 'To the moon! 🚀' },
+       {
+         type: 'coin',
+         weight: 65,
+         emoji: '🪙',
+         multiplier: 2,
+         name: 'Coin Win! 💰',
+       },
+       { type: 'draw', weight: 65, emoji: '🤝', multiplier: 1, name: "It's a Draw" },
+       { type: 'lose', weight: 65, emoji: '💀', multiplier: 0, name: 'You Lost' },
+     ];
 
     let outcomePool = [];
     for (const outcome of outcomes) {
