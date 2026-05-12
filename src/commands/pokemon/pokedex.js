@@ -150,7 +150,7 @@ async function createPokedexImage(pageLabel, pagePokemons, totalCaught, totalCou
   </svg>`);
 
   const composites = [{ input: bgSvg, top: 0, left: 0 }];
-  const silhouetteMask = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150"><rect width="150" height="150" fill="#2d3748"/></svg>`);
+  const silhouetteMask = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150"><rect width="150" height="150" fill="#000000"/></svg>`);
 
   const spritePromises = pagePokemons.map(async (pkmn, i) => {
     const r = Math.floor(i / cols);
@@ -176,13 +176,15 @@ async function createPokedexImage(pageLabel, pagePokemons, totalCaught, totalCou
         } else {
           // Uncaught silhouette
           const silhouette = await sharp(resized)
-            .composite([{ input: silhouetteMask, blend: 'source-in' }])
+            .composite([{ input: silhouetteMask, blend: 'in' }])
             .png()
             .toBuffer();
           pkmnComposites.push({ input: silhouette, top: cy + 5, left: cx + 5 });
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      console.error('Sprite render error for', pkmn.key, ':', e);
+    }
 
     // Number text
     const numberSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cellSize - 6}" height="${cellSize - 6}">
