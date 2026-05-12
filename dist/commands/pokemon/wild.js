@@ -1,10 +1,11 @@
 "use strict";
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 const PokemonBattleService = require('../../services/PokemonBattleService').default || require('../../services/PokemonBattleService');
 const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
+const BattleRenderer = require('../../services/BattleRenderer').default || require('../../services/BattleRenderer');
 const activeBattles = new Set();
 module.exports = {
     name: 'wild',
@@ -84,15 +85,13 @@ module.exports = {
             for (let i = 0; i < showChunks.length; i++) {
                 const chunk = showChunks[i];
                 const turnNum = chunk[0]?.turn || i + 1;
-                const hpBar = (p) => {
-                    const pct = Math.max(0, p.hp / p.maxHp);
-                    const filled = Math.ceil(pct * 10);
-                    const empty = 10 - filled;
-                    const emoji = p.hp <= 0 ? '💀' : PokemonBattleService.getTypeEmojis(p.types);
-                    return `${emoji} **${p.name}** \`[${'█'.repeat(filled)}${'░'.repeat(empty)}]\` ${Math.max(0, p.hp)}/${p.maxHp}`;
-                };
-                const teamADisplay = playerTeam.map(hpBar).join('\n');
-                const teamBDisplay = wildTeam.map(hpBar).join('\n');
+                const lastEntry = chunk[chunk.length - 1];
+                // 🎨 RENDER VISUAL FRAME
+                const highlightId = lastEntry?.text.includes('used') ? lastEntry.text.split(' ')[0] : null; // Simple heuristic for highlight
+                const frameBuffer = await BattleRenderer.renderFrame(playerTeam, wildTeam, {
+                    actionText: lastEntry?.text || `Turn ${turnNum}`,
+                });
+                const attachment = new AttachmentBuilder(frameBuffer, { name: `battle_${turnNum}.png` });
                 const logText = chunk.map((e) => {
                     const prefix = e.type === 'faint' ? '💀' : e.type === 'super_effective' ? '⚡' : e.type === 'crit' ? '💥' : e.type === 'immune' ? '🚫' : '▸';
                     return `${prefix} ${e.text}`;
@@ -100,9 +99,10 @@ module.exports = {
                 const turnEmbed = new EmbedBuilder()
                     .setColor(0xFF6B35)
                     .setTitle(`⚔️ Wild Battle — Turn ${turnNum}`)
-                    .addFields({ name: `🔴 Your Team`, value: teamADisplay, inline: true }, { name: '🔵 Wild Team', value: teamBDisplay, inline: true }, { name: '📜 Battle Log', value: logText.slice(0, 1024) || 'Waiting...' })
+                    .setImage(`attachment://battle_${turnNum}.png`)
+                    .setDescription(logText.slice(0, 1024) || 'Waiting...')
                     .setFooter({ text: `Turn ${turnNum}/${result.turns}` });
-                await battleMsg.edit({ embeds: [turnEmbed] });
+                await battleMsg.edit({ embeds: [turnEmbed], files: [attachment] });
                 if (i < showChunks.length - 1) {
                     await new Promise((r) => setTimeout(r, config.pokemonBattle.turnDelay));
                 }
