@@ -10,9 +10,9 @@ const JAIL_GIFS = [
   'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWtka21lZWZxdDhldndtaDlscmN6M2xjbmIycWJ2czk0OWE5bzg5aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/d8XNDMiXhPMVRKpjlu/giphy.gif',
   'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHQ0eWVyZTVsNjR5a2k4bmNrendqNTA5OWVxcXdhazIwN3FxeTVldiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/soS6N6KBCB3oc/giphy.gif',
   'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3Z3F1MGliaGphNnJ4eGliMHJoNDVrYm50NGdrbzhodDAwa3k3NWxoOCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/ZwX6kSakHXY5KsJZP1/giphy.gif',
-  'https://media.giphy.com/media/26gsobowozGM9umBi/giphy.gif',
+  'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWwxb2NvMmZ3azc5ZWMxeG9sczlwa3U1M3Nud282eHBtdnNnZDg2bSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/VPC0q2XppSEk8/giphy.gif',
   'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3azJ6ZnN4bXJkbHA5NWd0enAxZW5nNWs1c3p3OXQzOG16ZHV5Ymd1eSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/t6qZSIwcLk8GLCX6Vp/giphy.gif',
-  'https://media.giphy.com/media/l4Ep6uxU6aedrYUik/giphy.gif',
+  'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWwxb2NvMmZ3azc5ZWMxeG9sczlwa3U1M3Nud282eHBtdnNnZDg2bSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Lqd8rVp6nbfs1zjG3m/giphy.gif',
   'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3Mm90OHV0aWgzNDR0dnAyNGQxY2UxaWl5bnpoam1za2Jvb2l2dDlhMSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/r59gUvu0iTW2Q/giphy.gif',
 ];
 
