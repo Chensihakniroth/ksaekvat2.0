@@ -89,18 +89,13 @@ module.exports = {
                 // 🎨 Render visual frame with correct HP for this turn
                 const frameBuffer = await BattleRenderer.renderFrame(playerTeam, wildTeam, snapshot ? { teamA: snapshot.teamA, teamB: snapshot.teamB } : undefined);
                 const attachment = new AttachmentBuilder(frameBuffer, { name: `battle_${turnNum}.png` });
-                // 📜 Battle log goes in the embed text
+                // 📜 Battle log as plain text (flows into the image naturally)
                 const logText = chunk.map((e) => {
                     const prefix = e.type === 'faint' ? '💀' : e.type === 'super_effective' ? '⚡' : e.type === 'crit' ? '💥' : e.type === 'immune' ? '🚫' : '▸';
                     return `${prefix} ${e.text}`;
                 }).join('\n');
-                const turnEmbed = new EmbedBuilder()
-                    .setColor(0xFF6B35)
-                    .setTitle(`⚔️ Wild Battle — Turn ${turnNum}`)
-                    .setImage(`attachment://battle_${turnNum}.png`)
-                    .setDescription(logText.slice(0, 1024) || '...')
-                    .setFooter({ text: `Turn ${turnNum}/${result.turns}` });
-                await battleMsg.edit({ embeds: [turnEmbed], files: [attachment] });
+                const content = `⚔️ **Wild Battle — Turn ${turnNum}/${result.turns}**\n${logText.slice(0, 1900)}`;
+                await battleMsg.edit({ content, files: [attachment], embeds: [] });
                 if (i < showChunks.length - 1) {
                     await new Promise((r) => setTimeout(r, 1500));
                 }
