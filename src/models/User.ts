@@ -44,6 +44,7 @@ export interface IUser extends Document {
   equipped: Map<string, any>;
   lootbox: number;
   team: string[];
+  pokemonTeam: any[];  // ObjectId refs to UserPokemon documents (max 3)
   animals: Map<string, Map<string, number>>;
   boosters: Map<string, any>;
   pokeballs: number;
@@ -159,6 +160,7 @@ const UserSchema: Schema = new Schema({
   lootbox: { type: Number, default: 0 },
 
   team: [String], // Array of character names (Slim Storage)
+  pokemonTeam: [{ type: Schema.Types.ObjectId, ref: 'UserPokemon' }], // Pokémon Battle Team (max 3)
 
   // RPG & Stats
   animals: { type: Schema.Types.Map, of: Schema.Types.Map, default: {} }, // { rarity: { animalKey: count } }

@@ -181,10 +181,10 @@ module.exports = {
             isFree = true;
         }
         if (!isFree) {
-            if (!(await database.hasBalance(message.author.id, PULL_COST))) {
-                return message.reply(`💸 Oh no, sweetie! Your free pull is already used, and you need **${EconomyService.format(PULL_COST)}** <:coin:1480551418464305163> to wish again. (｡•́︿•̀｡)`);
+            if (!(await database.hasTotalBalance(message.author.id, PULL_COST))) {
+                return message.reply(`💸 Oh no, sweetie! Your free pull is already used, and you need **${EconomyService.format(PULL_COST)}** <:coin:1480551418464305163> (Wallet + Bank) to wish again. (｡•́︿•̀｡)`);
             }
-            await database.removeBalance(message.author.id, PULL_COST);
+            await database.payWithAnyBalance(message.author.id, PULL_COST);
         }
         const fullPool = await database.getGachaPool();
         const pool = fullPool[gameKey];

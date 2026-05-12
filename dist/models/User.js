@@ -50,6 +50,7 @@ const UserSchema = new mongoose_1.Schema({
     id: { type: String, required: true, unique: true, index: true }, // Discord ID
     username: { type: String, default: 'Unknown Traveler' }, // Discord Username
     balance: { type: Number, default: 1000, index: true },
+    bank: { type: Number, default: 0, index: true },
     star_dust: { type: Number, default: 0 },
     level: { type: Number, default: 1, index: true },
     worldLevel: { type: Number, default: 1 },
@@ -78,6 +79,7 @@ const UserSchema = new mongoose_1.Schema({
     equipped: { type: mongoose_1.Schema.Types.Map, of: mongoose_1.Schema.Types.Mixed, default: {} },
     lootbox: { type: Number, default: 0 },
     team: [String], // Array of character names (Slim Storage)
+    pokemonTeam: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'UserPokemon' }], // Pokémon Battle Team (max 3)
     // RPG & Stats
     animals: { type: mongoose_1.Schema.Types.Map, of: mongoose_1.Schema.Types.Map, default: {} }, // { rarity: { animalKey: count } }
     boosters: { type: mongoose_1.Schema.Types.Map, of: mongoose_1.Schema.Types.Mixed, default: {} },

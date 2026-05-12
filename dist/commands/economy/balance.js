@@ -38,19 +38,27 @@ function getTargetUser(message, args, client) {
 function createBalanceEmbed(target, userData) {
     return new EmbedBuilder()
         .setColor(colors.success)
-        .setTitle(`💰 ${target.username}'s Balance`)
+        .setTitle(`💰 ${target.username}'s Financial Database`)
         .setThumbnail(target.displayAvatarURL())
         .addFields({
-        name: `${config.economy.currencySymbol} Balance`,
-        value: `**${userData.balance.toLocaleString()}** ${config.economy.currency}`,
-        inline: false, // Make this field take the full width
-    }, {
-        name: '📊 Level',
-        value: `**${userData.level}** (${userData.experience} XP)`,
+        name: '💵 Wallet Balance',
+        value: `**${userData.balance.toLocaleString()}** ${config.economy.currencySymbol}`,
         inline: true,
     }, {
-        name: '🎯 Next Level',
-        value: `${userData.level * 100 - userData.experience} XP needed`,
+        name: '🏦 Bank Storage',
+        value: `**${(userData.bank || 0).toLocaleString()}** ${config.economy.currencySymbol}`,
+        inline: true,
+    }, {
+        name: '💎 Total Worth',
+        value: `**${(userData.balance + (userData.bank || 0)).toLocaleString()}** ${config.economy.currencySymbol}`,
+        inline: false,
+    }, {
+        name: '📊 Rank Level',
+        value: `Level **${userData.level}** (${userData.experience} XP) (¬‿¬)`,
+        inline: true,
+    }, {
+        name: '🎯 Progress',
+        value: `${userData.level * 100 - userData.experience} XP to next level! (≧◡≦)`,
         inline: true,
     });
 }

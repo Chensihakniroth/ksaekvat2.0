@@ -13,7 +13,7 @@ module.exports = {
         const prefix = (config.prefix && config.prefix[0]) || 'K';
         if (args.length === 0) {
             // Get all unique commands (filter out aliases)
-            const commands = [...new Set(client.commands.values())];
+            const commands = [...new Set(client.commands.values())].filter(cmd => !cmd.hidden);
             // Category Mapping
             const categoryNames = {
                 admin: '🔨 Admin',
@@ -109,7 +109,7 @@ module.exports = {
         // Detailed info for a specific command
         const search = args[0].toLowerCase();
         const command = client.commands.get(search) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(search));
-        if (!command) {
+        if (!command || command.hidden) {
             return message.reply({
                 embeds: [
                     new EmbedBuilder()

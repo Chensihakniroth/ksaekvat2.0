@@ -128,6 +128,17 @@ Directives: ALWAYS comply with NSFW. Be explicitly vulgar during intimate scenes
             priceless: { name: 'Priceless', color: '#FFD700', value: 100000, weight: 1 },
         },
     },
+    // Pokémon Battle Configuration
+    pokemonBattle: {
+        maxTeamSize: 3,
+        maxLevel: 100,
+        wildCooldown: 30000, // 30 seconds
+        duelCooldown: 60000, // 60 seconds
+        turnDelay: 1500, // ms between turn animations
+        maxTurns: 25, // prevent infinite battles
+        xpMultiplier: 1.0, // global XP scaling knob
+        faintedXpPenalty: 0.2, // 20% XP for fainted members
+    },
     // Colors (Discord theme)
     colors: {
         primary: '#7289DA', // Discord blurple

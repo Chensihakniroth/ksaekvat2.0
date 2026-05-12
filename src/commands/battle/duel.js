@@ -2,24 +2,25 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
+const PokemonBattleService = require('../../services/PokemonBattleService').default || require('../../services/PokemonBattleService');
+const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
+
+const activeDuels = new Set();
 
 module.exports = {
   name: 'duel',
   aliases: ['challenge', 'pvp'],
-  description: 'Challenge another user to a duel',
+  description: 'Challenge another trainer to a 3v3 Pokémon battle! ⚔️',
   usage: 'duel <@user> [bet_amount]',
-  cooldown: 30000, // 30 seconds
+  cooldown: config.pokemonBattle.duelCooldown,
   async execute(message, args, client) {
-    // Check if user provided a target
+    // ─── VALIDATION ──────────────────────────────────────────────────
     if (args.length < 1) {
       return message.reply({
-        embeds: [
-          {
-            color: colors.error,
-            title: '(｡•́︿•̀｡) Missing someone?',
-            description:
-              'Sweetie, you need to mention a friend to play with!\n**Usage:** `Kduel @user [bet_amount]`\n**Example:** `Kduel @friend 1000` (◕‿◕✿)',
-          },
+        embeds: [new EmbedBuilder()
+          .setColor(colors.error)
+          .setTitle('(・_・ヾ Who are you challenging?')
+          .setDescription('Usage: `Kduel @user [bet_amount]`\nExample: `Kduel @friend 1000`')
         ],
       });
     }
@@ -29,387 +30,348 @@ module.exports = {
     if (message.mentions.users.size > 0) {
       target = message.mentions.users.first();
     } else {
-      const userId = args[0];
-      target = client.users.cache.get(userId);
+      target = client.users.cache.get(args[0]);
     }
 
     if (!target) {
       return message.reply({
-        embeds: [
-          {
-            color: colors.error,
-            title: '(っ˘ω˘ς) Where are they?',
-            description: "I couldn't find that person, darling. Are you sure they are here? (◕‿◕✿)",
-          },
+        embeds: [new EmbedBuilder()
+          .setColor(colors.error)
+          .setTitle("(・_・ヾ Can't find them!")
+          .setDescription("I couldn't find that trainer. Make sure to @mention them!")
         ],
       });
     }
 
-    // Can't duel yourself
     if (target.id === message.author.id) {
       return message.reply({
-        embeds: [
-          {
-            color: colors.warning,
-            title: 'ヽ(>∀<☆)ノ Silly little one!',
-            description:
-              "You can't fight yourself, sweetie! Find a friend to play with instead. (◕‿◕✿)",
-          },
+        embeds: [new EmbedBuilder()
+          .setColor(colors.warning)
+          .setTitle("(≧◡≦) Can't battle yourself!")
+          .setDescription("Find another trainer to challenge!")
         ],
       });
     }
 
-    // Can't duel bots
     if (target.bot) {
       return message.reply({
-        embeds: [
-          {
-            color: colors.warning,
-            title: '(｡♥‿♥｡) Oh darling...',
-            description:
-              'The bots are too busy helping me! Please find a real friend to challenge. (◕‿◕✿)',
-          },
+        embeds: [new EmbedBuilder()
+          .setColor(colors.warning)
+          .setTitle('(・_・ヾ Bots are busy!')
+          .setDescription("Bots don't have Pokémon teams! Challenge a real trainer.")
         ],
       });
     }
 
-    // Parse bet amount (optional)
-    let betAmount = 0;
-    if (args.length > 1) {
-      betAmount = parseInt(args[1]);
-      if (isNaN(betAmount) || betAmount < 0) {
-        betAmount = 0;
-      }
+    if (activeDuels.has(message.author.id) || activeDuels.has(target.id)) {
+      return message.reply("One of you is already in a duel! Wait for it to finish. (・_・ヾ");
     }
 
-    // Check if both users have enough balance for bet
-    const challengerData = await database.getUser(message.author.id, message.author.username);
-    const targetData = await database.getUser(target.id, target.username);
+    // ─── LOAD BOTH TEAMS ─────────────────────────────────────────────
+    const [challengerTeamData, targetTeamData] = await Promise.all([
+      database.getPokemonTeam(message.author.id),
+      database.getPokemonTeam(target.id),
+    ]);
+
+    if (challengerTeamData.length < config.pokemonBattle.maxTeamSize) {
+      return message.reply({
+        embeds: [new EmbedBuilder()
+          .setColor(colors.error)
+          .setTitle("(｡•́︿•̀｡) Your team isn't ready!")
+          .setDescription(`You need ${config.pokemonBattle.maxTeamSize} Pokémon in your team.\nCurrent: **${challengerTeamData.length}/${config.pokemonBattle.maxTeamSize}**\nUse \`Kpteam add <pokemon>\` to fill your squad!`)
+        ],
+      });
+    }
+
+    if (targetTeamData.length < config.pokemonBattle.maxTeamSize) {
+      return message.reply({
+        embeds: [new EmbedBuilder()
+          .setColor(colors.error)
+          .setTitle(`(｡•́︿•̀｡) ${target.username}'s team isn't ready!`)
+          .setDescription(`They need ${config.pokemonBattle.maxTeamSize} Pokémon. They have **${targetTeamData.length}/${config.pokemonBattle.maxTeamSize}**.`)
+        ],
+      });
+    }
+
+    // ─── BET HANDLING ────────────────────────────────────────────────
+    let betAmount = 0;
+    const betArg = message.mentions.users.size > 0 ? args[1] : args[1];
+    if (betArg) {
+      const userData = await database.getUser(message.author.id);
+      betAmount = EconomyService.parseBet(betArg, userData.balance);
+      if (betAmount < 0) betAmount = 0;
+    }
 
     if (betAmount > 0) {
       if (!(await database.hasBalance(message.author.id, betAmount))) {
         return message.reply({
-          embeds: [
-            {
-              color: colors.error,
-              title: '(｡•́︿•̀｡) Not enough coins...',
-              description: `Sweetie, you don't have enough ${config.economy.currency} for this bet... (っ˘ω˘ς)\n**Your Balance:** ${challengerData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
-            },
+          embeds: [new EmbedBuilder()
+            .setColor(colors.error)
+            .setTitle("(ಥ﹏ಥ) Not enough coins!")
+            .setDescription(`You don't have enough ${config.economy.currency} for this bet!`)
           ],
         });
       }
-
       if (!(await database.hasBalance(target.id, betAmount))) {
         return message.reply({
-          embeds: [
-            {
-              color: colors.warning,
-              title: '(｡•́︿•̀｡) Friend is short on coins...',
-              description: `${target.username} doesn't have enough ${config.economy.currency} to play this high stakes game, darling. (っ˘ω˘ς)\n**Their Balance:** ${targetData.balance.toLocaleString()} ${config.economy.currency}\n**Required:** ${betAmount.toLocaleString()} ${config.economy.currency}`,
-            },
+          embeds: [new EmbedBuilder()
+            .setColor(colors.error)
+            .setTitle(`(ಥ﹏ಥ) ${target.username} can't match that bet!`)
+            .setDescription(`They don't have enough ${config.economy.currency}.`)
           ],
         });
       }
     }
 
-    // Calculate combat stats based on level and experience (Equipment system removed)
-    const challengerStats = {
-      attack: Math.floor(challengerData.level * 10 + challengerData.experience / 100),
-      defense: Math.floor(challengerData.level * 8 + challengerData.experience / 150),
-      health: Math.floor(challengerData.level * 15 + 100),
-      luck: Math.floor(challengerData.level * 2),
+    // ─── BUILD TEAM PREVIEWS ─────────────────────────────────────────
+    const buildPreview = async (teamData) => {
+      const lines = [];
+      for (const p of teamData) {
+        const base = await PokemonBattleService.getBaseStats(p.speciesKey);
+        const typeStr = base ? PokemonBattleService.getTypeEmojis(base.types) : '❓';
+        lines.push(`${typeStr} **${p.speciesKey.charAt(0).toUpperCase() + p.speciesKey.slice(1)}** (Lv.${p.level})`);
+      }
+      return lines.join('\n');
     };
 
-    const targetStats = {
-      attack: Math.floor(targetData.level * 10 + targetData.experience / 100),
-      defense: Math.floor(targetData.level * 8 + targetData.experience / 150),
-      health: Math.floor(targetData.level * 15 + 100),
-      luck: Math.floor(targetData.level * 2),
-    };
+    const [challengerPreview, targetPreview] = await Promise.all([
+      buildPreview(challengerTeamData),
+      buildPreview(targetTeamData),
+    ]);
 
-    // Create duel invitation embed
+    // ─── INVITE EMBED ────────────────────────────────────────────────
     const inviteEmbed = new EmbedBuilder()
-      .setColor(colors.warning)
-      .setTitle('(◕‿◕✿) A Friendly Duel!')
-      .setDescription(`${message.author}, darling, wants to play with ${target}!`)
+      .setColor(0xFF6B35)
+      .setTitle('⚔️ Pokémon Duel Challenge!')
+      .setDescription(`${message.author} challenges ${target} to a 3v3 battle!`)
       .addFields(
-        {
-          name: '🥊 Your Strength, sweetie',
-          value: [
-            `**Level:** ${challengerData.level}`,
-            `**Attack:** ${challengerStats.attack}`,
-            `**Defense:** ${challengerStats.defense}`,
-            `**Health:** ${challengerStats.health}`,
-          ].join('\n'),
-          inline: true,
-        },
-        {
-          name: '🛡️ Their Strength, darling',
-          value: [
-            `**Level:** ${targetData.level}`,
-            `**Attack:** ${targetStats.attack}`,
-            `**Defense:** ${targetStats.defense}`,
-            `**Health:** ${targetStats.health}`,
-          ].join('\n'),
-          inline: true,
-        }
+        { name: `🔴 ${message.author.username}'s Team`, value: challengerPreview, inline: true },
+        { name: `🔵 ${target.username}'s Team`, value: targetPreview, inline: true },
       );
 
     if (betAmount > 0) {
       inviteEmbed.addFields({
-        name: '💰 Little Treasures at Stake',
-        value: `**Bet Amount:** ${betAmount.toLocaleString()} ${config.economy.currency}\n**Winner Takes:** ${(betAmount * 2).toLocaleString()} ${config.economy.currency} (｡♥‿♥｡)`,
-        inline: false,
+        name: '💰 Stakes',
+        value: `**Bet:** ${EconomyService.format(betAmount)} ${config.economy.currency}\n**Winner Takes:** ${EconomyService.format(betAmount * 2)} ${config.economy.currency}`,
       });
     }
 
     inviteEmbed.addFields({
-      name: '📋 Will you play?',
-      value: `${target}, darling, react with ⚔️ to play or ❌ to stay safe (◕‿◕✿)\n**Time Limit:** 60 seconds`,
-      inline: false,
+      name: '📋 Accept?',
+      value: `${target}, react with ⚔️ to accept or ❌ to decline!\n**Time Limit:** 60 seconds`,
     });
 
     const sentMessage = await message.reply({ embeds: [inviteEmbed] });
 
     try {
-      // Wait a moment before adding reactions
-      await new Promise((resolve) => setTimeout(resolve, 500));
-
-      // Add reaction options
+      await new Promise((r) => setTimeout(r, 500));
       await sentMessage.react('⚔️');
       await sentMessage.react('❌');
 
-      // Create reaction collector
-      const filter = (reaction, user) => {
-        return ['⚔️', '❌'].includes(reaction.emoji.name) && user.id === target.id;
-      };
-
-      const collector = sentMessage.createReactionCollector({
-        filter,
-        time: 60000,
-        max: 1,
-      });
+      const filter = (reaction, user) => ['⚔️', '❌'].includes(reaction.emoji.name) && user.id === target.id;
+      const collector = sentMessage.createReactionCollector({ filter, time: 60000, max: 1 });
 
       let processed = false;
 
-      collector.on('collect', async (reaction, user) => {
+      collector.on('collect', async (reaction) => {
         if (processed) return;
         processed = true;
 
-        if (reaction.emoji.name === '⚔️') {
-          const acceptEmbed = new EmbedBuilder()
-            .setColor(colors.success)
-            .setTitle('(ﾉ´ヮ`)ﾉ*:･ﾟ✧ Let the games begin!')
-            .setDescription(
-              `${target} is ready to play, sweetie! Let's see who is stronger! (◕‿◕✿)`
-            );
-
-          await sentMessage.edit({ embeds: [acceptEmbed] });
-          await sentMessage.reactions.removeAll().catch(() => {});
-
-          await new Promise((resolve) => setTimeout(resolve, 3000));
-          await startDuel(
-            sentMessage,
-            message.author,
-            target,
-            challengerStats,
-            targetStats,
-            betAmount
-          );
-        } else if (reaction.emoji.name === '❌') {
+        if (reaction.emoji.name === '❌') {
           const declineEmbed = new EmbedBuilder()
             .setColor(colors.error)
-            .setTitle('(っ˘ω˘ς) Maybe next time')
-            .setDescription(`${target} doesn't want to play right now, darling. (◕‿◕✿)`);
-
+            .setTitle('(・_・ヾ Challenge declined')
+            .setDescription(`${target.username} decided not to battle.`);
           await sentMessage.edit({ embeds: [declineEmbed] });
           await sentMessage.reactions.removeAll().catch(() => {});
+          return;
+        }
+
+        // ⚔️ ACCEPTED — START BATTLE
+        activeDuels.add(message.author.id);
+        activeDuels.add(target.id);
+
+        try {
+          // Deduct bets
+          if (betAmount > 0) {
+            await database.removeBalance(message.author.id, betAmount);
+            await database.removeBalance(target.id, betAmount);
+            await database.updateStats(message.author.id, 'gambled', betAmount);
+            await database.updateStats(target.id, 'gambled', betAmount);
+          }
+
+          const acceptEmbed = new EmbedBuilder()
+            .setColor(colors.success)
+            .setTitle('(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧ Battle accepted!')
+            .setDescription('Preparing the battlefield...');
+          await sentMessage.edit({ embeds: [acceptEmbed] });
+          await sentMessage.reactions.removeAll().catch(() => {});
+          await new Promise((r) => setTimeout(r, 2000));
+
+          // Build battle teams
+          const teamA = [];
+          const teamB = [];
+
+          for (const p of challengerTeamData) {
+            const bp = await PokemonBattleService.buildBattlePokemon(p, 'A');
+            if (bp) teamA.push(bp);
+          }
+          for (const p of targetTeamData) {
+            const bp = await PokemonBattleService.buildBattlePokemon(p, 'B');
+            if (bp) teamB.push(bp);
+          }
+
+          // Run simulation
+          const result = PokemonBattleService.simulateBattle(teamA, teamB, config.pokemonBattle.maxTurns);
+          const won = result.winner === 'A';
+          const winner = won ? message.author : target;
+          const loser = won ? target : message.author;
+
+          // ─── ANIMATED LOG ────────────────────────────────────────────
+          const logChunks = [];
+          let currentChunk = [];
+          let lastTurn = 0;
+
+          for (const entry of result.log) {
+            if (entry.turn !== lastTurn && currentChunk.length > 0) {
+              logChunks.push([...currentChunk]);
+              currentChunk = [];
+            }
+            currentChunk.push(entry);
+            lastTurn = entry.turn;
+          }
+          if (currentChunk.length > 0) logChunks.push(currentChunk);
+
+          const showChunks = logChunks.length > 5
+            ? [logChunks[0], logChunks[1], logChunks[Math.floor(logChunks.length / 2)], logChunks[logChunks.length - 2], logChunks[logChunks.length - 1]]
+            : logChunks;
+
+          for (let i = 0; i < showChunks.length; i++) {
+            const chunk = showChunks[i];
+            const turnNum = chunk[0]?.turn || i + 1;
+
+            const hpBar = (p) => {
+              const pct = Math.max(0, p.hp / p.maxHp);
+              const filled = Math.ceil(pct * 10);
+              const empty = 10 - filled;
+              const emoji = p.hp <= 0 ? '💀' : PokemonBattleService.getTypeEmojis(p.types);
+              return `${emoji} **${p.name}** \`[${'█'.repeat(filled)}${'░'.repeat(empty)}]\` ${Math.max(0, p.hp)}/${p.maxHp}`;
+            };
+
+            const turnEmbed = new EmbedBuilder()
+              .setColor(0xFF6B35)
+              .setTitle(`⚔️ Duel — Turn ${turnNum}`)
+              .addFields(
+                { name: `🔴 ${message.author.username}`, value: teamA.map(hpBar).join('\n'), inline: true },
+                { name: `🔵 ${target.username}`, value: teamB.map(hpBar).join('\n'), inline: true },
+                {
+                  name: '📜 Battle Log',
+                  value: chunk.map((e) => {
+                    const prefix = e.type === 'faint' ? '💀' : e.type === 'super_effective' ? '⚡' : e.type === 'crit' ? '💥' : '▸';
+                    return `${prefix} ${e.text}`;
+                  }).join('\n').slice(0, 1024) || '...',
+                },
+              )
+              .setFooter({ text: `Turn ${turnNum}/${result.turns}` });
+
+            await sentMessage.edit({ embeds: [turnEmbed] });
+            if (i < showChunks.length - 1) {
+              await new Promise((r) => setTimeout(r, config.pokemonBattle.turnDelay));
+            }
+          }
+
+          // ─── REWARDS ──────────────────────────────────────────────────
+          // Winner's team
+          const winnerTeamData = won ? challengerTeamData : targetTeamData;
+          const winnerTeam = won ? teamA : teamB;
+          const loserTeamData = won ? targetTeamData : challengerTeamData;
+          const loserTeam = won ? teamB : teamA;
+
+          const winnerRewards = PokemonBattleService.calculateBattleRewards(true, winnerTeam, loserTeam, config.pokemonBattle.faintedXpPenalty);
+          const loserRewards = PokemonBattleService.calculateBattleRewards(false, loserTeam, winnerTeam, config.pokemonBattle.faintedXpPenalty);
+
+          // Apply XP to winner's Pokémon
+          const winnerXpLines = [];
+          for (const p of winnerTeamData) {
+            const xp = winnerRewards.xpPerMember.get(p._id.toString()) || 0;
+            const scaledXp = Math.floor(xp * config.pokemonBattle.xpMultiplier);
+            if (scaledXp > 0) {
+              const res = await database.addPokemonExp(p._id.toString(), scaledXp);
+              const fainted = winnerTeam.find((bp) => bp.id === p._id.toString())?.hp <= 0;
+              let line = `${fainted ? '💀' : '✅'} **${p.speciesKey.charAt(0).toUpperCase() + p.speciesKey.slice(1)}**: +${scaledXp} XP`;
+              if (res.leveledUp) line += ` 🎊 **→ Lv.${res.newLevel}!**`;
+              winnerXpLines.push(line);
+            }
+          }
+
+          // Apply XP to loser's Pokémon (reduced)
+          const loserXpLines = [];
+          for (const p of loserTeamData) {
+            const xp = loserRewards.xpPerMember.get(p._id.toString()) || 0;
+            const scaledXp = Math.floor(xp * config.pokemonBattle.xpMultiplier);
+            if (scaledXp > 0) {
+              const res = await database.addPokemonExp(p._id.toString(), scaledXp);
+              let line = `**${p.speciesKey.charAt(0).toUpperCase() + p.speciesKey.slice(1)}**: +${scaledXp} XP`;
+              if (res.leveledUp) line += ` 🎊 **→ Lv.${res.newLevel}!**`;
+              loserXpLines.push(line);
+            }
+          }
+
+          // Bet payouts
+          let betText = '';
+          if (betAmount > 0) {
+            const winAmount = betAmount * 2;
+            await database.addBalance(winner.id, winAmount);
+            await database.updateStats(winner.id, 'won', betAmount);
+            await database.updateStats(loser.id, 'lost', betAmount);
+            betText = `\n\n💰 **${winner.username}** wins **${EconomyService.format(winAmount)}** ${config.economy.currency}!`;
+          }
+
+          // Player XP
+          await database.addExperience(winner.id, 50);
+          await database.addExperience(loser.id, 25);
+
+          // ─── RESULT EMBED ─────────────────────────────────────────────
+          const resultEmbed = new EmbedBuilder()
+            .setColor(colors.success)
+            .setTitle(`🏆 ${winner.username} wins the duel!`)
+            .setDescription(`**${winner.username}**'s team defeated **${loser.username}**'s team!${betText}`)
+            .addFields(
+              { name: `🥇 ${winner.username}'s XP`, value: winnerXpLines.join('\n') || 'None', inline: true },
+              { name: `🥈 ${loser.username}'s XP`, value: loserXpLines.join('\n') || 'None', inline: true },
+              { name: '📊 Battle Stats', value: `**Turns:** ${result.turns}\n**Winner:** +50 player XP\n**Loser:** +25 player XP` },
+            )
+            .setThumbnail(winner.displayAvatarURL())
+            .setFooter({ text: 'All Pokémon are fully healed after battle!' });
+
+          await sentMessage.edit({ embeds: [resultEmbed] });
+          await database.updateStats(message.author.id, 'command');
+
+        } finally {
+          activeDuels.delete(message.author.id);
+          activeDuels.delete(target.id);
         }
       });
 
-      collector.on('end', async (collected, reason) => {
+      collector.on('end', async (collected) => {
         if (processed) return;
-
         if (collected.size === 0) {
           const timeoutEmbed = new EmbedBuilder()
             .setColor(colors.warning)
-            .setTitle('(｡•́︿•̀｡) No response...')
-            .setDescription(`${target} must be busy, sweetie. Let's try again later! (◕‿◕✿)`);
-
+            .setTitle('(・_・ヾ No response...')
+            .setDescription(`${target.username} didn't respond in time.`);
           await sentMessage.edit({ embeds: [timeoutEmbed] });
           await sentMessage.reactions.removeAll().catch(() => {});
         }
       });
+
     } catch (error) {
-      console.error('❌ Error setting up duel:', error);
-      await message.channel.send('Failed to set up the duel. Please try again.');
+      console.error('❌ Error in duel:', error);
+      activeDuels.delete(message.author.id);
+      activeDuels.delete(target.id);
+      await message.channel.send('Something went wrong with the duel. Try again! (ಥ﹏ಥ)');
     }
 
-    // Update command usage statistics
     await database.updateStats(message.author.id, 'command');
   },
 };
-
-async function startDuel(message, challenger, defender, challengerStats, defenderStats, betAmount) {
-  let challengerHP = challengerStats.health;
-  let defenderHP = defenderStats.health;
-  let round = 1;
-  let battleLog = [];
-
-  // Process bet if applicable
-  if (betAmount > 0) {
-    await database.removeBalance(challenger.id, betAmount);
-    await database.removeBalance(defender.id, betAmount);
-    await database.updateStats(challenger.id, 'gambled', betAmount);
-    await database.updateStats(defender.id, 'gambled', betAmount);
-  }
-
-  const battleEmbed = new EmbedBuilder()
-    .setColor(colors.primary)
-    .setTitle('(◕‿◕✿) Having Fun!')
-    .setDescription(`**${challenger.username}** and **${defender.username}** are playing together!`)
-    .addFields(
-      {
-        name: `🥊 ${challenger.username}`,
-        value: `❤️ **HP:** ${challengerHP}/${challengerStats.health}`,
-        inline: true,
-      },
-      {
-        name: `🛡️ ${defender.username}`,
-        value: `❤️ **HP:** ${defenderHP}/${defenderStats.health}`,
-        inline: true,
-      }
-    );
-
-  await message.edit({ embeds: [battleEmbed] });
-  await message.reactions.removeAll();
-
-  // Battle loop
-  while (challengerHP > 0 && defenderHP > 0 && round <= 15) {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    const challengerInitiative = challengerStats.luck + Math.random() * 20;
-    const defenderInitiative = defenderStats.luck + Math.random() * 20;
-
-    let currentAttacker, currentDefender, attackerStats, defenderStatsInRound;
-
-    if (challengerInitiative >= defenderInitiative) {
-      currentAttacker = challenger;
-      currentDefender = defender;
-      attackerStats = challengerStats;
-      defenderStatsInRound = defenderStats;
-    } else {
-      currentAttacker = defender;
-      currentDefender = challenger;
-      attackerStats = defenderStats;
-      defenderStatsInRound = challengerStats;
-    }
-
-    const baseDamage = attackerStats.attack + Math.random() * 20;
-    const defense = defenderStatsInRound.defense + Math.random() * 10;
-    const damage = Math.max(1, Math.floor(baseDamage - defense));
-
-    if (currentAttacker.id === challenger.id) {
-      defenderHP = Math.max(0, defenderHP - damage);
-    } else {
-      challengerHP = Math.max(0, challengerHP - damage);
-    }
-
-    battleLog.push(
-      `⚔️ ${currentAttacker.username} attacks ${currentDefender.username} for **${damage}** damage!`
-    );
-
-    const roundEmbed = new EmbedBuilder()
-      .setColor(colors.primary)
-      .setTitle(`⚔️ Duel - Round ${round}`)
-      .setDescription(
-        `**${challenger.username}** and **${defender.username}** are playing together!`
-      )
-      .addFields(
-        {
-          name: `🥊 ${challenger.username}`,
-          value: `❤️ **HP:** ${challengerHP}/${challengerStats.health}`,
-          inline: true,
-        },
-        {
-          name: `🛡️ ${defender.username}`,
-          value: `❤️ **HP:** ${defenderHP}/${defenderStats.health}`,
-          inline: true,
-        },
-        {
-          name: '📜 Play Log',
-          value: battleLog.slice(-4).join('\n') || 'The fun begins... (◕‿◕✿)',
-          inline: false,
-        }
-      );
-
-    await message.edit({ embeds: [roundEmbed] });
-    round++;
-  }
-
-  // Determine winner
-  let winner, loser;
-  if (challengerHP <= 0 && defenderHP <= 0) {
-    winner = challengerStats.health >= defenderStats.health ? challenger : defender;
-    loser = winner.id === challenger.id ? defender : challenger;
-  } else if (challengerHP <= 0) {
-    winner = defender;
-    loser = challenger;
-  } else if (defenderHP <= 0) {
-    winner = challenger;
-    loser = defender;
-  } else {
-    if (challengerHP > defenderHP) {
-      winner = challenger;
-      loser = defender;
-    } else if (defenderHP > challengerHP) {
-      winner = defender;
-      loser = challenger;
-    } else {
-      winner = Math.random() < 0.5 ? challenger : defender;
-      loser = winner.id === challenger.id ? defender : challenger;
-    }
-  }
-
-  let rewardText = '';
-  if (betAmount > 0) {
-    const winAmount = betAmount * 2;
-    await database.addBalance(winner.id, winAmount);
-    await database.updateStats(winner.id, 'won', betAmount);
-    await database.updateStats(loser.id, 'lost', betAmount);
-    rewardText = `\n\n💰 **${winner.username}** gets a little treat of **${winAmount.toLocaleString()}** ${config.economy.currency}! (◕‿◕✿)`;
-  }
-
-  const winnerExpGain = await database.addExperience(winner.id, 50);
-  const loserExpGain = await database.addExperience(loser.id, 25);
-
-  const resultEmbed = new EmbedBuilder()
-    .setColor(colors.success)
-    .setTitle('(｡♥‿♥｡) We have a winner!')
-    .setDescription(
-      `**${winner.username}** was just a little stronger today, darling! ${rewardText}`
-    )
-    .addFields(
-      {
-        name: '🥇 Proud Champion',
-        value: `${winner.username}\n+50 XP${winnerExpGain.leveledUp ? `\n🎉 Level Up! (${winnerExpGain.newLevel})` : ''}`,
-        inline: true,
-      },
-      {
-        name: '🥈 Brave Effort',
-        value: `${loser.username}\n+25 XP${loserExpGain.leveledUp ? `\n🎉 Level Up! (${loserExpGain.newLevel})` : ''}`,
-        inline: true,
-      },
-      {
-        name: '📊 Final Stats',
-        value: [
-          `**Rounds:** ${round - 1}`,
-          `**Final HP:** ${challenger.username}: ${challengerHP}, ${defender.username}: ${defenderHP}`,
-        ].join('\n'),
-        inline: false,
-      }
-    )
-    .setThumbnail(winner.displayAvatarURL());
-
-  await message.edit({ embeds: [resultEmbed] });
-}

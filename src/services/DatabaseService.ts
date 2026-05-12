@@ -6,6 +6,8 @@ import CharacterCard from '../models/CharacterCard';
 import AnimalRegistry from '../models/AnimalRegistry';
 import Character from '../models/Character'; 
 import GachaHistory from '../models/GachaHistory';
+import UserPokemon from '../models/UserPokemon';
+import type { IUserPokemon } from '../models/UserPokemon';
 const registry = require('../utils/registry.js');
 const logger = require('../utils/logger.js');
 
@@ -533,6 +535,129 @@ class DatabaseService {
       }
     });
     return pool;
+  }
+
+  // ─── POKÉMON BATTLE SYSTEM ───────────────────────────────────────────
+
+  /**
+   * Train a Pokémon from the Zoo — consumes 1 from Zoo count and creates
+   * an individual UserPokemon document with Level 1. (✧ω✧)
+   */
+  async trainPokemon(userId: string, speciesKey: string): Promise<any> {
+    try {
+      const user = await this.getUser(userId);
+      if (!user || !user.animals) return { success: false, message: "You don't have any Pokémon yet! Go hunt some first. (・_・ヾ" };
+
+      // Find the species in any rarity tier
+      let foundRarity: string | null = null;
+      const animalsMap = user.animals instanceof Map ? user.animals : new Map(Object.entries(user.animals));
+
+      for (const [rarity, animals] of animalsMap.entries()) {
+        const animalMap = animals instanceof Map ? animals : new Map(Object.entries(animals as any));
+        const count = animalMap.get(speciesKey);
+        if (count && count > 0) {
+          foundRarity = rarity;
+          break;
+        }
+      }
+
+      if (!foundRarity) {
+        return { success: false, message: `You don't have any **${speciesKey}** in your Zoo! (｡•́︿•̀｡)` };
+      }
+
+      // Consume 1 from Zoo count
+      await this.removeAnimal(userId, speciesKey, foundRarity);
+
+      // Create the individual UserPokemon document
+      const pokemon = await UserPokemon.create({
+        ownerId: userId,
+        speciesKey: speciesKey,
+        level: 1,
+        exp: 0,
+      });
+
+      return { success: true, pokemon, rarity: foundRarity };
+    } catch (err) {
+      logger.error('trainPokemon error:', err);
+      return { success: false, message: 'Something went wrong training that Pokémon... (ಥ﹏ಥ)' };
+    }
+  }
+
+  /**
+   * Get all individually trained Pokémon for a user.
+   */
+  async getTrainedPokemon(userId: string): Promise<IUserPokemon[]> {
+    try {
+      return await UserPokemon.find({ ownerId: userId }).sort({ level: -1 });
+    } catch (err) {
+      logger.error('getTrainedPokemon error:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Get the user's active Pokémon battle team (populated from refs).
+   */
+  async getPokemonTeam(userId: string): Promise<IUserPokemon[]> {
+    try {
+      const user = await User.findOne({ id: userId }).populate('pokemonTeam');
+      if (!user || !user.pokemonTeam) return [];
+      return user.pokemonTeam.filter(Boolean) as any[];
+    } catch (err) {
+      logger.error('getPokemonTeam error:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Set the user's Pokémon battle team (array of UserPokemon ObjectIds, max 3).
+   */
+  async setPokemonTeam(userId: string, pokemonIds: string[]): Promise<boolean> {
+    try {
+      const trimmed = pokemonIds.slice(0, 3);
+      await User.findOneAndUpdate(
+        { id: userId },
+        { $set: { pokemonTeam: trimmed } }
+      );
+      return true;
+    } catch (err) {
+      logger.error('setPokemonTeam error:', err);
+      return false;
+    }
+  }
+
+  /**
+   * Add XP to a specific UserPokemon and handle level-ups.
+   * Level cap: 100.
+   */
+  async addPokemonExp(pokemonId: string, amount: number): Promise<{ leveledUp: boolean; newLevel: number; pokemon: IUserPokemon | null }> {
+    try {
+      const pokemon = await UserPokemon.findById(pokemonId);
+      if (!pokemon) return { leveledUp: false, newLevel: 0, pokemon: null };
+
+      pokemon.exp += amount;
+      let leveledUp = false;
+
+      const getReq = (lvl: number) => lvl * 50 + lvl * lvl * 5;
+
+      while (pokemon.level < 100 && pokemon.exp >= getReq(pokemon.level)) {
+        pokemon.exp -= getReq(pokemon.level);
+        pokemon.level++;
+        leveledUp = true;
+      }
+
+      // Cap at level 100
+      if (pokemon.level >= 100) {
+        pokemon.level = 100;
+        pokemon.exp = 0;
+      }
+
+      await pokemon.save();
+      return { leveledUp, newLevel: pokemon.level, pokemon };
+    } catch (err) {
+      logger.error('addPokemonExp error:', err);
+      return { leveledUp: false, newLevel: 0, pokemon: null };
+    }
   }
 }
 
