@@ -202,6 +202,26 @@ class DatabaseService {
     return (user.bank || 0) >= amount;
   }
 
+  async hasTotalBalance(userId: string, amount: number) {
+    const user = await this.getUser(userId);
+    return (user.balance || 0) + (user.bank || 0) >= amount;
+  }
+
+  async payWithAnyBalance(userId: string, amount: number) {
+    const user = await User.findOne({ id: userId });
+    if (!user) return false;
+    
+    if ((user.balance || 0) >= amount) {
+      user.balance -= amount;
+    } else {
+      const remaining = amount - (user.balance || 0);
+      user.balance = 0;
+      user.bank = (user.bank || 0) - remaining;
+    }
+    await user.save();
+    return true;
+  }
+
   async deposit(userId: string, amount: number) {
     return await User.findOneAndUpdate(
       { id: userId },

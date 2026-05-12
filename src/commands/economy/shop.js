@@ -219,13 +219,14 @@ module.exports = {
           }
           await database.removeStarDust(userId, selectedItem.price);
         } else {
-          if (userData.balance < selectedItem.price) {
+          if (!(await database.hasTotalBalance(userId, selectedItem.price))) {
+            const totalWealth = (userData.balance || 0) + (userData.bank || 0);
             return i.reply({
-              content: `💸 Oh no, darling! You need **${EconomyService.format(selectedItem.price - userData.balance)}** more coins to buy that. (｡•́︿•̀｡)`,
+              content: `💸 Oh no, darling! You need **${EconomyService.format(selectedItem.price - totalWealth)}** more coins (Wallet + Bank) to buy that. (｡•́︿•̀｡)`,
               flags: [MessageFlags.Ephemeral],
             });
           }
-          await database.removeBalance(userId, selectedItem.price);
+          await database.payWithAnyBalance(userId, selectedItem.price);
         }
 
         // Process Granting

@@ -11,27 +11,28 @@ const jailedUsers = new Map();
 // ── Curated GIF pools for guaranteed context relevance ──────────────
 const GIF_POOLS = {
   rob_success: [
-    'https://media.giphy.com/media/SOmjomEnNHsrK/giphy.gif',
-    'https://media.giphy.com/media/l0HlNQ03J5JxX2rGU/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3UybjByZGxsNXZyYmtzNGt4Z3BuMmpscThsem5yMGRiejlpY3ZoNCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/0ixAZaU8Gp8R5TdRQT/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3UybjByZGxsNXZyYmtzNGt4Z3BuMmpscThsem5yMGRiejlpY3ZoNCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Rtu8Jzs4MzoC3cl8lM/giphy.gif',
     'https://media.giphy.com/media/dMsh6gRYJDymXSIatd/giphy.gif',
-    'https://media.giphy.com/media/3oEdv22bKDUluFKkxi/giphy.gif',
-    'https://media.giphy.com/media/Y6yRfR88rvP44/giphy.gif',
-    'https://media.giphy.com/media/eKNrUbDJuFuaQ1A37p/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3UybjByZGxsNXZyYmtzNGt4Z3BuMmpscThsem5yMGRiejlpY3ZoNCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/bpTL6wXRuMQpMIVduB/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3UybjByZGxsNXZyYmtzNGt4Z3BuMmpscThsem5yMGRiejlpY3ZoNCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/JhEHJrm4GTzw5gqj5y/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ3UybjByZGxsNXZyYmtzNGt4Z3BuMmpscThsem5yMGRiejlpY3ZoNCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/6N09ETGHhVuOspFNJD/giphy.gif',
   ],
   rob_fail: [
-    'https://media.giphy.com/media/l2JehQ2GitHGdVG9Y/giphy.gif',
-    'https://media.giphy.com/media/3o7TKnO6Wve3nkSLFm/giphy.gif',
-    'https://media.giphy.com/media/H1LbI7KnGPnFiYljBH/giphy.gif',
-    'https://media.giphy.com/media/3oAt21Fnr4i54uK8vK/giphy.gif',
-    'https://media.giphy.com/media/26ybwvTX7TSe3eoKs/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNjdpc3hrbnVpOTJ5a2x0ZDV2cTc5dWdvaDdxMmtjNnFmaTIwZno2eCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/7oFbG03C8AvFbv4Iti/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNjdpc3hrbnVpOTJ5a2x0ZDV2cTc5dWdvaDdxMmtjNnFmaTIwZno2eCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/SU90xAXfWonoggFIcm/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3Y3JhamQ0endjZTBkanE4a2Z5NXFuejUyenZobXFhdDJqMGkzc3k2aCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/V6gKvIt1JozxrMQPFc/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3N2RzczZtbml2MmFwOGJjMXAxOW9wd2NtaHJsOHdxbXpkOGRpYTV2NCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/uN1ggGbJi8Ie3BFoXq/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNjF4NWgydzk0Y2w2Zmd2M2doaG1zMHB6Zzh0dW11Z3c0aDFtNDY5NyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/J1YvLYmEKS8BcgM5Yy/giphy.gif',
   ],
   jail: [
-    'https://media.giphy.com/media/kcCfTKQ2s8its2fGBW/giphy.gif',
-    'https://media.giphy.com/media/3oEjHV0z8S7WM4MwnK/giphy.gif',
-    'https://media.giphy.com/media/YN1eB6slBDeNHr1gjs/giphy.gif',
+    'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWtka21lZWZxdDhldndtaDlscmN6M2xjbmIycWJ2czk0OWE5bzg5aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/d8XNDMiXhPMVRKpjlu/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHQ0eWVyZTVsNjR5a2k4bmNrendqNTA5OWVxcXdhazIwN3FxeTVldiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/soS6N6KBCB3oc/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3Z3F1MGliaGphNnJ4eGliMHJoNDVrYm50NGdrbzhodDAwa3k3NWxoOCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/ZwX6kSakHXY5KsJZP1/giphy.gif',
     'https://media.giphy.com/media/26gsobowozGM9umBi/giphy.gif',
-    'https://media.giphy.com/media/jmSjPi6soIoQCFwaXJ/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3azJ6ZnN4bXJkbHA5NWd0enAxZW5nNWs1c3p3OXQzOG16ZHV5Ymd1eSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/t6qZSIwcLk8GLCX6Vp/giphy.gif',
     'https://media.giphy.com/media/l4Ep6uxU6aedrYUik/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3Mm90OHV0aWgzNDR0dnAyNGQxY2UxaWl5bnpoam1za2Jvb2l2dDlhMSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/r59gUvu0iTW2Q/giphy.gif',
   ],
 };
 
@@ -85,7 +86,7 @@ module.exports = {
       if (jailGif) embed.setImage(jailGif);
 
       const sent = await message.reply({ embeds: [embed] });
-      setTimeout(() => sent.delete().catch(() => {}), 8000);
+      setTimeout(() => sent.delete().catch(() => { }), 8000);
       return 'CUSTOM_COOLDOWN'; // Signal to messageCreate that we handled it
     }
 
@@ -165,12 +166,7 @@ module.exports = {
     }
 
     // ── FAILURE ─────────────────────────────────────────────────────────
-    // Robber loses some money as a penalty (25% of what they tried to steal)
-    const penalty = Math.min(Math.floor(stealAmount * 0.25), robberData.balance);
-    if (penalty > 0) {
-      await database.removeBalance(robber.id, penalty);
-      await database.addBalance(target.id, penalty);
-    }
+    // (No penalty fine anymore per user request)
 
     // ── JAIL CHECK on failure ───────────────────────────────────────────
     if (Math.random() < jailChance) {
@@ -185,7 +181,6 @@ module.exports = {
         .setTitle('🚨 BUSTED — YOU\'RE GOING TO JAIL!')
         .setDescription(
           `**${robber.username}** tried to rob **${target.username}** and got caught by the authorities! (ಥ﹏ಥ)\n\n` +
-          `💸 **Penalty:** Lost **${penalty.toLocaleString()}** ${config.economy.currencySymbol} (paid to victim)\n` +
           `🔒 **Jail Time:** You can't rob for **20 minutes**!`
         )
         .setTimestamp();
@@ -204,7 +199,6 @@ module.exports = {
       .setTitle('❌ HEIST FAILED!')
       .setDescription(
         `**${robber.username}** tried to rob **${target.username}** but got caught! (・_・ヾ\n\n` +
-        `💸 **Penalty:** Lost **${penalty.toLocaleString()}** ${config.economy.currencySymbol} (paid to victim)\n` +
         `Lucky you didn't end up in jail this time...`
       )
       .setTimestamp();
