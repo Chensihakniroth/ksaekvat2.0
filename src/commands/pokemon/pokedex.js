@@ -3,6 +3,12 @@ const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 const AnimalService = require('../../services/AnimalService.js').default || require('../../services/AnimalService.js');
+const path = require('path');
+const fs = require('fs');
+const sharp = require('sharp');
+
+const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
+if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
 
 // ─── Pokémon type emoji map ───────────────────────────────────────────────────
 const TYPE_EMOJI = {
@@ -105,6 +111,98 @@ async function buildPokedexEmbed(target, pkmnEntry, userAnimals, animalsData, in
   return { embed, files };
 }
 
+// ─── Pokedex Visual Generator ──────────────────────────────────────────────────
+async function createPokedexImage(pageLabel, pagePokemons, totalCaught, totalCount) {
+  if (!pagePokemons || pagePokemons.length === 0) return null;
+
+  const cols = 6;
+  const rows = 5;
+  const cellSize = 124;
+  const padding = 18;
+  const headerHeight = 72;
+  const canvasWidth = padding * 2 + cols * cellSize;
+  const canvasHeight = headerHeight + padding + rows * cellSize + padding;
+
+  const bgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
+    <defs>
+      <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#8a0f21"/>
+        <stop offset="100%" stop-color="#4a040d"/>
+      </linearGradient>
+      <linearGradient id="hdr" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#590611"/>
+        <stop offset="100%" stop-color="#3d0108"/>
+      </linearGradient>
+    </defs>
+    <rect width="${canvasWidth}" height="${canvasHeight}" rx="16" ry="16" fill="url(#bg)"/>
+    <rect x="2" y="2" width="${canvasWidth - 4}" height="${canvasHeight - 4}" rx="14" ry="14" fill="none" stroke="#ff4d4d" stroke-width="2" opacity="0.6"/>
+    <rect x="12" y="10" width="${canvasWidth - 24}" height="50" rx="10" ry="10" fill="url(#hdr)"/>
+    <text x="${canvasWidth / 2}" y="43" font-family="'Courier New',monospace" font-size="20" font-weight="bold" fill="#ff9999" text-anchor="middle" letter-spacing="4">${pageLabel}</text>
+    <text x="30" y="44" font-family="sans-serif" font-size="22" fill="#ff4d4d">📖</text>
+    <text x="${canvasWidth - 30}" y="42" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ff9999" text-anchor="end">${totalCaught} / ${totalCount}</text>
+    ${Array.from({ length: rows }).map((_, r) =>
+      Array.from({ length: cols }).map((_, c) => {
+        const cx = padding + c * cellSize;
+        const cy = headerHeight + padding + r * cellSize;
+        return `<rect x="${cx + 3}" y="${cy + 3}" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="#111827" stroke="#330b13" stroke-width="1.5" opacity="0.9"/>`;
+      }).join('')
+    ).join('')}
+  </svg>`);
+
+  const composites = [{ input: bgSvg, top: 0, left: 0 }];
+  const silhouetteMask = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150"><rect width="150" height="150" fill="#2d3748"/></svg>`);
+
+  const spritePromises = pagePokemons.map(async (pkmn, i) => {
+    const r = Math.floor(i / cols);
+    const c = i % cols;
+    const cx = padding + c * cellSize;
+    const cy = headerHeight + padding + r * cellSize;
+    
+    const pkmnComposites = [];
+
+    if (pkmn.caught) {
+      // Glow ring for caught
+      const glowSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cellSize - 6}" height="${cellSize - 6}">
+        <rect x="0" y="0" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="none" stroke="#ff4d4d" stroke-width="1.5" opacity="0.5"/>
+      </svg>`);
+      pkmnComposites.push({ input: glowSvg, top: cy + 3, left: cx + 3 });
+    }
+
+    try {
+      const resized = await AnimalService.getResizedSpriteBuffer(pkmn.key, cellSize - 6);
+      if (resized) {
+        if (pkmn.caught) {
+          pkmnComposites.push({ input: resized, top: cy + 5, left: cx + 5 });
+        } else {
+          // Uncaught silhouette
+          const silhouette = await sharp(resized)
+            .composite([{ input: silhouetteMask, blend: 'source-in' }])
+            .png()
+            .toBuffer();
+          pkmnComposites.push({ input: silhouette, top: cy + 5, left: cx + 5 });
+        }
+      }
+    } catch (e) {}
+
+    // Number text
+    const numberSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cellSize - 6}" height="${cellSize - 6}">
+      <text x="${(cellSize - 6) / 2}" y="${cellSize - 15}" font-family="sans-serif" font-size="12" font-weight="bold" fill="${pkmn.caught ? '#fff' : '#4a5568'}" text-anchor="middle">#${String(pkmn.index).padStart(3, '0')}</text>
+    </svg>`);
+    pkmnComposites.push({ input: numberSvg, top: cy + 3, left: cx + 3 });
+
+    return pkmnComposites;
+  });
+
+  const results = await Promise.all(spritePromises);
+  results.forEach(res => composites.push(...res));
+
+  const outPath = path.join(TEMP_DIR, `pokedex-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
+  await sharp({
+    create: { width: canvasWidth, height: canvasHeight, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } }
+  }).composite(composites).png().toFile(outPath);
+  return outPath;
+}
+
 module.exports = {
   name: 'pokedex',
   aliases: ['pdex', 'pkdex', 'dex', 'pinfo'],
@@ -187,33 +285,37 @@ module.exports = {
     }
 
     // List View Mode
-    const PAGE_SIZE = 15;
+    const PAGE_SIZE = 30;
     const maxPages = Math.ceil(totalCount / PAGE_SIZE) || 1;
     let currentPage = 0;
 
-    const generatePageEmbed = (page) => {
+    const { AttachmentBuilder } = require('discord.js');
+
+    const generatePagePayload = async (page) => {
       const start = page * PAGE_SIZE;
       const end = start + PAGE_SIZE;
-      const items = allPokemon.slice(start, end);
+      const items = allPokemon.slice(start, end).map((p, idx) => ({ ...p, index: start + idx + 1 }));
 
-      const description = items.map((p, idx) => {
-        const num = String(start + idx + 1).padStart(3, '0');
-        if (p.caught) {
-          return `\`#${num}\` ${p.emoji} **${p.name}** \`[${p.rarity.toUpperCase()}]\` — ${p.count}×`;
-        } else {
-          return `\`#${num}\` ❔ **???????** \`[${p.rarity.toUpperCase()}]\` — Uncaught`;
-        }
-      }).join('\n');
+      const imgPath = await createPokedexImage(`PAGE ${page + 1}`, items, totalCaught, totalCount);
 
-      return new EmbedBuilder()
-        .setColor(colors.primary || 0x0099ff)
+      const embed = new EmbedBuilder()
+        .setColor('#e63946')
         .setTitle(`📖 ${target.username}'s Pokédex Logbook`)
-        .setDescription(`**Progress:** ${totalCaught} / ${totalCount} (${percent}%)\n\n${description}`)
-        .setFooter({ text: `Page ${page + 1} of ${maxPages}` });
+        .setImage('attachment://pokedex-page.png')
+        .setFooter({ text: `Page ${page + 1} of ${maxPages}  •  ${totalCaught} / ${totalCount} Caught` });
+
+      return { 
+        embeds: [embed], 
+        files: [new AttachmentBuilder(imgPath, { name: 'pokedex-page.png' })],
+        imgPath
+      };
     };
 
+    const payload = await generatePagePayload(currentPage);
+
     const msg = await message.reply({
-      embeds: [generatePageEmbed(currentPage)],
+      embeds: payload.embeds,
+      files: payload.files,
       components: maxPages > 1 ? [
         new ActionRowBuilder().addComponents(
           new ButtonBuilder().setCustomId('pdex_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(true),
@@ -222,6 +324,8 @@ module.exports = {
       ] : []
     });
 
+    if (payload.imgPath) fs.unlink(payload.imgPath, () => {});
+
     if (maxPages > 1) {
       const collector = msg.createMessageComponentCollector({ time: 60_000 });
       collector.on('collect', async (i) => {
@@ -229,8 +333,12 @@ module.exports = {
         if (i.customId === 'pdex_prev' && currentPage > 0) currentPage--;
         else if (i.customId === 'pdex_next' && currentPage < maxPages - 1) currentPage++;
         await i.deferUpdate();
+        
+        const nextPayload = await generatePagePayload(currentPage);
+        
         await msg.edit({
-          embeds: [generatePageEmbed(currentPage)],
+          embeds: nextPayload.embeds,
+          files: nextPayload.files,
           components: [
             new ActionRowBuilder().addComponents(
               new ButtonBuilder().setCustomId('pdex_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(currentPage === 0),
@@ -238,6 +346,7 @@ module.exports = {
             )
           ]
         });
+        if (nextPayload.imgPath) fs.unlink(nextPayload.imgPath, () => {});
       });
       collector.on('end', () => msg.edit({ components: [] }).catch(() => {}));
     }
