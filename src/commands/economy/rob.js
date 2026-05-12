@@ -63,7 +63,7 @@ async function getContextGif(pool) {
 
 module.exports = {
   name: 'rob',
-  aliases: ['steal', 'heist'],
+  aliases: ['steal', 'heist', 'plon'],
   description: 'Attempt to rob another user\'s wallet! 50/50 odds... but you might end up in jail. (¬‿¬)',
   usage: 'rob <@user>',
   category: 'economy',
