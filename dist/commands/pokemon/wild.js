@@ -57,7 +57,7 @@ module.exports = {
                 .setTitle('⚔️ Wild Pokémon Battle!')
                 .setDescription('A wild team appeared! Preparing for battle...')
                 .addFields({ name: `🔴 ${message.author.username}'s Team`, value: formatTeamPreview(playerTeam, 'player'), inline: true }, { name: '🔵 Wild Team', value: formatTeamPreview(wildTeam, 'wild'), inline: true })
-                .setFooter({ text: 'Battle starting in 3 seconds...' });
+                .setFooter({ text: 'Battle starting...' });
             const battleMsg = await message.reply({ embeds: [matchupEmbed] });
             // ─── RUN SIMULATION ─────────────────────────────────────────────
             const result = PokemonBattleService.simulateBattle(playerTeam, wildTeam, config.pokemonBattle.maxTurns);
@@ -122,24 +122,20 @@ module.exports = {
                     });
                 }
             }
-            // ─── FINAL RESULT EMBED ─────────────────────────────────────────
+            // ─── FINAL RESULT MESSAGE ───────────────────────────────────────
             const xpLines = xpResults.map((r) => {
                 let line = `${r.fainted ? '💀' : '✅'} **${r.name}**: +${r.xp} XP`;
                 if (r.leveledUp)
                     line += ` 🎊 **→ Lv.${r.newLevel}!**`;
-                if (r.fainted)
-                    line += ' *(fainted — 20% XP)*';
                 return line;
             }).join('\n');
-            const resultEmbed = new EmbedBuilder()
-                .setColor(won ? colors.success : colors.error)
-                .setTitle(won ? '(✧ω✧) VICTORY!' : '(ಥ﹏ಥ) Defeat...')
-                .setDescription(won
-                ? 'Your team wiped the wild Pokémon! Great teamwork! (¬‿¬)'
-                : "Your team was knocked out... Train harder and try again! (・_・ヾ")
-                .addFields({ name: '⭐ XP Earned', value: xpLines || 'None', inline: false }, { name: '💰 Reward', value: `+${EconomyService.format(rewards.money)} ${config.economy.currency}`, inline: true }, { name: '📊 Turns', value: `${result.turns}`, inline: true })
-                .setFooter({ text: 'Pokémon are fully healed after battle!' });
-            await battleMsg.edit({ embeds: [resultEmbed] });
+            const finalSnapshot = result.snapshots[result.snapshots.length - 1];
+            const finalFrame = await BattleRenderer.renderFrame(playerTeam, wildTeam, finalSnapshot ? { teamA: finalSnapshot.teamA, teamB: finalSnapshot.teamB } : undefined);
+            const finalAttachment = new AttachmentBuilder(finalFrame, { name: 'battle_final.png' });
+            const finalContent = won
+                ? `(✧ω✧) **VICTORY!** You won in ${result.turns} turns!\n💰 **Reward:** +${EconomyService.format(rewards.money)} ${config.economy.currency}\n\n**⭐ XP Earned**\n${xpLines || 'None'}`
+                : `(ಥ﹏ಥ) **DEFEAT...** Your team fainted in ${result.turns} turns.\n\n**⭐ XP Earned**\n${xpLines || 'None'}`;
+            await battleMsg.edit({ content: finalContent, embeds: [], files: [finalAttachment] });
             // Player XP reward
             const playerXp = won ? 30 : 10;
             await database.addExperience(message.author.id, playerXp);

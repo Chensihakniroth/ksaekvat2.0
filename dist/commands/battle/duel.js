@@ -182,7 +182,6 @@ module.exports = {
                         .setDescription('Preparing the battlefield...');
                     await sentMessage.edit({ embeds: [acceptEmbed] });
                     await sentMessage.reactions.removeAll().catch(() => { });
-                    await new Promise((r) => setTimeout(r, 2000));
                     // Build battle teams
                     const teamA = [];
                     const teamB = [];
@@ -284,15 +283,19 @@ module.exports = {
                     // Player XP
                     await database.addExperience(winner.id, 50);
                     await database.addExperience(loser.id, 25);
-                    // ─── RESULT EMBED ─────────────────────────────────────────────
-                    const resultEmbed = new EmbedBuilder()
-                        .setColor(colors.success)
-                        .setTitle(`🏆 ${winner.username} wins the duel!`)
-                        .setDescription(`**${winner.username}**'s team defeated **${loser.username}**'s team!${betText}`)
-                        .addFields({ name: `🥇 ${winner.username}'s XP`, value: winnerXpLines.join('\n') || 'None', inline: true }, { name: `🥈 ${loser.username}'s XP`, value: loserXpLines.join('\n') || 'None', inline: true }, { name: '📊 Battle Stats', value: `**Turns:** ${result.turns}\n**Winner:** +50 player XP\n**Loser:** +25 player XP` })
-                        .setThumbnail(winner.displayAvatarURL())
-                        .setFooter({ text: 'All Pokémon are fully healed after battle!' });
-                    await sentMessage.edit({ embeds: [resultEmbed] });
+                    // ─── FINAL RESULT MESSAGE ───────────────────────────────────────
+                    const finalSnapshot = result.snapshots[result.snapshots.length - 1];
+                    const finalFrame = await BattleRenderer.renderFrame(teamA, teamB, finalSnapshot ? { teamA: finalSnapshot.teamA, teamB: finalSnapshot.teamB } : undefined);
+                    const finalAttachment = new AttachmentBuilder(finalFrame, { name: 'duel_final.png' });
+                    const finalContent = `🏆 **${winner.username} wins the duel in ${result.turns} turns!**
+**${winner.username}**'s team defeated **${loser.username}**'s team!${betText}
+
+🥇 **${winner.username}'s XP:**
+${winnerXpLines.join('\n') || 'None'}
+
+🥈 **${loser.username}'s XP:**
+${loserXpLines.join('\n') || 'None'}`;
+                    await sentMessage.edit({ content: finalContent, embeds: [], files: [finalAttachment] });
                     await database.updateStats(message.author.id, 'command');
                 }
                 finally {
