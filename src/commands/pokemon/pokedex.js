@@ -150,7 +150,6 @@ async function createPokedexImage(pageLabel, pagePokemons, totalCaught, totalCou
   </svg>`);
 
   const composites = [{ input: bgSvg, top: 0, left: 0 }];
-  const silhouetteMask = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="150" height="150"><rect width="150" height="150" fill="#000000"/></svg>`);
 
   const spritePromises = pagePokemons.map(async (pkmn, i) => {
     const r = Math.floor(i / cols);
@@ -174,11 +173,13 @@ async function createPokedexImage(pageLabel, pagePokemons, totalCaught, totalCou
         if (pkmn.caught) {
           pkmnComposites.push({ input: resized, top: cy + 5, left: cx + 5 });
         } else {
-          // Uncaught silhouette
-          const silhouette = await sharp(resized)
-            .composite([{ input: silhouetteMask, blend: 'in' }])
-            .png()
-            .toBuffer();
+          // Uncaught silhouette — extract alpha channel (the shape),
+          // create a solid black image, then join alpha back in
+          const meta = await sharp(resized).metadata();
+          const alphaChannel = await sharp(resized).extractChannel(3).toBuffer();
+          const silhouette = await sharp({
+            create: { width: meta.width, height: meta.height, channels: 3, background: { r: 0, g: 0, b: 0 } }
+          }).joinChannel(alphaChannel).png().toBuffer();
           pkmnComposites.push({ input: silhouette, top: cy + 5, left: cx + 5 });
         }
       }
