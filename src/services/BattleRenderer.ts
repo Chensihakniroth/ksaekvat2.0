@@ -62,14 +62,14 @@ class BattleRenderer {
       if (sprite) {
         composites.push({
           input: sprite,
-          top: pos.y - 48,
-          left: pos.x - 48,
+          top: pos.y - 60,
+          left: pos.x - 60,
         });
       }
       
-      // Add UI Overlay (HP Bar, Name)
+      // Consolidated HP Plate (Name + Bar)
       composites.push({
-        input: Buffer.from(this.generatePokemonUI(p, pos.x + 60, pos.y, 'left', options.highlightId === p.id)),
+        input: Buffer.from(this.generateHPPlate(p, pos.x, pos.y - 70, 'left', options.highlightId === p.id)),
         top: 0,
         left: 0,
       });
@@ -79,24 +79,24 @@ class BattleRenderer {
     for (let i = 0; i < teamB.length; i++) {
       const p = teamB[i];
       const pos = positionsB[i];
-      const sprite = await this.getSprite(p.speciesKey, p.hp <= 0, true); // Flip for enemy
+      const sprite = await this.getSprite(p.speciesKey, p.hp <= 0, true);
       if (sprite) {
         composites.push({
           input: sprite,
-          top: pos.y - 48,
-          left: pos.x - 48,
+          top: pos.y - 60,
+          left: pos.x - 60,
         });
       }
 
-      // Add UI Overlay
+      // Consolidated HP Plate
       composites.push({
-        input: Buffer.from(this.generatePokemonUI(p, pos.x - 60, pos.y, 'right', options.highlightId === p.id)),
+        input: Buffer.from(this.generateHPPlate(p, pos.x, pos.y - 70, 'right', options.highlightId === p.id)),
         top: 0,
         left: 0,
       });
     }
 
-    // 5. Action Text Overlay
+    // 5. Action Dialog Overlay
     if (options.actionText) {
       composites.push({
         input: Buffer.from(this.generateActionOverlay(options.actionText)),
@@ -115,55 +115,54 @@ class BattleRenderer {
     let s = sharp(buffer).resize(120, 120, { kernel: 'nearest' });
     
     if (flip) s = s.flop();
-    if (isFainted) s = s.grayscale().modulate({ brightness: 0.5 });
+    if (isFainted) s = s.grayscale().modulate({ brightness: 0.4 });
 
     return await s.toBuffer();
   }
 
-  private generatePokemonUI(p: BattlePokemon, x: number, y: number, align: 'left' | 'right', isHighlighted: boolean): string {
+  private generateHPPlate(p: BattlePokemon, x: number, y: number, align: 'left' | 'right', isHighlighted: boolean): string {
     const hpPct = Math.max(0, p.hp / p.maxHp);
-    const barWidth = 120;
-    const barHeight = 8;
-    const hpColor = hpPct > 0.5 ? '#00ff88' : hpPct > 0.2 ? '#ffcc00' : '#ff4444';
+    const plateWidth = 130;
+    const barWidth = 110;
+    const barHeight = 6;
+    const hpColor = hpPct > 0.5 ? '#00ff00' : hpPct > 0.2 ? '#ffff00' : '#ff0000';
     
-    const textAnchor = align === 'left' ? 'start' : 'end';
-    const highlightStroke = isHighlighted ? 'stroke="#00ffff" stroke-width="2" filter="url(#glow)"' : '';
+    const plateX = align === 'left' ? x - 65 : x - 65; // Center it over the sprite
+    const highlightColor = isHighlighted ? '#ffffff' : '#333333';
 
     return `
       <svg width="${this.WIDTH}" height="${this.HEIGHT}">
-        <defs>
-          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-        </defs>
-        <g transform="translate(${x}, ${y - 20})">
-          <!-- Name & Level -->
-          <text x="0" y="-10" font-family="Arial, sans-serif" font-weight="bold" font-size="16" fill="white" text-anchor="${textAnchor}" style="text-shadow: 2px 2px 2px black;">
-            ${p.name} <tspan fill="#aaa" font-size="12">Lv.${p.level}</tspan>
+        <g transform="translate(${plateX}, ${y})">
+          <!-- Background Plate -->
+          <rect x="0" y="0" width="${plateWidth}" height="32" fill="rgba(0,0,0,0.6)" rx="4" stroke="${highlightColor}" stroke-width="1.5" />
+          
+          <!-- Name -->
+          <text x="6" y="14" font-family="Arial, sans-serif" font-weight="bold" font-size="12" fill="white">
+            ${p.name.toUpperCase()} <tspan fill="#ccc" font-size="9">Lv.${p.level}</tspan>
           </text>
           
           <!-- HP Bar Background -->
-          <rect x="${align === 'left' ? 0 : -barWidth}" y="0" width="${barWidth}" height="${barHeight}" fill="#333" rx="4" />
+          <rect x="10" y="19" width="${barWidth}" height="${barHeight}" fill="#222" rx="2" />
           
           <!-- HP Bar Fill -->
-          <rect x="${align === 'left' ? 0 : -barWidth + (barWidth * (1 - hpPct))}" y="0" width="${barWidth * hpPct}" height="${barHeight}" fill="${hpColor}" rx="4" ${highlightStroke} />
-          
-          <!-- HP Text -->
-          <text x="${align === 'left' ? barWidth : -barWidth}" y="20" font-family="monospace" font-size="10" fill="#ddd" text-anchor="${textAnchor}">
-            ${Math.max(0, p.hp)}/${p.maxHp}
-          </text>
+          <rect x="10" y="19" width="${barWidth * hpPct}" height="${barHeight}" fill="${hpColor}" rx="2" />
         </g>
       </svg>
     `;
   }
 
   private generateActionOverlay(text: string): string {
+    // Escape XML entities just in case
+    const safeText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').toUpperCase();
+    
     return `
       <svg width="${this.WIDTH}" height="${this.HEIGHT}">
-        <rect x="0" y="350" width="800" height="50" fill="rgba(0,0,0,0.7)" />
-        <text x="400" y="382" font-family="Arial, sans-serif" font-size="20" fill="#00ffff" font-weight="bold" text-anchor="middle" style="letter-spacing: 1px;">
-          ${text.toUpperCase()}
+        <!-- Classic Dialog Box -->
+        <rect x="40" y="330" width="720" height="60" fill="white" rx="8" stroke="#333" stroke-width="4" />
+        <rect x="45" y="335" width="710" height="50" fill="none" rx="6" stroke="#ccc" stroke-width="1" />
+        
+        <text x="400" y="367" font-family="Arial, sans-serif" font-size="16" fill="#111" font-weight="bold" text-anchor="middle">
+          ${safeText}
         </text>
       </svg>
     `;

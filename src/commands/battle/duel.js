@@ -264,10 +264,6 @@ module.exports = {
               .setColor(0xFF6B35)
               .setTitle(`⚔️ Duel — Turn ${turnNum}`)
               .setImage(`attachment://duel_${turnNum}.png`)
-              .setDescription(chunk.map((e) => {
-                const prefix = e.type === 'faint' ? '💀' : e.type === 'super_effective' ? '⚡' : e.type === 'crit' ? '💥' : '▸';
-                return `${prefix} ${e.text}`;
-              }).join('\n').slice(0, 1024) || '...')
               .setFooter({ text: `Turn ${turnNum}/${result.turns}` });
 
             await sentMessage.edit({ embeds: [turnEmbed], files: [attachment] });

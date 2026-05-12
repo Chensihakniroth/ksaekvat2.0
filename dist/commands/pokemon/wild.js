@@ -100,7 +100,6 @@ module.exports = {
                     .setColor(0xFF6B35)
                     .setTitle(`⚔️ Wild Battle — Turn ${turnNum}`)
                     .setImage(`attachment://battle_${turnNum}.png`)
-                    .setDescription(logText.slice(0, 1024) || 'Waiting...')
                     .setFooter({ text: `Turn ${turnNum}/${result.turns}` });
                 await battleMsg.edit({ embeds: [turnEmbed], files: [attachment] });
                 if (i < showChunks.length - 1) {
