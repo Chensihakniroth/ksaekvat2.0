@@ -5,145 +5,112 @@ import AnimalService from './AnimalService';
 import type { BattlePokemon } from './PokemonBattleService';
 
 /**
- * 🎨 BATTLE RENDERER SERVICE
- * Generates dynamic 800x400 battle frames using Sharp + SVG.
- * Image contains ONLY: background, sprites, and HP plates.
- * Battle log text goes in the Discord embed, NOT in the image.
+ * 🎨 BATTLE RENDERER — OWO-Style Card Layout
+ * Each row: [Player Sprite][Player HP][···gap···][Enemy HP][Enemy Sprite]
+ * No text overlays. Battle log goes in Discord embed.
  */
-
 class BattleRenderer {
   private readonly BG_PATH = path.join(process.cwd(), 'assets', 'battle_bg.png');
-  private readonly WIDTH = 800;
-  private readonly HEIGHT = 400;
-  private readonly SPRITE_SIZE = 96;
+  private readonly W = 800;
+  private readonly H = 400;
+  private readonly SPRITE = 80;
+  private readonly CARD_H = 105;
+  private readonly CARD_W = 780;
+  private readonly CARD_X = 10;
+  private readonly ROW_GAP = 12;
+  private readonly BAR_W = 160;
+  private readonly BAR_H = 10;
 
-  /**
-   * Render a battle frame showing sprites and HP bars only.
-   * No text overlays — battle log is handled by the Discord embed.
-   */
-  public async renderFrame(
-    teamA: BattlePokemon[],
-    teamB: BattlePokemon[]
-  ): Promise<Buffer> {
-    const composites: any[] = [];
-
-    // 1. Background
-    let base = sharp({
-      create: {
-        width: this.WIDTH,
-        height: this.HEIGHT,
-        channels: 4,
-        background: { r: 10, g: 10, b: 25, alpha: 1 }
-      }
-    });
-
+  public async renderFrame(teamA: BattlePokemon[], teamB: BattlePokemon[]): Promise<Buffer> {
+    // Background
+    let base: sharp.Sharp;
     if (fs.existsSync(this.BG_PATH)) {
-      base = sharp(this.BG_PATH).resize(this.WIDTH, this.HEIGHT);
+      base = sharp(this.BG_PATH).resize(this.W, this.H);
+    } else {
+      base = sharp({ create: { width: this.W, height: this.H, channels: 4, background: { r: 15, g: 15, b: 30, alpha: 1 } } });
     }
 
-    // 2. Layout — OWO-style: consistent columns, evenly spaced rows
-    //    Each slot: sprite on top, HP plate directly below
-    //    3 rows, centered vertically with padding
-    const SPRITE = this.SPRITE_SIZE;
-    const PLATE_H = 28;
-    const SLOT_H = SPRITE + PLATE_H + 4; // sprite + gap + plate
-    const TOTAL_H = SLOT_H * 3 + 20; // 3 slots + gaps between
-    const START_Y = Math.floor((this.HEIGHT - TOTAL_H) / 2);
+    const composites: any[] = [];
+    const totalH = this.CARD_H * 3 + this.ROW_GAP * 2;
+    const startY = Math.floor((this.H - totalH) / 2);
 
-    const TEAM_A_X = 120; // center x for left team
-    const TEAM_B_X = this.WIDTH - 120; // center x for right team
-
-    // 3. Render each team
+    // Build ONE SVG for all cards + bars + text
+    let svg = '';
     for (let i = 0; i < 3; i++) {
-      const rowY = START_Y + i * (SLOT_H + 10);
+      const ry = startY + i * (this.CARD_H + this.ROW_GAP);
+      const pA = i < teamA.length ? teamA[i] : null;
+      const pB = i < teamB.length ? teamB[i] : null;
 
-      // --- Team A (left) ---
-      if (i < teamA.length) {
-        const p = teamA[i];
-        const sprite = await this.getSprite(p.speciesKey, p.hp <= 0);
-        if (sprite) {
-          composites.push({
-            input: sprite,
-            top: rowY,
-            left: TEAM_A_X - Math.floor(SPRITE / 2),
-          });
-        }
-        // HP plate directly below sprite
-        composites.push({
-          input: Buffer.from(this.generateHPPlate(p, TEAM_A_X, rowY + SPRITE + 2)),
-          top: 0,
-          left: 0,
-        });
+      // Card background
+      svg += `<rect x="${this.CARD_X}" y="${ry}" width="${this.CARD_W}" height="${this.CARD_H}" fill="rgba(0,0,0,0.55)" rx="8" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>`;
+
+      const cy = ry + Math.floor(this.CARD_H / 2); // vertical center
+
+      // Left side stats (Team A) — anchored right of sprite
+      if (pA) {
+        const sx = this.CARD_X + this.SPRITE + 20;
+        svg += this.statsBlock(pA, sx, cy, 'left');
       }
 
-      // --- Team B (right, flipped) ---
+      // Right side stats (Team B) — anchored left of sprite
+      if (pB) {
+        const sx = this.CARD_X + this.CARD_W - this.SPRITE - 20;
+        svg += this.statsBlock(pB, sx, cy, 'right');
+      }
+    }
+
+    composites.push({
+      input: Buffer.from(`<svg width="${this.W}" height="${this.H}" xmlns="http://www.w3.org/2000/svg">${svg}</svg>`),
+      top: 0, left: 0,
+    });
+
+    // Composite sprites
+    for (let i = 0; i < 3; i++) {
+      const ry = startY + i * (this.CARD_H + this.ROW_GAP);
+      const sy = ry + Math.floor((this.CARD_H - this.SPRITE) / 2);
+
+      if (i < teamA.length) {
+        const sp = await this.getSprite(teamA[i].speciesKey, teamA[i].hp <= 0);
+        if (sp) composites.push({ input: sp, top: sy, left: this.CARD_X + 8 });
+      }
       if (i < teamB.length) {
-        const p = teamB[i];
-        const sprite = await this.getSprite(p.speciesKey, p.hp <= 0, true);
-        if (sprite) {
-          composites.push({
-            input: sprite,
-            top: rowY,
-            left: TEAM_B_X - Math.floor(SPRITE / 2),
-          });
-        }
-        // HP plate directly below sprite
-        composites.push({
-          input: Buffer.from(this.generateHPPlate(p, TEAM_B_X, rowY + SPRITE + 2)),
-          top: 0,
-          left: 0,
-        });
+        const sp = await this.getSprite(teamB[i].speciesKey, teamB[i].hp <= 0, true);
+        if (sp) composites.push({ input: sp, top: sy, left: this.CARD_X + this.CARD_W - this.SPRITE - 8 });
       }
     }
 
     return await base.composite(composites).png().toBuffer();
   }
 
-  private async getSprite(key: string, isFainted: boolean, flip: boolean = false): Promise<Buffer | null> {
-    let buffer = await AnimalService.getPokemonSpriteBuffer(key);
-    if (!buffer) return null;
+  private statsBlock(p: BattlePokemon, ax: number, cy: number, side: 'left' | 'right'): string {
+    const pct = Math.max(0, p.hp / p.maxHp);
+    const col = pct > 0.5 ? '#22c55e' : pct > 0.2 ? '#eab308' : '#ef4444';
+    const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const name = esc(`${p.name.toUpperCase()} Lv.${p.level}`);
+    const hp = esc(`${Math.max(0, p.hp)}/${p.maxHp}`);
+    let s = '';
 
-    let s = sharp(buffer).resize(this.SPRITE_SIZE, this.SPRITE_SIZE, {
-      kernel: 'nearest',
-      fit: 'contain',
-      background: { r: 0, g: 0, b: 0, alpha: 0 },
-    });
-    
-    if (flip) s = s.flop();
-    if (isFainted) s = s.grayscale().modulate({ brightness: 0.4 });
-
-    return await s.toBuffer();
+    if (side === 'left') {
+      s += `<text x="${ax}" y="${cy - 12}" font-family="Arial,sans-serif" font-weight="bold" font-size="13" fill="white">${name}</text>`;
+      s += `<rect x="${ax}" y="${cy}" width="${this.BAR_W}" height="${this.BAR_H}" fill="#1a1a2e" rx="4"/>`;
+      s += `<rect x="${ax}" y="${cy}" width="${this.BAR_W * pct}" height="${this.BAR_H}" fill="${col}" rx="4"/>`;
+      s += `<text x="${ax}" y="${cy + 24}" font-family="Arial,sans-serif" font-size="11" fill="#bbb">${hp}</text>`;
+    } else {
+      s += `<text x="${ax}" y="${cy - 12}" font-family="Arial,sans-serif" font-weight="bold" font-size="13" fill="white" text-anchor="end">${name}</text>`;
+      s += `<rect x="${ax - this.BAR_W}" y="${cy}" width="${this.BAR_W}" height="${this.BAR_H}" fill="#1a1a2e" rx="4"/>`;
+      s += `<rect x="${ax - this.BAR_W}" y="${cy}" width="${this.BAR_W * pct}" height="${this.BAR_H}" fill="${col}" rx="4"/>`;
+      s += `<text x="${ax}" y="${cy + 24}" font-family="Arial,sans-serif" font-size="11" fill="#bbb" text-anchor="end">${hp}</text>`;
+    }
+    return s;
   }
 
-  /**
-   * Generates a compact HP plate: [NAME Lv.X] + [████░░░░]
-   * Centered horizontally at (centerX, topY).
-   */
-  private generateHPPlate(p: BattlePokemon, centerX: number, topY: number): string {
-    const hpPct = Math.max(0, p.hp / p.maxHp);
-    const plateW = 120;
-    const barW = 100;
-    const barH = 6;
-    const plateH = 28;
-    const hpColor = hpPct > 0.5 ? '#22c55e' : hpPct > 0.2 ? '#eab308' : '#ef4444';
-    const px = centerX - Math.floor(plateW / 2);
-
-    return `
-      <svg width="${this.WIDTH}" height="${this.HEIGHT}">
-        <g transform="translate(${px}, ${topY})">
-          <!-- Plate background -->
-          <rect x="0" y="0" width="${plateW}" height="${plateH}" fill="rgba(0,0,0,0.7)" rx="4" />
-          <!-- Name + Level -->
-          <text x="${plateW / 2}" y="12" font-family="Arial,sans-serif" font-weight="bold" font-size="10" fill="white" text-anchor="middle">
-            ${p.name.toUpperCase()} Lv.${p.level}
-          </text>
-          <!-- HP bar bg -->
-          <rect x="${(plateW - barW) / 2}" y="16" width="${barW}" height="${barH}" fill="#333" rx="3" />
-          <!-- HP bar fill -->
-          <rect x="${(plateW - barW) / 2}" y="16" width="${barW * hpPct}" height="${barH}" fill="${hpColor}" rx="3" />
-        </g>
-      </svg>
-    `;
+  private async getSprite(key: string, fainted: boolean, flip = false): Promise<Buffer | null> {
+    const buf = await AnimalService.getPokemonSpriteBuffer(key);
+    if (!buf) return null;
+    let s = sharp(buf).resize(this.SPRITE, this.SPRITE, { kernel: 'nearest', fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } });
+    if (flip) s = s.flop();
+    if (fainted) s = s.grayscale().modulate({ brightness: 0.4 });
+    return s.toBuffer();
   }
 }
 
