@@ -197,11 +197,13 @@ class DatabaseService {
     async updateStats(userId, type, amount = 1) {
         const update = {};
         if (type === 'won')
-            update['stats.totalWon'] = 1;
+            update['stats.totalWon'] = amount;
         else if (type === 'lost')
-            update['stats.totalLost'] = 1;
+            update['stats.totalLost'] = amount;
         else if (type === 'command')
             update['stats.commandsUsed'] = 1;
+        else if (type === 'gambled')
+            update['stats.totalGambled'] = amount;
         else
             update[`stats.${type}`] = amount;
         await User_1.default.findOneAndUpdate({ id: userId }, { $inc: update });

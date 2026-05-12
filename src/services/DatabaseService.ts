@@ -250,12 +250,13 @@ class DatabaseService {
     );
   }
 
-  async updateStats(userId: string, type: string, amount = 1) {
-    const update: any = {};
-    if (type === 'won') update['stats.totalWon'] = 1;
-    else if (type === 'lost') update['stats.totalLost'] = 1;
-    else if (type === 'command') update['stats.commandsUsed'] = 1;
-    else update[`stats.${type}`] = amount;
+async updateStats(userId: string, type: string, amount = 1) {
+     const update: any = {};
+     if (type === 'won') update['stats.totalWon'] = amount;
+     else if (type === 'lost') update['stats.totalLost'] = amount;
+     else if (type === 'command') update['stats.commandsUsed'] = 1;
+     else if (type === 'gambled') update['stats.totalGambled'] = amount;
+     else update[`stats.${type}`] = amount;
 
     await User.findOneAndUpdate({ id: userId }, { $inc: update });
   }
