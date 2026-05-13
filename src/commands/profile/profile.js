@@ -120,7 +120,31 @@ module.exports = {
     const safeUsername = escapeXml(target.username);
     const safeSpouse = escapeXml(spouseTextPlain);
 
-    // Build the SVG overlay
+    // Fix embedColor if it's a number (from colors.js)
+    if (typeof embedColor === 'number') {
+      embedColor = '#' + embedColor.toString(16).padStart(6, '0');
+    }
+
+    const composites = [];
+    let hasBackground = false;
+
+    // 1. Fetch Theme Background Layer
+    if (backgroundUrl) {
+      try {
+        const bgRes = await axios.get(backgroundUrl, { responseType: 'arraybuffer' });
+        const bgBuffer = await sharp(bgRes.data)
+          .resize(canvasWidth, canvasHeight, { fit: 'cover' })
+          .toBuffer();
+        composites.push({ input: bgBuffer, top: 0, left: 0 });
+        hasBackground = true;
+      } catch (e) {
+        logger.error('Failed to load background image for profile', e);
+        // Fall back to default background
+        hasBackground = false;
+      }
+    }
+
+    // Build the SVG overlay NOW that we know if hasBackground is true
     const bgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
       <defs>
         <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
@@ -133,11 +157,11 @@ module.exports = {
         </linearGradient>
       </defs>
       
-      <!-- Base Background (Only if no theme image is equipped) -->
-      ${!backgroundUrl ? `<rect width="${canvasWidth}" height="${canvasHeight}" rx="20" ry="20" fill="url(#bg)"/>` : ''}
+      <!-- Base Background (Only if no theme image is equipped/loaded) -->
+      ${!hasBackground ? `<rect width="${canvasWidth}" height="${canvasHeight}" rx="20" ry="20" fill="url(#bg)"/>` : ''}
       
       <!-- Content overlay (glassmorphic dark layer to make text readable over the background image) -->
-      ${backgroundUrl ? `<rect x="0" y="0" width="${canvasWidth}" height="${canvasHeight}" rx="20" ry="20" fill="#000000" opacity="0.6"/>` : ''}
+      ${hasBackground ? `<rect x="0" y="0" width="${canvasWidth}" height="${canvasHeight}" rx="20" ry="20" fill="#000000" opacity="0.6"/>` : ''}
       
       <rect x="2" y="2" width="${canvasWidth - 4}" height="${canvasHeight - 4}" rx="18" ry="18" fill="none" stroke="${embedColor}" stroke-width="3" opacity="0.8"/>
       
@@ -195,25 +219,10 @@ module.exports = {
 
     </svg>`);
 
-    const composites = [];
-
-    // 1. Base Layer (Theme Background)
-    if (backgroundUrl) {
-      try {
-        const bgRes = await axios.get(backgroundUrl, { responseType: 'arraybuffer' });
-        const bgBuffer = await sharp(bgRes.data)
-          .resize(canvasWidth, canvasHeight, { fit: 'cover' })
-          .toBuffer();
-        composites.push({ input: bgBuffer, top: 0, left: 0 });
-      } catch (e) {
-        logger.error('Failed to load background image for profile', e);
-      }
-    }
-
     // 2. SVG Overlay
     composites.push({ input: bgSvg, top: 0, left: 0 });
 
-    // 3. Avatar Overlay
+    // 3. Fetch Avatar Overlay
     try {
       const avatarUrl = target.displayAvatarURL({ extension: 'png', size: 256 });
       const avatarRes = await axios.get(avatarUrl, { responseType: 'arraybuffer' });
