@@ -241,21 +241,8 @@ module.exports = {
        });
     }
 
-    const gen1Path = path.join(process.cwd(), 'gen1_pokemon.json');
-    const gen2Path = path.join(process.cwd(), 'gen2_pokemon.json');
-    let dexOrder = [];
-    try {
-      const g1 = JSON.parse(fs.readFileSync(gen1Path, 'utf8'));
-      const g2 = JSON.parse(fs.readFileSync(gen2Path, 'utf8'));
-      dexOrder = [...g1.map(p => p.key), ...g2.map(p => p.key)];
-    } catch (e) {
-      console.error('Failed to load dex JSONs:', e);
-    }
-
-    const dexMap = {};
-    dexOrder.forEach((k, i) => dexMap[k] = i);
-
-    allPokemon.sort((a, b) => (dexMap[a.key] ?? 999) - (dexMap[b.key] ?? 999));
+    const RW = {}; RARITY_ORDER.forEach((r, i) => RW[r] = i);
+    allPokemon.sort((a, b) => (RW[a.rarity] ?? 99) - (RW[b.rarity] ?? 99) || a.name.localeCompare(b.name));
 
     const totalCaught = allPokemon.filter(p => p.caught).length;
     const totalCount = allPokemon.length;
