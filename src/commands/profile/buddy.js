@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
-const AnimalService = require('../../services/AnimalService');
+const AnimalService = require('../../services/AnimalService.js').default || require('../../services/AnimalService.js');
 
 module.exports = {
   name: 'buddy',
