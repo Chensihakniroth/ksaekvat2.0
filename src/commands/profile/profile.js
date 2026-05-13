@@ -262,17 +262,18 @@ module.exports = {
 
 // 4. Favorite Pokemon Overlay
      if (favoritePokemonBuffer) {
-       // Position it so it stands on the "ground" (bottom of the card) (✧ω✧)
-       // We resize it to 480 height to make it feel premium and large
-       const buddyHeight = 480; 
+       // Resize to fit within canvas while keeping aspect ratio
+       const buddyMaxHeight = 400;
+       const buddyMaxWidth = 400;
+       const buddyResized = await sharp(favoritePokemonBuffer).resize(buddyMaxWidth, buddyMaxHeight, { fit: 'inside' }).toBuffer();
        composites.push({
-         input: await sharp(favoritePokemonBuffer).resize(null, buddyHeight).toBuffer(),
-         top: canvasHeight - buddyHeight + 10, // Slightly below for that "standing" feel
-         left: 650 // More overlap for depth
+         input: buddyResized,
+         top: canvasHeight - buddyResized.height + 10,
+         left: canvasWidth - buddyResized.width - 20
        });
-     }
+}
 
-    const outPath = path.join(TEMP_DIR, `profile-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
+     const outPath = path.join(TEMP_DIR, `profile-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
     
     // Generate Final Image
     await sharp({

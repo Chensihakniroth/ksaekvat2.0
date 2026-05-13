@@ -86,6 +86,17 @@ class AnimalService {
     if (!url) return null;
 
     try {
+      // If it's a local path (non-http), read from disk (｡♥‿♥｡)
+      if (!url.startsWith('http')) {
+        const fullPath = path.isAbsolute(url) ? url : path.join(process.cwd(), url);
+        if (fs.existsSync(fullPath)) {
+          const buffer = fs.readFileSync(fullPath);
+          fs.writeFileSync(localPath, buffer);
+          return buffer;
+        }
+        return null;
+      }
+
       const response = await axios.get(url, {
         responseType: 'arraybuffer',
         headers: { 'User-Agent': 'Mozilla/5.0' }
@@ -95,6 +106,7 @@ class AnimalService {
       fs.writeFileSync(localPath, buffer);
       return buffer;
     } catch (error: any) {
+      console.error(`Failed to fetch sprite buffer for ${key}:`, error.message);
       return null;
     }
   }

@@ -59,7 +59,7 @@ async function getContextGif(pool) {
 }
 module.exports = {
     name: 'rob',
-    aliases: ['steal', 'heist'],
+    aliases: ['steal', 'heist', 'plon'],
     description: 'Attempt to rob another user\'s wallet! 50/50 odds... but you might end up in jail. (¬‿¬)',
     usage: 'rob <@user>',
     category: 'economy',
@@ -94,10 +94,10 @@ module.exports = {
             });
         }
         if (target.id === robber.id) {
-            return message.reply('mix ban tv plon klun eng jg ? kdav klun men bong jun tv pet. (≧◡≦)');
+            return message.reply('You can\'t rob yourself... that\'s just moving money between pockets. (≧◡≦)');
         }
         if (target.bot) {
-            return message.reply('bot ot dae ban prak khae pi mjas teh, kom sov pek. (¬‿¬)');
+            return message.reply('Bots don\'t carry cash. Nice try though. (¬‿¬)');
         }
         // ── Fetch both users ────────────────────────────────────────────────
         const robberData = await database.getUser(robber.id, robber.username);
@@ -119,7 +119,7 @@ module.exports = {
         const successChance = 0.50; // 50% success rate
         // Random steal amount: 1,000 - 10,000, capped at target's wallet
         const stealAmount = Math.min(Math.floor(Math.random() * 9001) + 1000, // 1000–10000
-            targetData.balance);
+        targetData.balance);
         // ── SUCCESS ─────────────────────────────────────────────────────────
         if (roll < successChance) {
             // Transfer money
@@ -130,7 +130,7 @@ module.exports = {
                 .setColor(0x00ff88)
                 .setTitle('💰 PLON BAN SOMRACH :3')
                 .setDescription(`**${robber.username}** plorn **${stealAmount.toLocaleString()}** ${config.economy.currencySymbol} from **${target.username}**'s wallet! (¬‿¬)\n\n` +
-                    `Their bank was untouchable... but their wallet? Wide open.`)
+                `Their bank was untouchable... but their wallet? Wide open.`)
                 .addFields({ name: '🏃 Your Wallet', value: `**${(robberData.balance + stealAmount).toLocaleString()}** ${config.economy.currencySymbol}`, inline: true }, { name: '😭 Victim\'s Wallet', value: `**${(targetData.balance - stealAmount).toLocaleString()}** ${config.economy.currencySymbol}`, inline: true })
                 .setTimestamp();
             if (robGif)
@@ -148,7 +148,7 @@ module.exports = {
                 .setColor(0xff0000)
                 .setTitle('🚨 JORB KOK 1 - 0 ')
                 .setDescription(`**${robber.username}** ror plorn **${target.username}** Tae police jab ban! (ಥ﹏ಥ)\n\n` +
-                    `🔒 **Jail Time:** You can't rob for **20 minutes**!`)
+                `🔒 **Jail Time:** You can't rob for **20 minutes**!`)
                 .setTimestamp();
             if (jailGif)
                 embed.setImage(jailGif);
@@ -161,7 +161,7 @@ module.exports = {
             .setColor(colors.error)
             .setTitle('❌ plon ke ot ban haaaa')
             .setDescription(`**${robber.username}** jong plorn **${target.username}** but ke tarm torn (・_・ヾ\n\n` +
-                `Heng ai ke ot jab dak kok...`)
+            `Heng ai ke ot jab dak kok...`)
             .setTimestamp();
         if (failGif)
             embed.setImage(failGif);

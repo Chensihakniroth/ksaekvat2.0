@@ -74,6 +74,16 @@ class AnimalService {
         if (!url)
             return null;
         try {
+            // If it's a local path (non-http), read from disk (｡♥‿♥｡)
+            if (!url.startsWith('http')) {
+                const fullPath = path_1.default.isAbsolute(url) ? url : path_1.default.join(process.cwd(), url);
+                if (fs_1.default.existsSync(fullPath)) {
+                    const buffer = fs_1.default.readFileSync(fullPath);
+                    fs_1.default.writeFileSync(localPath, buffer);
+                    return buffer;
+                }
+                return null;
+            }
             const response = await axios_1.default.get(url, {
                 responseType: 'arraybuffer',
                 headers: { 'User-Agent': 'Mozilla/5.0' }
@@ -83,6 +93,7 @@ class AnimalService {
             return buffer;
         }
         catch (error) {
+            console.error(`Failed to fetch sprite buffer for ${key}:`, error.message);
             return null;
         }
     }
@@ -119,6 +130,48 @@ class AnimalService {
         }
         catch (error) {
             console.error(`Failed to resize sprite for ${key}:`, error.message);
+            return null;
+        }
+    }
+    /**
+     * Get a SILHOUETTE sprite buffer with local DISK caching.
+     * Prevents expensive sharp operations in the Pokedex command! (｡♥‿♥｡)
+     */
+    async getSilhouetteSpriteBuffer(key, size) {
+        const CACHE_DIR = path_1.default.join(process.cwd(), '.tmp', 'pokemon_cache', 'silhouettes');
+        if (!fs_1.default.existsSync(CACHE_DIR))
+            fs_1.default.mkdirSync(CACHE_DIR, { recursive: true });
+        const localPath = path_1.default.join(CACHE_DIR, `${key}_${size}.png`);
+        // 1. Check disk cache first
+        if (fs_1.default.existsSync(localPath)) {
+            return fs_1.default.readFileSync(localPath);
+        }
+        // 2. Get resized sprite
+        const resizedBuffer = await this.getResizedSpriteBuffer(key, size);
+        if (!resizedBuffer)
+            return null;
+        try {
+            // 3. Create silhouette using Sharp
+            const sharp = require('sharp');
+            const meta = await sharp(resizedBuffer).metadata();
+            const alphaChannel = await sharp(resizedBuffer).extractChannel(3).toBuffer();
+            const silhouette = await sharp({
+                create: {
+                    width: meta.width || size,
+                    height: meta.height || size,
+                    channels: 3,
+                    background: { r: 0, g: 0, b: 0 }
+                }
+            })
+                .joinChannel(alphaChannel)
+                .png()
+                .toBuffer();
+            // 4. Save to cache
+            fs_1.default.writeFileSync(localPath, silhouette);
+            return silhouette;
+        }
+        catch (error) {
+            console.error(`Failed to create silhouette for ${key}:`, error.message);
             return null;
         }
     }
@@ -238,9 +291,20 @@ class AnimalService {
         if (this.imageCache.has(key))
             return this.imageCache.get(key) || null;
         let lookup = this.sanitizeName(key);
-        // Safety check: is it actually a pokemon? (•̀ᴗ•́)و
         if (!AnimalService.VALID_POKEMON.has(key.toLowerCase()))
             return null;
+        // 1. Check local assets first! (｡♥‿♥｡)
+        const possiblePaths = [
+            path_1.default.join('assets', 'pokemon', 'artwork', `${lookup}.png`),
+            path_1.default.join('assets', 'pokemon', 'gen1', `${lookup}.png`),
+            path_1.default.join('assets', 'pokemon', 'gen2', `${lookup}.png`),
+        ];
+        for (const p of possiblePaths) {
+            if (fs_1.default.existsSync(path_1.default.join(process.cwd(), p))) {
+                this.imageCache.set(key, p);
+                return p;
+            }
+        }
         if (lookup === 'missingno') {
             const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
             this.imageCache.set(key, url);
@@ -277,6 +341,18 @@ class AnimalService {
         let lookup = this.sanitizeName(key);
         if (!AnimalService.VALID_POKEMON.has(key.toLowerCase()))
             return null;
+        // 1. Check local assets first! (｡♥‿♥｡)
+        const possiblePaths = [
+            path_1.default.join('assets', 'pokemon', 'gen1', `${lookup}.png`),
+            path_1.default.join('assets', 'pokemon', 'gen2', `${lookup}.png`),
+            path_1.default.join('assets', 'pokemon', 'sprites', `${lookup}.png`),
+        ];
+        for (const p of possiblePaths) {
+            if (fs_1.default.existsSync(path_1.default.join(process.cwd(), p))) {
+                this.spriteCache.set(key, p);
+                return p;
+            }
+        }
         if (lookup === 'missingno') {
             const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
             this.spriteCache.set(key, url);
