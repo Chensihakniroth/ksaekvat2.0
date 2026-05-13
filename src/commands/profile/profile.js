@@ -8,6 +8,7 @@ const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
 const logger = require('../../utils/logger.js');
+const AnimalService = require('../../services/AnimalService').default || require('../../services/AnimalService');
 
 const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
@@ -71,7 +72,26 @@ module.exports = {
 
     // Calculate essential stats
     const accountAge = Math.floor((Date.now() - (userData.joinedAt || Date.now())) / (1000 * 60 * 60 * 24));
-    const expToNextLevel = userData.level * 100 - userData.experience;
+    const nextLevelExp = userData.level * 100;
+    const progressPercent = Math.min(100, Math.floor((userData.experience / nextLevelExp) * 100));
+
+    // Favorite Pokemon Logic (｡♥‿♥｡)
+    let favoritePokemonBuffer = null;
+    if (userData.profileTheme && userData.profileTheme.favorites) {
+      const fav = userData.profileTheme.favorites.find(f => f.type === 'animal');
+      if (fav) {
+        try {
+          const imgData = await AnimalService.getPokemonImageBuffer(fav.name);
+          if (imgData && imgData.buffer) {
+            favoritePokemonBuffer = await sharp(imgData.buffer)
+              .resize(180, 180, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+              .toBuffer();
+          }
+        } catch (e) {
+          logger.error(`Failed to load favorite pokemon ${fav.name}`, e);
+        }
+      }
+    }
 
     // Calculate pokemon collection
     let totalPokemonValue = 0;
@@ -175,12 +195,12 @@ module.exports = {
       <text x="190" y="80" font-family="sans-serif" font-size="42" font-weight="bold" fill="#ffffff" filter="drop-shadow(0px 2px 4px rgba(0,0,0,0.8))">${safeUsername}</text>
       
       <text x="190" y="125" font-family="sans-serif" font-size="24" font-weight="bold" fill="#ffffff" filter="drop-shadow(0px 1px 2px rgba(0,0,0,0.8))">LV. ${userData.level}</text>
-      <text x="740" y="125" font-family="sans-serif" font-size="18" font-weight="bold" fill="#eeeeee" text-anchor="end" filter="drop-shadow(0px 1px 2px rgba(0,0,0,0.8))">${userData.experience} / ${userData.level * 100} XP</text>
+      <text x="740" y="125" font-family="sans-serif" font-size="18" font-weight="bold" fill="#eeeeee" text-anchor="end" filter="drop-shadow(0px 1px 2px rgba(0,0,0,0.8))">${userData.experience} / ${nextLevelExp} XP (${progressPercent}%)</text>
 
       <!-- XP Bar Background -->
       <rect x="190" y="140" width="550" height="16" rx="8" ry="8" fill="#000000" opacity="0.6"/>
       <!-- XP Bar Fill -->
-      <rect x="190" y="140" width="${Math.min(550, Math.max(16, (userData.experience / (userData.level * 100)) * 550))}" height="16" rx="8" ry="8" fill="${embedColor}" opacity="1"/>
+      <rect x="190" y="140" width="${Math.min(550, Math.max(16, (userData.experience / nextLevelExp) * 550))}" height="16" rx="8" ry="8" fill="${embedColor}" opacity="1"/>
 
       <!-- Info Grid Boxes -->
       <!-- Left Box -->
@@ -237,6 +257,11 @@ module.exports = {
       composites.push({ input: avatarBuffer, top: 40, left: 40 });
     } catch (e) {
       logger.error('Failed to load avatar for profile', e);
+    }
+
+    // 4. Favorite Pokemon Overlay
+    if (favoritePokemonBuffer) {
+      composites.push({ input: favoritePokemonBuffer, top: 20, left: 600 });
     }
 
     const outPath = path.join(TEMP_DIR, `profile-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);

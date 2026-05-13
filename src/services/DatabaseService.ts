@@ -170,12 +170,42 @@ class DatabaseService {
 
   async setTheme(userId: string, themeId: string) {
     const user = await this.getUser(userId);
+    if (!user) return false;
+    
     if (user.unlockedThemes && user.unlockedThemes.includes(themeId)) {
-      user.profileTheme = themeId;
+      if (!user.profileTheme) {
+        user.profileTheme = { theme: themeId, favorites: [] };
+      } else {
+        user.profileTheme.theme = themeId;
+      }
+      user.markModified('profileTheme');
       await this.saveUser(user);
       return true;
     }
     return false;
+  }
+
+  async setFavorite(userId: string, type: 'character' | 'animal', name: string) {
+    const user = await this.getUser(userId);
+    if (!user) return false;
+
+    if (!user.profileTheme) {
+        user.profileTheme = { theme: 'default', favorites: [] };
+    }
+    
+    if (!Array.isArray(user.profileTheme.favorites)) {
+        user.profileTheme.favorites = [];
+    }
+
+    // Remove existing of same type to prevent duplicates (only 1 animal buddy allowed!)
+    user.profileTheme.favorites = user.profileTheme.favorites.filter((f: any) => f.type !== type);
+    
+    // Add new one
+    user.profileTheme.favorites.push({ type, name });
+    
+    user.markModified('profileTheme');
+    await this.saveUser(user);
+    return true;
   }
 
   async removeBalance(userId: string, amount: number) {
