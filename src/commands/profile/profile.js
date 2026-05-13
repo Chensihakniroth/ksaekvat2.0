@@ -132,10 +132,12 @@ module.exports = {
           <stop offset="100%" stop-color="${embedColor}" stop-opacity="0.3"/>
         </linearGradient>
       </defs>
-      <rect width="${canvasWidth}" height="${canvasHeight}" rx="20" ry="20" fill="url(#bg)"/>
       
-      <!-- Content overlay (glassmorphic dark layer to make text readable if there's a background image) -->
-      <rect x="0" y="0" width="${canvasWidth}" height="${canvasHeight}" rx="20" ry="20" fill="#000000" opacity="0.6"/>
+      <!-- Base Background (Only if no theme image is equipped) -->
+      ${!backgroundUrl ? `<rect width="${canvasWidth}" height="${canvasHeight}" rx="20" ry="20" fill="url(#bg)"/>` : ''}
+      
+      <!-- Content overlay (glassmorphic dark layer to make text readable over the background image) -->
+      ${backgroundUrl ? `<rect x="0" y="0" width="${canvasWidth}" height="${canvasHeight}" rx="20" ry="20" fill="#000000" opacity="0.6"/>` : ''}
       
       <rect x="2" y="2" width="${canvasWidth - 4}" height="${canvasHeight - 4}" rx="18" ry="18" fill="none" stroke="${embedColor}" stroke-width="3" opacity="0.8"/>
       
@@ -143,7 +145,7 @@ module.exports = {
       <rect x="20" y="20" width="${canvasWidth - 40}" height="160" rx="16" ry="16" fill="url(#hdr)" stroke="${embedColor}" stroke-width="1.5" opacity="0.9"/>
       
       <!-- Avatar border -->
-      <circle cx="100" cy="100" r="64" fill="none" stroke="#ffffff" stroke-width="4" opacity="0.9"/>
+      <circle cx="100" cy="100" r="64" fill="none" stroke="${embedColor}" stroke-width="4" opacity="1"/>
 
       <!-- Texts -->
       <text x="190" y="80" font-family="sans-serif" font-size="42" font-weight="bold" fill="#ffffff" filter="drop-shadow(0px 2px 4px rgba(0,0,0,0.8))">${safeUsername}</text>
@@ -154,7 +156,7 @@ module.exports = {
       <!-- XP Bar Background -->
       <rect x="190" y="140" width="550" height="16" rx="8" ry="8" fill="#000000" opacity="0.6"/>
       <!-- XP Bar Fill -->
-      <rect x="190" y="140" width="${Math.min(550, Math.max(16, (userData.experience / (userData.level * 100)) * 550))}" height="16" rx="8" ry="8" fill="#ffffff" opacity="0.9"/>
+      <rect x="190" y="140" width="${Math.min(550, Math.max(16, (userData.experience / (userData.level * 100)) * 550))}" height="16" rx="8" ry="8" fill="${embedColor}" opacity="1"/>
 
       <!-- Info Grid Boxes -->
       <!-- Left Box -->
