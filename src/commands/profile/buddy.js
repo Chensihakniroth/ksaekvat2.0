@@ -1,6 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
+const AnimalService = require('../../services/AnimalService');
 
 module.exports = {
   name: 'buddy',
@@ -51,11 +52,13 @@ module.exports = {
     const success = await database.setFavorite(userId, 'animal', animalKey);
 
     if (success) {
+      const pokemonImageUrl = await AnimalService.getPokemonImage(animalKey);
+
       const embed = new EmbedBuilder()
         .setColor(colors.primary)
         .setTitle('✨ New Buddy Set!')
         .setDescription(`Your profile buddy has been set to **${animalData.emoji} ${animalData.name}**! It looks so cute on your trainer card! (｡♥‿♥｡)`)
-        .setThumbnail(client.user.displayAvatarURL());
+        .setThumbnail(pokemonImageUrl || client.user.displayAvatarURL());
 
       return message.reply({ embeds: [embed] });
     } else {

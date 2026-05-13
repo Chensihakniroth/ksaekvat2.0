@@ -134,8 +134,8 @@ module.exports = {
     
     const winRate = totalGambled > 0 ? ((totalWon / totalGambled) * 100).toFixed(1) : '0.0';
     const rarest = getRarestPokemon(rarityCount);
-
-    const canvasWidth = 800;
+    const isBuddyEquipped = !!favoritePokemonBuffer;
+    const canvasWidth = isBuddyEquipped ? 1000 : 800;
     const canvasHeight = 450;
     const safeUsername = escapeXml(target.username);
     const safeSpouse = escapeXml(spouseTextPlain);
@@ -153,7 +153,7 @@ module.exports = {
       try {
         const bgRes = await axios.get(backgroundUrl, { responseType: 'arraybuffer' });
         const bgBuffer = await sharp(bgRes.data)
-          .resize(canvasWidth, canvasHeight, { fit: 'cover' })
+          .resize(isBuddyEquipped ? 850 : 800, canvasHeight, { fit: 'cover' })
           .toBuffer();
         composites.push({ input: bgBuffer, top: 0, left: 0 });
         hasBackground = true;
@@ -164,8 +164,9 @@ module.exports = {
       }
     }
 
-    // Build the SVG overlay NOW that we know if hasBackground is true
-    const bgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
+    // Build the SVG overlay (The Card itself is always 800 wide)
+    const cardWidth = 800;
+    const bgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${canvasHeight}">
       <defs>
         <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#0d101e"/>
@@ -178,15 +179,15 @@ module.exports = {
       </defs>
       
       <!-- Base Background (Only if no theme image is equipped/loaded) -->
-      ${!hasBackground ? `<rect width="${canvasWidth}" height="${canvasHeight}" rx="20" ry="20" fill="url(#bg)"/>` : ''}
+      ${!hasBackground ? `<rect width="${cardWidth}" height="${canvasHeight}" rx="20" ry="20" fill="url(#bg)"/>` : ''}
       
       <!-- Content overlay (glassmorphic dark layer to make text readable over the background image) -->
-      ${hasBackground ? `<rect x="0" y="0" width="${canvasWidth}" height="${canvasHeight}" rx="20" ry="20" fill="#000000" opacity="0.6"/>` : ''}
+      ${hasBackground ? `<rect x="0" y="0" width="${cardWidth}" height="${canvasHeight}" rx="20" ry="20" fill="#000000" opacity="0.6"/>` : ''}
       
-      <rect x="2" y="2" width="${canvasWidth - 4}" height="${canvasHeight - 4}" rx="18" ry="18" fill="none" stroke="${embedColor}" stroke-width="3" opacity="0.8"/>
+      <rect x="2" y="2" width="${cardWidth - 4}" height="${canvasHeight - 4}" rx="18" ry="18" fill="none" stroke="${embedColor}" stroke-width="3" opacity="0.8"/>
       
       <!-- Header box -->
-      <rect x="20" y="20" width="${canvasWidth - 40}" height="160" rx="16" ry="16" fill="url(#hdr)" stroke="${embedColor}" stroke-width="1.5" opacity="0.9"/>
+      <rect x="20" y="20" width="${cardWidth - 40}" height="160" rx="16" ry="16" fill="url(#hdr)" stroke="${embedColor}" stroke-width="1.5" opacity="0.9"/>
       
       <!-- Avatar border -->
       <circle cx="100" cy="100" r="64" fill="none" stroke="${embedColor}" stroke-width="4" opacity="1"/>
@@ -261,18 +262,29 @@ module.exports = {
 
     // 4. Favorite Pokemon Overlay
     if (favoritePokemonBuffer) {
-      composites.push({ input: favoritePokemonBuffer, top: 20, left: 600 });
+      // Position it slightly overlapping the card's right edge for a dynamic look! (✧ω✧)
+      composites.push({ 
+        input: await sharp(favoritePokemonBuffer).resize(220, 220).toBuffer(), 
+        top: 115, 
+        left: 730 
+      });
     }
 
     const outPath = path.join(TEMP_DIR, `profile-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
     
     // Generate Final Image
     await sharp({
-      create: { width: canvasWidth, height: canvasHeight, channels: 4, background: { r: 13, g: 16, b: 30, alpha: 1 } }
+      create: { 
+        width: canvasWidth, 
+        height: canvasHeight, 
+        channels: 4, 
+        background: { r: 0, g: 0, b: 0, alpha: 0 } // Transparent canvas so the "next to" part looks clean
+      }
     })
       .composite(composites)
       .png()
       .toFile(outPath);
+   .toFile(outPath);
 
     await message.reply({ 
       files: [new AttachmentBuilder(outPath, { name: 'profile.png' })]
