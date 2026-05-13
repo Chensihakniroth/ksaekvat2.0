@@ -147,57 +147,46 @@ async function createPokedexImage(pageLabel, pagePokemons, totalCaught, totalCou
         return `<rect x="${cx + 3}" y="${cy + 3}" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="#111827" stroke="#330b13" stroke-width="1.5" opacity="0.9"/>`;
       }).join('')
     ).join('')}
+    ${pagePokemons.map((pkmn, i) => {
+      const r = Math.floor(i / cols);
+      const c = i % cols;
+      const cx = padding + c * cellSize;
+      const cy = headerHeight + padding + r * cellSize;
+      let elements = '';
+      if (pkmn.caught) {
+        elements += `<rect x="${cx + 3}" y="${cy + 3}" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="none" stroke="#ff4d4d" stroke-width="1.5" opacity="0.5"/>`;
+      }
+      elements += `<text x="${cx + cellSize / 2}" y="${cy + cellSize - 15}" font-family="sans-serif" font-size="12" font-weight="bold" fill="${pkmn.caught ? '#fff' : '#4a5568'}" text-anchor="middle">#${String(pkmn.index).padStart(3, '0')}</text>`;
+      return elements;
+    }).join('')}
   </svg>`);
 
   const composites = [{ input: bgSvg, top: 0, left: 0 }];
-
   const spritePromises = pagePokemons.map(async (pkmn, i) => {
     const r = Math.floor(i / cols);
     const c = i % cols;
     const cx = padding + c * cellSize;
     const cy = headerHeight + padding + r * cellSize;
     
-    const pkmnComposites = [];
-
-    if (pkmn.caught) {
-      // Glow ring for caught
-      const glowSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cellSize - 6}" height="${cellSize - 6}">
-        <rect x="0" y="0" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="none" stroke="#ff4d4d" stroke-width="1.5" opacity="0.5"/>
-      </svg>`);
-      pkmnComposites.push({ input: glowSvg, top: cy + 3, left: cx + 3 });
-    }
-
     try {
-      const resized = await AnimalService.getResizedSpriteBuffer(pkmn.key, cellSize - 6);
-      if (resized) {
-        if (pkmn.caught) {
-          pkmnComposites.push({ input: resized, top: cy + 5, left: cx + 5 });
-        } else {
-          // Uncaught silhouette — extract alpha channel (the shape),
-          // create a solid black image, then join alpha back in
-          const meta = await sharp(resized).metadata();
-          const alphaChannel = await sharp(resized).extractChannel(3).toBuffer();
-          const silhouette = await sharp({
-            create: { width: meta.width, height: meta.height, channels: 3, background: { r: 0, g: 0, b: 0 } }
-          }).joinChannel(alphaChannel).png().toBuffer();
-          pkmnComposites.push({ input: silhouette, top: cy + 5, left: cx + 5 });
-        }
+      let buffer = null;
+      if (pkmn.caught) {
+        buffer = await AnimalService.getResizedSpriteBuffer(pkmn.key, cellSize - 6);
+      } else {
+        buffer = await AnimalService.getSilhouetteSpriteBuffer(pkmn.key, cellSize - 6);
+      }
+      
+      if (buffer) {
+        return { input: buffer, top: cy + 5, left: cx + 5 };
       }
     } catch (e) {
       console.error('Sprite render error for', pkmn.key, ':', e);
     }
-
-    // Number text
-    const numberSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cellSize - 6}" height="${cellSize - 6}">
-      <text x="${(cellSize - 6) / 2}" y="${cellSize - 15}" font-family="sans-serif" font-size="12" font-weight="bold" fill="${pkmn.caught ? '#fff' : '#4a5568'}" text-anchor="middle">#${String(pkmn.index).padStart(3, '0')}</text>
-    </svg>`);
-    pkmnComposites.push({ input: numberSvg, top: cy + 3, left: cx + 3 });
-
-    return pkmnComposites;
+    return null;
   });
 
   const results = await Promise.all(spritePromises);
-  results.forEach(res => composites.push(...res));
+  composites.push(...results.filter(Boolean));
 
   const outPath = path.join(TEMP_DIR, `pokedex-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
   await sharp({

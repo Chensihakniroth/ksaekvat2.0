@@ -260,15 +260,15 @@ module.exports = {
       logger.error('Failed to load avatar for profile', e);
     }
 
-    // 4. Favorite Pokemon Overlay
-    if (favoritePokemonBuffer) {
-      // Position it slightly overlapping the card's right edge for a dynamic look! (✧ω✧)
-      composites.push({ 
-        input: await sharp(favoritePokemonBuffer).resize(220, 220).toBuffer(), 
-        top: 115, 
-        left: 730 
-      });
-    }
+// 4. Favorite Pokemon Overlay
+     if (favoritePokemonBuffer) {
+       // Position it slightly overlapping the card's right edge for a dynamic look! (✧ω✧)
+       composites.push({
+         input: await sharp(favoritePokemonBuffer).resize(280, 280).toBuffer(),
+         top: 100,
+         left: 695
+       });
+     }
 
     const outPath = path.join(TEMP_DIR, `profile-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
     
