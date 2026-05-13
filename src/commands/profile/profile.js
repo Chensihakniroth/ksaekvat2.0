@@ -163,7 +163,7 @@ module.exports = {
       <path d="M 40 245 L 370 245" stroke="${embedColor}" stroke-width="1" opacity="0.4"/>
       
       <text x="40" y="280" font-family="sans-serif" font-size="20" font-weight="bold" fill="#aaaaaa">Balance</text>
-      <text x="370" y="280" font-family="sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="end">${EconomyService.format(userData.balance)} ${config.economy.currency}</text>
+      <text x="370" y="280" font-family="sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="end">${EconomyService.format(userData.balance)} Coins</text>
       
       <text x="40" y="325" font-family="sans-serif" font-size="20" font-weight="bold" fill="#aaaaaa">Pokémon</text>
       <text x="370" y="325" font-family="sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="end">${totalPokemonOwned}</text>
