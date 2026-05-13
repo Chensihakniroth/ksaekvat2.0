@@ -308,9 +308,21 @@ class AnimalService {
     if (this.imageCache.has(key)) return this.imageCache.get(key) || null;
 
     let lookup = this.sanitizeName(key);
-    
-    // Safety check: is it actually a pokemon? (•̀ᴗ•́)و
     if (!AnimalService.VALID_POKEMON.has(key.toLowerCase())) return null;
+
+    // 1. Check local assets first! (｡♥‿♥｡)
+    const possiblePaths = [
+      path.join('assets', 'pokemon', 'artwork', `${lookup}.png`),
+      path.join('assets', 'pokemon', 'gen1', `${lookup}.png`),
+      path.join('assets', 'pokemon', 'gen2', `${lookup}.png`),
+    ];
+
+    for (const p of possiblePaths) {
+      if (fs.existsSync(path.join(process.cwd(), p))) {
+        this.imageCache.set(key, p);
+        return p;
+      }
+    }
 
     if (lookup === 'missingno') {
       const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
@@ -351,8 +363,21 @@ class AnimalService {
     if (this.spriteCache.has(key)) return this.spriteCache.get(key) || null;
 
     let lookup = this.sanitizeName(key);
-    
     if (!AnimalService.VALID_POKEMON.has(key.toLowerCase())) return null;
+
+    // 1. Check local assets first! (｡♥‿♥｡)
+    const possiblePaths = [
+      path.join('assets', 'pokemon', 'gen1', `${lookup}.png`),
+      path.join('assets', 'pokemon', 'gen2', `${lookup}.png`),
+      path.join('assets', 'pokemon', 'sprites', `${lookup}.png`),
+    ];
+
+    for (const p of possiblePaths) {
+      if (fs.existsSync(path.join(process.cwd(), p))) {
+        this.spriteCache.set(key, p);
+        return p;
+      }
+    }
 
     if (lookup === 'missingno') {
       const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';

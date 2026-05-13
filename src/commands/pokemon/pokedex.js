@@ -148,16 +148,23 @@ async function createPokedexImage(pageLabel, pagePokemons, totalCaught, totalCou
       }).join('')
     ).join('')}
     ${pagePokemons.map((pkmn, i) => {
+      if (!pkmn.caught) return '';
       const r = Math.floor(i / cols);
       const c = i % cols;
       const cx = padding + c * cellSize;
       const cy = headerHeight + padding + r * cellSize;
-      let elements = '';
-      if (pkmn.caught) {
-        elements += `<rect x="${cx + 3}" y="${cy + 3}" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="none" stroke="#ff4d4d" stroke-width="1.5" opacity="0.5"/>`;
-      }
-      elements += `<text x="${cx + cellSize / 2}" y="${cy + cellSize - 15}" font-family="sans-serif" font-size="12" font-weight="bold" fill="${pkmn.caught ? '#fff' : '#4a5568'}" text-anchor="middle">#${String(pkmn.index).padStart(3, '0')}</text>`;
-      return elements;
+      return `<rect x="${cx + 3}" y="${cy + 3}" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="none" stroke="#ff4d4d" stroke-width="1.5" opacity="0.5"/>`;
+    }).join('')}
+  </svg>`);
+
+  const fgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
+    ${pagePokemons.map((pkmn, i) => {
+      const r = Math.floor(i / cols);
+      const c = i % cols;
+      const cx = padding + c * cellSize;
+      const cy = headerHeight + padding + r * cellSize;
+      const displayName = pkmn.caught ? (pkmn.name.length > 12 ? pkmn.name.slice(0, 10) + '..' : pkmn.name) : '??????';
+      return `<text x="${cx + cellSize / 2}" y="${cy + cellSize - 15}" font-family="sans-serif" font-size="10" font-weight="bold" fill="${pkmn.caught ? '#fff' : '#4a5568'}" text-anchor="middle">${displayName.toUpperCase()}</text>`;
     }).join('')}
   </svg>`);
 
@@ -187,6 +194,7 @@ async function createPokedexImage(pageLabel, pagePokemons, totalCaught, totalCou
 
   const results = await Promise.all(spritePromises);
   composites.push(...results.filter(Boolean));
+  composites.push({ input: fgSvg, top: 0, left: 0 });
 
   const outPath = path.join(TEMP_DIR, `pokedex-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
   await sharp({
