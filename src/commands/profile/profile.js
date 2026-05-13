@@ -284,7 +284,6 @@ module.exports = {
       .composite(composites)
       .png()
       .toFile(outPath);
-   .toFile(outPath);
 
     await message.reply({ 
       files: [new AttachmentBuilder(outPath, { name: 'profile.png' })]
