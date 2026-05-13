@@ -84,7 +84,7 @@ module.exports = {
           const imgData = await AnimalService.getPokemonImageBuffer(fav.name);
           if (imgData && imgData.buffer) {
             favoritePokemonBuffer = await sharp(imgData.buffer)
-              .resize(180, 180, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+              .resize(600, 600, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
               .toBuffer();
           }
         } catch (e) {
@@ -135,7 +135,7 @@ module.exports = {
     const winRate = totalGambled > 0 ? ((totalWon / totalGambled) * 100).toFixed(1) : '0.0';
     const rarest = getRarestPokemon(rarityCount);
     const isBuddyEquipped = !!favoritePokemonBuffer;
-    const canvasWidth = isBuddyEquipped ? 1000 : 800;
+    const canvasWidth = isBuddyEquipped ? 1150 : 800;
     const canvasHeight = 450;
     const safeUsername = escapeXml(target.username);
     const safeSpouse = escapeXml(spouseTextPlain);
@@ -262,11 +262,13 @@ module.exports = {
 
 // 4. Favorite Pokemon Overlay
      if (favoritePokemonBuffer) {
-       // Position it slightly overlapping the card's right edge for a dynamic look! (✧ω✧)
+       // Position it so it stands on the "ground" (bottom of the card) (✧ω✧)
+       // We resize it to 480 height to make it feel premium and large
+       const buddyHeight = 480; 
        composites.push({
-         input: await sharp(favoritePokemonBuffer).resize(280, 280).toBuffer(),
-         top: 100,
-         left: 695
+         input: await sharp(favoritePokemonBuffer).resize(null, buddyHeight).toBuffer(),
+         top: canvasHeight - buddyHeight + 10, // Slightly below for that "standing" feel
+         left: 650 // More overlap for depth
        });
      }
 
