@@ -202,6 +202,8 @@ module.exports = {
       <rect x="190" y="140" width="550" height="16" rx="8" ry="8" fill="#000000" opacity="0.6"/>
       <!-- XP Bar Fill -->
       <rect x="190" y="140" width="${Math.min(550, Math.max(16, (userData.experience / nextLevelExp) * 550))}" height="16" rx="8" ry="8" fill="${embedColor}" opacity="1"/>
+      <!-- XP Bar Indicator -->
+      <circle cx="${190 + Math.min(550, Math.max(0, (userData.experience / nextLevelExp) * 550))}" cy="148" r="10" fill="#ffffff" stroke="${embedColor}" stroke-width="2"/>
 
       <!-- Info Grid Boxes -->
       <!-- Left Box -->
