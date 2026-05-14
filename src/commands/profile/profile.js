@@ -266,10 +266,11 @@ module.exports = {
        const buddyMaxHeight = 400;
        const buddyMaxWidth = 400;
        const buddyResized = await sharp(favoritePokemonBuffer).resize(buddyMaxWidth, buddyMaxHeight, { fit: 'inside' }).toBuffer();
+       const { width, height } = await sharp(buddyResized).metadata();
        composites.push({
          input: buddyResized,
-         top: canvasHeight - buddyResized.height + 10,
-         left: canvasWidth - buddyResized.width - 20
+         top: canvasHeight - height + 10,
+         left: canvasWidth - width - 20
        });
 }
 
