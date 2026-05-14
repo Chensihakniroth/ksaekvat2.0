@@ -36,12 +36,18 @@ module.exports = {
 
     const userThemes = allThemes.filter(t => unlocked.includes(t.id));
 
+    const currentThemeId = (userData.profileTheme && typeof userData.profileTheme === 'object') 
+      ? userData.profileTheme.theme 
+      : (userData.profileTheme || 'default');
+    
+    const currentThemeName = allThemes.find(t => t.id === currentThemeId)?.name || 'Default';
+
     const embed = new EmbedBuilder()
       .setColor(colors.primary)
       .setTitle('🎨 Your Profile Themes')
       .setDescription(
         `Select a theme below to customize your \`Kprofile\`, sweetie! (｡♥‿♥｡)\n\n` +
-        `**Current Theme:** ${userData.profileTheme || 'Default'}`
+        `**Current Theme:** ${currentThemeName}`
       );
 
     const menu = new ActionRowBuilder().addComponents(
@@ -54,7 +60,7 @@ module.exports = {
             value: t.id,
             description: t.description,
             emoji: t.emoji,
-            default: t.id === userData.profileTheme
+            default: t.id === currentThemeId
           }))
         )
     );

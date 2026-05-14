@@ -53,6 +53,9 @@ module.exports = {
 
     try { await message.channel.sendTyping(); } catch (_) {}
 
+    // Ensure level is in sync with XP formula! (✧ω✧)
+    await database.syncLevel(target.id);
+
     const userData = await database.getUser(target.id, target.username);
     const animalsData = await database.loadAnimals();
     const flatRegistry = await database.getAnimalRegistry();
@@ -62,8 +65,12 @@ module.exports = {
     let embedColor = colors.primary;
     let backgroundUrl = null;
 
-    if (userData.profileTheme && userData.profileTheme !== 'default') {
-      const theme = shopConfig.categories.themes.items.find(t => t.id === userData.profileTheme);
+    const currentThemeId = (userData.profileTheme && typeof userData.profileTheme === 'object') 
+      ? userData.profileTheme.theme 
+      : (userData.profileTheme || 'default');
+
+    if (currentThemeId && currentThemeId !== 'default') {
+      const theme = shopConfig.categories.themes.items.find(t => t.id === currentThemeId);
       if (theme) {
         embedColor = theme.color;
         backgroundUrl = theme.image;
@@ -72,7 +79,7 @@ module.exports = {
 
     // Calculate essential stats
     const accountAge = Math.floor((Date.now() - (userData.joinedAt || Date.now())) / (1000 * 60 * 60 * 24));
-    const nextLevelExp = userData.level * 100;
+    const nextLevelExp = EconomyService.getLevelRequirement(userData.level);
     const progressPercent = Math.min(100, Math.floor((userData.experience / nextLevelExp) * 100));
 
     // Favorite Pokemon Logic (｡♥‿♥｡)

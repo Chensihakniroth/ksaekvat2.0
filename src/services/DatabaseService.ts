@@ -8,6 +8,7 @@ import Character from '../models/Character';
 import GachaHistory from '../models/GachaHistory';
 import UserPokemon from '../models/UserPokemon';
 import type { IUserPokemon } from '../models/UserPokemon';
+import EconomyService from './EconomyService';
 const registry = require('../utils/registry.js');
 const logger = require('../utils/logger.js');
 
@@ -64,16 +65,10 @@ class DatabaseService {
     );
 
     let leveledUp = false;
-    const getReq = (lvl: number) =>
-      lvl < 5
-        ? lvl * 100
-        : lvl < 15
-          ? Math.floor(500 * Math.pow(1.2, lvl - 5))
-          : Math.floor(3000 * Math.pow(1.15, lvl - 15) + lvl * 200);
 
     // Handle potential multi-level-up based on the now-incremented experience
-    while (user.experience >= getReq(user.level)) {
-      user.experience -= getReq(user.level);
+    while (user.experience >= EconomyService.getLevelRequirement(user.level)) {
+      user.experience -= EconomyService.getLevelRequirement(user.level);
       user.level++;
       leveledUp = true;
     }
@@ -86,7 +81,7 @@ class DatabaseService {
       leveledUp,
       newLevel: user.level,
       currentExp: user.experience,
-      nextExp: getReq(user.level),
+      nextExp: EconomyService.getLevelRequirement(user.level),
       updatedUser: user.toObject(),
     };
   }
@@ -97,6 +92,27 @@ class DatabaseService {
       { $inc: { balance: amount } },
       { returnDocument: 'after', upsert: true }
     );
+  }
+
+  /**
+   * Check if a user's level and experience are in sync with the current formula.
+   * If they have enough XP to level up multiple times, it does so! (✧ω✧)
+   */
+  async syncLevel(userId: string) {
+    const user = await User.findOne({ id: userId });
+    if (!user) return null;
+
+    let leveledUp = false;
+    while (user.experience >= EconomyService.getLevelRequirement(user.level)) {
+      user.experience -= EconomyService.getLevelRequirement(user.level);
+      user.level++;
+      leveledUp = true;
+    }
+
+    if (leveledUp) {
+      await user.save();
+    }
+    return user;
   }
 
   async addPokeball(userId: string, type: string, amount = 1) {
