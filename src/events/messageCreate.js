@@ -9,10 +9,10 @@ const axios = require('axios');
 const conversationMemory = new Map();
 const MAX_MEMORY = 20;
 
-// Track active command requests to prevent spam/overlap! (｡♥‿♥｡)
+// Track active command requests to prevent spam/overlap
 const activeRequests = new Set();
 
-// Progressive spam penalty tracking! (ᗒᗣᗕ)
+// Track spam strikes per user
 const spamStrikes = new Map();
 
 module.exports = {
@@ -38,7 +38,7 @@ module.exports = {
           .filter((v, i, a) => a.indexOf(v) === i); // deduplicate
       }
       // subprefix override is applied globally; per-user sub handled via customSubPrefix field (for display only for now)
-    } catch (_) { }
+    } catch (_) {}
 
     // Check main prefixes (user or global)
     for (const p of userMainPrefixes) {
@@ -98,29 +98,27 @@ module.exports = {
         const userId = message.author.id;
         const now = Date.now();
 
-        // --- 2.3 SPAM PENALTY ENGINE (Mommy's Mood) ---
+        // --- 2.3 SPAM PENALTY ENGINE ---
         let strikeData = spamStrikes.get(userId) || { count: 0, lastSpam: 0 };
-        
+
         // Reset strikes if they've been good for 30 seconds
         if (now - strikeData.lastSpam > 30000) {
           strikeData = { count: 0, lastSpam: now };
         }
 
-        const handleSpam = (penaltyTime, title, desc) => {
+        const handleSpam = (penaltyTime, desc) => {
           const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, penaltyTime);
           const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
 
-          // Only reply if it's the first few strikes to avoid bot-spamming-about-spam
           if (strikeData.count < 4) {
             message.reply({
               embeds: [{
                 color: parseInt(config.colors.warning.slice(1), 16),
-                title: title,
-                description: desc + `\n\n**Wait time: <t:${unixTime}:R>**\n*(Self-destructing in 5s)*`,
+                title: 'Cooldown Active',
+                description: `${desc}\n\n**Time remaining: <t:${unixTime}:R>**`,
                 timestamp: new Date(),
-              }]
-            }).then(msg => {
-              setTimeout(() => msg.delete().catch(() => {}), 5000);
+              }],
+              flags: [MessageFlags.Ephemeral]
             }).catch(() => {});
           }
 
@@ -130,10 +128,11 @@ module.exports = {
           cooldowns.setCooldown(`GLOBAL-${userId}`);
           return true;
         };
+
         // 1. Check Concurrency Lock
         if (activeRequests.has(userId)) {
           cooldowns.setCooldown(`GLOBAL-${userId}`);
-          return; 
+          return;
         }
 
         // 2. Check Strikes
@@ -143,13 +142,12 @@ module.exports = {
         const GLOBAL_60S = 60000;
 
         if (strikeData.count >= 3 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_60S)) {
-          return handleSpam(GLOBAL_60S, '🚫 System Timeout', 'Spam detected. Access has been restricted for **60 seconds**.');
+          return handleSpam(GLOBAL_60S, 'Spam detected. Access restricted for 60 seconds.');
         } else if (strikeData.count === 2 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_20S)) {
-          return handleSpam(GLOBAL_20S, '⏳ Command Throttled', "You're sending commands too quickly. Please wait **20 seconds**.");
+          return handleSpam(GLOBAL_20S, "You're sending commands too quickly. Please wait 20 seconds.");
         } else if (strikeData.count === 1 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_8S)) {
-          return handleSpam(GLOBAL_8S, '⏳ Slow Down', "Rate limit exceeded. Please wait **8 seconds** before your next request.");
+          return handleSpam(GLOBAL_8S, "Rate limit exceeded. Please wait 8 seconds before your next request.");
         } else if (cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_3S)) {
-          // Strike 0 -> 1
           strikeData.count = 1;
           strikeData.lastSpam = now;
           spamStrikes.set(userId, strikeData);
@@ -158,56 +156,50 @@ module.exports = {
           message.reply({
             embeds: [{
               color: parseInt(config.colors.warning.slice(1), 16),
-              title: '⏳ Cooldown Active',
-              description: `System is processing. Please wait until <t:${unixTime}:R> before your next command.\n*(Self-destructing in 5s)*`,      
+              title: 'Cooldown Active',
+              description: `Please wait until <t:${unixTime}:R> before your next command.`,
               timestamp: new Date(),
-            }]
-          }).then(msg => {
-            setTimeout(() => msg.delete().catch(() => {}), 5000);
+            }],
+            flags: [MessageFlags.Ephemeral]
           }).catch(() => {});
           return;
         }
+
         // 3. Clear to go!
         cooldowns.setCooldown(`GLOBAL-${userId}`);
         activeRequests.add(userId);
 
         // Check if user is admin for admin-only commands
         if (command.adminOnly && !config.adminIds.includes(message.author.id)) {
-          activeRequests.delete(userId); // Important: clean up if denied!
+          activeRequests.delete(userId);
           message.reply({
-            embeds: [
-              {
-                color: parseInt(config.colors.error.slice(1), 16),
-                title: '🚫 Access Denied',
-                description:
-                  "This command is restricted to authorized personnel only.\n*(Self-destructing in 5s)*",      
-                timestamp: new Date(),
-              },
-            ]
-          }).then(msg => {
-            setTimeout(() => msg.delete().catch(() => {}), 5000);
+            embeds: [{
+              color: parseInt(config.colors.error.slice(1), 16),
+              title: 'Access Denied',
+              description: "This command is restricted to authorized personnel only.",
+              timestamp: new Date(),
+            }],
+            flags: [MessageFlags.Ephemeral]
           }).catch(() => {});
           return;
         }
+
         // Check cooldowns
         if (command.cooldown) {
           const cooldownKey = `${message.author.id}-${commandName}`;
           if (cooldowns.isOnCooldown(cooldownKey, command.cooldown)) {
-            activeRequests.delete(userId); // Clean up
+            activeRequests.delete(userId);
             const timeLeft = cooldowns.getTimeLeft(cooldownKey, command.cooldown);
             const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
 
             message.reply({
-              embeds: [
-                {
-                  color: parseInt(config.colors.warning.slice(1), 16),
-                  title: '⏳ Cooldown Active',
-                  description: `Command is on cooldown. You can use it again <t:${unixTime}:R>.\n*(Self-destructing in 5s)*`,
-                  timestamp: new Date(),
-                },
-              ]
-            }).then(msg => {
-              setTimeout(() => msg.delete().catch(() => {}), 5000);
+              embeds: [{
+                color: parseInt(config.colors.warning.slice(1), 16),
+                title: 'Cooldown Active',
+                description: `Command is on cooldown. You can use it again <t:${unixTime}:R>.`,
+                timestamp: new Date(),
+              }],
+              flags: [MessageFlags.Ephemeral]
             }).catch(() => {});
             return;
           }
@@ -228,15 +220,12 @@ module.exports = {
         } catch (error) {
           logger.error(`Error executing command ${commandName}:`, error);
           message.reply({
-            embeds: [
-              {
-                color: parseInt(config.colors.error.slice(1), 16),
-                title: '❌ Execution Error',
-                description:
-                  'An unexpected error occurred while processing your request.',
-                timestamp: new Date(),
-              },
-            ],
+            embeds: [{
+              color: parseInt(config.colors.error.slice(1), 16),
+              title: 'Execution Error',
+              description: 'An unexpected error occurred while processing your request.',
+              timestamp: new Date(),
+            }],
             flags: [MessageFlags.Ephemeral]
           }).catch(() => {});
         } finally {
@@ -291,24 +280,24 @@ async function handleMessageListening(message, client) {
         const channelName = message.channel.name || 'DM';
 
         const embed = new EmbedBuilder()
-          .setTitle('👀 Message Intercepted')
+          .setTitle('Message Intercepted')
           .setColor(0x3498db)
           .addFields([
             {
-              name: '👤 User',
+              name: 'User',
               value: `${message.author.tag} (${message.author.id})`,
               inline: true,
             },
-            { name: '🏠 Server', value: serverName, inline: true },
-            { name: '📍 Channel', value: `#${channelName}`, inline: true },
-            { name: '💬 Message', value: message.content || '*[No text content]*', inline: false },
+            { name: 'Server', value: serverName, inline: true },
+            { name: 'Channel', value: `#${channelName}`, inline: true },
+            { name: 'Message', value: message.content || '*[No text content]*', inline: false },
           ])
           .setTimestamp()
           .setThumbnail(message.author.displayAvatarURL());
 
         if (message.attachments.size > 0) {
           const attachments = message.attachments.map((att) => att.url).join('\n');
-          embed.addFields([{ name: '📎 Attachments', value: attachments, inline: false }]);
+          embed.addFields([{ name: 'Attachments', value: attachments, inline: false }]);
         }
 
         await admin.send({ embeds: [embed] });
@@ -349,11 +338,10 @@ async function handleDMForwarding(message, client) {
     console.error(`Failed to send DM message from admin ${message.author.id}:`, error);
     try {
       await message.author.send(
-        '❌ Failed to send your message. Please check if the target channel still exists and the bot has permissions.'
+        'Failed to send your message. Please check if the target channel still exists and the bot has permissions.'
       );
     } catch (dmError) {
       console.error('Failed to notify admin about sending failure:', dmError);
     }
   }
 }
-
