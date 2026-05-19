@@ -10,6 +10,7 @@ const CharacterCard_1 = __importDefault(require("../models/CharacterCard"));
 const AnimalRegistry_1 = __importDefault(require("../models/AnimalRegistry"));
 const GachaHistory_1 = __importDefault(require("../models/GachaHistory"));
 const UserPokemon_1 = __importDefault(require("../models/UserPokemon"));
+const EconomyService_1 = __importDefault(require("./EconomyService"));
 const registry = require('../utils/registry.js');
 const logger = require('../utils/logger.js');
 /**
@@ -59,14 +60,9 @@ class DatabaseService {
         // ── First atomic XP boost ───────────────────────────────────────────
         const user = await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { experience: amount } }, { returnDocument: 'after', upsert: true });
         let leveledUp = false;
-        const getReq = (lvl) => lvl < 5
-            ? lvl * 100
-            : lvl < 15
-                ? Math.floor(500 * Math.pow(1.2, lvl - 5))
-                : Math.floor(3000 * Math.pow(1.15, lvl - 15) + lvl * 200);
         // Handle potential multi-level-up based on the now-incremented experience
-        while (user.experience >= getReq(user.level)) {
-            user.experience -= getReq(user.level);
+        while (user.experience >= EconomyService_1.default.getLevelRequirement(user.level)) {
+            user.experience -= EconomyService_1.default.getLevelRequirement(user.level);
             user.level++;
             leveledUp = true;
         }
@@ -77,12 +73,31 @@ class DatabaseService {
             leveledUp,
             newLevel: user.level,
             currentExp: user.experience,
-            nextExp: getReq(user.level),
+            nextExp: EconomyService_1.default.getLevelRequirement(user.level),
             updatedUser: user.toObject(),
         };
     }
     async addBalance(userId, amount) {
         return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { balance: amount } }, { returnDocument: 'after', upsert: true });
+    }
+    /**
+     * Check if a user's level and experience are in sync with the current formula.
+     * If they have enough XP to level up multiple times, it does so! (✧ω✧)
+     */
+    async syncLevel(userId) {
+        const user = await User_1.default.findOne({ id: userId });
+        if (!user)
+            return null;
+        let leveledUp = false;
+        while (user.experience >= EconomyService_1.default.getLevelRequirement(user.level)) {
+            user.experience -= EconomyService_1.default.getLevelRequirement(user.level);
+            user.level++;
+            leveledUp = true;
+        }
+        if (leveledUp) {
+            await user.save();
+        }
+        return user;
     }
     async addPokeball(userId, type, amount = 1) {
         const field = type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';

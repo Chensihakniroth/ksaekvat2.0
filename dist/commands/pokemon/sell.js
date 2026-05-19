@@ -265,10 +265,11 @@ module.exports = {
             userData.balance += sellValue;
             userData.markModified('animals');
             await database.saveUser(userData);
-            const imageUrl = await AnimalService.getPokemonImage(foundKey);
+            const imgData = await AnimalService.getPokemonImageBuffer(foundKey);
             const rarityInfo = config.hunting.rarities[foundRarity];
             const { getRarityEmoji } = require('../../utils/images.js');
             const rarityEmoji = getRarityEmoji(foundRarity, client);
+            const files = [];
             const embed = new EmbedBuilder()
                 .setColor(parseInt(rarityInfo.color.slice(1), 16))
                 .setTitle('ヽ(>∀<☆)ノ Released!')
@@ -283,11 +284,13 @@ module.exports = {
                 value: `${EconomyService.format(userData.balance)} ${config.economy.currency}`,
                 inline: true,
             });
-            if (imageUrl)
-                embed.setThumbnail(imageUrl);
+            if (imgData && imgData.buffer) {
+                files.push(new (require('discord.js').AttachmentBuilder)(imgData.buffer, { name: imgData.fileName }));
+                embed.setThumbnail(`attachment://${imgData.fileName}`);
+            }
             // Update command usage statistics
             await database.updateStats(message.author.id, 'command');
-            return message.reply({ embeds: [embed] });
+            return message.reply({ embeds: [embed], files });
         }
     },
 };

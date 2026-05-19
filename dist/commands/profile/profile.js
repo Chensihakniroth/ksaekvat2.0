@@ -53,6 +53,8 @@ module.exports = {
             await message.channel.sendTyping();
         }
         catch (_) { }
+        // Ensure level is in sync with XP formula! (✧ω✧)
+        await database.syncLevel(target.id);
         const userData = await database.getUser(target.id, target.username);
         const animalsData = await database.loadAnimals();
         const flatRegistry = await database.getAnimalRegistry();
@@ -60,8 +62,11 @@ module.exports = {
         const shopConfig = require('../../config/shopConfig.js');
         let embedColor = colors.primary;
         let backgroundUrl = null;
-        if (userData.profileTheme && userData.profileTheme !== 'default') {
-            const theme = shopConfig.categories.themes.items.find(t => t.id === userData.profileTheme);
+        const currentThemeId = (userData.profileTheme && typeof userData.profileTheme === 'object')
+            ? userData.profileTheme.theme
+            : (userData.profileTheme || 'default');
+        if (currentThemeId && currentThemeId !== 'default') {
+            const theme = shopConfig.categories.themes.items.find(t => t.id === currentThemeId);
             if (theme) {
                 embedColor = theme.color;
                 backgroundUrl = theme.image;
@@ -69,7 +74,7 @@ module.exports = {
         }
         // Calculate essential stats
         const accountAge = Math.floor((Date.now() - (userData.joinedAt || Date.now())) / (1000 * 60 * 60 * 24));
-        const nextLevelExp = userData.level * 100;
+        const nextLevelExp = EconomyService.getLevelRequirement(userData.level);
         const progressPercent = Math.min(100, Math.floor((userData.experience / nextLevelExp) * 100));
         // Favorite Pokemon Logic (｡♥‿♥｡)
         let favoritePokemonBuffer = null;
@@ -190,6 +195,8 @@ module.exports = {
       <rect x="190" y="140" width="550" height="16" rx="8" ry="8" fill="#000000" opacity="0.6"/>
       <!-- XP Bar Fill -->
       <rect x="190" y="140" width="${Math.min(550, Math.max(16, (userData.experience / nextLevelExp) * 550))}" height="16" rx="8" ry="8" fill="${embedColor}" opacity="1"/>
+      <!-- XP Bar Indicator -->
+      <circle cx="${190 + Math.min(550, Math.max(0, (userData.experience / nextLevelExp) * 550))}" cy="148" r="10" fill="#ffffff" stroke="${embedColor}" stroke-width="2"/>
 
       <!-- Info Grid Boxes -->
       <!-- Left Box -->
@@ -252,10 +259,11 @@ module.exports = {
             const buddyMaxHeight = 400;
             const buddyMaxWidth = 400;
             const buddyResized = await sharp(favoritePokemonBuffer).resize(buddyMaxWidth, buddyMaxHeight, { fit: 'inside' }).toBuffer();
+            const { width, height } = await sharp(buddyResized).metadata();
             composites.push({
                 input: buddyResized,
-                top: canvasHeight - buddyResized.height + 10,
-                left: canvasWidth - buddyResized.width - 20
+                top: canvasHeight - height + 10,
+                left: canvasWidth - width - 20
             });
         }
         const outPath = path.join(TEMP_DIR, `profile-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);

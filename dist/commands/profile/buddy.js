@@ -1,5 +1,5 @@
 "use strict";
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const AnimalService = require('../../services/AnimalService.js').default || require('../../services/AnimalService.js');
@@ -41,13 +41,20 @@ module.exports = {
         // Set as favorite
         const success = await database.setFavorite(userId, 'animal', animalKey);
         if (success) {
-            const pokemonImageUrl = await AnimalService.getPokemonImage(animalKey);
+            const imgData = await AnimalService.getPokemonImageBuffer(animalKey);
+            let files = [];
             const embed = new EmbedBuilder()
                 .setColor(colors.primary)
                 .setTitle('✨ New Buddy Set!')
-                .setDescription(`Your profile buddy has been set to **${animalData.emoji} ${animalData.name}**! It looks so cute on your trainer card! (｡♥‿♥｡)`)
-                .setThumbnail(pokemonImageUrl || client.user.displayAvatarURL());
-            return message.reply({ embeds: [embed] });
+                .setDescription(`Your profile buddy has been set to **${animalData.emoji} ${animalData.name}**! It looks so cute on your trainer card! (｡♥‿♥｡)`);
+            if (imgData && imgData.buffer) {
+                files.push(new AttachmentBuilder(imgData.buffer, { name: imgData.fileName }));
+                embed.setThumbnail(`attachment://${imgData.fileName}`);
+            }
+            else {
+                embed.setThumbnail(client.user.displayAvatarURL());
+            }
+            return message.reply({ embeds: [embed], files });
         }
         else {
             return message.reply('Something went wrong while setting your buddy... (ಥ﹏ಥ)');
