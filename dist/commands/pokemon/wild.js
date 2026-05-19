@@ -22,9 +22,9 @@ module.exports = {
         if (playerTeamData.length < config.pokemonBattle.maxTeamSize) {
             return message.reply({
                 embeds: [new EmbedBuilder()
-                        .setColor(colors.error)
-                        .setTitle('Team not ready!')
-                        .setDescription(`You need exactly **${config.pokemonBattle.maxTeamSize}** Pokémon in your battle team!\nCurrent: **${playerTeamData.length}/${config.pokemonBattle.maxTeamSize}**\n\nUse \`Kpteam add <pokemon>\` to fill your team.`)
+                    .setColor(colors.error)
+                    .setTitle('Team not ready!')
+                    .setDescription(`You need exactly **${config.pokemonBattle.maxTeamSize}** Pokémon in your battle team!\nCurrent: **${playerTeamData.length}/${config.pokemonBattle.maxTeamSize}**\n\nUse \`Kpteam add <pokemon>\` to fill your team.`)
                 ],
             });
         }
@@ -122,6 +122,7 @@ module.exports = {
                 }
             }
             // FINAL RESULT MESSAGE
+
             const xpLines = xpResults.map((r) => {
                 let line = `${r.fainted ? 'FNT' : 'OK'} **${r.name}**: +${r.xp} XP`;
                 if (r.leveledUp)
