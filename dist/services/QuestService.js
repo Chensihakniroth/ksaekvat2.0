@@ -90,6 +90,68 @@ class QuestService {
         }
     }
     /**
+     * Generate 3 random weekly quests for a user (｡♥‿♥｡)
+     */
+    async generateWeeklyQuests(userId) {
+        const user = await User_1.default.findOne({ id: userId });
+        if (!user)
+            return null;
+        const questPool = Object.keys(QUEST_TYPES);
+        const selectedTypes = questPool.sort(() => 0.5 - Math.random()).slice(0, 3);
+        const newWeeklyQuests = selectedTypes.map(type => {
+            const config = QUEST_TYPES[type];
+            const target = config.targets[Math.floor(Math.random() * config.targets.length)];
+            return {
+                questId: `weekly_${type}_${Date.now()}_${Math.floor(Math.random() * 1000)}`,
+                type: type,
+                target: target,
+                current: 0,
+                completed: false,
+                rewarded: false
+            };
+        });
+        user.weeklyQuests = newWeeklyQuests;
+        user.lastWeeklyQuestReset = new Date();
+        await user.save();
+        return newWeeklyQuests;
+    }
+    /**
+     * Update progress for a specific weekly quest type (｡♥‿♥｡)
+     */
+    async updateWeeklyProgress(userId, type, amount = 1) {
+        const user = await User_1.default.findOne({ id: userId });
+        if (!user)
+            return;
+        // Check if reset is needed (weekly reset)
+        const now = new Date();
+        const lastReset = user.lastWeeklyQuestReset ? new Date(user.lastWeeklyQuestReset) : null;
+        // Check if it's been 7 days since last weekly reset
+        if (lastReset && now.getTime() - lastReset.getTime() >= 7 * 24 * 60 * 60 * 1000) {
+            await this.generateWeeklyQuests(userId);
+            return;
+        }
+        // If no weekly quests exist, generate them
+        if (!user.weeklyQuests || user.weeklyQuests.length === 0) {
+            await this.generateWeeklyQuests(userId);
+            return;
+        }
+        let modified = false;
+        for (const quest of user.weeklyQuests) {
+            if (quest.type === type && !quest.completed) {
+                quest.current += amount;
+                if (quest.current >= quest.target) {
+                    quest.current = quest.target;
+                    quest.completed = true;
+                }
+                modified = true;
+            }
+        }
+        if (modified) {
+            user.markModified('weeklyQuests');
+            await user.save();
+        }
+    }
+    /**
      * Get formatted quest list for embeds (｡♥‿♥｡)
      */
     getQuestInfo(quest) {

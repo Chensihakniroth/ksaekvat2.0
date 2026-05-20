@@ -47,7 +47,8 @@ module.exports = {
     let activeBallType = activeMasterball ? 'masterball' : activeUltraball ? 'ultraball' : activePokeball ? 'pokeball' : null;
 
     let distractionChance = config.hunting.distractionChance;
-    if (activeMasterball || activeUltraball) distractionChance = 0;
+    if (activeMasterball) distractionChance = 0;
+    else if (activeUltraball) distractionChance = 0.05;
     else if (activePokeball) distractionChance = 0.1;
 
     if (Math.random() < distractionChance) {
@@ -68,13 +69,15 @@ module.exports = {
     let totalWeight = 0;
     for (const [key, r] of Object.entries(rarities)) {
       // Filter rarities based on active ball
-      if (activeMasterball || activeUltraball) {
-        if (!['epic', 'legendary', 'mythical', 'priceless'].includes(key)) continue;
+      if (activeMasterball) {
+        if (!['rare', 'epic', 'legendary', 'mythical', 'priceless'].includes(key)) continue;
+      } else if (activeUltraball) {
+        if (!['uncommon', 'rare', 'epic', 'legendary', 'mythical', 'priceless'].includes(key)) continue;
       }
 
       let weight = r.weight;
-      // Master ball has 5x mythical chance
-      if (activeMasterball && key === 'mythical') weight *= 5;
+      // Master ball has 2x mythical chance
+      if (activeMasterball && key === 'mythical') weight *= 2;
 
       totalWeight += weight;
     }
@@ -84,12 +87,14 @@ module.exports = {
     let selectedRarity = 'common';
 
     for (const [key, r] of Object.entries(rarities)) {
-      if (activeMasterball || activeUltraball) {
-        if (!['epic', 'legendary', 'mythical', 'priceless'].includes(key)) continue;
+      if (activeMasterball) {
+        if (!['rare', 'epic', 'legendary', 'mythical', 'priceless'].includes(key)) continue;
+      } else if (activeUltraball) {
+        if (!['uncommon', 'rare', 'epic', 'legendary', 'mythical', 'priceless'].includes(key)) continue;
       }
 
       let weight = r.weight;
-      if (activeMasterball && key === 'mythical') weight *= 5;
+      if (activeMasterball && key === 'mythical') weight *= 2;
 
       currentWeight += weight;
       if (random <= currentWeight) {

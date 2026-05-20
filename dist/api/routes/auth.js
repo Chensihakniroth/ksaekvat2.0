@@ -67,19 +67,28 @@ router.get('/me', async (req, res) => {
                 id: decoded.id,
                 username: decoded.username,
                 avatar: decoded.avatar,
+                slug: user.profileTheme?.slug || null,
                 balance: user.balance || 0,
                 level: user.level || 1,
             }
         });
     }
     catch (err) {
-        res.clearCookie('ksaekvat_session');
+        res.clearCookie('ksaekvat_session', {
+            path: '/',
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production'
+        });
         res.status(401).json({ success: false, error: 'Invalid token' });
     }
 });
 // Logout
 router.post('/logout', (req, res) => {
-    res.clearCookie('ksaekvat_session');
+    res.clearCookie('ksaekvat_session', {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production'
+    });
     res.json({ success: true });
 });
 module.exports = router;

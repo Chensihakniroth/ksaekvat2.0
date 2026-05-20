@@ -86,6 +86,17 @@ class AnimalService {
     if (!url) return null;
 
     try {
+      // If it's a local path (non-http), read from disk (｡♥‿♥｡)
+      if (!url.startsWith('http')) {
+        const fullPath = path.isAbsolute(url) ? url : path.join(process.cwd(), url);
+        if (fs.existsSync(fullPath)) {
+          const buffer = fs.readFileSync(fullPath);
+          fs.writeFileSync(localPath, buffer);
+          return buffer;
+        }
+        return null;
+      }
+
       const response = await axios.get(url, {
         responseType: 'arraybuffer',
         headers: { 'User-Agent': 'Mozilla/5.0' }
@@ -95,6 +106,7 @@ class AnimalService {
       fs.writeFileSync(localPath, buffer);
       return buffer;
     } catch (error: any) {
+      console.error(`Failed to fetch sprite buffer for ${key}:`, error.message);
       return null;
     }
   }
@@ -139,6 +151,51 @@ class AnimalService {
   }
 
   /**
+   * Get a SILHOUETTE sprite buffer with local DISK caching.
+   * Prevents expensive sharp operations in the Pokedex command! (｡♥‿♥｡)
+   */
+  public async getSilhouetteSpriteBuffer(key: string, size: number): Promise<Buffer | null> {
+    const CACHE_DIR = path.join(process.cwd(), '.tmp', 'pokemon_cache', 'silhouettes');
+    if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
+
+    const localPath = path.join(CACHE_DIR, `${key}_${size}.png`);
+
+    // 1. Check disk cache first
+    if (fs.existsSync(localPath)) {
+      return fs.readFileSync(localPath);
+    }
+
+    // 2. Get resized sprite
+    const resizedBuffer = await this.getResizedSpriteBuffer(key, size);
+    if (!resizedBuffer) return null;
+
+    try {
+      // 3. Create silhouette using Sharp
+      const sharp = require('sharp');
+      const meta = await sharp(resizedBuffer).metadata();
+      const alphaChannel = await sharp(resizedBuffer).extractChannel(3).toBuffer();
+      const silhouette = await sharp({
+        create: { 
+          width: meta.width || size, 
+          height: meta.height || size, 
+          channels: 3, 
+          background: { r: 0, g: 0, b: 0 } 
+        }
+      })
+      .joinChannel(alphaChannel)
+      .png()
+      .toBuffer();
+
+      // 4. Save to cache
+      fs.writeFileSync(localPath, silhouette);
+      return silhouette;
+    } catch (error: any) {
+      console.error(`Failed to create silhouette for ${key}:`, error.message);
+      return null;
+    }
+  }
+
+  /**
    * Calculate comprehensive stats for a user's animal collection.
    */
   public calculateZooStats(userAnimals: any, animalsData: any): ZooStats {
@@ -157,7 +214,7 @@ class AnimalService {
         const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
         for (const [animalKey, count] of animalEntries) {
           // Only count valid Pokemon! (•̀ᴗ•́)و
-          if (!AnimalService.GEN1_POKEMON.has(animalKey.toLowerCase())) continue;
+          if (!AnimalService.VALID_POKEMON.has(animalKey.toLowerCase())) continue;
 
           if (animalsData[rarity][animalKey]) {
             const val = animalsData[rarity][animalKey].value * (count as number);
@@ -192,7 +249,8 @@ class AnimalService {
 
     return badges;
   }
-  private static readonly GEN1_POKEMON = new Set([
+  private static readonly VALID_POKEMON = new Set([
+    // GEN 1
     'bulbasaur', 'ivysaur', 'venusaur', 'charmander', 'charmeleon', 'charizard',
     'squirtle', 'wartortle', 'blastoise', 'caterpie', 'metapod', 'butterfree',
     'weedle', 'kakuna', 'beedrill', 'pidgey', 'pidgeotto', 'pidgeot',
@@ -217,7 +275,26 @@ class AnimalService {
     'magikarp', 'gyarados', 'lapras', 'ditto', 'eevee', 'vaporeon',
     'jolteon', 'flareon', 'porygon', 'omanyte', 'omastar', 'kabuto',
     'kabutops', 'aerodactyl', 'snorlax', 'articuno', 'zapdos', 'moltres',
-    'dratini', 'dragonair', 'dragonite', 'mewtwo', 'mew', 'missingno', 'shinycharizard'
+    'dratini', 'dragonair', 'dragonite', 'mewtwo', 'mew', 'missingno', 'shinycharizard',
+    
+    // GEN 2
+    'chikorita', 'bayleef', 'meganium', 'cyndaquil', 'quilava', 'typhlosion',
+    'totodile', 'croconaw', 'feraligatr', 'sentret', 'furret', 'hoothoot',
+    'noctowl', 'ledyba', 'ledian', 'spinarak', 'ariados', 'crobat',
+    'chinchou', 'lanturn', 'pichu', 'cleffa', 'igglybuff', 'togepi',
+    'togetic', 'natu', 'xatu', 'mareep', 'flaaffy', 'ampharos',
+    'bellossom', 'marill', 'azumarill', 'sudowoodo', 'politoed', 'hoppip',
+    'skiploom', 'jumpluff', 'aipom', 'sunkern', 'sunflora', 'yanma',
+    'wooper', 'quagsire', 'espeon', 'umbreon', 'murkrow', 'slowking',
+    'misdreavus', 'girafarig', 'pineco', 'forretress', 'dunsparce', 'gligar',
+    'steelix', 'snubbull', 'granbull', 'qwilfish', 'scizor', 'shuckle',
+    'heracross', 'sneasel', 'teddiursa', 'ursaring', 'slugma', 'magcargo',
+    'swinub', 'piloswine', 'corsola', 'remoraid', 'octillery', 'delibird',
+    'mantine', 'skarmory', 'houndour', 'houndoom', 'kingdra', 'phanpy',
+    'donphan', 'porygon2', 'stantler', 'smeargle', 'tyrogue', 'hitmontop',
+    'smoochum', 'elekid', 'magby', 'miltank', 'blissey', 'raikou',
+    'entei', 'suicune', 'larvitar', 'pupitar', 'tyranitar', 'lugia',
+    'ho_oh', 'celebi'
   ]);
 
   private imageCache: Map<string, string> = new Map();
@@ -232,6 +309,7 @@ class AnimalService {
       .replace(/nidoran\s?♂/g, 'nidoran-m')
       .replace(/farfetch['’]d/g, 'farfetchd')
       .replace(/mr\.\s?mime/g, 'mr-mime')
+      .replace(/ho_oh/g, 'ho-oh')
       .replace(/[^a-z0-9-]/g, ''); // Remove other special chars
   }
 
@@ -242,9 +320,21 @@ class AnimalService {
     if (this.imageCache.has(key)) return this.imageCache.get(key) || null;
 
     let lookup = this.sanitizeName(key);
-    
-    // Safety check: is it actually a pokemon? (•̀ᴗ•́)و
-    if (!AnimalService.GEN1_POKEMON.has(lookup)) return null;
+    if (!AnimalService.VALID_POKEMON.has(key.toLowerCase())) return null;
+
+    // 1. Check local assets first! (｡♥‿♥｡)
+    const possiblePaths = [
+      path.join('assets', 'pokemon', 'artwork', `${lookup}.png`),
+      path.join('assets', 'pokemon', 'gen1', `${lookup}.png`),
+      path.join('assets', 'pokemon', 'gen2', `${lookup}.png`),
+    ];
+
+    for (const p of possiblePaths) {
+      if (fs.existsSync(path.join(process.cwd(), p))) {
+        this.imageCache.set(key, p);
+        return p;
+      }
+    }
 
     if (lookup === 'missingno') {
       const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
@@ -285,8 +375,21 @@ class AnimalService {
     if (this.spriteCache.has(key)) return this.spriteCache.get(key) || null;
 
     let lookup = this.sanitizeName(key);
-    
-    if (!AnimalService.GEN1_POKEMON.has(lookup)) return null;
+    if (!AnimalService.VALID_POKEMON.has(key.toLowerCase())) return null;
+
+    // 1. Check local assets first! (｡♥‿♥｡)
+    const possiblePaths = [
+      path.join('assets', 'pokemon', 'gen1', `${lookup}.png`),
+      path.join('assets', 'pokemon', 'gen2', `${lookup}.png`),
+      path.join('assets', 'pokemon', 'sprites', `${lookup}.png`),
+    ];
+
+    for (const p of possiblePaths) {
+      if (fs.existsSync(path.join(process.cwd(), p))) {
+        this.spriteCache.set(key, p);
+        return p;
+      }
+    }
 
     if (lookup === 'missingno') {
       const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';

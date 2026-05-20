@@ -2,71 +2,63 @@ const { EmbedBuilder } = require('discord.js');
 const colors = require('../../utils/colors.js');
 const database = require('../../services/DatabaseService');
 const config = require('../../config/config.js');
-// Use built-in fetch (Node.js 18+) or axios as fallback
-const fetch = global.fetch || require('axios').get;
 
-const TENOR_API_KEY = config.tenorApiKey;
-const CLIENT_KEY = 'my_test_app';
+const GIPHY_API_KEY = config.giphyApiKey;
+
+// ── Curated jail GIFs for guaranteed relevance ──────────────────────
+const JAIL_GIFS = [
+  'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWtka21lZWZxdDhldndtaDlscmN6M2xjbmIycWJ2czk0OWE5bzg5aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/d8XNDMiXhPMVRKpjlu/giphy.gif',
+  'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHQ0eWVyZTVsNjR5a2k4bmNrendqNTA5OWVxcXdhazIwN3FxeTVldiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/soS6N6KBCB3oc/giphy.gif',
+  'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3Z3F1MGliaGphNnJ4eGliMHJoNDVrYm50NGdrbzhodDAwa3k3NWxoOCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/ZwX6kSakHXY5KsJZP1/giphy.gif',
+  'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWwxb2NvMmZ3azc5ZWMxeG9sczlwa3U1M3Nud282eHBtdnNnZDg2bSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/VPC0q2XppSEk8/giphy.gif',
+  'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3azJ6ZnN4bXJkbHA5NWd0enAxZW5nNWs1c3p3OXQzOG16ZHV5Ymd1eSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/t6qZSIwcLk8GLCX6Vp/giphy.gif',
+  'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNWwxb2NvMmZ3azc5ZWMxeG9sczlwa3U1M3Nud282eHBtdnNnZDg2bSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Lqd8rVp6nbfs1zjG3m/giphy.gif',
+  'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3Mm90OHV0aWgzNDR0dnAyNGQxY2UxaWl5bnpoam1za2Jvb2l2dDlhMSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/r59gUvu0iTW2Q/giphy.gif',
+];
+
+/**
+ * Get a jail GIF — curated pool first, Giphy random API fallback.
+ */
+async function getJailGif() {
+  // Primary: curated pool (instant, always jail-themed)
+  if (JAIL_GIFS.length > 0) {
+    return JAIL_GIFS[Math.floor(Math.random() * JAIL_GIFS.length)];
+  }
+
+  // Fallback: Giphy random endpoint
+  try {
+    const url = `https://api.giphy.com/v1/gifs/random?api_key=${GIPHY_API_KEY}&tag=jail&rating=pg-13`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (data.data && data.data.images) {
+      return data.data.images.original.url;
+    }
+  } catch (err) {
+    console.error('[JAIL] Giphy fallback failed:', err.message);
+  }
+  return null;
+}
 
 module.exports = {
   name: 'jail',
-  description: 'Send someone to jail.',
+  description: 'Send someone to jail. (¬‿¬)',
   usage: 'jail [@user] [message]',
   cooldown: 3000,
   async execute(message, args) {
     const mentionedUser = message.mentions.users.first();
     const customMessage = args.slice(1).join(' ');
+
     const sent = await message.reply({
       embeds: [
         new EmbedBuilder()
           .setColor(colors.primary || 0x0099ff)
-          .setTitle('🔒 Preparing jail...')
-          .setDescription('Loading jail animation...'),
+          .setTitle('🔒 Processing arrest...')
+          .setDescription('Fetching jail footage... (・_・ヾ'),
       ],
     });
 
     try {
-      let gifUrl = null;
-      let gifId = null;
-
-      // First try Tenor API with randomization
-      try {
-        const query = 'jail handcuff arrest prison';
-        const url = `https://tenor.googleapis.com/v2/search?key=${TENOR_API_KEY}&client_key=${CLIENT_KEY}&q=${encodeURIComponent(query)}&limit=10&random=true&media_filter=gif`;
-        const response = await fetch(url);
-        const data = global.fetch ? await response.json() : response.data;
-
-        if (data.results && Array.isArray(data.results) && data.results.length > 0) {
-          const randomIndex = Math.floor(Math.random() * data.results.length);
-          const selectedGif = data.results[randomIndex];
-          gifUrl = selectedGif.media_formats.gif.url;
-          gifId = selectedGif.id;
-
-          // Register share for the selected GIF
-          try {
-            const shareUrl = `https://tenor.googleapis.com/v2/registershare?id=${gifId}&key=${TENOR_API_KEY}&client_key=${CLIENT_KEY}&q=${encodeURIComponent(query)}`;
-            await fetch(shareUrl);
-          } catch (shareErr) {
-            console.log('Tenor Register Share failed:', shareErr.message);
-          }
-        }
-      } catch (e) {
-        console.log('Tenor API failed:', e);
-      }
-
-      // Fallback to waifu.pics
-      if (!gifUrl) {
-        try {
-          const res2 = await fetch('https://api.waifu.pics/sfw/kill'); // Using kill as a close match
-          const data2 = global.fetch ? await res2.json() : res2.data;
-          console.log('Waifu.pics kill response:', data2);
-          if (data2 && data2.url) {
-            gifUrl = data2.url;
-          }
-        } catch (e) {
-          console.log('Waifu.pics kill API failed:', e);
-        }
-      }
+      const gifUrl = await getJailGif();
 
       const targetUser = mentionedUser || message.author;
       const embed = new EmbedBuilder()
@@ -77,10 +69,7 @@ module.exports = {
         );
 
       if (gifUrl) {
-        console.log('Using jail GIF URL:', gifUrl);
         embed.setImage(gifUrl);
-      } else {
-        console.log('No jail GIF found from any API');
       }
 
       await sent.edit({ embeds: [embed] });
@@ -92,7 +81,7 @@ module.exports = {
             .setColor(colors.danger || 0xff4444)
             .setTitle('🔒 JAIL TIME!')
             .setDescription(
-              `**${mentionedUser?.username || message.author.username}** has been sent to jail! (No GIF available)`
+              `**${mentionedUser?.username || message.author.username}** has been sent to jail! (No GIF available) (ಥ﹏ಥ)`
             ),
         ],
       });

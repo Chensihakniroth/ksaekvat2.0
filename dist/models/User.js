@@ -50,6 +50,7 @@ const UserSchema = new mongoose_1.Schema({
     id: { type: String, required: true, unique: true, index: true }, // Discord ID
     username: { type: String, default: 'Unknown Traveler' }, // Discord Username
     balance: { type: Number, default: 1000, index: true },
+    bank: { type: Number, default: 0, index: true },
     star_dust: { type: Number, default: 0 },
     level: { type: Number, default: 1, index: true },
     worldLevel: { type: Number, default: 1 },
@@ -57,6 +58,8 @@ const UserSchema = new mongoose_1.Schema({
     // Rewards & Gacha
     dailyClaimed: { type: Boolean, default: false },
     weeklyClaimed: { type: Boolean, default: false },
+    lastDaily: { type: Date, default: null },
+    lastWeekly: { type: Date, default: null },
     lastGachaReset: { type: Date, default: null },
     dailyPulls: { type: Number, default: 0 },
     extraPulls: { type: Number, default: 0 },
@@ -76,6 +79,7 @@ const UserSchema = new mongoose_1.Schema({
     equipped: { type: mongoose_1.Schema.Types.Map, of: mongoose_1.Schema.Types.Mixed, default: {} },
     lootbox: { type: Number, default: 0 },
     team: [String], // Array of character names (Slim Storage)
+    pokemonTeam: [{ type: mongoose_1.Schema.Types.ObjectId, ref: 'UserPokemon' }], // Pokémon Battle Team (max 3)
     // RPG & Stats
     animals: { type: mongoose_1.Schema.Types.Map, of: mongoose_1.Schema.Types.Map, default: {} }, // { rarity: { animalKey: count } }
     boosters: { type: mongoose_1.Schema.Types.Map, of: mongoose_1.Schema.Types.Mixed, default: {} },
@@ -89,10 +93,46 @@ const UserSchema = new mongoose_1.Schema({
         affinity: { type: Number, default: 0 },
         marriedAt: { type: Date, default: null },
     },
-    profileTheme: { type: String, default: 'default' },
+    profileTheme: {
+        theme: { type: String, default: 'default' },
+        background: { type: String, default: null },
+        accentColor: { type: String, default: '#22d3ee' }, // Cyan default
+        bio: { type: String, default: 'Exploring the digital realm.' },
+        banner: { type: String, default: null },
+        bannerPosition: { type: String, default: '50%' },
+        avatar: { type: String, default: null },
+        music: { type: String, default: null },
+        slug: { type: String, default: null, index: true },
+        socials: {
+            discord: { type: String, default: null },
+            instagram: { type: String, default: null },
+            twitter: { type: String, default: null },
+            github: { type: String, default: null },
+            website: { type: String, default: null },
+        },
+        portfolio: [
+            {
+                type: { type: String, enum: ['github', 'art'] },
+                title: String,
+                url: String,
+                description: String,
+            },
+        ],
+        favorites: [
+            {
+                type: { type: String, enum: ['character', 'animal'] },
+                name: String,
+            },
+        ],
+        showStats: { type: Boolean, default: true },
+        showInventory: { type: Boolean, default: true },
+    },
     unlockedThemes: { type: [String], default: ['default'] },
     quests: [QuestSchema],
     lastQuestReset: { type: Date, default: null },
+    // Weekly Quests
+    weeklyQuests: [QuestSchema],
+    lastWeeklyQuestReset: { type: Date, default: null },
     stats: {
         totalGambled: { type: Number, default: 0 },
         totalWon: { type: Number, default: 0 },

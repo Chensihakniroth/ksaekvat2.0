@@ -32,6 +32,10 @@ module.exports = {
             }
             return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid amount', description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)' }] });
         }
+        // If user tries to bet "all" but it would exceed maxBet, use maxBet instead
+        if (isAllBet && betAmount > maxBet) {
+            betAmount = maxBet;
+        }
         if (betAmount < minBet) {
             return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet too low', description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)` }] });
         }
@@ -143,6 +147,10 @@ module.exports = {
                     components: [],
                 });
             }
+            // Update Quest Progress! (｡♥‿♥｡)
+            const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+            await QuestService.updateProgress(message.author.id, 'RPS', 1);
+            await QuestService.updateWeeklyProgress(message.author.id, 'RPS', 1);
         });
     },
 };

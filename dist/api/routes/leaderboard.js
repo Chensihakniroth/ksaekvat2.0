@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
             const users = await User.find({})
                 .sort(mongoSort)
                 .limit(limit * 2) // Fetch a bit extra for complex sorts
-                .select('id username level balance experience star_dust gacha_inventory animals stats')
+                .select('id username level balance experience star_dust gacha_inventory animals stats profileTheme.slug')
                 .lean();
             const withCounts = users.map((u) => {
                 let pokemonCount = 0;
@@ -42,6 +42,7 @@ router.get('/', async (req, res) => {
                         }
                     }
                 }
+                const characterCount = Array.isArray(u.gacha_inventory) ? u.gacha_inventory.length : 0;
                 return {
                     userId: String(u.id || u._id),
                     username: u.username || 'Unknown Traveler',
@@ -49,18 +50,17 @@ router.get('/', async (req, res) => {
                     balance: u.balance || 0,
                     star_dust: u.star_dust || 0,
                     experience: u.experience || 0,
-                    characterCount: Array.isArray(u.gacha_inventory) ? u.gacha_inventory.length : 0,
-                    pokemonCount,
+                    collectionCount: characterCount + pokemonCount,
                     commandsUsed: u.stats?.commandsUsed || 0,
                     totalDonated: u.stats?.totalDonated || 0,
+                    slug: u.profileTheme?.slug || null
                 };
             });
-            // 3. Final refinement for cases where MongoDB can't sort (like Pokemon count)
+            // 3. Final refinement for cases where MongoDB can't sort (like Collection count)
             const sortFn = {
                 balance: (a, b) => b.balance - a.balance,
                 level: (a, b) => b.level - a.level || b.experience - a.experience,
-                pokemon: (a, b) => b.pokemonCount - a.pokemonCount,
-                characters: (a, b) => b.characterCount - a.characterCount,
+                collection: (a, b) => b.collectionCount - a.collectionCount,
                 donations: (a, b) => b.totalDonated - a.totalDonated,
             };
             const sorted = withCounts

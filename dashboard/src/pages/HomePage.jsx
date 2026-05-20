@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Trophy, Star, Shield, Zap, Bot, Sparkles, Sword, PawPrint, ChevronRight } from 'lucide-react';
+import { 
+  Trophy, Star, Shield, Zap, Bot, Sparkles, Sword, 
+  PawPrint, ChevronRight, Activity, Globe, Layout, 
+  Cpu, Users, Terminal as TerminalIcon, Fingerprint
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const INVITE_LINK = "https://discord.com/oauth2/authorize?client_id=1399459454889754805";
@@ -8,7 +12,7 @@ const INVITE_LINK = "https://discord.com/oauth2/authorize?client_id=139945945488
 export default function HomePage() {
   const [stats, setStats] = useState(null);
   const { scrollYProgress } = useScroll();
-  const yBg = useTransform(scrollYProgress, [0, 1], ['0%', '20%']);
+  const yBg = useTransform(scrollYProgress, [0, 1], ['0%', '15%']);
 
   useEffect(() => {
     fetch('/api/stats')
@@ -17,143 +21,121 @@ export default function HomePage() {
       .catch(() => {});
   }, []);
 
-  const fadeUp = { hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { type: 'spring', damping: 20 } } };
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15, delayChildren: 0.2 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+  };
 
   return (
-    <div className="home-container" style={{ position: 'relative', overflow: 'hidden' }}>
+    <div className="home-container" style={{ position: 'relative', overflow: 'hidden', minHeight: '100vh' }}>
       
-      {/* Background Ambience */}
-      <motion.div style={{ y: yBg }} className="bg-ambience">
-        <div className="bg-orb-giant bg-orb-1" />
-        <div className="bg-orb-giant bg-orb-2" />
-        <div className="bg-orb-giant bg-orb-3" />
-      </motion.div>
-
-      <div className="wrap relative z-10 p-0 m-0">
+      <div className="wrap relative z-10">
         
         {/* HERO SECTION */}
         <motion.section 
-          initial="hidden" animate="show" variants={{ show: { transition: { staggerChildren: 0.1 } } }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
           className="landing-hero-v4"
+          style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', paddingTop: '80px' }}
         >
-          <div className="landing-text-content">
-            <motion.div variants={fadeUp} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 16px', borderRadius: '50px', background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)', color: '#818cf8', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', width: 'fit-content', marginBottom: '1rem' }}>
-              <Zap size={14} style={{ animation: 'pulse 2s infinite' }} />
-              Next-Gen Discord Ecosystem
-            </motion.div>
-            
-            <motion.h1 variants={fadeUp} className="landing-title">
-              ELEVATE YOUR <br />
-              <span className="landing-title-grad">SERVER EXPERIENCE</span>
-            </motion.h1>
-            
-            <motion.p variants={fadeUp} className="landing-desc">
-              KSAEKVAT is the ultimate Anime RPG bot. Collect legendary characters, hunt mystical beasts, battle in strategic combat, and dominate global leaderboards.
-            </motion.p>
-            
-            <motion.div variants={fadeUp} className="landing-actions">
-              <a href={INVITE_LINK} target="_blank" rel="noreferrer" className="landing-btn-primary">
-                <Bot size={22} />
-                <span>Add to Discord</span>
-              </a>
-              <Link to="/leaderboard" className="landing-btn-secondary">
-                <Trophy size={20} />
-                <span>View Rankings</span>
-              </Link>
-            </motion.div>
+          <motion.div variants={itemVariants} style={{ marginBottom: '3rem', display: 'flex', alignItems: 'center', gap: '12px', opacity: 0.6 }}>
+            <div style={{ width: '40px', height: '1px', background: 'var(--cyber-cyan)', boxShadow: '0 0 10px var(--cyber-cyan)' }} />
+            <span style={{ fontSize: '0.7rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.4em', color: 'var(--cyber-cyan)', textShadow: '0 0 8px rgba(0,243,255,0.5)' }}>The Infinite Archive</span>
+            <div style={{ width: '40px', height: '1px', background: 'var(--cyber-cyan)', boxShadow: '0 0 10px var(--cyber-cyan)' }} />
+          </motion.div>
+          
+          <motion.h1 variants={itemVariants} className="landing-title" style={{ fontSize: 'clamp(3.5rem, 12vw, 8rem)', fontWeight: 900, letterSpacing: '-0.06em', lineHeight: 0.9, marginBottom: '2rem' }}>
+            BEYOND <br />
+            <span className="landing-title-grad" style={{ background: 'linear-gradient(to right, #fff, var(--cyber-cyan))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textShadow: '0 0 20px rgba(0, 243, 255, 0.4)' }}>RESONANCE</span>
+          </motion.h1>
+          
+          <motion.p variants={itemVariants} className="landing-desc" style={{ fontSize: '1.1rem', fontWeight: 400, color: 'var(--text-dim)', maxWidth: '550px', margin: '0 auto 4rem', lineHeight: 1.6 }}>
+            Architecting the future of Discord-based RPG ecosystems. Secure legendary assets and dominate the digital landscape with KSAEKVAT.
+          </motion.p>
+          
+          <motion.div variants={itemVariants} className="landing-actions" style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a href={INVITE_LINK} target="_blank" rel="noreferrer" className="btn-v3" style={{ padding: '20px 48px', background: 'var(--cyber-cyan)', color: '#000', border: 'none', boxShadow: '0 0 20px rgba(0, 243, 255, 0.3)' }}>
+              <Zap size={18} />
+              <span>INVITE DISCORD BOT</span>
+            </a>
+            <Link to="/leaderboard" className="btn-v3 btn-v3-ghost" style={{ padding: '20px 48px', borderColor: 'rgba(255,255,255,0.1)' }}>
+              <Fingerprint size={18} />
+              <span>ARCHIVES</span>
+            </Link>
+          </motion.div>
 
-            <motion.div variants={fadeUp} className="landing-stats-row">
-              <div className="l-stat">
-                <span className="l-stat-val cyan">{stats?.totalUsers?.toLocaleString() || "10,000+"}</span>
-                <span className="l-stat-lbl">Active Operatives</span>
-              </div>
-              <div className="l-stat-div" />
-              <div className="l-stat">
-                <span className="l-stat-val gold">{stats?.totalCharactersOwned?.toLocaleString() || "1M+"}</span>
-                <span className="l-stat-lbl">Characters Rolled</span>
-              </div>
-            </motion.div>
-          </div>
-
-          <motion.div variants={fadeUp} className="landing-visual">
-            <div className="l-vis-card">
-              <div className="l-vis-bg" />
-              <div className="l-vis-header">
-                <div className="l-vis-hlt">
-                  <Shield size={20} color="#22d3ee" />
-                  SYSTEM PREVIEW
-                </div>
-                <div className="l-vis-status">ONLINE</div>
-              </div>
-
-              <div className="l-vis-item purple">
-                <div className="l-vis-icon purple"><Star size={20} /></div>
-                <div className="l-vis-text">
-                  <span className="l-vis-title">Genshin & HSR Gacha</span>
-                  <span className="l-vis-subtitle">Over 500+ characters to collect</span>
-                </div>
-              </div>
-              
-              <div className="l-vis-item red">
-                <div className="l-vis-icon red"><Sword size={20} /></div>
-                <div className="l-vis-text">
-                  <span className="l-vis-title">RPG Boss Raids</span>
-                  <span className="l-vis-subtitle">Team up & defeat world bosses</span>
-                </div>
-              </div>
-
-              <div className="l-vis-item green">
-                <div className="l-vis-icon green"><PawPrint size={20} /></div>
-                <div className="l-vis-text">
-                  <span className="l-vis-title">Ecosystem Hunting</span>
-                  <span className="l-vis-subtitle">Catch mystical creatures in the Zoo</span>
-                </div>
-              </div>
+          <motion.div variants={itemVariants} className="landing-stats-row" style={{ marginTop: '100px', display: 'flex', gap: '40px', opacity: 0.6, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <div className="l-stat">
+              <span className="l-stat-val" style={{ fontSize: '1.5rem', fontWeight: 900 }}>{stats?.totalUsers?.toLocaleString() || "12.4K"}</span>
+              <span className="l-stat-lbl" style={{ display: 'block', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.2em', marginTop: '8px' }}>OPERATIVES</span>
+            </div>
+            <div className="l-stat">
+              <span className="l-stat-val" style={{ fontSize: '1.5rem', fontWeight: 900 }}>{stats?.totalCharactersOwned?.toLocaleString() || "1.2M"}</span>
+              <span className="l-stat-lbl" style={{ display: 'block', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.2em', marginTop: '8px' }}>ASSETS</span>
             </div>
           </motion.div>
         </motion.section>
 
-        {/* FEATURES GRID */}
-        <section style={{ marginBottom: '8rem' }}>
-          <div className="landing-core-title">
-            <h2 className="l-core-h2">CORE <span>MODULES</span></h2>
-            <p className="landing-desc" style={{ margin: '1rem auto' }}>Engage with meticulously crafted game systems right inside your Discord channels.</p>
-          </div>
+        {/* ZEN FEATURES */}
+        <section style={{ padding: '160px 0' }}>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+            style={{ textAlign: 'center', marginBottom: '80px' }}
+          >
+            <h2 style={{ fontSize: '0.8rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.5em', opacity: 0.3, marginBottom: '20px' }}>CORE PROTOCOLS</h2>
+            <p style={{ fontSize: '1.5rem', fontWeight: 200, maxWidth: '700px', margin: '0 auto' }}>Meticulously engineered systems designed for high-performance strategic engagement.</p>
+          </motion.div>
 
-          <div className="landing-grid">
+          <div className="landing-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '40px' }}>
             <FeatureCard 
-              icon={<Star size={32} />}
-              title="Anime Gacha"
-              desc="Pull your favorite characters from wildly popular anime and games with fully simulated pity and drop rates."
-              glowColor="#c084fc"
+              icon={<Star size={24} />}
+              title="RESONANCE"
+              desc="Simulated acquisition protocols with accurate drop rates and multi-tier parity systems."
+              accent="var(--purple)"
             />
             <FeatureCard 
-              icon={<PawPrint size={32} />}
-              title="Biological Hunting"
-              desc="Deploy specific commands to capture animals, from common pets to priceless mythological beasts. Build your zoo!"
-              glowColor="#34d399"
+              icon={<PawPrint size={24} />}
+              title="SPECIMEN"
+              desc="Deploy biological capture units to secure rare specimens for your private registry."
+              accent="var(--green)"
             />
             <FeatureCard 
-              icon={<Sword size={32} />}
-              title="Tactical RPG"
-              desc="Level up your Discord profile natively. Equip characters, gain EXP, and partake in high-stakes combat."
-              glowColor="#f87171"
+              icon={<Sword size={24} />}
+              title="COMBAT"
+              desc="Advanced turn-based strategic engine with deep scaling and level progression."
+              accent="var(--red)"
             />
           </div>
         </section>
 
-        {/* CALL TO ACTION */}
+        {/* MINIMAL CTA */}
         <motion.section 
-          initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
-          className="landing-cta"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+          className="glass-panel"
+          style={{ padding: '100px 60px', borderRadius: '40px', textAlign: 'center', border: '1px solid rgba(0, 243, 255, 0.1)', background: 'rgba(0, 243, 255, 0.02)', boxShadow: '0 0 40px rgba(0, 243, 255, 0.05)', marginBottom: '120px' }}
         >
-          <div className="l-cta-icon"><Sparkles size={48} /></div>
-          <h2 className="l-cta-title">READY TO INITIATE?</h2>
-          <p className="l-cta-desc">Integrate the system into your own server. It takes precisely 5.4 seconds to establish the uplink.</p>
-          <a href={INVITE_LINK} target="_blank" rel="noreferrer" className="l-cta-btn">
-            <Bot size={24} />
-            <span>Invite KSAEKVAT Now</span>
-            <ChevronRight size={20} />
+          <div style={{ display: 'inline-flex', padding: '15px', borderRadius: '50%', background: 'rgba(0, 243, 255, 0.1)', marginBottom: '30px', boxShadow: '0 0 20px rgba(0, 243, 255, 0.2)' }}>
+             <Sparkles size={32} color="var(--cyber-cyan)" />
+          </div>
+          <h2 style={{ fontSize: '3rem', fontWeight: 900, letterSpacing: '-0.04em', marginBottom: '1.5rem', color: '#fff', textShadow: '0 0 10px rgba(255,255,255,0.2)' }}>START YOUR JOURNEY.</h2>
+          <p style={{ color: 'var(--text-dim)', maxWidth: '500px', margin: '0 auto 4rem', fontSize: '1.1rem' }}>Synchronize your server with the infinite archive instantly.</p>
+          <a href={INVITE_LINK} target="_blank" rel="noreferrer" className="btn-v3" style={{ padding: '22px 64px', fontSize: '1rem', background: 'var(--cyber-cyan)', color: '#000', border: 'none', boxShadow: '0 0 20px rgba(0, 243, 255, 0.3)' }}>
+            <span>INVITE DISCORD BOT</span>
           </a>
         </motion.section>
         
@@ -162,18 +144,19 @@ export default function HomePage() {
   );
 }
 
-function FeatureCard({ icon, title, desc, glowColor }) {
+function FeatureCard({ icon, title, desc, accent }) {
   return (
     <motion.div 
-      whileHover={{ y: -10 }}
-      className="l-feature-card"
-      style={{ '--fc-glow': glowColor, '--fc-glow-dim': glowColor + '33' }}
+      whileHover={{ y: -5, background: 'rgba(255,255,255,0.02)', borderColor: accent, boxShadow: `0 0 20px ${accent}30` }}
+      className="glass-panel"
+      style={{ padding: '50px 40px', borderRadius: '24px', textAlign: 'left', border: '1px solid rgba(255,255,255,0.03)', transition: '0.4s' }}
     >
-      <div className="l-feature-icon" style={{ color: glowColor }}>
+      <div style={{ color: accent, marginBottom: '30px', opacity: 0.8, filter: `drop-shadow(0 0 10px ${accent})` }}>
         {icon}
       </div>
-      <h3 className="l-feature-title">{title}</h3>
-      <p className="l-feature-desc">{desc}</p>
+      <h3 style={{ fontSize: '1rem', fontWeight: 900, letterSpacing: '0.2em', marginBottom: '1.5rem', color: '#fff', textShadow: `0 0 10px ${accent}40` }}>{title}</h3>
+      <p style={{ fontSize: '0.9rem', color: 'var(--text-dim)', lineHeight: 1.6, fontWeight: 400 }}>{desc}</p>
     </motion.div>
   );
 }
+

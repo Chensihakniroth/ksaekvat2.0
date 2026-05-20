@@ -9,6 +9,8 @@ const TalkTarget_1 = __importDefault(require("../models/TalkTarget"));
 const CharacterCard_1 = __importDefault(require("../models/CharacterCard"));
 const AnimalRegistry_1 = __importDefault(require("../models/AnimalRegistry"));
 const GachaHistory_1 = __importDefault(require("../models/GachaHistory"));
+const UserPokemon_1 = __importDefault(require("../models/UserPokemon"));
+const EconomyService_1 = __importDefault(require("./EconomyService"));
 const registry = require('../utils/registry.js');
 const logger = require('../utils/logger.js');
 /**
@@ -31,7 +33,7 @@ class DatabaseService {
         }
         catch (err) {
             logger.error(`MongoDB getUser error:`, err);
-            return null;
+            throw err;
         }
     }
     async saveUser(user) {
@@ -40,6 +42,7 @@ class DatabaseService {
         }
         catch (err) {
             logger.error(`MongoDB saveUser error:`, err);
+            throw err;
         }
     }
     async saveUserUpdate(userId, updatePayload) {
@@ -48,7 +51,7 @@ class DatabaseService {
         }
         catch (err) {
             logger.error(`MongoDB saveUserUpdate error:`, err);
-            return null;
+            throw err;
         }
     }
     async getAllUsers() {
@@ -58,14 +61,9 @@ class DatabaseService {
         // ── First atomic XP boost ───────────────────────────────────────────
         const user = await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { experience: amount } }, { returnDocument: 'after', upsert: true });
         let leveledUp = false;
-        const getReq = (lvl) => lvl < 5
-            ? lvl * 100
-            : lvl < 15
-                ? Math.floor(500 * Math.pow(1.2, lvl - 5))
-                : Math.floor(3000 * Math.pow(1.15, lvl - 15) + lvl * 200);
         // Handle potential multi-level-up based on the now-incremented experience
-        while (user.experience >= getReq(user.level)) {
-            user.experience -= getReq(user.level);
+        while (user.experience >= EconomyService_1.default.getLevelRequirement(user.level)) {
+            user.experience -= EconomyService_1.default.getLevelRequirement(user.level);
             user.level++;
             leveledUp = true;
         }
@@ -76,12 +74,31 @@ class DatabaseService {
             leveledUp,
             newLevel: user.level,
             currentExp: user.experience,
-            nextExp: getReq(user.level),
+            nextExp: EconomyService_1.default.getLevelRequirement(user.level),
             updatedUser: user.toObject(),
         };
     }
     async addBalance(userId, amount) {
         return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { balance: amount } }, { returnDocument: 'after', upsert: true });
+    }
+    /**
+     * Check if a user's level and experience are in sync with the current formula.
+     * If they have enough XP to level up multiple times, it does so! (✧ω✧)
+     */
+    async syncLevel(userId) {
+        const user = await User_1.default.findOne({ id: userId });
+        if (!user)
+            return null;
+        let leveledUp = false;
+        while (user.experience >= EconomyService_1.default.getLevelRequirement(user.level)) {
+            user.experience -= EconomyService_1.default.getLevelRequirement(user.level);
+            user.level++;
+            leveledUp = true;
+        }
+        if (leveledUp) {
+            await user.save();
+        }
+        return user;
     }
     async addPokeball(userId, type, amount = 1) {
         const field = type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
@@ -137,12 +154,38 @@ class DatabaseService {
     }
     async setTheme(userId, themeId) {
         const user = await this.getUser(userId);
+        if (!user)
+            return false;
         if (user.unlockedThemes && user.unlockedThemes.includes(themeId)) {
-            user.profileTheme = themeId;
+            if (!user.profileTheme) {
+                user.profileTheme = { theme: themeId, favorites: [] };
+            }
+            else {
+                user.profileTheme.theme = themeId;
+            }
+            user.markModified('profileTheme');
             await this.saveUser(user);
             return true;
         }
         return false;
+    }
+    async setFavorite(userId, type, name) {
+        const user = await this.getUser(userId);
+        if (!user)
+            return false;
+        if (!user.profileTheme) {
+            user.profileTheme = { theme: 'default', favorites: [] };
+        }
+        if (!Array.isArray(user.profileTheme.favorites)) {
+            user.profileTheme.favorites = [];
+        }
+        // Remove existing of same type to prevent duplicates (only 1 animal buddy allowed!)
+        user.profileTheme.favorites = user.profileTheme.favorites.filter((f) => f.type !== type);
+        // Add new one
+        user.profileTheme.favorites.push({ type, name });
+        user.markModified('profileTheme');
+        await this.saveUser(user);
+        return true;
     }
     async removeBalance(userId, amount) {
         return await User_1.default.findOneAndUpdate({ id: userId }, { $inc: { balance: -amount } }, { returnDocument: 'after' });
@@ -154,14 +197,55 @@ class DatabaseService {
         const user = await this.getUser(userId);
         return user.balance >= amount;
     }
+    async hasBankBalance(userId, amount) {
+        const user = await this.getUser(userId);
+        return (user.bank || 0) >= amount;
+    }
+    async hasTotalBalance(userId, amount) {
+        const user = await this.getUser(userId);
+        return (user.balance || 0) + (user.bank || 0) >= amount;
+    }
+    async payWithAnyBalance(userId, amount) {
+        const user = await User_1.default.findOne({ id: userId });
+        if (!user)
+            return false;
+        if ((user.balance || 0) >= amount) {
+            user.balance -= amount;
+        }
+        else {
+            const remaining = amount - (user.balance || 0);
+            user.balance = 0;
+            user.bank = (user.bank || 0) - remaining;
+        }
+        await user.save();
+        return true;
+    }
+    async deposit(userId, amount) {
+        return await User_1.default.findOneAndUpdate({ id: userId }, {
+            $inc: {
+                balance: -amount,
+                bank: amount
+            }
+        }, { returnDocument: 'after' });
+    }
+    async withdraw(userId, amount) {
+        return await User_1.default.findOneAndUpdate({ id: userId }, {
+            $inc: {
+                balance: amount,
+                bank: -amount
+            }
+        }, { returnDocument: 'after' });
+    }
     async updateStats(userId, type, amount = 1) {
         const update = {};
         if (type === 'won')
-            update['stats.totalWon'] = 1;
+            update['stats.totalWon'] = amount;
         else if (type === 'lost')
-            update['stats.totalLost'] = 1;
+            update['stats.totalLost'] = amount;
         else if (type === 'command')
             update['stats.commandsUsed'] = 1;
+        else if (type === 'gambled')
+            update['stats.totalGambled'] = amount;
         else
             update[`stats.${type}`] = amount;
         await User_1.default.findOneAndUpdate({ id: userId }, { $inc: update });
@@ -414,6 +498,117 @@ class DatabaseService {
             }
         });
         return pool;
+    }
+    // ─── POKÉMON BATTLE SYSTEM ───────────────────────────────────────────
+    /**
+     * Train a Pokémon from the Zoo — consumes 1 from Zoo count and creates
+     * an individual UserPokemon document with Level 1. (✧ω✧)
+     */
+    async trainPokemon(userId, speciesKey) {
+        try {
+            const user = await this.getUser(userId);
+            if (!user || !user.animals)
+                return { success: false, message: "You don't have any Pokémon yet! Go hunt some first. (・_・ヾ" };
+            // Find the species in any rarity tier
+            let foundRarity = null;
+            const animalsMap = user.animals instanceof Map ? user.animals : new Map(Object.entries(user.animals));
+            for (const [rarity, animals] of animalsMap.entries()) {
+                const animalMap = animals instanceof Map ? animals : new Map(Object.entries(animals));
+                const count = animalMap.get(speciesKey);
+                if (count && count > 0) {
+                    foundRarity = rarity;
+                    break;
+                }
+            }
+            if (!foundRarity) {
+                return { success: false, message: `You don't have any **${speciesKey}** in your Zoo! (｡•́︿•̀｡)` };
+            }
+            // Consume 1 from Zoo count
+            await this.removeAnimal(userId, speciesKey, foundRarity);
+            // Create the individual UserPokemon document
+            const pokemon = await UserPokemon_1.default.create({
+                ownerId: userId,
+                speciesKey: speciesKey,
+                level: 1,
+                exp: 0,
+            });
+            return { success: true, pokemon, rarity: foundRarity };
+        }
+        catch (err) {
+            logger.error('trainPokemon error:', err);
+            return { success: false, message: 'Something went wrong training that Pokémon... (ಥ﹏ಥ)' };
+        }
+    }
+    /**
+     * Get all individually trained Pokémon for a user.
+     */
+    async getTrainedPokemon(userId) {
+        try {
+            return await UserPokemon_1.default.find({ ownerId: userId }).sort({ level: -1 });
+        }
+        catch (err) {
+            logger.error('getTrainedPokemon error:', err);
+            return [];
+        }
+    }
+    /**
+     * Get the user's active Pokémon battle team (populated from refs).
+     */
+    async getPokemonTeam(userId) {
+        try {
+            const user = await User_1.default.findOne({ id: userId }).populate('pokemonTeam');
+            if (!user || !user.pokemonTeam)
+                return [];
+            return user.pokemonTeam.filter(Boolean);
+        }
+        catch (err) {
+            logger.error('getPokemonTeam error:', err);
+            return [];
+        }
+    }
+    /**
+     * Set the user's Pokémon battle team (array of UserPokemon ObjectIds, max 3).
+     */
+    async setPokemonTeam(userId, pokemonIds) {
+        try {
+            const trimmed = pokemonIds.slice(0, 3);
+            await User_1.default.findOneAndUpdate({ id: userId }, { $set: { pokemonTeam: trimmed } });
+            return true;
+        }
+        catch (err) {
+            logger.error('setPokemonTeam error:', err);
+            return false;
+        }
+    }
+    /**
+     * Add XP to a specific UserPokemon and handle level-ups.
+     * Level cap: 100.
+     */
+    async addPokemonExp(pokemonId, amount) {
+        try {
+            const pokemon = await UserPokemon_1.default.findById(pokemonId);
+            if (!pokemon)
+                return { leveledUp: false, newLevel: 0, pokemon: null };
+            pokemon.exp += amount;
+            let leveledUp = false;
+            const getReq = (lvl) => lvl * 50 + lvl * lvl * 5;
+            while (pokemon.level < 100 && pokemon.exp >= getReq(pokemon.level)) {
+                pokemon.exp -= getReq(pokemon.level);
+                pokemon.level++;
+                leveledUp = true;
+            }
+            // Cap at level 100
+            if (pokemon.level >= 100) {
+                pokemon.level = 100;
+                pokemon.exp = 0;
+            }
+            await pokemon.save();
+            return { leveledUp, newLevel: pokemon.level, pokemon };
+        }
+        catch (err) {
+            logger.error('addPokemonExp error:', err);
+            return { leveledUp: false, newLevel: 0, pokemon: null };
+        }
     }
 }
 module.exports = new DatabaseService();

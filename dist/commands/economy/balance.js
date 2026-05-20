@@ -3,6 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
+const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 module.exports = {
     name: 'balance',
     aliases: ['bal', 'money', 'coins'],
@@ -36,23 +37,26 @@ function getTargetUser(message, args, client) {
 }
 // Function to create the balance embed
 function createBalanceEmbed(target, userData) {
+    const nextLevelExp = EconomyService.getLevelRequirement(userData.level);
+    const expNeeded = Math.max(0, nextLevelExp - userData.experience);
+    // Progress bar calculation
+    const progressPercent = Math.min(100, Math.max(0, (userData.experience / nextLevelExp) * 100));
+    const filledBars = Math.round(progressPercent / 10);
+    const progressBar = '▰'.repeat(filledBars) + '▱'.repeat(10 - filledBars);
+    const walletVal = `**${userData.balance.toLocaleString()}** ${config.economy.currency}`;
+    const bankVal = `**${(userData.bank || 0).toLocaleString()}** ${config.economy.currency}`;
+    const totalVal = `**${(userData.balance + (userData.bank || 0)).toLocaleString()}** ${config.economy.currency}`;
     return new EmbedBuilder()
         .setColor(colors.success)
-        .setTitle(`💰 ${target.username}'s Balance`)
-        .setThumbnail(target.displayAvatarURL())
-        .addFields({
-        name: `${config.economy.currencySymbol} Balance`,
-        value: `**${userData.balance.toLocaleString()}** ${config.economy.currency}`,
-        inline: false, // Make this field take the full width
-    }, {
-        name: '📊 Level',
-        value: `**${userData.level}** (${userData.experience} XP)`,
-        inline: true,
-    }, {
-        name: '🎯 Next Level',
-        value: `${userData.level * 100 - userData.experience} XP needed`,
-        inline: true,
-    });
+        .setAuthor({
+        name: `${target.username}'s Balance`,
+        iconURL: target.displayAvatarURL({ dynamic: true })
+    })
+        .setDescription(`💵 **Wallet:** ${walletVal}\n` +
+        `🏦 **Bank:** ${bankVal}\n` +
+        `💎 **Net Worth:** ${totalVal}\n\n` +
+        `📊 **Rank Level:** Level **${userData.level}** (${userData.experience.toLocaleString()} / ${nextLevelExp.toLocaleString()} XP)\n` +
+        `\`${progressBar}\` — *${expNeeded.toLocaleString()} XP to next level! (≧◡≦)*`);
 }
 // Function to add active boosters to the embed
 async function addActiveBoosters(embed, target) {

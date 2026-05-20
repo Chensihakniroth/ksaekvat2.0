@@ -43,6 +43,7 @@ router.use('/stats', require('./routes/stats'));
 router.use('/gacha', require('./routes/gacha'));
 router.use('/zoo', require('./routes/zoo'));
 router.use('/auth', require('./routes/auth'));
+router.use('/shop', require('./routes/shop'));
 
 // --- Health ---
 router.get('/ping', (_req, res) => res.json({ success: true, message: 'KSAEKVAT API is alive! ヽ(>∀<☆)ノ' }));

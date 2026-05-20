@@ -25,12 +25,15 @@ export interface IUser extends Document {
   id: string;
   username: string;
   balance: number;
+  bank: number;
   star_dust: number;
   level: number;
   worldLevel: number;
   experience: number;
   dailyClaimed: boolean;
   weeklyClaimed: boolean;
+  lastDaily: Date | null;
+  lastWeekly: Date | null;
   lastGachaReset: Date | null;
   dailyPulls: number;
   extraPulls: number;
@@ -41,6 +44,7 @@ export interface IUser extends Document {
   equipped: Map<string, any>;
   lootbox: number;
   team: string[];
+  pokemonTeam: any[];  // ObjectId refs to UserPokemon documents (max 3)
   animals: Map<string, Map<string, number>>;
   boosters: Map<string, any>;
   pokeballs: number;
@@ -57,8 +61,10 @@ export interface IUser extends Document {
     accentColor: string | null;
     bio: string | null;
     banner: string | null;
+    bannerPosition: string | null;
     avatar: string | null;
     music: string | null;
+    slug: string | null;
     socials: {
       discord?: string;
       instagram?: string;
@@ -71,6 +77,10 @@ export interface IUser extends Document {
       title: string;
       url: string;
       description?: string;
+    }[];
+    favorites?: {
+      type: 'character' | 'animal';
+      name: string;
     }[];
     showStats: boolean;
     showInventory: boolean;
@@ -85,6 +95,15 @@ export interface IUser extends Document {
     rewarded: boolean;
   }[];
   lastQuestReset: Date | null;
+  weeklyQuests: {
+    questId: string;
+    type: string;
+    target: number;
+    current: number;
+    completed: boolean;
+    rewarded: boolean;
+  }[];
+  lastWeeklyQuestReset: Date | null;
   stats: IUserStats;
   joinedAt: Date;
   customPrefix?: string;   // User's personal main prefix (e.g. 'K', '!')
@@ -108,6 +127,7 @@ const UserSchema: Schema = new Schema({
   id: { type: String, required: true, unique: true, index: true }, // Discord ID
   username: { type: String, default: 'Unknown Traveler' }, // Discord Username
   balance: { type: Number, default: 1000, index: true },
+  bank: { type: Number, default: 0, index: true },
   star_dust: { type: Number, default: 0 },
   level: { type: Number, default: 1, index: true },
   worldLevel: { type: Number, default: 1 },
@@ -116,6 +136,8 @@ const UserSchema: Schema = new Schema({
   // Rewards & Gacha
   dailyClaimed: { type: Boolean, default: false },
   weeklyClaimed: { type: Boolean, default: false },
+  lastDaily: { type: Date, default: null },
+  lastWeekly: { type: Date, default: null },
   lastGachaReset: { type: Date, default: null },
   dailyPulls: { type: Number, default: 0 },
   extraPulls: { type: Number, default: 0 },
@@ -138,6 +160,7 @@ const UserSchema: Schema = new Schema({
   lootbox: { type: Number, default: 0 },
 
   team: [String], // Array of character names (Slim Storage)
+  pokemonTeam: [{ type: Schema.Types.ObjectId, ref: 'UserPokemon' }], // Pokémon Battle Team (max 3)
 
   // RPG & Stats
   animals: { type: Schema.Types.Map, of: Schema.Types.Map, default: {} }, // { rarity: { animalKey: count } }
@@ -160,8 +183,10 @@ const UserSchema: Schema = new Schema({
     accentColor: { type: String, default: '#22d3ee' }, // Cyan default
     bio: { type: String, default: 'Exploring the digital realm.' },
     banner: { type: String, default: null },
+    bannerPosition: { type: String, default: '50%' },
     avatar: { type: String, default: null },
     music: { type: String, default: null },
+    slug: { type: String, default: null, index: true },
     socials: {
       discord: { type: String, default: null },
       instagram: { type: String, default: null },
@@ -177,6 +202,12 @@ const UserSchema: Schema = new Schema({
         description: String,
       },
     ],
+    favorites: [
+      {
+        type: { type: String, enum: ['character', 'animal'] },
+        name: String,
+      },
+    ],
     showStats: { type: Boolean, default: true },
     showInventory: { type: Boolean, default: true },
   },
@@ -184,6 +215,10 @@ const UserSchema: Schema = new Schema({
 
   quests: [QuestSchema],
   lastQuestReset: { type: Date, default: null },
+  
+  // Weekly Quests
+  weeklyQuests: [QuestSchema],
+  lastWeeklyQuestReset: { type: Date, default: null },
 
   stats: {
     totalGambled: { type: Number, default: 0 },

@@ -48,6 +48,15 @@ class EconomyService {
   public format(amount: number): string {
     return amount.toLocaleString();
   }
+
+  /**
+   * Get the experience required to level up from a specific level.
+   */
+  public getLevelRequirement(level: number): number {
+    if (level < 5) return level * 100;
+    if (level < 15) return Math.floor(500 * Math.pow(1.2, level - 5));
+    return Math.floor(3000 * Math.pow(1.15, level - 15) + level * 200);
+  }
 }
 
 const instance = new EconomyService();

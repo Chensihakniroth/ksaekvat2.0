@@ -77,7 +77,26 @@ async function connectDB() {
     const prog = logger.loader('Connecting to MongoDB');
     try {
         const uri = getMongoURI();
-        await mongoose.connect(uri);
+        // Connection options for maximum resilience on cloud platforms like Railway
+        const options = {
+            serverSelectionTimeoutMS: 5000, // Fail fast if MongoDB is down (5 seconds)
+            socketTimeoutMS: 45000, // Keep sockets from hanging (45 seconds)
+            connectTimeoutMS: 10000, // Initial connection timeout (10 seconds)
+            maxPoolSize: 10, // Max connections in the pool
+            minPoolSize: 2, // Minimum connections to keep open
+            heartbeatFrequencyMS: 10000, // Ping MongoDB every 10 seconds to keep connection alive
+        };
+        // Connection lifecycle listeners
+        mongoose.connection.on('disconnected', () => {
+            logger.warn('MongoDB connection lost! Reconnection is handled automatically by driver.');
+        });
+        mongoose.connection.on('reconnected', () => {
+            logger.success('MongoDB connection restored successfully.');
+        });
+        mongoose.connection.on('error', (err) => {
+            logger.error('MongoDB error event:', err);
+        });
+        await mongoose.connect(uri, options);
         prog.done();
         logger.item('Status', 'Connected', '\x1b[32m');
         logger.item('Host', mongoose.connection.host);
@@ -100,9 +119,11 @@ async function bootstrap() {
     // 4. HTTP server + API + Dashboard
     logger.section('Web Server');
     const app = express();
-    app.use(express.json());
+    app.use(express.json({ limit: '15mb' }));
     const cookieParser = require('cookie-parser');
     app.use(cookieParser());
+    // Static assets
+    app.use('/assets', express.static(path.join(__dirname, '../../assets')));
     // API Routes
     app.use('/api', require('../api/index'));
     // Serve dashboard static build
@@ -153,6 +174,7 @@ cron.schedule('0 0 * * *', async () => {
         u.dailyClaimed = false;
         // Generate new quests for everyone! (｡♥‿♥｡)
         await QuestService.generateDailyQuests(u.id);
+        await QuestService.generateWeeklyQuests(u.id);
         await database.saveUser(u);
     }
 });

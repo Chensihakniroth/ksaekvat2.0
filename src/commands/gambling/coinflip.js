@@ -7,7 +7,7 @@ const EconomyService = require('../../services/EconomyService').default || requi
 module.exports = {
   name: 'coinflip',
   aliases: ['cf', 'flip'],
-  description: 'Flip a coin with Mommy! (◕‿◕✿)',
+  description: 'Bet your balance on a coin flip.',
   usage: 'coinflip <amount/all> [heads/tails]',
   cooldown: 3000, // 3 seconds
   async execute(message, args, client) {
@@ -17,9 +17,9 @@ module.exports = {
         embeds: [
           {
             color: colors.error,
-            title: '❌ Wrong amount, sweetie!',
+            title: '❌ Invalid Amount',
             description:
-              'Please specify a valid amount to bet. (｡♥‿♥｡) \n**Usage:** `Kcoinflip <amount/all> [heads/tails]`',
+              'Please specify a valid amount to bet.\n**Usage:** `Kcoinflip <amount/all> [heads/tails]`',
           },
         ],
       });
@@ -33,13 +33,18 @@ module.exports = {
 
     if (betAmount <= 0) {
       if (args[0]?.toLowerCase() === 'all' && userData.balance <= 0) {
-        return message.reply({ embeds: [{ color: colors.error, title: '💸 No funds found!', description: `You don't have any money to play right now, sweetie. (◕‿◕✿)` }] });
+        return message.reply({ embeds: [{ color: colors.error, title: '💸 No Funds', description: `You don't have any balance to bet.` }] });
       }
-      return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid amount', description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)' }] });
+      return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid Amount', description: 'Please provide a valid number.' }] });
+    }
+
+    // If user tries to bet "all" but it would exceed maxBet, use maxBet instead
+    if (isAllBet && betAmount > maxBet) {
+      betAmount = maxBet;
     }
 
     if (betAmount < minBet) {
-      return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet too low', description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)` }] });
+      return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet Too Low', description: `Minimum bet is **${minBet.toLocaleString()}** ${config.economy.currency}.` }] });
     }
 
     if (!(await database.hasBalance(message.author.id, betAmount))) {
@@ -47,8 +52,8 @@ module.exports = {
         embeds: [
           {
             color: colors.error,
-            title: '💸 Insufficient funds',
-            description: `You don't have enough to make that bet, darling! (｡•́︿•̀｡)\n**You have:** ${userData.balance.toLocaleString()} ${config.economy.currency}`,
+            title: '💸 Insufficient Funds',
+            description: `You don't have enough balance for this bet.\n**Current Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`,
           },
         ],
       });
@@ -75,9 +80,9 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setColor(colors.primary)
-      .setTitle('🪙 Flipping a Coin!')
+      .setTitle('🪙 Coin Flip')
       .setDescription(
-        `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**Choice:** ${userChoice === 'heads' ? 'Heads' : 'Tails'}\n\n${frames[0]} **Wait a moment, darling! Mommy is flipping it for you... (ﾉ´ヮ)ﾉ*:･ﾟ✧**`
+        `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**Choice:** ${userChoice === 'heads' ? 'Heads' : 'Tails'}\n\n${frames[0]} *Flipping coin...*`
       );
 
     message
@@ -89,9 +94,9 @@ module.exports = {
 
           const animationEmbed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('🪙 Flipping a Coin!')
+            .setTitle('🪙 Coin Flip')
             .setDescription(
-              `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**Choice:** ${userChoice === 'heads' ? 'Heads' : 'Tails'}\n\n${frames[frameIndex]} **Wait a moment, darling! Mommy is flipping it for you... (ﾉ´ヮ)ﾉ*:･ﾟ✧**`
+              `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}${betTypeText}\n**Choice:** ${userChoice === 'heads' ? 'Heads' : 'Tails'}\n\n${frames[frameIndex]} *Flipping coin...*`
             );
           try {
             await sentMessage.edit({ embeds: [animationEmbed] });
@@ -116,9 +121,9 @@ module.exports = {
 
           finalEmbed = new EmbedBuilder()
             .setColor(colors.success)
-            .setTitle('🎉 You won, sweetie! ヽ(>∀<☆)ノ')
+            .setTitle('🎉 You Won!')
             .setDescription(
-              `${resultEmoji} It landed on **${coinResult === 'heads' ? 'Heads' : 'Tails'}**!\nMommy is so proud of your luck! (ﾉ´ヮ)ﾉ*:･ﾟ✧`
+              `${resultEmoji} The coin landed on **${coinResult === 'heads' ? 'Heads' : 'Tails'}**!`
             )
             .addFields(
               {
@@ -141,7 +146,7 @@ module.exports = {
           if (expGain.leveledUp) {
             finalEmbed.addFields({
               name: '🎉 Level Up!',
-              value: `Congratulations! You've reached level **${expGain.newLevel}**, sweetie! (◕‿◕✿)`,
+              value: `You have reached level **${expGain.newLevel}**!`,
               inline: false,
             });
           }
@@ -154,9 +159,9 @@ module.exports = {
 
           finalEmbed = new EmbedBuilder()
             .setColor(colors.error)
-            .setTitle('💸 Better luck next time!')
+            .setTitle('💥 You Lost')
             .setDescription(
-              `${resultEmoji} It landed on **${coinResult === 'heads' ? 'Heads' : 'Tails'}**.\nDon't be sad, darling! You can try again later. (っ˘ω˘ς)`
+              `${resultEmoji} The coin landed on **${coinResult === 'heads' ? 'Heads' : 'Tails'}**.`
             )
             .addFields(
               {
@@ -195,6 +200,7 @@ module.exports = {
         // Update Quest Progress! (｡♥‿♥｡)
         const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
         await QuestService.updateProgress(message.author.id, 'COINFLIP', 1);
+        await QuestService.updateWeeklyProgress(message.author.id, 'COINFLIP', 1);
       })
       .catch((error) => {
         console.error('Error in coinflip animation:', error);

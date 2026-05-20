@@ -26,7 +26,7 @@ export default function ZooPage() {
   return (
     <div className="zoo-container">
       <div className="bg-ambience">
-         <div className="bg-orb-cyan" />
+         {/* Static background is handled globally in App.jsx */}
       </div>
 
       <div className="wrap relative z-10">

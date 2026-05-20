@@ -14,8 +14,8 @@ module.exports = {
                 embeds: [
                     {
                         color: colors.error,
-                        title: '(｡•́︿•̀｡) Oh no, darling...',
-                        description: "Mommy doesn't have permission to manage messages in this server. (っ˘ω˘ς)",
+                        title: '🚫 PERMISSION ERROR',
+                        description: "System lacks 'Manage Messages' permission. (ಥ﹏ಥ) I can't sweep the cache if I don't have access! (・_・ヾ",
                     },
                 ],
             });
@@ -26,8 +26,8 @@ module.exports = {
                 embeds: [
                     {
                         color: colors.error,
-                        title: '(◕‸ ◕✿) Sweetie, you forgot something!',
-                        description: 'Please tell Mommy how many messages to clear. (｡•́︿•̀｡)\n**Usage:** `Kclear <amount> [@user]`\n**Examples:**\n`Kclear 10` - Clear 10 messages\n`Kclear 5 @user` - Clear 5 messages from specific user',
+                        title: '⚠️ ARGUMENT ERROR',
+                        description: 'How many messages should I purge? (・_・ヾ\n**Usage:** `Kclear <amount> [@user]`\n**Examples:**\n`Kclear 10` - Clear 10 messages\n`Kclear 5 @user` - Clear 5 messages from specific user',
                     },
                 ],
             });
@@ -39,8 +39,8 @@ module.exports = {
                 embeds: [
                     {
                         color: colors.error,
-                        title: "(｡•́︿•̀｡) That's not right, darling",
-                        description: 'Please provide a number between 1 and 100 so Mommy can help you. (◕‿◕✿)',
+                        title: "❌ RANGE ERROR",
+                        description: 'Please provide a number between 1 and 100. (・_・ヾ System limit exceeded!',
                     },
                 ],
             });
@@ -72,8 +72,8 @@ module.exports = {
                         embeds: [
                             {
                                 color: colors.warning,
-                                title: "(っ˘ω˘ς) I couldn't find anything...",
-                                description: `No messages from **${targetUser.username}** found in the recent messages, sweetie. (◕‿◕✿)`,
+                                title: "🔍 NO DATA FOUND",
+                                description: `No messages from **${targetUser.username}** found in the recent simulation logs. (・_・ヾ`,
                             },
                         ],
                     })
@@ -94,8 +94,8 @@ module.exports = {
                     embeds: [
                         {
                             color: colors.warning,
-                            title: '(｡•́︿•̀｡) These are too old, darling',
-                            description: "All targeted messages are older than 14 days and Mommy can't bulk delete them. (っ˘ω˘ς)",
+                            title: '🛑 CACHE ERROR',
+                            description: "All targeted messages are older than 14 days. Discord's API won't let me bulk-purge old data! (ಥ﹏ಥ)",
                         },
                     ],
                 })
@@ -103,39 +103,38 @@ module.exports = {
                     setTimeout(() => msg.delete().catch(() => { }), 5000);
                 });
             }
-            // Bulk delete recent messages
             message.channel
                 .bulkDelete(recentMessages, true)
                 .then((deletedMessages) => {
                 const deletedCount = deletedMessages.size;
-                let description = `Mommy successfully cleaned up **${deletedCount}** messages for you! ヽ(>∀<☆)ノ`;
+                let description = `Cache cleared! Successfully purged **${deletedCount}** messages. (¬‿¬)`;
                 if (targetUser) {
-                    description = `Mommy successfully cleaned up **${deletedCount}** messages from **${targetUser.username}**! (｡♥‿♥｡)`;
+                    description = `Purge successful! Removed **${deletedCount}** messages from **${targetUser.username}**. (✧ω✧)`;
                 }
                 if (oldMessages.size > 0) {
-                    description += `\n\n(っ˘ω˘ς) **${oldMessages.size}** messages were too old for Mommy to delete (older than 14 days).`;
+                    description += `\n\n(・_0) **${oldMessages.size}** messages were too old to bulk-delete (older than 14 days).`;
                 }
                 const successEmbed = new EmbedBuilder()
                     .setColor(colors.success)
-                    .setTitle('ヽ(>∀<☆)ノ All Cleaned Up!')
+                    .setTitle('🧹 CACHE PURGED')
                     .setDescription(description)
                     .addFields({
-                    name: '(◕‿◕✿) Summary',
+                    name: '📊 SUMMARY',
                     value: [
                         `**Requested:** ${amount} messages`,
                         `**Deleted:** ${deletedCount} messages`,
                         targetUser
                             ? `**Target User:** ${targetUser.username}`
-                            : '**Target:** All users',
-                        `**Channel:** ${message.channel.name}`,
-                        `**Cleared by:** ${message.author.username}`,
+                            : '**Target:** Global Purge',
+                        `**Sector:** ${message.channel.name}`,
+                        `**Operator:** ${message.author.username}`,
                     ].join('\n'),
                     inline: true,
                 }, {
-                    name: '(｡♥‿♥｡) Admin Action',
+                    name: '🛡️ AUTHENTICATION',
                     value: [
                         `**Admin:** ${message.author.username}`,
-                        `**Action:** Clear Messages`,
+                        `**Protocol:** Cache Sweep`,
                     ].join('\n'),
                     inline: true,
                 });
@@ -163,8 +162,8 @@ module.exports = {
                     embeds: [
                         {
                             color: colors.error,
-                            title: '(｡•́︿•̀｡) Mommy failed you...',
-                            description: `Failed to clear messages: ${error.message} (っ˘ω˘ς)`,
+                            title: '❌ SYSTEM FAILURE',
+                            description: `Failed to clear messages: ${error.message} (ಥ﹏ಥ)`,
                         },
                     ],
                 })
@@ -180,8 +179,8 @@ module.exports = {
                 embeds: [
                     {
                         color: colors.error,
-                        title: '(｡•́︿•̀｡) Something went wrong...',
-                        description: `Failed to fetch messages: ${error.message} (っ˘ω˘ς)`,
+                        title: '🛑 LOG FETCH ERROR',
+                        description: `Failed to fetch messages: ${error.message} (・_0)`,
                     },
                 ],
             })

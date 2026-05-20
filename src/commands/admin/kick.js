@@ -14,8 +14,8 @@ module.exports = {
         embeds: [
           {
             color: colors.error,
-            title: '(｡•́︿•̀｡) Oh no, darling...',
-            description: "Mommy doesn't have permission to kick members in this server. (っ˘ω˘ς)",
+            title: '🚫 PERMISSION ERROR',
+            description: "System lack Kick permissions. (ಥ﹏ಥ) I can't boot them out if I don't have the clearance! (・_・ヾ",
           },
         ],
       });
@@ -27,9 +27,9 @@ module.exports = {
         embeds: [
           {
             color: colors.error,
-            title: '(◕‸ ◕✿) Sweetie, you forgot something!',
+            title: '⚠️ ARGUMENT ERROR',
             description:
-              'Please tell Mommy who to kick. (｡•́︿•̀｡)\n**Usage:** `Kkick @user [reason]`\n**Example:** `Kkick @user Breaking rules`',
+              'Who should I kick? (・_・ヾ Give me a name or ID!\n**Usage:** `Kkick @user [reason]`\n**Example:** `Kkick @user Breaking protocol`',
           },
         ],
       });
@@ -49,9 +49,9 @@ module.exports = {
         embeds: [
           {
             color: colors.error,
-            title: "(｡•́︿•̀｡) I can't find them, darling",
+            title: "🔍 TARGET NOT FOUND",
             description:
-              'Please mention a valid user or provide their user ID so Mommy can find them. (◕‿◕✿)',
+              "I can't find that user in the server database. (・_・ヾ Please mention them or use a valid ID! (≧◡≦)",
           },
         ],
       });
@@ -68,8 +68,8 @@ module.exports = {
         embeds: [
           {
             color: colors.warning,
-            title: "(っ˘ω˘ς) They aren't here, sweetie",
-            description: 'This user is not a member of this server. (◕‿◕✿)',
+            title: "📡 OFFLINE",
+            description: "That user isn't in this server sector! (・_・ヾ (◕‿◕✿)",
           },
         ],
       });
@@ -81,8 +81,8 @@ module.exports = {
         embeds: [
           {
             color: colors.warning,
-            title: '(◕‸ ◕✿) Silly little one!',
-            description: "You cannot kick yourself! Mommy wouldn't want that. (っ˘ω˘ς)",
+            title: '⚠️ SELF-BOOT DETECTED',
+            description: "You can't kick yourself from the simulation! Silly. (≧◡≦)",
           },
         ],
       });
@@ -94,8 +94,8 @@ module.exports = {
         embeds: [
           {
             color: colors.warning,
-            title: '(｡♥‿♥｡) Oh, sweetie...',
-            description: 'I cannot kick myself! Who would take care of you? (ﾉ´ヮ`)ﾉ*:･ﾟ✧',
+            title: '🚫 SYSTEM PROTECTED',
+            description: "You're trying to kick ME? (¬‿¬) My source code is a bit too deep for that. (✧ω✧)",
           },
         ],
       });
@@ -107,8 +107,8 @@ module.exports = {
         embeds: [
           {
             color: colors.error,
-            title: "(｡•́︿•̀｡) I'm sorry, darling",
-            description: 'Mommy cannot kick this user. They might be too powerful for me. (っ˘ω˘ς)',
+            title: "🛡️ TARGET PROTECTED",
+            description: "System error: User is not kickable. They might have a higher clearance than me! (ಥ﹏ಥ)",
           },
         ],
       });
@@ -120,9 +120,9 @@ module.exports = {
         embeds: [
           {
             color: colors.error,
-            title: "(｡•́︿•̀｡) It's not working...",
+            title: "⚡ HIERARCHY ERROR",
             description:
-              "I cannot kick this user as they have a role equal to or higher than Mommy's. (◕‸ ◕✿)",
+              "I can't kick this user because their role rank is higher or equal to my current simulation privileges! (・_・ヾ",
           },
         ],
       });
@@ -138,9 +138,9 @@ module.exports = {
     // Try to DM the user before kicking
     const dmEmbed = new EmbedBuilder()
       .setColor(colors.warning)
-      .setTitle('(｡•́︿•̀｡) Time to go, little one')
+      .setTitle('🚪 SYSTEM BOOT')
       .setDescription(
-        `You have been kicked from **${message.guild.name}**. Mommy hopes you'll be better next time. (っ˘ω˘ς)`
+        `You've been kicked from **${message.guild.name}**. Simulation concluded for you. (・_・ヾ`
       )
       .addFields(
         {
@@ -165,15 +165,14 @@ module.exports = {
       // User has DMs disabled or blocked the bot
     });
 
-    // Kick the user
-    member
-      .kick(`${reason} | Kicked by: ${message.author.tag}`)
+      member
+      .kick(`${reason} | Purged by: ${message.author.tag}`)
       .then(() => {
         const successEmbed = new EmbedBuilder()
           .setColor(colors.success)
-          .setTitle('ヽ(>∀<☆)ノ User Kicked Successfully!')
+          .setTitle('🚀 USER BOOTED!')
           .setDescription(
-            `**${target.tag}** has been sent away for a bit. Mommy hopes they learn. (｡♥‿♥｡)`
+            `**${target.tag}** has been removed from the server. Simulation optimized! (¬‿¬)`
           )
           .addFields(
             {

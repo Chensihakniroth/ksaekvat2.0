@@ -5,7 +5,7 @@ const colors = require('../../utils/colors.js');
 
 module.exports = {
   name: 'quests',
-  aliases: ['q', 'daily', 'tasks', 'kquests'],
+  aliases: ['q', 'task', 'quest'],
   description: "View your daily tasks from Mommy! Complete them for big rewards! (｡♥‿♥｡)",
   usage: 'quests',
   async execute(message, args, client) {
@@ -48,7 +48,7 @@ module.exports = {
     });
 
     if (allCompleted) {
-        embed.addFields({ name: '🎊 All Done!', value: "You've finished everything for today! Mommy is so proud of you! (｡♥‿♥｡)", inline: false });
+      embed.addFields({ name: '🎊 All Done!', value: "You've finished everything for today! Mommy is so proud of you! (｡♥‿♥｡)", inline: false });
     }
 
     const row = new ActionRowBuilder().addComponents(
@@ -74,37 +74,37 @@ module.exports = {
         let pullReward = 0;
 
         updatedUser.quests.forEach(q => {
-            if (q.completed && !q.rewarded) {
-                q.rewarded = true;
-                rewardsGiven++;
-                // Base reward: 10 Star Dust and 2 Extra Pulls per quest
-                starDustReward += 10;
-                pullReward += 2;
-            }
+          if (q.completed && !q.rewarded) {
+            q.rewarded = true;
+            rewardsGiven++;
+            // Base reward: 10 Star Dust and 2 Extra Pulls per quest
+            starDustReward += 10;
+            pullReward += 2;
+          }
         });
 
         if (rewardsGiven > 0) {
-            updatedUser.star_dust = (updatedUser.star_dust || 0) + starDustReward;
-            updatedUser.extraPulls = (updatedUser.extraPulls || 0) + pullReward;
-            updatedUser.markModified('quests');
-            await database.saveUser(updatedUser);
+          updatedUser.star_dust = (updatedUser.star_dust || 0) + starDustReward;
+          updatedUser.extraPulls = (updatedUser.extraPulls || 0) + pullReward;
+          updatedUser.markModified('quests');
+          await database.saveUser(updatedUser);
 
-            await i.reply({
-                content: `🎊 **REWARDS CLAIMED!** 🎊\nYou received **${starDustReward}** Star Dust and **${pullReward}** Extra Pulls! Mommy loves a hard worker! (｡♥‿♥｡)`,
-                flags: [MessageFlags.Ephemeral]
-            });
+          await i.reply({
+            content: `🎊 **REWARDS CLAIMED!** 🎊\nYou received **${starDustReward}** Star Dust and **${pullReward}** Extra Pulls! Mommy loves a hard worker! (｡♥‿♥｡)`,
+            flags: [MessageFlags.Ephemeral]
+          });
 
-            // Update main embed
-            const finalEmbed = EmbedBuilder.from(embed).setFields([]);
-            updatedUser.quests.forEach((q) => {
-                const info = QuestService.getQuestInfo(q);
-                finalEmbed.addFields({
-                    name: `${q.rewarded ? '🎁 Claimed' : info.status} — ${info.name}`,
-                    value: `${info.description}\n📊 **Progress:** \`${info.progress}\``,
-                    inline: false,
-                });
+          // Update main embed
+          const finalEmbed = EmbedBuilder.from(embed).setFields([]);
+          updatedUser.quests.forEach((q) => {
+            const info = QuestService.getQuestInfo(q);
+            finalEmbed.addFields({
+              name: `${q.rewarded ? '🎁 Claimed' : info.status} — ${info.name}`,
+              value: `${info.description}\n📊 **Progress:** \`${info.progress}\``,
+              inline: false,
             });
-            await msg.edit({ embeds: [finalEmbed], components: [] });
+          });
+          await msg.edit({ embeds: [finalEmbed], components: [] });
         }
       }
     });

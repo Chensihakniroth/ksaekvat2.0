@@ -18,7 +18,7 @@ module.exports = {
   usage: 'bag',
   async execute(message, args, client) {
     const userId = message.author.id;
-    logger.command('bag', { user: message.author.tag });
+    logger.info(`${message.author.tag} used command: bag`);
 
     const renderBag = async () => {
       const userData = await database.getUser(userId, message.author.username);
