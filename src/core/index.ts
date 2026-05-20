@@ -55,7 +55,29 @@ async function connectDB() {
   const prog = logger.loader('Connecting to MongoDB');
   try {
     const uri = getMongoURI();
-    await mongoose.connect(uri);
+    
+    // Connection options for maximum resilience on cloud platforms like Railway
+    const options = {
+      serverSelectionTimeoutMS: 5000, // Fail fast if MongoDB is down (5 seconds)
+      socketTimeoutMS: 45000,         // Keep sockets from hanging (45 seconds)
+      connectTimeoutMS: 10000,        // Initial connection timeout (10 seconds)
+      maxPoolSize: 10,                // Max connections in the pool
+      minPoolSize: 2,                 // Minimum connections to keep open
+      heartbeatFrequencyMS: 10000,    // Ping MongoDB every 10 seconds to keep connection alive
+    };
+
+    // Connection lifecycle listeners
+    mongoose.connection.on('disconnected', () => {
+      logger.warn('MongoDB connection lost! Reconnection is handled automatically by driver.');
+    });
+    mongoose.connection.on('reconnected', () => {
+      logger.success('MongoDB connection restored successfully.');
+    });
+    mongoose.connection.on('error', (err: any) => {
+      logger.error('MongoDB error event:', err);
+    });
+
+    await mongoose.connect(uri, options);
     prog.done();
     logger.item('Status', 'Connected', '\x1b[32m');
     logger.item('Host', mongoose.connection.host);

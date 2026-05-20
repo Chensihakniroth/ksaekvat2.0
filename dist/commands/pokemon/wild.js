@@ -7,105 +7,186 @@ const PokemonBattleService = require('../../services/PokemonBattleService').defa
 const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 const BattleRenderer = require('../../services/BattleRenderer').default || require('../../services/BattleRenderer');
 const activeBattles = new Set();
+// ─── HELPERS ────────────────────────────────────────────────────────────────
+/**
+ * Safe message edit — swallows "Unknown Message" errors that can occur
+ * if the message was deleted mid-battle.
+ */
+async function safeEdit(msg, payload) {
+    try {
+        await msg.edit(payload);
+    }
+    catch (err) {
+        if (err.code !== 10008)
+            throw err; // re-throw if not "Unknown Message"
+    }
+}
+/**
+ * Group raw log entries by turn number into an ordered array of
+ * { turn, entries[] } objects.
+ */
+function groupByTurn(log) {
+    const map = new Map();
+    for (const entry of log) {
+        if (!map.has(entry.turn))
+            map.set(entry.turn, []);
+        map.get(entry.turn).push(entry);
+    }
+    return [...map.entries()]
+        .sort(([a], [b]) => a - b)
+        .map(([turn, entries]) => ({ turn, entries }));
+}
+// ─── COMMAND ────────────────────────────────────────────────────────────────
 module.exports = {
     name: 'wild',
     aliases: ['wildbattle', 'pokebattle'],
-    description: 'Battle a wild Pokémon team! 3v3 automated melee.',
+    description: 'Battle a wild Pokémon team! 3v3 real-time turn-by-turn. (✧ω✧)',
     usage: 'wild',
     cooldown: config.pokemonBattle.wildCooldown,
     async execute(message, args, client) {
         if (activeBattles.has(message.author.id)) {
-            return message.reply("Wait! You already have a battle running!");
+            return message.reply("Wait! (・_・ヾ You already have a battle running!");
         }
-        // LOAD PLAYER TEAM
+        // ─── LOAD PLAYER TEAM ────────────────────────────────────────────
         const playerTeamData = await database.getPokemonTeam(message.author.id);
         if (playerTeamData.length < config.pokemonBattle.maxTeamSize) {
             return message.reply({
                 embeds: [new EmbedBuilder()
-                    .setColor(colors.error)
-                    .setTitle('Team not ready!')
-                    .setDescription(`You need exactly **${config.pokemonBattle.maxTeamSize}** Pokémon in your battle team!\nCurrent: **${playerTeamData.length}/${config.pokemonBattle.maxTeamSize}**\n\nUse \`Kpteam add <pokemon>\` to fill your team.`)
+                        .setColor(colors.error)
+                        .setTitle('(｡•́︿•̀｡) Team not ready!')
+                        .setDescription(`You need exactly **${config.pokemonBattle.maxTeamSize}** Pokémon in your battle team!\n` +
+                        `Current: **${playerTeamData.length}/${config.pokemonBattle.maxTeamSize}**\n\n` +
+                        `Use \`Kpteam add <pokemon>\` to fill your team.`)
                 ],
             });
         }
         activeBattles.add(message.author.id);
         try {
             await message.channel.sendTyping();
-            // Build player's battle Pokémon
+            // ─── BUILD TEAMS ─────────────────────────────────────────────
             const playerTeam = [];
             for (const p of playerTeamData) {
                 const bp = await PokemonBattleService.buildBattlePokemon(p, 'A');
                 if (bp)
                     playerTeam.push(bp);
             }
-            if (playerTeam.length < 3) {
+            if (playerTeam.length < config.pokemonBattle.maxTeamSize) {
                 activeBattles.delete(message.author.id);
-                return message.reply("Failed to load some of your Pokémon stats. Try again!");
+                return message.reply("(ಥ﹏ಥ) Failed to load some of your Pokémon stats. Try again!");
             }
-            // Generate wild team scaled to player's avg level
             const avgLevel = Math.floor(playerTeam.reduce((s, p) => s + p.level, 0) / playerTeam.length);
             const wildTeam = await PokemonBattleService.generateWildTeam(avgLevel);
-            // INITIAL EMBED: MATCHUP
-            const formatTeamPreview = (team, label) => {
-                return team.map((p) => {
+            // ─── INTRO: Two-stage battle open ────────────────────────────
+            // Stage 1 — "Wild appeared!" flash (dark card, 1.2 s)
+            // Stage 2 — Full matchup embed with HP bars + power scores
+            // Stage 1 ── dark flash card
+            const wildNames = wildTeam.map(p => p.name).join(', ');
+            const battleMsg = await message.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor(0x1a1a2e)
+                        .setDescription('```\n' +
+                        '  ！！！ A wild team appeared ！！！\n' +
+                        '```')
+                        .addFields({
+                        name: '\u200B',
+                        value: `> **${wildNames}**\n> *blocked your path!*`,
+                    })
+                        .setFooter({ text: 'Checking your team…' }),
+                ],
+            });
+            await new Promise(r => setTimeout(r, 700));
+            // ─── INTRO STAGE 2: Clean matchup card ───────────────────────
+            // Name + type + level only — image already shows HP bars.
+            const buildMatchupField = (team, side) => {
+                return team.map((p, i) => {
                     const typeStr = PokemonBattleService.getTypeEmojis(p.types);
-                    return `${typeStr} **${p.name}** (Lv.${p.level})`;
+                    const slot = side === 'player'
+                        ? ['①', '②', '③'][i] ?? `${i + 1}.`
+                        : ['Ⅰ', 'Ⅱ', 'Ⅲ'][i] ?? `${i + 1}.`;
+                    return `${slot} ${typeStr} **${p.name}** \`Lv.${p.level}\``;
                 }).join('\n');
             };
+            const powerScore = team => {
+                const avg = team.reduce((s, p) => s + p.level, 0) / team.length;
+                const stars = Math.min(5, Math.max(1, Math.round(avg / 20)));
+                return '★'.repeat(stars) + '☆'.repeat(5 - stars);
+            };
+            const initialSnapshot = {
+                teamA: playerTeam.map(p => ({ hp: p.hp, status: 'none' })),
+                teamB: wildTeam.map(p => ({ hp: p.hp, status: 'none' })),
+            };
+            const introFrame = await BattleRenderer.renderFrame(playerTeam, wildTeam, initialSnapshot);
+            const introAttachment = new AttachmentBuilder(introFrame, { name: 'battle_intro.png' });
             const matchupEmbed = new EmbedBuilder()
-                .setColor(0xFF6B35)
-                .setTitle('Wild Pokémon Battle')
-                .setDescription('A wild team appeared! Preparing for battle...')
-                .addFields({ name: `${message.author.username}'s Team`, value: formatTeamPreview(playerTeam, 'player'), inline: true }, { name: 'Wild Team', value: formatTeamPreview(wildTeam, 'wild'), inline: true })
-                .setFooter({ text: 'Battle starting...' });
-            const battleMsg = await message.reply({ embeds: [matchupEmbed] });
-            // RUN SIMULATION
+                .setColor(0xFF4500)
+                .setTitle('⚔️  B A T T L E  S T A R T')
+                .addFields({
+                name: `🔴  ${message.author.username}  ${powerScore(playerTeam)}`,
+                value: buildMatchupField(playerTeam, 'player'),
+                inline: true,
+            }, {
+                name: `🔵  Wild Team  ${powerScore(wildTeam)}`,
+                value: buildMatchupField(wildTeam, 'wild'),
+                inline: true,
+            })
+                .setImage('attachment://battle_intro.png')
+                .setFooter({ text: '3v3  ·  Auto-Battle  ·  Starting in 2s…' });
+            await safeEdit(battleMsg, {
+                content: null,
+                embeds: [matchupEmbed],
+                files: [introAttachment],
+            });
+            await new Promise(r => setTimeout(r, 2000));
+            // ─── RUN SIMULATION ──────────────────────────────────────────
             const result = PokemonBattleService.simulateBattle(playerTeam, wildTeam, config.pokemonBattle.maxTurns);
             const won = result.winner === 'A';
-            // ANIMATED BATTLE LOG
-            // Show log in chunks for dramatic effect
-            const logChunks = [];
-            let currentChunk = [];
-            let lastTurn = 0;
-            for (const entry of result.log) {
-                if (entry.turn !== lastTurn && currentChunk.length > 0) {
-                    logChunks.push([...currentChunk]);
-                    currentChunk = [];
-                }
-                currentChunk.push(entry);
-                lastTurn = entry.turn;
+            // Build a quick snapshot lookup: turn → { teamA, teamB }
+            const snapshotMap = new Map();
+            for (const s of result.snapshots) {
+                snapshotMap.set(s.turn, s);
             }
-            if (currentChunk.length > 0)
-                logChunks.push(currentChunk);
-            // Show up to 5 turn-by-turn updates
-            const showChunks = logChunks.length > 5
-                ? [logChunks[0], logChunks[1], logChunks[Math.floor(logChunks.length / 2)], logChunks[logChunks.length - 2], logChunks[logChunks.length - 1]]
-                : logChunks;
-            for (let i = 0; i < showChunks.length; i++) {
-                const chunk = showChunks[i];
-                const turnNum = chunk[0]?.turn || i + 1;
-                // Find the matching HP snapshot for this turn
-                const snapshot = result.snapshots.find(s => s.turn === turnNum) || result.snapshots[result.snapshots.length - 1];
-                const frameBuffer = await BattleRenderer.renderFrame(playerTeam, wildTeam, snapshot ? { teamA: snapshot.teamA, teamB: snapshot.teamB } : undefined);
-                const attachment = new AttachmentBuilder(frameBuffer, { name: `battle_${turnNum}.png` });
-                // Battle log as plain text (flows into the image naturally)
-                const logText = chunk.map((e) => {
-                    const prefix = e.type === 'faint' ? 'FNT' : e.type === 'super_effective' ? 'SE' : e.type === 'crit' ? 'CRT' : e.type === 'immune' ? 'IMM' : '>';
-                    return `${prefix} ${e.text}`;
-                }).join('\n');
-                const content = `**Wild Battle — Turn ${turnNum}/${result.turns}**\n${logText.slice(0, 1900)}`;
-                await battleMsg.edit({ content, files: [attachment], embeds: [] });
-                if (i < showChunks.length - 1) {
-                    await new Promise((r) => setTimeout(r, 1500));
+            // Group log entries by turn
+            const turns = groupByTurn(result.log);
+            // ─── REAL-TIME TURN LOOP ──────────────────────────────────────
+            // Only render on notable events (faint/crit/super_effective) or
+            // every QUIET_FLUSH turns — skips quiet turns to keep it snappy.
+            const NOTABLE = new Set(['faint', 'crit', 'super_effective']);
+            const QUIET_FLUSH = 3;
+            let lastRenderedTurn = 0;
+            for (let i = 0; i < turns.length; i++) {
+                const { turn, entries } = turns[i];
+                const isLastTurn = i === turns.length - 1;
+                const highlight = entries.find(e => NOTABLE.has(e.type));
+                const turnsSinceLast = turn - lastRenderedTurn;
+                if (!highlight && !isLastTurn && turnsSinceLast < QUIET_FLUSH)
+                    continue;
+                const snap = snapshotMap.get(turn) ??
+                    result.snapshots[result.snapshots.length - 1];
+                const frameBuffer = await BattleRenderer.renderFrame(playerTeam, wildTeam, { teamA: snap.teamA, teamB: snap.teamB });
+                const frameAttachment = new AttachmentBuilder(frameBuffer, { name: `battle_t${turn}.png` });
+                const topEvent = highlight ?? entries[0];
+                const prefix = topEvent?.type === 'faint' ? '💀' :
+                    topEvent?.type === 'crit' ? '💥' :
+                        topEvent?.type === 'super_effective' ? '⚡' : '▸';
+                const eventLine = topEvent ? `  ${prefix} ${topEvent.text}` : '';
+                await safeEdit(battleMsg, {
+                    content: `\`Turn ${turn}/${result.turns}\`${eventLine}`,
+                    files: [frameAttachment],
+                    embeds: [],
+                });
+                lastRenderedTurn = turn;
+                if (!isLastTurn) {
+                    await message.channel.sendTyping();
+                    await new Promise(r => setTimeout(r, highlight?.type === 'faint' ? 1200 :
+                        highlight?.type === 'crit' ? 800 : 700));
                 }
             }
-            // APPLY REWARDS
+            // ─── APPLY REWARDS ────────────────────────────────────────────
             const rewards = PokemonBattleService.calculateBattleRewards(won, playerTeam, wildTeam, config.pokemonBattle.faintedXpPenalty);
-            // Award money
             if (rewards.money > 0) {
                 await database.addBalance(message.author.id, rewards.money);
             }
-            // Award XP to each team member
             const xpResults = [];
             for (const p of playerTeamData) {
                 const xp = rewards.xpPerMember.get(p._id.toString()) || 0;
@@ -117,26 +198,34 @@ module.exports = {
                         xp: scaledXp,
                         leveledUp: res.leveledUp,
                         newLevel: res.newLevel,
-                        fainted: playerTeam.find((bp) => bp.id === p._id.toString())?.hp <= 0,
+                        fainted: playerTeam.find(bp => bp.id === p._id.toString())?.hp <= 0,
                     });
                 }
             }
-            // FINAL RESULT MESSAGE
-
-            const xpLines = xpResults.map((r) => {
-                let line = `${r.fainted ? 'FNT' : 'OK'} **${r.name}**: +${r.xp} XP`;
+            // ─── FINAL RESULT ─────────────────────────────────────────────
+            const finalSnap = result.snapshots[result.snapshots.length - 1];
+            const xpLines = xpResults
+                .map(r => {
+                let s = `${r.fainted ? '💀' : '✅'} ${r.name} +${r.xp} XP`;
                 if (r.leveledUp)
-                    line += ` -> Lv.${r.newLevel}!`;
-                return line;
-            }).join('\n');
-            const finalSnapshot = result.snapshots[result.snapshots.length - 1];
-            const finalFrame = await BattleRenderer.renderFrame(playerTeam, wildTeam, finalSnapshot ? { teamA: finalSnapshot.teamA, teamB: finalSnapshot.teamB } : undefined);
+                    s += ` 🎊 Lv.${r.newLevel}!`;
+                return s;
+            })
+                .join('  ·  ');
+            const outcomeLine = won
+                ? `(✧ω✧) **VICTORY!** ${result.turns} turns  ·  💰 +${EconomyService.format(rewards.money)} ${config.economy.currency}`
+                : `(ಥ﹏ಥ) **DEFEAT** after ${result.turns} turns`;
+            const finalContent = xpLines
+                ? `${outcomeLine}\n${xpLines}`
+                : outcomeLine;
+            const finalFrame = await BattleRenderer.renderFrame(playerTeam, wildTeam, finalSnap ? { teamA: finalSnap.teamA, teamB: finalSnap.teamB } : undefined);
             const finalAttachment = new AttachmentBuilder(finalFrame, { name: 'battle_final.png' });
-            const finalContent = won
-                ? `**VICTORY!** You won in ${result.turns} turns!\n**Reward:** +${EconomyService.format(rewards.money)} ${config.economy.currency}\n\n**XP Earned**\n${xpLines || 'None'}`
-                : `**DEFEAT** Your team fainted in ${result.turns} turns.\n\n**XP Earned**\n${xpLines || 'None'}`;
-            await battleMsg.edit({ content: finalContent, embeds: [], files: [finalAttachment] });
-            // Player XP reward
+            await safeEdit(battleMsg, {
+                content: finalContent,
+                embeds: [],
+                files: [finalAttachment],
+            });
+            // Award player account XP
             const playerXp = won ? 30 : 10;
             await database.addExperience(message.author.id, playerXp);
             await database.updateStats(message.author.id, 'command');

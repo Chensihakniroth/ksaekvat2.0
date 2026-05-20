@@ -31,7 +31,7 @@ class DatabaseService {
       return user;
     } catch (err) {
       logger.error(`MongoDB getUser error:`, err);
-      return null;
+      throw err;
     }
   }
 
@@ -40,6 +40,7 @@ class DatabaseService {
       await user.save();
     } catch (err) {
       logger.error(`MongoDB saveUser error:`, err);
+      throw err;
     }
   }
 
@@ -48,7 +49,7 @@ class DatabaseService {
       return await User.findOneAndUpdate({ id: userId }, updatePayload, { returnDocument: 'after' });
     } catch (err) {
       logger.error(`MongoDB saveUserUpdate error:`, err);
-      return null;
+      throw err;
     }
   }
 

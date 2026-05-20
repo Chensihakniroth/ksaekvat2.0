@@ -219,11 +219,21 @@ module.exports = {
           );
         } catch (error) {
           logger.error(`Error executing command ${commandName}:`, error);
+          
+          const isDbError = 
+            error.name === 'MongoServerSelectionError' || 
+            error.name === 'MongooseError' || 
+            error.message?.includes('Mongo') || 
+            error.message?.includes('ECONNRESET') || 
+            error.message?.includes('connection');
+
           message.reply({
             embeds: [{
               color: parseInt(config.colors.error.slice(1), 16),
-              title: 'Execution Error',
-              description: 'An unexpected error occurred while processing your request.',
+              title: isDbError ? '⚡ Database Connection Error' : 'Execution Error',
+              description: isDbError
+                ? 'Failed to connect to the database. The simulation database might be undergoing maintenance or experiencing a transient network hiccup. Please try again in a few moments! (ಥ﹏ಥ)'
+                : 'An unexpected error occurred while processing your request.',
               timestamp: new Date(),
             }],
             flags: [MessageFlags.Ephemeral]

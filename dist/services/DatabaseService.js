@@ -33,7 +33,7 @@ class DatabaseService {
         }
         catch (err) {
             logger.error(`MongoDB getUser error:`, err);
-            return null;
+            throw err;
         }
     }
     async saveUser(user) {
@@ -42,6 +42,7 @@ class DatabaseService {
         }
         catch (err) {
             logger.error(`MongoDB saveUser error:`, err);
+            throw err;
         }
     }
     async saveUserUpdate(userId, updatePayload) {
@@ -50,7 +51,7 @@ class DatabaseService {
         }
         catch (err) {
             logger.error(`MongoDB saveUserUpdate error:`, err);
-            return null;
+            throw err;
         }
     }
     async getAllUsers() {
