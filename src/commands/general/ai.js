@@ -16,7 +16,9 @@ module.exports = {
   async execute(message, args, client) {
     const text = args.join(' ').trim();
     if (!text) {
-      return message.reply('Did you need something, sweetie? Tell me what you want to talk about. (◕‿◕✿)');
+      return message.reply(
+        'Did you need something, sweetie? Tell me what you want to talk about. (◕‿◕✿)'
+      );
     }
 
     const channelId = message.channel.id;
@@ -37,7 +39,27 @@ module.exports = {
     try {
       const { baseUrl, model, fallbackModels, systemPrompt: configPrompt } = config.aiConfig;
 
-      let processedUserMessage = text;
+      let replyContext = '';
+      if (message.reference && message.reference.messageId) {
+        try {
+          const repliedMsg =
+            message.channel.messages.cache.get(message.reference.messageId) ||
+            (await message.channel.messages.fetch(message.reference.messageId));
+          if (repliedMsg) {
+            const author = repliedMsg.author;
+            const cleanContent = repliedMsg.content
+              ? repliedMsg.content.length > 100
+                ? repliedMsg.content.substring(0, 100) + '...'
+                : repliedMsg.content
+              : '[No text content]';
+            replyContext = ` (replying to ${author.bot ? 'Bot' : 'User'} ${author.username} [ID: ${author.id}]: "${cleanContent}")`;
+          }
+        } catch (e) {
+          logger.warn(`Failed to fetch replied-to message for AI context: ${e.message}`);
+        }
+      }
+
+      const processedUserMessage = `[User: ${message.author.username} (ID: ${message.author.id})${replyContext}]: ${text}`;
 
       const url = `${baseUrl}/chat/completions`;
 
@@ -58,7 +80,9 @@ module.exports = {
 
       for (const currentModel of modelsToTry) {
         try {
-          logger.info(`AI Request -> Channel: ${channelId} | Model: ${currentModel} | History: ${history.length / 2} turns`);
+          logger.info(
+            `AI Request -> Channel: ${channelId} | Model: ${currentModel} | History: ${history.length / 2} turns`
+          );
 
           response = await axios.post(
             url,
@@ -92,14 +116,16 @@ module.exports = {
       }
 
       if (!response) {
-        return message.reply("All my connections are busy right now, darling... try again in a moment? (◕‿◕✿)");
+        return message.reply(
+          'All my connections are busy right now, darling... try again in a moment? (◕‿◕✿)'
+        );
       }
 
       if (response.data && response.data.choices && response.data.choices[0]) {
         let botMsg = response.data.choices[0].message.content;
 
         if (!botMsg) {
-          botMsg = "Mmm~ cat got my tongue, darling... try again? (◕ヮ◕)";
+          botMsg = 'Mmm~ cat got my tongue, darling... try again? (◕ヮ◕)';
         }
         const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
 
@@ -117,7 +143,7 @@ module.exports = {
         }
       } else {
         logger.error(`Invalid response structure: ${JSON.stringify(response.data)}`);
-        message.reply("Something went wrong, darling... (っ˘ω˘ς)");
+        message.reply('Something went wrong, darling... (っ˘ω˘ς)');
       }
     } catch (error) {
       logger.error(`AI Error (${error.code || 'UNKNOWN'}): ${error.message}`);

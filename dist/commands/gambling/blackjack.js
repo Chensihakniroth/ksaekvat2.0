@@ -28,16 +28,40 @@ module.exports = {
         let isAllBet = args[0]?.toLowerCase() === 'all';
         if (betAmount <= 0) {
             if (args[0]?.toLowerCase() === 'all' && userData.balance <= 0) {
-                return message.reply({ embeds: [{ color: colors.error, title: '💸 No funds found!', description: `You don't have any money to play right now, sweetie. (◕‿◕✿)` }] });
+                return message.reply({
+                    embeds: [
+                        {
+                            color: colors.error,
+                            title: '💸 No funds found!',
+                            description: `You don't have any money to play right now, sweetie. (◕‿◕✿)`,
+                        },
+                    ],
+                });
             }
-            return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid amount', description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)' }] });
+            return message.reply({
+                embeds: [
+                    {
+                        color: colors.error,
+                        title: '❌ Invalid amount',
+                        description: 'Please use a proper number, sweetie. (｡•́︿•̀｡)',
+                    },
+                ],
+            });
         }
         // If user tries to bet "all" but it would exceed maxBet, use maxBet instead
         if (isAllBet && betAmount > maxBet) {
             betAmount = maxBet;
         }
         if (betAmount < minBet) {
-            return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet too low', description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)` }] });
+            return message.reply({
+                embeds: [
+                    {
+                        color: colors.warning,
+                        title: '💸 Bet too low',
+                        description: `You need at least **${minBet.toLocaleString()}** ${config.economy.currency} to play. (｡♥‿♥｡)`,
+                    },
+                ],
+            });
         }
         if (!(await database.hasBalance(message.author.id, betAmount))) {
             return message.reply({

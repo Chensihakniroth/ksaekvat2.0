@@ -117,12 +117,16 @@ const logger = {
   header: (title) => {
     const line = '━'.repeat(60);
     console.log(`\n${colors.cyan}┏${line}┓`);
-    console.log(`┃ ${colors.bright}${colors.white}${title.toUpperCase().padEnd(58)} ${colors.cyan}┃`);
+    console.log(
+      `┃ ${colors.bright}${colors.white}${title.toUpperCase().padEnd(58)} ${colors.cyan}┃`
+    );
     console.log(`┗${line}┛${colors.reset}`);
   },
 
   section: (title) => {
-    console.log(`\n${colors.bright}${colors.cyan}◆ ${colors.white}${title.toUpperCase()}${colors.reset}`);
+    console.log(
+      `\n${colors.bright}${colors.cyan}◆ ${colors.white}${title.toUpperCase()}${colors.reset}`
+    );
     console.log(`${colors.cyan}${'━'.repeat(40)}${colors.reset}`);
   },
 
@@ -147,7 +151,10 @@ const logger = {
         '┃' +
         colors.reset +
         headers
-          .map((h, i) => `${colors.bright}${colors.white} ${h.padEnd(colWidths[i] - 1)} ${colors.reset}`)
+          .map(
+            (h, i) =>
+              `${colors.bright}${colors.white} ${h.padEnd(colWidths[i] - 1)} ${colors.reset}`
+          )
           .join(colors.cyan + '┃' + colors.reset) +
         colors.cyan +
         '┃' +
@@ -191,10 +198,11 @@ const logger = {
   blank: () => console.log(''),
 
   loader: (message) => {
-    const timestamp = colors.dim + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + colors.reset;
-    process.stdout.write(
-      `${timestamp} ${colors.cyan}⌬${colors.reset} ${message.padEnd(30)} `
-    );
+    const timestamp =
+      colors.dim +
+      new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) +
+      colors.reset;
+    process.stdout.write(`${timestamp} ${colors.cyan}⌬${colors.reset} ${message.padEnd(30)} `);
     return {
       done: () => process.stdout.write(`${colors.green}● COMPLETED${colors.reset}\n`),
       fail: (err) => process.stdout.write(`${colors.red}✖ FAILED (${err})${colors.reset}\n`),

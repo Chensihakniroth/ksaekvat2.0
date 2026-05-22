@@ -1,13 +1,20 @@
 const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
-const GachaService = require('../../services/GachaService').default || require('../../services/GachaService');
-const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
+const GachaService =
+  require('../../services/GachaService').default || require('../../services/GachaService');
+const EconomyService =
+  require('../../services/EconomyService').default || require('../../services/EconomyService');
 const gachaConfig = require('../../config/gachaConfig.js');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 const sharp = require('sharp');
-const { getItemEmoji, getRarityEmoji, getElementEmoji, getRoleEmoji } = require('../../utils/images.js');
+const {
+  getItemEmoji,
+  getRarityEmoji,
+  getElementEmoji,
+  getRoleEmoji,
+} = require('../../utils/images.js');
 
 const PULL_COST = 10000;
 const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
@@ -42,24 +49,27 @@ async function createGachaResultImage(results) {
     try {
       let imageBuffer;
       if (item.image_url && item.image_url.startsWith('http')) {
-          const response = await axios.get(item.image_url, {
-            responseType: 'arraybuffer',
-            headers: { 
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-              'Referer': 'https://pokemon.fandom.com/'
-            }
-          });
-          imageBuffer = Buffer.from(response.data);
+        const response = await axios.get(item.image_url, {
+          responseType: 'arraybuffer',
+          headers: {
+            'User-Agent':
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+            Referer: 'https://pokemon.fandom.com/',
+          },
+        });
+        imageBuffer = Buffer.from(response.data);
       } else if (item.image_url) {
-          // Handle local paths! (｡♥‿♥｡)
-          const fullPath = path.isAbsolute(item.image_url) ? item.image_url : path.join(process.cwd(), item.image_url);
-          if (fs.existsSync(fullPath)) {
-            imageBuffer = fs.readFileSync(fullPath);
-          } else {
-            throw new Error(`Local file not found: ${fullPath}`);
-          }
+        // Handle local paths! (｡♥‿♥｡)
+        const fullPath = path.isAbsolute(item.image_url)
+          ? item.image_url
+          : path.join(process.cwd(), item.image_url);
+        if (fs.existsSync(fullPath)) {
+          imageBuffer = fs.readFileSync(fullPath);
+        } else {
+          throw new Error(`Local file not found: ${fullPath}`);
+        }
       } else {
-          throw new Error('No image_url provided');
+        throw new Error('No image_url provided');
       }
 
       const game = item.game?.toLowerCase();
@@ -69,7 +79,7 @@ async function createGachaResultImage(results) {
       const rarityColors = {
         5: '#FFB13F', // Gold
         4: '#A256FF', // Purple
-        3: '#51A0FF'  // Blue
+        3: '#51A0FF', // Blue
       };
       const bgColor = rarityColors[item.rarity] || '#1c1d21';
 
@@ -80,10 +90,7 @@ async function createGachaResultImage(results) {
 
       if (useCover) {
         // For Genshin/WuWa/HSR, flatten with rarity background
-        processedCard = await cardImage
-          .flatten({ background: bgColor })
-          .png()
-          .toBuffer();
+        processedCard = await cardImage.flatten({ background: bgColor }).png().toBuffer();
       } else {
         // For others (ZZZ, Common items), place the image onto a card with rarity background and a nice border! (｡♥‿♥｡)
         const borderSize = 14;
@@ -95,10 +102,14 @@ async function createGachaResultImage(results) {
             background: bgColor,
           },
         })
-          .composite([{ 
-            input: await cardImage.resize(cardWidth - 80, cardHeight - 120, { fit: 'contain' }).toBuffer(),
-            blend: 'over'
-          }])
+          .composite([
+            {
+              input: await cardImage
+                .resize(cardWidth - 80, cardHeight - 120, { fit: 'contain' })
+                .toBuffer(),
+              blend: 'over',
+            },
+          ])
           .png()
           .toBuffer();
 
@@ -224,13 +235,15 @@ module.exports = {
 
     let bonusMasterball = false;
     // Check for 5-star characters specifically to grant the bonus
-    const hasFiveStarCharacter = results.some((r) => r.rarity === 5 && (r.type === 'character' || !r.type));
+    const hasFiveStarCharacter = results.some(
+      (r) => r.rarity === 5 && (r.type === 'character' || !r.type)
+    );
     if (hasFiveStarCharacter) {
-        // 25% chance to get a bonus master ball! (｡♥‿♥｡)
-        if (Math.random() < 0.25) {
-            bonusMasterball = true;
-            await database.addGachaItem(message.author.id, 'Master Ball');
-        }
+      // 25% chance to get a bonus master ball! (｡♥‿♥｡)
+      if (Math.random() < 0.25) {
+        bonusMasterball = true;
+        await database.addGachaItem(message.author.id, 'Master Ball');
+      }
     }
 
     const hasFiveStar = results.some((r) => r.rarity === 5);
@@ -268,7 +281,7 @@ module.exports = {
 
     let finalDescription = description;
     if (bonusMasterball) {
-        finalDescription += `\n\n**BONUS!** You also found a 🟣 **Master Ball**! (｡♥‿♥｡)`;
+      finalDescription += `\n\n**BONUS!** You also found a 🟣 **Master Ball**! (｡♥‿♥｡)`;
     }
 
     let footerParts = [];
@@ -322,12 +335,19 @@ module.exports = {
     for (const item of results) {
       await database.addGachaItem(message.author.id, item.name);
       if (item.rarity >= 4) {
-        await database.logGachaPull(message.author.id, message.author.username, item.name, item.game, item.rarity);
+        await database.logGachaPull(
+          message.author.id,
+          message.author.username,
+          item.name,
+          item.game,
+          item.rarity
+        );
       }
     }
-    
+
     // Update Quest Progress! (｡♥‿♥｡)
-    const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+    const QuestService =
+      require('../../services/QuestService').default || require('../../services/QuestService');
     await QuestService.updateProgress(message.author.id, 'GACHA', results.length);
 
     await database.saveUser(userData);

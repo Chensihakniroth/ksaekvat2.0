@@ -11,20 +11,22 @@ export default function Navbar() {
   const [results, setResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
   const [currentTime, setCurrentClock] = useState(new Date());
-  
+
   const { user, login, logout } = useAuth();
-  
+
   const searchRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 40);
     const timer = setInterval(() => setCurrentClock(new Date()), 1000);
-    
+
     window.addEventListener('scroll', handleScroll);
-    const handleClickOutside = (e) => { if (searchRef.current && !searchRef.current.contains(e.target)) setShowResults(false); };
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) setShowResults(false);
+    };
     window.addEventListener('mousedown', handleClickOutside);
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('mousedown', handleClickOutside);
@@ -34,27 +36,36 @@ export default function Navbar() {
 
   useEffect(() => {
     const term = search.trim();
-    if (term.length < 2) { setResults([]); setShowResults(false); return; }
-    
+    if (term.length < 2) {
+      setResults([]);
+      setShowResults(false);
+      return;
+    }
+
     const delay = setTimeout(() => {
-      fetch(`/api/profile/search?query=${encodeURIComponent(term)}`).then(r => r.json()).then(res => {
-        if (res.success) {
-          setResults(res.data); setShowResults(true);
-        }
-      }).catch(err => console.error('[Search] Fetch failed:', err));
+      fetch(`/api/profile/search?query=${encodeURIComponent(term)}`)
+        .then((r) => r.json())
+        .then((res) => {
+          if (res.success) {
+            setResults(res.data);
+            setShowResults(true);
+          }
+        })
+        .catch((err) => console.error('[Search] Fetch failed:', err));
     }, 300);
     return () => clearTimeout(delay);
   }, [search]);
 
   const handleSelect = (userId) => {
-    setSearch(''); setShowResults(false); setMobileMenuOpen(false);
+    setSearch('');
+    setShowResults(false);
+    setMobileMenuOpen(false);
     navigate(`/profile/${userId}`);
   };
 
   return (
     <header className={`zen-nav-wrap ${isScrolled ? 'scrolled' : ''}`}>
       <div className="zen-nav-inner wrap">
-        
         {/* --- BRANDING --- */}
         <div className="nav-left">
           <Link to="/" className="zen-brand" onClick={() => setMobileMenuOpen(false)}>
@@ -73,7 +84,11 @@ export default function Navbar() {
         {/* --- RIGHT ACTIONS --- */}
         <div className="nav-right">
           <div className="zen-clock">
-            {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
+            {currentTime.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })}
           </div>
 
           {user ? (
@@ -81,8 +96,18 @@ export default function Navbar() {
               <button onClick={() => navigate('/dashboard')} className="zen-action-btn">
                 EDIT
               </button>
-              <div className="zen-avatar-wrap" onClick={() => navigate(`/profile/${user.slug || user.username}`)}>
-                <img src={user.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png` : '/assets/default-avatar.png'} alt="" />
+              <div
+                className="zen-avatar-wrap"
+                onClick={() => navigate(`/profile/${user.slug || user.username}`)}
+              >
+                <img
+                  src={
+                    user.avatar
+                      ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
+                      : '/assets/default-avatar.png'
+                  }
+                  alt=""
+                />
               </div>
               <button onClick={logout} className="zen-logout-btn" title="Logout">
                 <LogOut size={16} />
@@ -102,20 +127,67 @@ export default function Navbar() {
         {/* --- MOBILE DRAWER --- */}
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="zen-mobile-overlay" onClick={() => setMobileMenuOpen(false)}>
-              <motion.div initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 200 }} className="zen-mobile-menu" onClick={e => e.stopPropagation()}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="zen-mobile-overlay"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <motion.div
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -20, opacity: 0 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="zen-mobile-menu"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <div className="zen-mobile-links">
-                  <Link to="/" onClick={() => setMobileMenuOpen(false)}>HOME</Link>
-                  <Link to="/leaderboard" onClick={() => setMobileMenuOpen(false)}>RANK</Link>
-                  <Link to="/shop" onClick={() => setMobileMenuOpen(false)}>SHOP</Link>
+                  <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+                    HOME
+                  </Link>
+                  <Link to="/leaderboard" onClick={() => setMobileMenuOpen(false)}>
+                    RANK
+                  </Link>
+                  <Link to="/shop" onClick={() => setMobileMenuOpen(false)}>
+                    SHOP
+                  </Link>
                   {user ? (
                     <>
-                      <Link to={`/profile/${user.username}`} onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--cyber-cyan)' }}>PROFILE</Link>
-                      <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} style={{ color: 'var(--cyber-yellow)' }}>EDIT PROFILE</Link>
-                      <button onClick={() => { logout(); setMobileMenuOpen(false); }} className="zen-mobile-logout">LOGOUT</button>
+                      <Link
+                        to={`/profile/${user.username}`}
+                        onClick={() => setMobileMenuOpen(false)}
+                        style={{ color: 'var(--cyber-cyan)' }}
+                      >
+                        PROFILE
+                      </Link>
+                      <Link
+                        to="/dashboard"
+                        onClick={() => setMobileMenuOpen(false)}
+                        style={{ color: 'var(--cyber-yellow)' }}
+                      >
+                        EDIT PROFILE
+                      </Link>
+                      <button
+                        onClick={() => {
+                          logout();
+                          setMobileMenuOpen(false);
+                        }}
+                        className="zen-mobile-logout"
+                      >
+                        LOGOUT
+                      </button>
                     </>
                   ) : (
-                    <button onClick={() => { login(); setMobileMenuOpen(false); }} className="zen-mobile-login">LOGIN</button>
+                    <button
+                      onClick={() => {
+                        login();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="zen-mobile-login"
+                    >
+                      LOGIN
+                    </button>
                   )}
                 </div>
               </motion.div>
@@ -283,18 +355,28 @@ export default function Navbar() {
 
 function NavBtn({ to, label }) {
   return (
-    <NavLink to={to} end={to === '/'} className={({isActive}) => `zen-nav-item ${isActive ? 'active' : ''}`}>
+    <NavLink
+      to={to}
+      end={to === '/'}
+      className={({ isActive }) => `zen-nav-item ${isActive ? 'active' : ''}`}
+    >
       {({ isActive }) => (
         <>
           <span>{label}</span>
           {isActive && (
-            <motion.div 
-              layoutId="navDot" 
-              style={{ 
-                position: 'absolute', bottom: '-15px', left: '50%', 
-                transform: 'translateX(-50%)', width: '4px', height: '4px', 
-                background: '#fff', borderRadius: '50%', boxShadow: '0 0 10px #fff'
-              }} 
+            <motion.div
+              layoutId="navDot"
+              style={{
+                position: 'absolute',
+                bottom: '-15px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '4px',
+                height: '4px',
+                background: '#fff',
+                borderRadius: '50%',
+                boxShadow: '0 0 10px #fff',
+              }}
             />
           )}
         </>
@@ -302,4 +384,3 @@ function NavBtn({ to, label }) {
     </NavLink>
   );
 }
-

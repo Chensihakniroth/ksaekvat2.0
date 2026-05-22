@@ -1,8 +1,10 @@
 const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
-const CombatService = require('../../services/CombatService.js').default || require('../../services/CombatService.js');
-const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
+const CombatService =
+  require('../../services/CombatService.js').default || require('../../services/CombatService.js');
+const EconomyService =
+  require('../../services/EconomyService').default || require('../../services/EconomyService');
 
 module.exports = {
   name: 'player',
@@ -21,7 +23,7 @@ module.exports = {
     }
 
     const userData = await database.getUser(target.id, target.username);
-    
+
     // --- CALCULATE STATS (Using Service) ---
     // Pass empty bonuses as the equipment system is removed
     const emptyBonuses = { attack: 0, defense: 0, hp: 0, speed: 0, luck: 0 };
@@ -31,20 +33,18 @@ module.exports = {
       .setColor(colors.primary)
       .setTitle(`⚔️ ${target.username}'s Combat Stats`)
       .setThumbnail(target.displayAvatarURL())
-      .addFields(
-        {
-          name: '📊 Combat Stats',
-          value: [
-            `**Level:** ${userData.level}`,
-            `**Experience:** ${EconomyService.format(userData.experience)}`,
-            `**Health:** ${totalStats.health}`,
-            `**Attack:** ${totalStats.attack}`,
-            `**Defense:** ${totalStats.defense}`,
-            `**Luck:** ${totalStats.luck}`,
-          ].join('\n'),
-          inline: true,
-        }
-      );
+      .addFields({
+        name: '📊 Combat Stats',
+        value: [
+          `**Level:** ${userData.level}`,
+          `**Experience:** ${EconomyService.format(userData.experience)}`,
+          `**Health:** ${totalStats.health}`,
+          `**Attack:** ${totalStats.attack}`,
+          `**Defense:** ${totalStats.defense}`,
+          `**Luck:** ${totalStats.luck}`,
+        ].join('\n'),
+        inline: true,
+      });
 
     // Battle statistics
     const stats = userData.stats || {};

@@ -39,7 +39,7 @@ module.exports = {
                 embeds: [
                     {
                         color: colors.error,
-                        title: "❌ RANGE ERROR",
+                        title: '❌ RANGE ERROR',
                         description: 'Please provide a number between 1 and 100. (・_・ヾ System limit exceeded!',
                     },
                 ],
@@ -72,7 +72,7 @@ module.exports = {
                         embeds: [
                             {
                                 color: colors.warning,
-                                title: "🔍 NO DATA FOUND",
+                                title: '🔍 NO DATA FOUND',
                                 description: `No messages from **${targetUser.username}** found in the recent simulation logs. (・_・ヾ`,
                             },
                         ],

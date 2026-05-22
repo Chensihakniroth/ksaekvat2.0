@@ -8,7 +8,13 @@ const {
 } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
-const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji, getRoleEmoji } = require('../../utils/images.js');
+const {
+  getCharacterIcon,
+  getItemEmoji,
+  getRarityEmoji,
+  getElementEmoji,
+  getRoleEmoji,
+} = require('../../utils/images.js');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
@@ -55,13 +61,12 @@ module.exports = {
 
       const found = await findCharacter(charName);
       if (!found) return message.reply(`❌ You don't have **${charName}** in your collection yet!`);
-      if (userData.team.includes(found.name)) return message.reply('🚫 They are already in your team! (◕‿◕✿)');
+      if (userData.team.includes(found.name))
+        return message.reply('🚫 They are already in your team! (◕‿◕✿)');
 
       userData.team.push(found.name);
       await database.saveUser(userData);
-      return message.reply(
-        `✅ Added **${found.name}** to your squad! (ﾉ´ヮ\`)ﾉ*:･ﾟ✧`
-      );
+      return message.reply(`✅ Added **${found.name}** to your squad! (ﾉ´ヮ\`)ﾉ*:･ﾟ✧`);
     }
 
     // --- SUBCOMMAND: REMOVE ---
@@ -94,7 +99,9 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setColor(colors.primary)
         .setTitle(`🛡️ ${message.author.username}'s Elite Squad`)
-        .setDescription(`**Team Status:** ${filledSlots}/4 Slots Deployed\n*Manage your battlefield composition below!* (｡♥‿♥｡)`)
+        .setDescription(
+          `**Team Status:** ${filledSlots}/4 Slots Deployed\n*Manage your battlefield composition below!* (｡♥‿♥｡)`
+        )
         .setFooter({ text: 'Use buttons below to easily manage your team slots!' });
 
       const slotGems = ['💠', '💠', '💠', '💠'];
@@ -192,8 +199,9 @@ module.exports = {
 
       if (i.customId === 'team_help_btn') {
         return i.reply({
-          content: "**(◕‿◕✿) Mommy's Team Guide:**\nTo add someone to an empty slot, just use the command: \`kteam add <name>\`\nExample: \`kteam add Raiden\`\n\nYou can only have 4 characters in your squad!",
-          flags: [MessageFlags.Ephemeral]
+          content:
+            "**(◕‿◕✿) Mommy's Team Guide:**\nTo add someone to an empty slot, just use the command: \`kteam add <name>\`\nExample: \`kteam add Raiden\`\n\nYou can only have 4 characters in your squad!",
+          flags: [MessageFlags.Ephemeral],
         });
       }
 
@@ -201,7 +209,10 @@ module.exports = {
         const slot = parseInt(i.customId.replace('team_pop_', ''));
 
         if (slot > userData.team.length || !userData.team[slot - 1]) {
-          return i.reply({ content: "That slot is already empty!", flags: [MessageFlags.Ephemeral] });
+          return i.reply({
+            content: 'That slot is already empty!',
+            flags: [MessageFlags.Ephemeral],
+          });
         }
 
         const remName = userData.team[slot - 1];
@@ -239,7 +250,7 @@ module.exports = {
     });
 
     collector.on('end', () => {
-      msg.edit({ components: [] }).catch(() => { });
+      msg.edit({ components: [] }).catch(() => {});
     });
   },
 };

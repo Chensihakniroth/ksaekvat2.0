@@ -18,8 +18,8 @@ module.exports = {
                     new EmbedBuilder()
                         .setColor(colors.error)
                         .setTitle('⚠️ TRANSACTION ERROR')
-                        .setDescription('How much do you want to deposit? (・_・ヾ\nUsage: `kdeposit <amount/all>`')
-                ]
+                        .setDescription('How much do you want to deposit? (・_・ヾ\nUsage: `kdeposit <amount/all>`'),
+                ],
             });
         }
         const amount = economy.parseBet(args[0], user.balance, 1, user.balance);
@@ -29,8 +29,8 @@ module.exports = {
                     new EmbedBuilder()
                         .setColor(colors.error)
                         .setTitle('❌ INVALID AMOUNT')
-                        .setDescription("You can't deposit that! (・_・ヾ Check your wallet balance first. (≧◡≦)")
-                ]
+                        .setDescription("You can't deposit that! (・_・ヾ Check your wallet balance first. (≧◡≦)"),
+                ],
             });
         }
         if (user.balance < amount) {
@@ -39,8 +39,8 @@ module.exports = {
                     new EmbedBuilder()
                         .setColor(colors.error)
                         .setTitle('🚫 INSUFFICIENT FUNDS')
-                        .setDescription(`You only have **${user.balance.toLocaleString()}** ${config.economy.currencySymbol} in your wallet! (ಥ﹏ಥ)`)
-                ]
+                        .setDescription(`You only have **${user.balance.toLocaleString()}** ${config.economy.currencySymbol} in your wallet! (ಥ﹏ಥ)`),
+                ],
             });
         }
         // Perform atomic deposit
@@ -49,7 +49,15 @@ module.exports = {
             .setColor(colors.success)
             .setTitle('🏦 DEPOSIT SUCCESS')
             .setDescription(`Transferred **${amount.toLocaleString()}** ${config.economy.currencySymbol} to your bank storage! (¬‿¬)`)
-            .addFields({ name: '💵 Wallet', value: `**${updatedUser.balance.toLocaleString()}** ${config.economy.currencySymbol}`, inline: true }, { name: '🏦 Bank', value: `**${updatedUser.bank.toLocaleString()}** ${config.economy.currencySymbol}`, inline: true })
+            .addFields({
+            name: '💵 Wallet',
+            value: `**${updatedUser.balance.toLocaleString()}** ${config.economy.currencySymbol}`,
+            inline: true,
+        }, {
+            name: '🏦 Bank',
+            value: `**${updatedUser.bank.toLocaleString()}** ${config.economy.currencySymbol}`,
+            inline: true,
+        })
             .setThumbnail(message.author.displayAvatarURL())
             .setTimestamp();
         // Update command usage stats

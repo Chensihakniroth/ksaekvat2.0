@@ -29,11 +29,11 @@ router.get('/discord/callback', async (req, res) => {
             redirect_uri: config.redirectUri,
         });
         const tokenRes = await axios_1.default.post('https://discord.com/api/oauth2/token', params.toString(), {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         });
         const { access_token } = tokenRes.data;
         const userRes = await axios_1.default.get('https://discord.com/api/users/@me', {
-            headers: { Authorization: `Bearer ${access_token}` }
+            headers: { Authorization: `Bearer ${access_token}` },
         });
         const userData = userRes.data;
         // Ensure user exists in our DB
@@ -44,7 +44,7 @@ router.get('/discord/callback', async (req, res) => {
         res.cookie('ksaekvat_session', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
         res.redirect('/'); // Go back to dashboard
     }
@@ -70,14 +70,14 @@ router.get('/me', async (req, res) => {
                 slug: user.profileTheme?.slug || null,
                 balance: user.balance || 0,
                 level: user.level || 1,
-            }
+            },
         });
     }
     catch (err) {
         res.clearCookie('ksaekvat_session', {
             path: '/',
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production'
+            secure: process.env.NODE_ENV === 'production',
         });
         res.status(401).json({ success: false, error: 'Invalid token' });
     }
@@ -87,7 +87,7 @@ router.post('/logout', (req, res) => {
     res.clearCookie('ksaekvat_session', {
         path: '/',
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production'
+        secure: process.env.NODE_ENV === 'production',
     });
     res.json({ success: true });
 });

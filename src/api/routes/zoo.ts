@@ -28,15 +28,15 @@ router.get('/image/:key', async (req: Request, res: Response) => {
     if ((imageUrl as string).startsWith('http')) {
       const response = await axios.get(imageUrl as string, {
         responseType: 'stream',
-        headers: { 'User-Agent': 'Mozilla/5.0' }
+        headers: { 'User-Agent': 'Mozilla/5.0' },
       });
       res.setHeader('Content-Type', 'image/png');
       res.setHeader('Cache-Control', 'public, max-age=86400'); // 24h cache
       response.data.pipe(res);
     } else {
       // Local file
-      const fullPath = require('path').isAbsolute(imageUrl as string) 
-        ? (imageUrl as string) 
+      const fullPath = require('path').isAbsolute(imageUrl as string)
+        ? (imageUrl as string)
         : require('path').join(process.cwd(), imageUrl as string);
       res.sendFile(fullPath);
     }

@@ -10,7 +10,7 @@ import Footer from './components/Footer';
 import GlobalTicker from './components/GlobalTicker';
 import { AuthProvider } from './context/AuthContext';
 
-// Page Components (Lazy Loaded for Performance) 
+// Page Components (Lazy Loaded for Performance)
 const HomePage = lazy(() => import('./pages/HomePage'));
 const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage'));
 const ProfilePage = lazy(() => import('./pages/ProfilePage'));
@@ -25,22 +25,60 @@ const DashboardPage = lazy(() => import('./pages/DashboardPage'));
  */
 function LoadingGateway() {
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'var(--bg-deep)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-      <motion.div 
-        animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }} 
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        style={{ width: '60px', height: '60px', background: 'var(--cyber-yellow)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', fontWeight: 900, fontSize: '2rem', boxShadow: '0 0 30px var(--cyber-yellow)', marginBottom: '30px' }}
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'var(--bg-deep)',
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <motion.div
+        animate={{ scale: [1, 1.1, 1], opacity: [0.5, 1, 0.5] }}
+        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          width: '60px',
+          height: '60px',
+          background: 'var(--cyber-yellow)',
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#000',
+          fontWeight: 900,
+          fontSize: '2rem',
+          boxShadow: '0 0 30px var(--cyber-yellow)',
+          marginBottom: '30px',
+        }}
       >
         ✦
       </motion.div>
-      <div style={{ fontSize: '0.75rem', fontWeight: 900, letterSpacing: '0.4em', color: 'var(--cyber-cyan)', textTransform: 'uppercase', textShadow: '0 0 10px rgba(0, 243, 255, 0.5)' }}>
+      <div
+        style={{
+          fontSize: '0.75rem',
+          fontWeight: 900,
+          letterSpacing: '0.4em',
+          color: 'var(--cyber-cyan)',
+          textTransform: 'uppercase',
+          textShadow: '0 0 10px rgba(0, 243, 255, 0.5)',
+        }}
+      >
         ESTABLISHING UPLINK...
       </div>
-      <motion.div 
+      <motion.div
         initial={{ width: 0 }}
         animate={{ width: '200px' }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-        style={{ height: '1px', background: 'var(--cyber-cyan)', marginTop: '20px', boxShadow: '0 0 10px var(--cyber-cyan)' }}
+        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          height: '1px',
+          background: 'var(--cyber-cyan)',
+          marginTop: '20px',
+          boxShadow: '0 0 10px var(--cyber-cyan)',
+        }}
       />
     </div>
   );
@@ -49,7 +87,7 @@ function LoadingGateway() {
 function AppContent() {
   const location = useLocation();
   const isProfile = location.pathname.startsWith('/profile/');
-  
+
   // Setup Parallax Background
   const { scrollYProgress } = useScroll();
   const yBg = useTransform(scrollYProgress, [0, 1], ['0%', '15%']);
@@ -57,27 +95,32 @@ function AppContent() {
   console.log('[App] Initializing High-End Dashboard OS...');
 
   return (
-    <div className="app-wrapper" style={{ position: 'relative', minHeight: '100vh', background: '#050505' }}>
+    <div
+      className="app-wrapper"
+      style={{ position: 'relative', minHeight: '100vh', background: '#050505' }}
+    >
       {!isProfile && (
         <>
           <div className="cyber-grid" />
-          <motion.div 
-            style={{ 
-              position: 'fixed', 
-              inset: 0, 
-              zIndex: 0, 
+          <motion.div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 0,
               y: yBg,
-              pointerEvents: 'none'
+              pointerEvents: 'none',
             }}
           >
-            <div style={{ 
-              position: 'absolute', 
-              inset: '-10%', 
-              backgroundImage: 'url("/bg-cyberpunk.jpg")', 
-              backgroundSize: 'cover', 
-              backgroundPosition: 'center', 
-              opacity: 0.3 
-            }} />
+            <div
+              style={{
+                position: 'absolute',
+                inset: '-10%',
+                backgroundImage: 'url("/bg-cyberpunk.jpg")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                opacity: 0.3,
+              }}
+            />
           </motion.div>
           <header className="fixed-top-section" style={{ zIndex: 100 }}>
             <Navbar />

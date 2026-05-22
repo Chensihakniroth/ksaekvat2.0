@@ -143,11 +143,11 @@ function getItemEmoji(item, client) {
   const emojiName = item.name.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
 
   // 1. Search in Application Emojis
-  let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);
+  let customEmoji = client.application?.emojis.cache.find((e) => e.name === emojiName);
 
   // 2. Fallback to Guild Emojis
   if (!customEmoji) {
-    customEmoji = client.emojis.cache.find(e => e.name === emojiName);
+    customEmoji = client.emojis.cache.find((e) => e.name === emojiName);
   }
 
   if (customEmoji) {
@@ -166,7 +166,8 @@ function getItemEmoji(item, client) {
 
 function getRarityEmoji(rarity, client, item = null) {
   // 1. Detect Type
-  const isNumeric = typeof rarity === 'number' || (!isNaN(parseInt(rarity)) && /^\d+$/.test(rarity.toString()));
+  const isNumeric =
+    typeof rarity === 'number' || (!isNaN(parseInt(rarity)) && /^\d+$/.test(rarity.toString()));
   const isCharacter = item?.type === 'character' || (item && !item.type && isNumeric);
 
   // 2. Hardcoded ID Mapping
@@ -178,12 +179,12 @@ function getRarityEmoji(rarity, client, item = null) {
 
   const pokemonMap = {
     priceless: '<:rarity_priceless:1482366975672975463>',
-    mythical:  '<:rarity_mythical:1482366970589483180>',
+    mythical: '<:rarity_mythical:1482366970589483180>',
     legendary: '<:rarity_legendary:1482366964994408528>',
-    epic:      '<:rarity_epic:1482366960070164560>',
-    rare:      '<:rarity_rare:1482366980790157467>',
-    uncommon:  '<:rarity_uncommon:1482366986498605218>',
-    common:    '<:rarity_common:1482366954361716776>',
+    epic: '<:rarity_epic:1482366960070164560>',
+    rare: '<:rarity_rare:1482366980790157467>',
+    uncommon: '<:rarity_uncommon:1482366986498605218>',
+    common: '<:rarity_common:1482366954361716776>',
   };
 
   // 3. Logic: If numeric or character context, use Gacha stars
@@ -198,20 +199,26 @@ function getRarityEmoji(rarity, client, item = null) {
 
   // 4. Dynamic Lookup Fallback
   if (!client) return '✨';
-  
-  const emojiName = (isNumeric || isCharacter) 
-    ? `${rarity}_star` 
-    : `rarity_${rarity.toString().toLowerCase()}`;
 
-  const customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName) 
-                 || client.emojis.cache.find(e => e.name === emojiName);
+  const emojiName =
+    isNumeric || isCharacter ? `${rarity}_star` : `rarity_${rarity.toString().toLowerCase()}`;
+
+  const customEmoji =
+    client.application?.emojis.cache.find((e) => e.name === emojiName) ||
+    client.emojis.cache.find((e) => e.name === emojiName);
 
   if (customEmoji) return customEmoji.toString();
 
   // 5. Final Fallback
   const fallbackMap = {
-    5: '⭐', 4: '✨', 3: '💎',
-    legendary: '🟠', epic: '🟣', rare: '🔵', uncommon: '🟢', common: '⚪',
+    5: '⭐',
+    4: '✨',
+    3: '💎',
+    legendary: '🟠',
+    epic: '🟣',
+    rare: '🔵',
+    uncommon: '🟢',
+    common: '⚪',
   };
 
   return fallbackMap[rarity] || fallbackMap[rarity.toString().toLowerCase()] || '✨';
@@ -222,9 +229,9 @@ function getElementEmoji(item, client) {
 
   const elementName = item.element.trim().replace(/[^a-zA-Z0-9]+/g, '');
 
-  let elementEmoji = client.application?.emojis.cache.find(e => e.name === elementName);
+  let elementEmoji = client.application?.emojis.cache.find((e) => e.name === elementName);
   if (!elementEmoji) {
-    elementEmoji = client.emojis.cache.find(e => e.name === elementName);
+    elementEmoji = client.emojis.cache.find((e) => e.name === elementName);
   }
 
   if (elementEmoji) {
@@ -259,34 +266,37 @@ function getRoleEmoji(role, client) {
   if (!role || !client) return '';
 
   // Normalize: trim, uppercase for lookup
-  const roleName = role.trim().toUpperCase().replace(/[-\s]+/g, '_');
+  const roleName = role
+    .trim()
+    .toUpperCase()
+    .replace(/[-\s]+/g, '_');
   // Map common variants to emoji names
   const nameMap = {
-    'DPS': 'DPS',
-    'S_DPS': 'SDPS',
-    'SDPS': 'SDPS',
-    'SUPPORT': 'SUPPORT',
-    'HEAL': 'HEAL',
-    'HEALER': 'HEAL',
-    'TANK': 'TANK',
+    DPS: 'DPS',
+    S_DPS: 'SDPS',
+    SDPS: 'SDPS',
+    SUPPORT: 'SUPPORT',
+    HEAL: 'HEAL',
+    HEALER: 'HEAL',
+    TANK: 'TANK',
   };
   const emojiName = nameMap[roleName] || roleName;
 
-  let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);
+  let customEmoji = client.application?.emojis.cache.find((e) => e.name === emojiName);
   if (!customEmoji) {
-    customEmoji = client.emojis.cache.find(e => e.name === emojiName);
+    customEmoji = client.emojis.cache.find((e) => e.name === emojiName);
   }
 
   if (customEmoji) return customEmoji.toString();
 
   // Unicode fallbacks
   const fallbacks = {
-    'DPS': '⚔️',
-    'SDPS': '🗡️',
-    'SUPPORT': '🔮',
-    'HEAL': '💚',
-    'HEALER': '💚',
-    'TANK': '🛡️',
+    DPS: '⚔️',
+    SDPS: '🗡️',
+    SUPPORT: '🔮',
+    HEAL: '💚',
+    HEALER: '💚',
+    TANK: '🛡️',
   };
   return fallbacks[roleName] || '✨';
 }
@@ -299,4 +309,3 @@ module.exports = {
   getElementEmoji,
   getRoleEmoji,
 };
-

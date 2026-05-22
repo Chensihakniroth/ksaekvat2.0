@@ -41,24 +41,38 @@ module.exports = {
                 .addFields({
                 name: `📤 ${sender.username}'s Offer`,
                 value: trade.sender.offer.length > 0
-                    ? trade.sender.offer.map(i => `${i.emoji || '✨'} **${i.name}**`).join('\n')
+                    ? trade.sender.offer.map((i) => `${i.emoji || '✨'} **${i.name}**`).join('\n')
                     : '*Nothing yet...*',
                 inline: true,
             }, {
                 name: `📥 ${target.username}'s Offer`,
                 value: trade.target.offer.length > 0
-                    ? trade.target.offer.map(i => `${i.emoji || '✨'} **${i.name}**`).join('\n')
+                    ? trade.target.offer.map((i) => `${i.emoji || '✨'} **${i.name}**`).join('\n')
                     : '*Nothing yet...*',
                 inline: true,
             });
             if (trade.sender.accepted)
-                embed.addFields({ name: '✅ Status', value: `${sender.username} has accepted!`, inline: false });
+                embed.addFields({
+                    name: '✅ Status',
+                    value: `${sender.username} has accepted!`,
+                    inline: false,
+                });
             if (trade.target.accepted)
-                embed.addFields({ name: '✅ Status', value: `${target.username} has accepted!`, inline: false });
+                embed.addFields({
+                    name: '✅ Status',
+                    value: `${target.username} has accepted!`,
+                    inline: false,
+                });
             embed.setFooter({ text: 'Commands: Kadd <item_name> | Kremove <item_name> | Kcancel' });
             return embed;
         };
-        const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('trade_accept').setLabel('Accept Trade').setStyle(ButtonStyle.Success), new ButtonBuilder().setCustomId('trade_cancel').setLabel('Cancel').setStyle(ButtonStyle.Danger));
+        const row = new ActionRowBuilder().addComponents(new ButtonBuilder()
+            .setCustomId('trade_accept')
+            .setLabel('Accept Trade')
+            .setStyle(ButtonStyle.Success), new ButtonBuilder()
+            .setCustomId('trade_cancel')
+            .setLabel('Cancel')
+            .setStyle(ButtonStyle.Danger));
         const msg = await message.channel.send({
             content: `${target}, **${sender.username}** has invited you to trade!`,
             embeds: [createTradeEmbed()],
@@ -66,7 +80,10 @@ module.exports = {
         });
         // We use a persistent message collector for the trade commands
         const textFilter = (m) => [sender.id, target.id].includes(m.author.id);
-        const textCollector = message.channel.createMessageCollector({ filter: textFilter, time: 300000 });
+        const textCollector = message.channel.createMessageCollector({
+            filter: textFilter,
+            time: 300000,
+        });
         const buttonCollector = msg.createMessageComponentCollector({ time: 300000 });
         const animalsData = await database.loadAnimals();
         const flatRegistry = await database.getAnimalRegistry();
@@ -78,7 +95,7 @@ module.exports = {
                 const itemName = m.content.slice(5).trim().toLowerCase();
                 const userData = await database.getUser(m.author.id, m.author.username);
                 // Find in Gacha Inventory
-                const char = userData.gacha_inventory.find(i => i.name.toLowerCase().includes(itemName));
+                const char = userData.gacha_inventory.find((i) => i.name.toLowerCase().includes(itemName));
                 // Find in Animals
                 let animal = null;
                 let rarityFound = null;
@@ -88,7 +105,9 @@ module.exports = {
                     const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
                     for (const [key, count] of animalEntries) {
                         const def = animalsData[rarity]?.[key] || flatRegistry[key];
-                        if (def && (def.name.toLowerCase().includes(itemName) || key.toLowerCase().includes(itemName)) && count > 0) {
+                        if (def &&
+                            (def.name.toLowerCase().includes(itemName) || key.toLowerCase().includes(itemName)) &&
+                            count > 0) {
                             animal = { ...def, key };
                             rarityFound = rarity;
                             break;
@@ -98,8 +117,8 @@ module.exports = {
                         break;
                 }
                 if (char) {
-                    if (player.offer.find(o => o.name === char.name)) {
-                        m.reply("You already added that, darling! (｡•́︿•̀｡)").then(rm => setTimeout(() => rm.delete().catch(() => { }), 3000));
+                    if (player.offer.find((o) => o.name === char.name)) {
+                        m.reply('You already added that, darling! (｡•́︿•̀｡)').then((rm) => setTimeout(() => rm.delete().catch(() => { }), 3000));
                     }
                     else {
                         player.offer.push({ name: char.name, type: 'character', emoji: '⭐' });
@@ -109,18 +128,24 @@ module.exports = {
                     }
                 }
                 else if (animal) {
-                    if (player.offer.find(o => o.name === animal.name)) {
-                        m.reply("You already added that, darling! (｡•́︿•̀｡)").then(rm => setTimeout(() => rm.delete().catch(() => { }), 3000));
+                    if (player.offer.find((o) => o.name === animal.name)) {
+                        m.reply('You already added that, darling! (｡•́︿•̀｡)').then((rm) => setTimeout(() => rm.delete().catch(() => { }), 3000));
                     }
                     else {
-                        player.offer.push({ name: animal.name, key: animal.key, rarity: rarityFound, type: 'pokemon', emoji: animal.emoji });
+                        player.offer.push({
+                            name: animal.name,
+                            key: animal.key,
+                            rarity: rarityFound,
+                            type: 'pokemon',
+                            emoji: animal.emoji,
+                        });
                         trade.sender.accepted = false;
                         trade.target.accepted = false;
                         await msg.edit({ embeds: [createTradeEmbed()] });
                     }
                 }
                 else {
-                    m.reply("I couldn't find that item in your bag, sweetie! (｡•́︿•̀｡)").then(rm => setTimeout(() => rm.delete().catch(() => { }), 3000));
+                    m.reply("I couldn't find that item in your bag, sweetie! (｡•́︿•̀｡)").then((rm) => setTimeout(() => rm.delete().catch(() => { }), 3000));
                 }
                 try {
                     m.delete().catch(() => { });
@@ -190,7 +215,9 @@ module.exports = {
         });
         buttonCollector.on('end', () => {
             if (trade.status === 'PENDING' || trade.status === 'NEGOTIATING') {
-                msg.edit({ content: '🤝 Trade timed out! (｡•́︿•̀｡)', embeds: [], components: [] }).catch(() => { });
+                msg
+                    .edit({ content: '🤝 Trade timed out! (｡•́︿•̀｡)', embeds: [], components: [] })
+                    .catch(() => { });
             }
         });
     },

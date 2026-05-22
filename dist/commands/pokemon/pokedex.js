@@ -1,5 +1,5 @@
 "use strict";
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
@@ -12,18 +12,44 @@ if (!fs.existsSync(TEMP_DIR))
     fs.mkdirSync(TEMP_DIR, { recursive: true });
 // ─── Pokémon type emoji map ───────────────────────────────────────────────────
 const TYPE_EMOJI = {
-    normal: '⬜', fire: '🔥', water: '💧', electric: '⚡',
-    grass: '🌿', ice: '❄️', fighting: '🥊', poison: '☠️',
-    ground: '🌍', flying: '🦅', psychic: '🔮', bug: '🐛',
-    rock: '🪨', ghost: '👻', dragon: '🐉', dark: '🌑',
-    steel: '⚙️', fairy: '🌸',
+    normal: '⬜',
+    fire: '🔥',
+    water: '💧',
+    electric: '⚡',
+    grass: '🌿',
+    ice: '❄️',
+    fighting: '🥊',
+    poison: '☠️',
+    ground: '🌍',
+    flying: '🦅',
+    psychic: '🔮',
+    bug: '🐛',
+    rock: '🪨',
+    ghost: '👻',
+    dragon: '🐉',
+    dark: '🌑',
+    steel: '⚙️',
+    fairy: '🌸',
 };
 const TYPE_COLORS = {
-    normal: '#A8A77A', fire: '#EE8130', water: '#6390F0', electric: '#F7D02C',
-    grass: '#7AC74C', ice: '#96D9D6', fighting: '#C22E28', poison: '#A33EA1',
-    ground: '#E2BF65', flying: '#A98FF3', psychic: '#F95587', bug: '#A6B91A',
-    rock: '#B6A136', ghost: '#735797', dragon: '#6F35FC', dark: '#705746',
-    steel: '#B7B7CE', fairy: '#D685AD',
+    normal: '#A8A77A',
+    fire: '#EE8130',
+    water: '#6390F0',
+    electric: '#F7D02C',
+    grass: '#7AC74C',
+    ice: '#96D9D6',
+    fighting: '#C22E28',
+    poison: '#A33EA1',
+    ground: '#E2BF65',
+    flying: '#A98FF3',
+    psychic: '#F95587',
+    bug: '#A6B91A',
+    rock: '#B6A136',
+    ghost: '#735797',
+    dragon: '#6F35FC',
+    dark: '#705746',
+    steel: '#B7B7CE',
+    fairy: '#D685AD',
 };
 const RARITY_ORDER = ['priceless', 'mythical', 'legendary', 'epic', 'rare', 'uncommon', 'common'];
 function statBar(value, max = 255, length = 12) {
@@ -63,11 +89,13 @@ async function buildPokedexEmbed(target, pkmnEntry, userAnimals, animalsData, in
     }
     catch (_) { }
     const primaryType = pokeData?.types?.[0]?.type?.name || 'normal';
-    const types = pokeData?.types?.map(t => `${TYPE_EMOJI[t.type.name] || '❔'} ${t.type.name.charAt(0).toUpperCase() + t.type.name.slice(1)}`).join('  ') || '—';
+    const types = pokeData?.types
+        ?.map((t) => `${TYPE_EMOJI[t.type.name] || '❔'} ${t.type.name.charAt(0).toUpperCase() + t.type.name.slice(1)}`)
+        .join('  ') || '—';
     const embedColor = TYPE_COLORS[primaryType] || '#5080d0';
     let flavorText = '*No data available.*';
     if (speciesData?.flavor_text_entries) {
-        const entry = speciesData.flavor_text_entries.find(e => e.language.name === 'en');
+        const entry = speciesData.flavor_text_entries.find((e) => e.language.name === 'en');
         if (entry)
             flavorText = entry.flavor_text.replace(/\n|\f/g, ' ');
     }
@@ -76,8 +104,17 @@ async function buildPokedexEmbed(target, pkmnEntry, userAnimals, animalsData, in
     const weightKg = pokeData ? `${(pokeData.weight / 10).toFixed(1)} kg` : '—';
     let statsText = '*No stats data.*';
     if (pokeData?.stats) {
-        const statNames = { hp: 'HP', attack: 'ATK', defense: 'DEF', 'special-attack': 'SpA', 'special-defense': 'SpD', speed: 'SPD' };
-        statsText = pokeData.stats.map(s => `\`${(statNames[s.stat.name] || s.stat.name.toUpperCase()).padEnd(3)}\` ${statBar(s.base_stat)}`).join('\n');
+        const statNames = {
+            hp: 'HP',
+            attack: 'ATK',
+            defense: 'DEF',
+            'special-attack': 'SpA',
+            'special-defense': 'SpD',
+            speed: 'SPD',
+        };
+        statsText = pokeData.stats
+            .map((s) => `\`${(statNames[s.stat.name] || s.stat.name.toUpperCase()).padEnd(3)}\` ${statBar(s.base_stat)}`)
+            .join('\n');
     }
     const isShiny = key === 'shinycharizard';
     const imgData = await AnimalService.getPokemonImageBuffer(key);
@@ -86,11 +123,21 @@ async function buildPokedexEmbed(target, pkmnEntry, userAnimals, animalsData, in
         .setColor(embedColor)
         .setTitle(`${rarityEmoji} ${name}${isShiny ? ' ✨' : ''}`)
         .setDescription(`*${flavorText}*`)
-        .addFields({ name: '🏷️ Type', value: types, inline: true }, { name: '⭐ Rarity', value: `${rarityEmoji} ${rarity.charAt(0).toUpperCase() + rarity.slice(1)}`, inline: true }, { name: '📦 Owned', value: `**${count}×** caught`, inline: true }, { name: '📏 Height', value: heightM, inline: true }, { name: '⚖️ Weight', value: weightKg, inline: true }, { name: '💰 Value', value: `${config.hunting.rarities[rarity]?.value?.toLocaleString() ?? '?'} coins`, inline: true }, { name: '📊 Base Stats', value: statsText, inline: false })
+        .addFields({ name: '🏷️ Type', value: types, inline: true }, {
+        name: '⭐ Rarity',
+        value: `${rarityEmoji} ${rarity.charAt(0).toUpperCase() + rarity.slice(1)}`,
+        inline: true,
+    }, { name: '📦 Owned', value: `**${count}×** caught`, inline: true }, { name: '📏 Height', value: heightM, inline: true }, { name: '⚖️ Weight', value: weightKg, inline: true }, {
+        name: '💰 Value',
+        value: `${config.hunting.rarities[rarity]?.value?.toLocaleString() ?? '?'} coins`,
+        inline: true,
+    }, { name: '📊 Base Stats', value: statsText, inline: false })
         .setFooter({ text: `${target.username}'s Pokédex  •  ${index + 1} / ${total}  •  PokéAPI` })
         .setTimestamp();
     if (imgData) {
-        const attachment = new (require('discord.js').AttachmentBuilder)(imgData.buffer, { name: imgData.fileName });
+        const attachment = new (require('discord.js').AttachmentBuilder)(imgData.buffer, {
+            name: imgData.fileName,
+        });
         embed.setThumbnail(`attachment://${imgData.fileName}`);
         files.push(attachment);
     }
@@ -124,12 +171,17 @@ async function createPokedexImage(pageLabel, pagePokemons, totalCaught, totalCou
     <text x="${canvasWidth / 2}" y="43" font-family="'Courier New',monospace" font-size="20" font-weight="bold" fill="#ff9999" text-anchor="middle" letter-spacing="4">${pageLabel}</text>
     <text x="30" y="44" font-family="sans-serif" font-size="22" fill="#ff4d4d">📖</text>
     <text x="${canvasWidth - 30}" y="42" font-family="sans-serif" font-size="16" font-weight="bold" fill="#ff9999" text-anchor="end">${totalCaught} / ${totalCount}</text>
-    ${Array.from({ length: rows }).map((_, r) => Array.from({ length: cols }).map((_, c) => {
+    ${Array.from({ length: rows })
+        .map((_, r) => Array.from({ length: cols })
+        .map((_, c) => {
         const cx = padding + c * cellSize;
         const cy = headerHeight + padding + r * cellSize;
         return `<rect x="${cx + 3}" y="${cy + 3}" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="#111827" stroke="#330b13" stroke-width="1.5" opacity="0.9"/>`;
-    }).join('')).join('')}
-    ${pagePokemons.map((pkmn, i) => {
+    })
+        .join(''))
+        .join('')}
+    ${pagePokemons
+        .map((pkmn, i) => {
         if (!pkmn.caught)
             return '';
         const r = Math.floor(i / cols);
@@ -137,17 +189,24 @@ async function createPokedexImage(pageLabel, pagePokemons, totalCaught, totalCou
         const cx = padding + c * cellSize;
         const cy = headerHeight + padding + r * cellSize;
         return `<rect x="${cx + 3}" y="${cy + 3}" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="none" stroke="#ff4d4d" stroke-width="1.5" opacity="0.5"/>`;
-    }).join('')}
+    })
+        .join('')}
   </svg>`);
     const fgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${canvasWidth}" height="${canvasHeight}">
-    ${pagePokemons.map((pkmn, i) => {
+    ${pagePokemons
+        .map((pkmn, i) => {
         const r = Math.floor(i / cols);
         const c = i % cols;
         const cx = padding + c * cellSize;
         const cy = headerHeight + padding + r * cellSize;
-        const displayName = pkmn.caught ? (pkmn.name.length > 12 ? pkmn.name.slice(0, 10) + '..' : pkmn.name) : '??????';
+        const displayName = pkmn.caught
+            ? pkmn.name.length > 12
+                ? pkmn.name.slice(0, 10) + '..'
+                : pkmn.name
+            : '??????';
         return `<text x="${cx + cellSize / 2}" y="${cy + cellSize - 15}" font-family="sans-serif" font-size="10" font-weight="bold" fill="${pkmn.caught ? '#fff' : '#4a5568'}" text-anchor="middle">${displayName.toUpperCase()}</text>`;
-    }).join('')}
+    })
+        .join('')}
   </svg>`);
     const composites = [{ input: bgSvg, top: 0, left: 0 }];
     const spritePromises = pagePokemons.map(async (pkmn, i) => {
@@ -177,8 +236,16 @@ async function createPokedexImage(pageLabel, pagePokemons, totalCaught, totalCou
     composites.push({ input: fgSvg, top: 0, left: 0 });
     const outPath = path.join(TEMP_DIR, `pokedex-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
     await sharp({
-        create: { width: canvasWidth, height: canvasHeight, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } }
-    }).composite(composites).png().toFile(outPath);
+        create: {
+            width: canvasWidth,
+            height: canvasHeight,
+            channels: 4,
+            background: { r: 0, g: 0, b: 0, alpha: 0 },
+        },
+    })
+        .composite(composites)
+        .png()
+        .toFile(outPath);
     return outPath;
 }
 module.exports = {
@@ -216,26 +283,32 @@ module.exports = {
                 rarity: def.rarity,
                 emoji: def.emoji || '🐾',
                 count: caughtCounts[key] || 0,
-                caught: !!caughtCounts[key]
+                caught: !!caughtCounts[key],
             });
         }
         const RW = {};
-        RARITY_ORDER.forEach((r, i) => RW[r] = i);
+        RARITY_ORDER.forEach((r, i) => (RW[r] = i));
         allPokemon.sort((a, b) => (RW[a.rarity] ?? 99) - (RW[b.rarity] ?? 99) || a.name.localeCompare(b.name));
-        const totalCaught = allPokemon.filter(p => p.caught).length;
+        const totalCaught = allPokemon.filter((p) => p.caught).length;
         const totalCount = allPokemon.length;
         const percent = totalCount > 0 ? ((totalCaught / totalCount) * 100).toFixed(1) : '0.0';
         if (args.length > 0 && !message.mentions.users.has(args[0].replace(/[<@!>]/g, ''))) {
             // Detailed View Mode
             let qArgs = args;
             if (message.mentions.users.size > 0) {
-                qArgs = args.filter(a => !a.startsWith('<@'));
+                qArgs = args.filter((a) => !a.startsWith('<@'));
             }
             if (qArgs.length > 0) {
                 const q = qArgs.join(' ').toLowerCase();
-                const found = allPokemon.find(p => p.key.toLowerCase() === q || p.name.toLowerCase().includes(q));
+                const found = allPokemon.find((p) => p.key.toLowerCase() === q || p.name.toLowerCase().includes(q));
                 if (!found) {
-                    return message.reply({ embeds: [new EmbedBuilder().setColor(colors.warning).setDescription(`(¯\\_(ツ)_/¯) Couldn't find **${q}** in the region's database!`)] });
+                    return message.reply({
+                        embeds: [
+                            new EmbedBuilder()
+                                .setColor(colors.warning)
+                                .setDescription(`(¯\\_(ツ)_/¯) Couldn't find **${q}** in the region's database!`),
+                        ],
+                    });
                 }
                 if (!found.caught && target.id === message.author.id) {
                     const { getRarityEmoji } = require('../../utils/images.js');
@@ -243,13 +316,23 @@ module.exports = {
                         .setColor('#2C2F33')
                         .setTitle(`${getRarityEmoji(found.rarity, client)} ??????`)
                         .setDescription(`*No data available. This Pokémon has not been registered in your Pokédex.*`)
-                        .addFields({ name: '⭐ Rarity', value: `${getRarityEmoji(found.rarity, client)} ${found.rarity.charAt(0).toUpperCase() + found.rarity.slice(1)}`, inline: true }, { name: '📦 Owned', value: `**0×** caught`, inline: true })
+                        .addFields({
+                        name: '⭐ Rarity',
+                        value: `${getRarityEmoji(found.rarity, client)} ${found.rarity.charAt(0).toUpperCase() + found.rarity.slice(1)}`,
+                        inline: true,
+                    }, { name: '📦 Owned', value: `**0×** caught`, inline: true })
                         .setFooter({ text: `${target.username}'s Pokédex  •  Unregistered` })
                         .setTimestamp();
                     return message.reply({ embeds: [embed] });
                 }
                 else if (!found.caught) {
-                    return message.reply({ embeds: [new EmbedBuilder().setColor(colors.warning).setDescription(`(¯\\_(ツ)_/¯) **${target.username}** hasn't caught **${found.name}** yet!`)] });
+                    return message.reply({
+                        embeds: [
+                            new EmbedBuilder()
+                                .setColor(colors.warning)
+                                .setDescription(`(¯\\_(ツ)_/¯) **${target.username}** hasn't caught **${found.name}** yet!`),
+                        ],
+                    });
                 }
                 const msg = await message.reply({ content: '📖 Loading Pokédex entry...' });
                 const { embed, files } = await buildPokedexEmbed(target, found, animalsObj, animalsData, 0, totalCaught, client);
@@ -264,26 +347,40 @@ module.exports = {
         const generatePagePayload = async (page) => {
             const start = page * PAGE_SIZE;
             const end = start + PAGE_SIZE;
-            const items = allPokemon.slice(start, end).map((p, idx) => ({ ...p, index: start + idx + 1 }));
+            const items = allPokemon
+                .slice(start, end)
+                .map((p, idx) => ({ ...p, index: start + idx + 1 }));
             const imgPath = await createPokedexImage(`PAGE ${page + 1}`, items, totalCaught, totalCount);
             const embed = new EmbedBuilder()
                 .setColor('#e63946')
                 .setTitle(`📖 ${target.username}'s Pokédex Logbook`)
                 .setImage('attachment://pokedex-page.png')
-                .setFooter({ text: `Page ${page + 1} of ${maxPages}  •  ${totalCaught} / ${totalCount} Caught` });
+                .setFooter({
+                text: `Page ${page + 1} of ${maxPages}  •  ${totalCaught} / ${totalCount} Caught`,
+            });
             return {
                 embeds: [embed],
                 files: [new AttachmentBuilder(imgPath, { name: 'pokedex-page.png' })],
-                imgPath
+                imgPath,
             };
         };
         const payload = await generatePagePayload(currentPage);
         const msg = await message.reply({
             embeds: payload.embeds,
             files: payload.files,
-            components: maxPages > 1 ? [
-                new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('pdex_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(true), new ButtonBuilder().setCustomId('pdex_next').setLabel('Next  ▶').setStyle(ButtonStyle.Secondary).setDisabled(maxPages === 1))
-            ] : []
+            components: maxPages > 1
+                ? [
+                    new ActionRowBuilder().addComponents(new ButtonBuilder()
+                        .setCustomId('pdex_prev')
+                        .setLabel('◀  Prev')
+                        .setStyle(ButtonStyle.Secondary)
+                        .setDisabled(true), new ButtonBuilder()
+                        .setCustomId('pdex_next')
+                        .setLabel('Next  ▶')
+                        .setStyle(ButtonStyle.Secondary)
+                        .setDisabled(maxPages === 1)),
+                ]
+                : [],
         });
         if (payload.imgPath)
             fs.unlink(payload.imgPath, () => { });
@@ -291,7 +388,10 @@ module.exports = {
             const collector = msg.createMessageComponentCollector({ time: 60_000 });
             collector.on('collect', async (i) => {
                 if (i.user.id !== message.author.id)
-                    return i.reply({ content: "That's not yours! (っ˘ω˘ς)", flags: [MessageFlags.Ephemeral] });
+                    return i.reply({
+                        content: "That's not yours! (っ˘ω˘ς)",
+                        flags: [MessageFlags.Ephemeral],
+                    });
                 if (i.customId === 'pdex_prev' && currentPage > 0)
                     currentPage--;
                 else if (i.customId === 'pdex_next' && currentPage < maxPages - 1)
@@ -302,8 +402,16 @@ module.exports = {
                     embeds: nextPayload.embeds,
                     files: nextPayload.files,
                     components: [
-                        new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('pdex_prev').setLabel('◀  Prev').setStyle(ButtonStyle.Secondary).setDisabled(currentPage === 0), new ButtonBuilder().setCustomId('pdex_next').setLabel('Next  ▶').setStyle(ButtonStyle.Secondary).setDisabled(currentPage === maxPages - 1))
-                    ]
+                        new ActionRowBuilder().addComponents(new ButtonBuilder()
+                            .setCustomId('pdex_prev')
+                            .setLabel('◀  Prev')
+                            .setStyle(ButtonStyle.Secondary)
+                            .setDisabled(currentPage === 0), new ButtonBuilder()
+                            .setCustomId('pdex_next')
+                            .setLabel('Next  ▶')
+                            .setStyle(ButtonStyle.Secondary)
+                            .setDisabled(currentPage === maxPages - 1)),
+                    ],
                 });
                 if (nextPayload.imgPath)
                     fs.unlink(nextPayload.imgPath, () => { });

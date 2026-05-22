@@ -2,7 +2,8 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService.js');
+const EconomyService =
+  require('../../services/EconomyService').default || require('../../services/EconomyService.js');
 
 module.exports = {
   name: 'coinflip',
@@ -33,9 +34,25 @@ module.exports = {
 
     if (betAmount <= 0) {
       if (args[0]?.toLowerCase() === 'all' && userData.balance <= 0) {
-        return message.reply({ embeds: [{ color: colors.error, title: '💸 No Funds', description: `You don't have any balance to bet.` }] });
+        return message.reply({
+          embeds: [
+            {
+              color: colors.error,
+              title: '💸 No Funds',
+              description: `You don't have any balance to bet.`,
+            },
+          ],
+        });
       }
-      return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid Amount', description: 'Please provide a valid number.' }] });
+      return message.reply({
+        embeds: [
+          {
+            color: colors.error,
+            title: '❌ Invalid Amount',
+            description: 'Please provide a valid number.',
+          },
+        ],
+      });
     }
 
     // If user tries to bet "all" but it would exceed maxBet, use maxBet instead
@@ -44,7 +61,15 @@ module.exports = {
     }
 
     if (betAmount < minBet) {
-      return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet Too Low', description: `Minimum bet is **${minBet.toLocaleString()}** ${config.economy.currency}.` }] });
+      return message.reply({
+        embeds: [
+          {
+            color: colors.warning,
+            title: '💸 Bet Too Low',
+            description: `Minimum bet is **${minBet.toLocaleString()}** ${config.economy.currency}.`,
+          },
+        ],
+      });
     }
 
     if (!(await database.hasBalance(message.author.id, betAmount))) {
@@ -198,7 +223,8 @@ module.exports = {
         }
 
         // Update Quest Progress! (｡♥‿♥｡)
-        const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+        const QuestService =
+          require('../../services/QuestService').default || require('../../services/QuestService');
         await QuestService.updateProgress(message.author.id, 'COINFLIP', 1);
         await QuestService.updateWeeklyProgress(message.author.id, 'COINFLIP', 1);
       })

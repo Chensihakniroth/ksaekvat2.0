@@ -11,7 +11,7 @@ services:
     env_file:
       - .env
     ports:
-      - "8080:8080" # Maps local 8080 to container 8080
+      - '8080:8080' # Maps local 8080 to container 8080
     volumes:
       - ./logs:/app/logs # Persistent logs!
     networks:

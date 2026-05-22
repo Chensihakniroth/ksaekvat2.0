@@ -3,7 +3,8 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const PokemonBattleService = require('../../services/PokemonBattleService').default || require('../../services/PokemonBattleService');
+const PokemonBattleService = require('../../services/PokemonBattleService').default ||
+    require('../../services/PokemonBattleService');
 module.exports = {
     name: 'pteam',
     aliases: ['poketeam', 'pt'],
@@ -17,10 +18,11 @@ module.exports = {
             const speciesName = args.slice(1).join(' ').toLowerCase().replace(/\s+/g, '');
             if (!speciesName) {
                 return message.reply({
-                    embeds: [new EmbedBuilder()
+                    embeds: [
+                        new EmbedBuilder()
                             .setColor(colors.warning)
                             .setTitle('(・_・ヾ Who should I train?')
-                            .setDescription('Usage: `Kpteam add <pokemon>`\nExample: `Kpteam add pikachu`')
+                            .setDescription('Usage: `Kpteam add <pokemon>`\nExample: `Kpteam add pikachu`'),
                     ],
                 });
             }
@@ -28,10 +30,11 @@ module.exports = {
             const currentTeam = await database.getPokemonTeam(message.author.id);
             if (currentTeam.length >= config.pokemonBattle.maxTeamSize) {
                 return message.reply({
-                    embeds: [new EmbedBuilder()
+                    embeds: [
+                        new EmbedBuilder()
                             .setColor(colors.error)
                             .setTitle('(ಥ﹏ಥ) Team is full!')
-                            .setDescription(`Your battle team already has ${config.pokemonBattle.maxTeamSize} Pokémon!\nRemove one first with \`Kpteam remove <slot>\``)
+                            .setDescription(`Your battle team already has ${config.pokemonBattle.maxTeamSize} Pokémon!\nRemove one first with \`Kpteam remove <slot>\``),
                     ],
                 });
             }
@@ -40,10 +43,11 @@ module.exports = {
             const result = await database.trainPokemon(message.author.id, speciesName);
             if (!result.success) {
                 return message.reply({
-                    embeds: [new EmbedBuilder()
+                    embeds: [
+                        new EmbedBuilder()
                             .setColor(colors.error)
                             .setTitle('(｡•́︿•̀｡) Training Failed')
-                            .setDescription(result.message)
+                            .setDescription(result.message),
                     ],
                 });
             }
@@ -55,10 +59,13 @@ module.exports = {
             // Get type info for display
             const baseStats = await PokemonBattleService.getBaseStats(speciesName);
             const typeDisplay = baseStats
-                ? baseStats.types.map((t) => `${PokemonBattleService.getTypeEmoji(t)} ${t.charAt(0).toUpperCase() + t.slice(1)}`).join(' / ')
+                ? baseStats.types
+                    .map((t) => `${PokemonBattleService.getTypeEmoji(t)} ${t.charAt(0).toUpperCase() + t.slice(1)}`)
+                    .join(' / ')
                 : 'Unknown';
             return message.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [
+                    new EmbedBuilder()
                         .setColor(colors.success)
                         .setTitle(`(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧ ${speciesName.charAt(0).toUpperCase() + speciesName.slice(1)} is ready to battle!`)
                         .setDescription([
@@ -68,7 +75,7 @@ module.exports = {
                         `**Team Slot:** ${teamIds.length}/${config.pokemonBattle.maxTeamSize}`,
                         '',
                         `*1 ${speciesName} was consumed from your Zoo for training!*`,
-                    ].join('\n'))
+                    ].join('\n')),
                 ],
             });
         }
@@ -77,20 +84,22 @@ module.exports = {
             const slot = parseInt(args[1]);
             if (isNaN(slot) || slot < 1 || slot > 3) {
                 return message.reply({
-                    embeds: [new EmbedBuilder()
+                    embeds: [
+                        new EmbedBuilder()
                             .setColor(colors.warning)
                             .setTitle('(・_・ヾ Which slot?')
-                            .setDescription('Usage: `Kpteam remove <1-3>`')
+                            .setDescription('Usage: `Kpteam remove <1-3>`'),
                     ],
                 });
             }
             const currentTeam = await database.getPokemonTeam(message.author.id);
             if (slot > currentTeam.length) {
                 return message.reply({
-                    embeds: [new EmbedBuilder()
+                    embeds: [
+                        new EmbedBuilder()
                             .setColor(colors.error)
                             .setTitle('(｡•́︿•̀｡) Empty slot!')
-                            .setDescription('That slot is already empty.')
+                            .setDescription('That slot is already empty.'),
                     ],
                 });
             }
@@ -100,10 +109,11 @@ module.exports = {
             teamIds.splice(slot - 1, 1);
             await database.setPokemonTeam(message.author.id, teamIds);
             return message.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [
+                    new EmbedBuilder()
                         .setColor(colors.success)
                         .setTitle('✅ Pokémon benched!')
-                        .setDescription(`**${removed.speciesKey.charAt(0).toUpperCase() + removed.speciesKey.slice(1)}** (Lv.${removed.level}) was removed from your team.\n*They're still trained — you can re-add them anytime!*`)
+                        .setDescription(`**${removed.speciesKey.charAt(0).toUpperCase() + removed.speciesKey.slice(1)}** (Lv.${removed.level}) was removed from your team.\n*They're still trained — you can re-add them anytime!*`),
                 ],
             });
         }
@@ -112,10 +122,11 @@ module.exports = {
             const trained = await database.getTrainedPokemon(message.author.id);
             if (trained.length === 0) {
                 return message.reply({
-                    embeds: [new EmbedBuilder()
+                    embeds: [
+                        new EmbedBuilder()
                             .setColor(colors.warning)
-                            .setTitle("(・_・ヾ No trained Pokémon yet!")
-                            .setDescription("Train one from your Zoo with `Kpteam add <pokemon>`")
+                            .setTitle('(・_・ヾ No trained Pokémon yet!')
+                            .setDescription('Train one from your Zoo with `Kpteam add <pokemon>`'),
                     ],
                 });
             }
@@ -129,11 +140,12 @@ module.exports = {
                 lines.push(`${typeEmoji} **${p.speciesKey.charAt(0).toUpperCase() + p.speciesKey.slice(1)}** — Lv.${p.level}${inTeam}`);
             }
             return message.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [
+                    new EmbedBuilder()
                         .setColor(colors.primary)
                         .setTitle(`📋 ${message.author.username}'s Trained Pokémon`)
                         .setDescription(lines.join('\n'))
-                        .setFooter({ text: `${trained.length} trained | ⚔️ = In battle team` })
+                        .setFooter({ text: `${trained.length} trained | ⚔️ = In battle team` }),
                 ],
             });
         }
@@ -141,16 +153,17 @@ module.exports = {
         const currentTeam = await database.getPokemonTeam(message.author.id);
         if (currentTeam.length === 0) {
             return message.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [
+                    new EmbedBuilder()
                         .setColor(colors.warning)
-                        .setTitle("(・_・ヾ Your battle team is empty!")
+                        .setTitle('(・_・ヾ Your battle team is empty!')
                         .setDescription([
-                        "You need to train Pokémon from your Zoo first!",
-                        "",
-                        "**Step 1:** Catch Pokémon with `Khunt`",
-                        "**Step 2:** Train them with `Kpteam add <pokemon>`",
-                        "**Step 3:** Battle with `Kwild` or `Kduel @user`!",
-                    ].join('\n'))
+                        'You need to train Pokémon from your Zoo first!',
+                        '',
+                        '**Step 1:** Catch Pokémon with `Khunt`',
+                        '**Step 2:** Train them with `Kpteam add <pokemon>`',
+                        '**Step 3:** Battle with `Kwild` or `Kduel @user`!',
+                    ].join('\n')),
                 ],
             });
         }
@@ -159,7 +172,9 @@ module.exports = {
             const p = currentTeam[i];
             const baseStats = await PokemonBattleService.getBaseStats(p.speciesKey);
             const typeDisplay = baseStats
-                ? baseStats.types.map((t) => `${PokemonBattleService.getTypeEmoji(t)} ${t.charAt(0).toUpperCase() + t.slice(1)}`).join(' / ')
+                ? baseStats.types
+                    .map((t) => `${PokemonBattleService.getTypeEmoji(t)} ${t.charAt(0).toUpperCase() + t.slice(1)}`)
+                    .join(' / ')
                 : 'Unknown';
             const bp = baseStats ? await PokemonBattleService.buildBattlePokemon(p, 'A') : null;
             teamLines.push([
@@ -169,11 +184,14 @@ module.exports = {
             ].join('\n'));
         }
         return message.reply({
-            embeds: [new EmbedBuilder()
+            embeds: [
+                new EmbedBuilder()
                     .setColor(colors.primary)
                     .setTitle(`⚔️ ${message.author.username}'s Battle Team`)
                     .setDescription(teamLines.join('\n\n'))
-                    .setFooter({ text: `${currentTeam.length}/${config.pokemonBattle.maxTeamSize} slots | Kpteam add/remove/list` })
+                    .setFooter({
+                    text: `${currentTeam.length}/${config.pokemonBattle.maxTeamSize} slots | Kpteam add/remove/list`,
+                }),
             ],
         });
     },

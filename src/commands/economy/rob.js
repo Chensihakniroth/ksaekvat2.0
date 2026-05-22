@@ -64,7 +64,8 @@ async function getContextGif(pool) {
 module.exports = {
   name: 'rob',
   aliases: ['steal', 'heist', 'plon'],
-  description: 'Attempt to rob another user\'s wallet! 50/50 odds... but you might end up in jail. (¬‿¬)',
+  description:
+    "Attempt to rob another user's wallet! 50/50 odds... but you might end up in jail. (¬‿¬)",
   usage: 'rob <@user>',
   category: 'economy',
   cooldown: 60000, // 1 minute (60,000 ms)
@@ -86,7 +87,7 @@ module.exports = {
       if (jailGif) embed.setImage(jailGif);
 
       const sent = await message.reply({ embeds: [embed] });
-      setTimeout(() => sent.delete().catch(() => { }), 8000);
+      setTimeout(() => sent.delete().catch(() => {}), 8000);
       return 'CUSTOM_COOLDOWN'; // Signal to messageCreate that we handled it
     }
 
@@ -98,17 +99,21 @@ module.exports = {
           new EmbedBuilder()
             .setColor(colors.error)
             .setTitle('⚠️ Hoch plorn pi na ke?')
-            .setDescription('oun eng plorn na ke? Mention neak ng mao! (・_・ヾ\n**Usage:** `krob @user`')
-        ]
+            .setDescription(
+              'oun eng plorn na ke? Mention neak ng mao! (・_・ヾ\n**Usage:** `krob @user`'
+            ),
+        ],
       });
     }
 
     if (target.id === robber.id) {
-      return message.reply('You can\'t rob yourself... that\'s just moving money between pockets. (≧◡≦)');
+      return message.reply(
+        "You can't rob yourself... that's just moving money between pockets. (≧◡≦)"
+      );
     }
 
     if (target.bot) {
-      return message.reply('Bots don\'t carry cash. Nice try though. (¬‿¬)');
+      return message.reply("Bots don't carry cash. Nice try though. (¬‿¬)");
     }
 
     // ── Fetch both users ────────────────────────────────────────────────
@@ -122,15 +127,17 @@ module.exports = {
           new EmbedBuilder()
             .setColor(colors.warning)
             .setTitle('💸 ah oun ng ot luy pg ng ')
-            .setDescription(`**${target.username}** ror luy ma riel kmean. ror neak mean luy jeang ng mao (・_・ヾ`)
-        ]
+            .setDescription(
+              `**${target.username}** ror luy ma riel kmean. ror neak mean luy jeang ng mao (・_・ヾ`
+            ),
+        ],
       });
     }
 
     // ── Roll the dice ───────────────────────────────────────────────────
     const roll = Math.random();
     const jailChance = 0.15; // 15% chance of jail on failure
-    const successChance = 0.50; // 50% success rate
+    const successChance = 0.5; // 50% success rate
 
     // Random steal amount: 1,000 - 10,000, capped at target's wallet
     const stealAmount = Math.min(
@@ -151,11 +158,19 @@ module.exports = {
         .setTitle('💰 PLON BAN SOMRACH :3')
         .setDescription(
           `**${robber.username}** plorn **${stealAmount.toLocaleString()}** ${config.economy.currencySymbol} from **${target.username}**'s wallet! (¬‿¬)\n\n` +
-          `Their bank was untouchable... but their wallet? Wide open.`
+            `Their bank was untouchable... but their wallet? Wide open.`
         )
         .addFields(
-          { name: '🏃 Your Wallet', value: `**${(robberData.balance + stealAmount).toLocaleString()}** ${config.economy.currencySymbol}`, inline: true },
-          { name: '😭 Victim\'s Wallet', value: `**${(targetData.balance - stealAmount).toLocaleString()}** ${config.economy.currencySymbol}`, inline: true }
+          {
+            name: '🏃 Your Wallet',
+            value: `**${(robberData.balance + stealAmount).toLocaleString()}** ${config.economy.currencySymbol}`,
+            inline: true,
+          },
+          {
+            name: "😭 Victim's Wallet",
+            value: `**${(targetData.balance - stealAmount).toLocaleString()}** ${config.economy.currencySymbol}`,
+            inline: true,
+          }
         )
         .setTimestamp();
 
@@ -178,7 +193,7 @@ module.exports = {
         .setTitle('🚨 JORB KOK 1 - 0 ')
         .setDescription(
           `**${robber.username}** ror plorn **${target.username}** Tae police jab ban! (ಥ﹏ಥ)\n\n` +
-          `🔒 **Jail Time:** You can't rob for **20 minutes**!`
+            `🔒 **Jail Time:** You can't rob for **20 minutes**!`
         )
         .setTimestamp();
 
@@ -196,7 +211,7 @@ module.exports = {
       .setTitle('❌ plon ke ot ban haaaa')
       .setDescription(
         `**${robber.username}** jong plorn **${target.username}** but ke tarm torn (・_・ヾ\n\n` +
-        `Heng ai ke ot jab dak kok...`
+          `Heng ai ke ot jab dak kok...`
       )
       .setTimestamp();
 

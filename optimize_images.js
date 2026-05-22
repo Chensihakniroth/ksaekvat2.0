@@ -15,12 +15,16 @@ function getFiles(dir, allFiles) {
   if (!fs.existsSync(dir)) return allFiles || [];
   const files = fs.readdirSync(dir);
   allFiles = allFiles || [];
-  files.forEach(function(file) {
+  files.forEach(function (file) {
     const fullPath = path.join(dir, file);
     if (fs.statSync(fullPath).isDirectory()) {
       allFiles = getFiles(fullPath, allFiles);
     } else {
-      if (file.toLowerCase().endsWith('.png') || file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')) {
+      if (
+        file.toLowerCase().endsWith('.png') ||
+        file.toLowerCase().endsWith('.jpg') ||
+        file.toLowerCase().endsWith('.jpeg')
+      ) {
         allFiles.push(fullPath);
       }
     }
@@ -30,9 +34,9 @@ function getFiles(dir, allFiles) {
 
 async function convert() {
   console.log('🚀 Starting Universal WebP Conversion & Optimization...');
-  
+
   let totalFiles = [];
-  targetDirs.forEach(dir => {
+  targetDirs.forEach((dir) => {
     console.log(`Scanning: ${dir}`);
     totalFiles = totalFiles.concat(getFiles(dir));
   });
@@ -45,7 +49,7 @@ async function convert() {
   for (const file of totalFiles) {
     const ext = path.extname(file);
     const webpPath = file.replace(ext, '.webp');
-    
+
     // Skip if webp already exists (optional, but good for speed)
     if (fs.existsSync(webpPath) && fs.statSync(webpPath).size > 0) {
       skipped++;
@@ -56,10 +60,10 @@ async function convert() {
       await sharp(file)
         .webp({ quality: 80, effort: 6 }) // High effort for better compression
         .toFile(webpPath);
-      
+
       // Note: We'll keep original for now to avoid breaking existing code that might expect .png
       // In a real production environment, you'd switch the code to use .webp and delete the .png
-      
+
       saved++;
       if (saved % 50 === 0) console.log(`Optimized ${saved}/${totalFiles.length}...`);
     } catch (err) {

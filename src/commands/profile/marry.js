@@ -1,4 +1,10 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
+const {
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  MessageFlags,
+} = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const { getCharacterImage, getCharacterIcon } = require('../../utils/images.js');
@@ -18,7 +24,9 @@ module.exports = {
           new EmbedBuilder()
             .setColor(colors.error)
             .setTitle('(◕‸ ◕✿) Who is the lucky one?')
-            .setDescription('Please tell Mommy which character you want to marry, sweetie!\nExample: `Kmarry Raiden Shogun`'),
+            .setDescription(
+              'Please tell Mommy which character you want to marry, sweetie!\nExample: `Kmarry Raiden Shogun`'
+            ),
         ],
       });
     }
@@ -34,7 +42,7 @@ module.exports = {
     }
 
     // 2. Check if user has a Ring of Promise
-    const ring = userData.inventory.find(i => i.name === 'Ring of Promise' && i.count > 0);
+    const ring = userData.inventory.find((i) => i.name === 'Ring of Promise' && i.count > 0);
     if (!ring) {
       return message.reply({
         content: `💍 Oh no, sweetie! You need a **Ring of Promise** from the \`Kshop\` to propose! (｡•́︿•̀｡)`,
@@ -42,7 +50,7 @@ module.exports = {
     }
 
     // 3. Check if user owns the character
-    const charEntry = userData.gacha_inventory.find(i => i.name.toLowerCase().includes(charName));
+    const charEntry = userData.gacha_inventory.find((i) => i.name.toLowerCase().includes(charName));
     if (!charEntry) {
       return message.reply({
         content: `❌ You don't own that character yet, darling! You must find them in the gacha first. (っ˘ω˘ς)`,
@@ -55,13 +63,21 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor('#FF69B4')
       .setTitle('💍 A Proposal of Love!')
-      .setDescription(`Are you sure you want to use your **Ring of Promise** to marry **${fullChar.name}**, sweetie? (｡♥‿♥｡)`)
+      .setDescription(
+        `Are you sure you want to use your **Ring of Promise** to marry **${fullChar.name}**, sweetie? (｡♥‿♥｡)`
+      )
       .setImage(splashArt)
       .setFooter({ text: 'This action cannot be undone easily! (っ˘ω˘ς)' });
 
     const row = new ActionRowBuilder().addComponents(
-      new ButtonBuilder().setCustomId('marry_confirm').setLabel('Yes, I do!').setStyle(ButtonStyle.Success),
-      new ButtonBuilder().setCustomId('marry_cancel').setLabel('Not yet...').setStyle(ButtonStyle.Secondary)
+      new ButtonBuilder()
+        .setCustomId('marry_confirm')
+        .setLabel('Yes, I do!')
+        .setStyle(ButtonStyle.Success),
+      new ButtonBuilder()
+        .setCustomId('marry_cancel')
+        .setLabel('Not yet...')
+        .setStyle(ButtonStyle.Secondary)
     );
 
     const msg = await message.reply({ embeds: [embed], components: [row] });
@@ -75,14 +91,14 @@ module.exports = {
         // Consume Ring
         ring.count--;
         if (ring.count <= 0) {
-            userData.inventory = userData.inventory.filter(item => item.name !== 'Ring of Promise');
+          userData.inventory = userData.inventory.filter((item) => item.name !== 'Ring of Promise');
         }
-        
+
         // Set Spouse
         userData.spouse = {
           name: fullChar.name,
           affinity: 1,
-          marriedAt: new Date()
+          marriedAt: new Date(),
         };
 
         userData.markModified('inventory');
@@ -92,13 +108,19 @@ module.exports = {
         const successEmbed = new EmbedBuilder()
           .setColor('#FF69B4')
           .setTitle('🎉 JUST MARRIED! 🎊')
-          .setDescription(`Congratulations, darling! You and **${fullChar.name}** are now bound by the Ring of Promise! (｡♥‿♥｡)\n\nUse \`Kaffinity\` every day to grow your love!`)
+          .setDescription(
+            `Congratulations, darling! You and **${fullChar.name}** are now bound by the Ring of Promise! (｡♥‿♥｡)\n\nUse \`Kaffinity\` every day to grow your love!`
+          )
           .setImage(splashArt)
           .setFooter({ text: `Wedding Date: ${new Date().toLocaleDateString()}` });
 
         await i.update({ embeds: [successEmbed], components: [] });
       } else {
-        await i.update({ content: 'Mommy understands, sweetie. Take your time! (◕‿◕✿)', embeds: [], components: [] });
+        await i.update({
+          content: 'Mommy understands, sweetie. Take your time! (◕‿◕✿)',
+          embeds: [],
+          components: [],
+        });
       }
     });
 

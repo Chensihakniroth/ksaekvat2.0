@@ -19,9 +19,15 @@ module.exports = {
         const arg = args[0]?.toLowerCase();
         if (arg) {
             const ballTypeMap = {
-                'p': 'pokeball', 'poke': 'pokeball', 'pokeball': 'pokeball',
-                'u': 'ultraball', 'ultra': 'ultraball', 'ultraball': 'ultraball',
-                'm': 'masterball', 'master': 'masterball', 'masterball': 'masterball'
+                p: 'pokeball',
+                poke: 'pokeball',
+                pokeball: 'pokeball',
+                u: 'ultraball',
+                ultra: 'ultraball',
+                ultraball: 'ultraball',
+                m: 'masterball',
+                master: 'masterball',
+                masterball: 'masterball',
             };
             const typeToUse = ballTypeMap[arg];
             if (typeToUse) {
@@ -34,7 +40,7 @@ module.exports = {
         // Parallelize DB calls for speed! (｡♥‿♥｡)
         const [userData, animalsData] = await Promise.all([
             database.getUser(message.author.id, message.author.username),
-            database.loadAnimals()
+            database.loadAnimals(),
         ]);
         // Check for active one-time balls
         const boosters = userData.boosters || new Map();
@@ -42,7 +48,13 @@ module.exports = {
         const activeUltraball = boosters.get('ultraball')?.active && boosters.get('ultraball')?.oneTime;
         const activeMasterball = boosters.get('masterball')?.active && boosters.get('masterball')?.oneTime;
         const activeBall = activeMasterball || activeUltraball || activePokeball;
-        let activeBallType = activeMasterball ? 'masterball' : activeUltraball ? 'ultraball' : activePokeball ? 'pokeball' : null;
+        let activeBallType = activeMasterball
+            ? 'masterball'
+            : activeUltraball
+                ? 'ultraball'
+                : activePokeball
+                    ? 'pokeball'
+                    : null;
         let distractionChance = config.hunting.distractionChance;
         if (activeMasterball)
             distractionChance = 0;
@@ -129,9 +141,13 @@ module.exports = {
             .setColor(parseInt(rarities[selectedRarity].color.slice(1), 16))
             .setTitle(`${rarityEmoji} ${animal.name}`)
             .setDescription(`*${rarities[selectedRarity].name} Rarity*`)
-            .setFooter({ text: `+${expReward} XP${statusText}${expRes.leveledUp ? ` | 🎊 Rank Up: ${expRes.newLevel}!` : ''}` });
+            .setFooter({
+            text: `+${expReward} XP${statusText}${expRes.leveledUp ? ` | 🎊 Rank Up: ${expRes.newLevel}!` : ''}`,
+        });
         if (imgData) {
-            const attachment = new (require('discord.js').AttachmentBuilder)(imgData.buffer, { name: imgData.fileName });
+            const attachment = new (require('discord.js').AttachmentBuilder)(imgData.buffer, {
+                name: imgData.fileName,
+            });
             embed.setImage(`attachment://${imgData.fileName}`);
             files.push(attachment);
         }

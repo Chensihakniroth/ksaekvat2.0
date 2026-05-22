@@ -8,7 +8,7 @@ const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
 const sharp = require('sharp');
-const { getItemEmoji, getRarityEmoji, getElementEmoji, getRoleEmoji } = require('../../utils/images.js');
+const { getItemEmoji, getRarityEmoji, getElementEmoji, getRoleEmoji, } = require('../../utils/images.js');
 const PULL_COST = 10000;
 const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
 // Ensure temp directory exists
@@ -39,14 +39,16 @@ async function createGachaResultImage(results) {
                     responseType: 'arraybuffer',
                     headers: {
                         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-                        'Referer': 'https://pokemon.fandom.com/'
-                    }
+                        Referer: 'https://pokemon.fandom.com/',
+                    },
                 });
                 imageBuffer = Buffer.from(response.data);
             }
             else if (item.image_url) {
                 // Handle local paths! (｡♥‿♥｡)
-                const fullPath = path.isAbsolute(item.image_url) ? item.image_url : path.join(process.cwd(), item.image_url);
+                const fullPath = path.isAbsolute(item.image_url)
+                    ? item.image_url
+                    : path.join(process.cwd(), item.image_url);
                 if (fs.existsSync(fullPath)) {
                     imageBuffer = fs.readFileSync(fullPath);
                 }
@@ -63,7 +65,7 @@ async function createGachaResultImage(results) {
             const rarityColors = {
                 5: '#FFB13F', // Gold
                 4: '#A256FF', // Purple
-                3: '#51A0FF' // Blue
+                3: '#51A0FF', // Blue
             };
             const bgColor = rarityColors[item.rarity] || '#1c1d21';
             let cardImage = sharp(imageBuffer).resize(cardWidth, cardHeight, {
@@ -72,10 +74,7 @@ async function createGachaResultImage(results) {
             });
             if (useCover) {
                 // For Genshin/WuWa/HSR, flatten with rarity background
-                processedCard = await cardImage
-                    .flatten({ background: bgColor })
-                    .png()
-                    .toBuffer();
+                processedCard = await cardImage.flatten({ background: bgColor }).png().toBuffer();
             }
             else {
                 // For others (ZZZ, Common items), place the image onto a card with rarity background and a nice border! (｡♥‿♥｡)
@@ -88,10 +87,14 @@ async function createGachaResultImage(results) {
                         background: bgColor,
                     },
                 })
-                    .composite([{
-                        input: await cardImage.resize(cardWidth - 80, cardHeight - 120, { fit: 'contain' }).toBuffer(),
-                        blend: 'over'
-                    }])
+                    .composite([
+                    {
+                        input: await cardImage
+                            .resize(cardWidth - 80, cardHeight - 120, { fit: 'contain' })
+                            .toBuffer(),
+                        blend: 'over',
+                    },
+                ])
                     .png()
                     .toBuffer();
                 processedCard = await sharp({

@@ -88,7 +88,7 @@ class GachaService {
     // Mommy's Guarantee! Ensures at least one 4-star or better per 10-pull. (｡♥‿♥｡)
     if (!hasHighRarity) {
       // Find a 3-star to replace
-      const replacementIndex = results.findIndex(r => r.rarity === 3);
+      const replacementIndex = results.findIndex((r) => r.rarity === 3);
       if (replacementIndex !== -1) {
         const fourStarPool = pool['4'];
         if (fourStarPool && fourStarPool.length > 0) {

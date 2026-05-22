@@ -10,7 +10,7 @@ const items = [
     rarity: '3',
     emoji: '✨',
     type: 'item',
-    image_url: 'http://bucket-production-4ca0.up.railway.app/gacha-images/common/stardust.png'
+    image_url: 'http://bucket-production-4ca0.up.railway.app/gacha-images/common/stardust.png',
   },
   {
     name: 'Pokeball',
@@ -18,7 +18,7 @@ const items = [
     rarity: '3',
     emoji: '⚪',
     type: 'item',
-    image_url: 'http://bucket-production-4ca0.up.railway.app/gacha-images/common/poke_man.png'
+    image_url: 'http://bucket-production-4ca0.up.railway.app/gacha-images/common/poke_man.png',
   },
   {
     name: 'Ultraball',
@@ -26,7 +26,7 @@ const items = [
     rarity: '4',
     emoji: '🟡',
     type: 'item',
-    image_url: 'assets/pokeball/ultra_ball.png'
+    image_url: 'assets/pokeball/ultra_ball.png',
   },
   {
     name: 'Master Ball',
@@ -34,8 +34,8 @@ const items = [
     rarity: '5',
     emoji: '🟣',
     type: 'item',
-    image_url: 'assets/pokeball/master_ball.png'
-  }
+    image_url: 'assets/pokeball/master_ball.png',
+  },
 ];
 
 async function seedItems() {
@@ -44,11 +44,10 @@ async function seedItems() {
     console.log('Connected to MongoDB');
 
     for (const item of items) {
-      await Character.findOneAndUpdate(
-        { name: item.name, game: item.game },
-        item,
-        { upsert: true, new: true }
-      );
+      await Character.findOneAndUpdate({ name: item.name, game: item.game }, item, {
+        upsert: true,
+        new: true,
+      });
       console.log(`Seeded item: ${item.name}`);
     }
 

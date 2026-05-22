@@ -30,7 +30,9 @@ router.use((req: Request, res: Response, next: NextFunction) => {
   entry.count++;
   // Increased limit for dashboard functionality (galleries/icons)
   if (entry.count > 1000) {
-    return res.status(429).json({ success: false, error: 'Too many requests. Slow down, darling! (ᗒᗣᗕ)' });
+    return res
+      .status(429)
+      .json({ success: false, error: 'Too many requests. Slow down, darling! (ᗒᗣᗕ)' });
   }
   next();
 });
@@ -46,6 +48,8 @@ router.use('/auth', require('./routes/auth'));
 router.use('/shop', require('./routes/shop'));
 
 // --- Health ---
-router.get('/ping', (_req, res) => res.json({ success: true, message: 'KSAEKVAT API is alive! ヽ(>∀<☆)ノ' }));
+router.get('/ping', (_req, res) =>
+  res.json({ success: true, message: 'KSAEKVAT API is alive! ヽ(>∀<☆)ノ' })
+);
 
 module.exports = router;

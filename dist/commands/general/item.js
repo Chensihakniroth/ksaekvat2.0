@@ -19,12 +19,27 @@ module.exports = {
             const ultraballEmoji = getItemEmoji({ name: 'Ultraball' }, client);
             const masterballEmoji = getItemEmoji({ name: 'Master Ball' }, client);
             const itemsList = [
-                { id: 'star_dust', name: 'Star Dust', count: userData.star_dust || 0, emoji: stardustEmoji },
+                {
+                    id: 'star_dust',
+                    name: 'Star Dust',
+                    count: userData.star_dust || 0,
+                    emoji: stardustEmoji,
+                },
                 { id: 'pokeball', name: 'Pokeball', count: userData.pokeballs || 0, emoji: pokeballEmoji },
-                { id: 'ultraball', name: 'Ultraball', count: userData.ultraballs || 0, emoji: ultraballEmoji },
-                { id: 'masterball', name: 'Master Ball', count: userData.masterballs || 0, emoji: masterballEmoji },
+                {
+                    id: 'ultraball',
+                    name: 'Ultraball',
+                    count: userData.ultraballs || 0,
+                    emoji: ultraballEmoji,
+                },
+                {
+                    id: 'masterball',
+                    name: 'Master Ball',
+                    count: userData.masterballs || 0,
+                    emoji: masterballEmoji,
+                },
             ];
-            const heldItems = itemsList.filter(item => item.count > 0);
+            const heldItems = itemsList.filter((item) => item.count > 0);
             const embed = new EmbedBuilder()
                 .setColor(colors.primary)
                 .setTitle(`🎒 ${message.author.username}'s Bag`)
@@ -33,7 +48,7 @@ module.exports = {
                 embed.setDescription('*Your bag is empty, darling. Try some gacha pulls! (｡•́︿•̀｡)*');
             }
             else {
-                const list = heldItems.map(w => `${w.emoji} **${w.name}**: ${w.count}`);
+                const list = heldItems.map((w) => `${w.emoji} **${w.name}**: ${w.count}`);
                 embed.setDescription(`**Items in your bag:**\n\n${list.join('\n')}\n\n*Click a button below to use a ball!*`);
             }
             embed.setFooter({ text: 'Pokeballs are one-time-use and valid for exactly one hunt! (◕‿✿)' });
@@ -70,10 +85,13 @@ module.exports = {
         });
         collector.on('collect', async (i) => {
             if (i.user.id !== userId)
-                return i.reply({ content: "Not your bag, darling! (っ˘ω˘ς)", flags: [MessageFlags.Ephemeral] });
+                return i.reply({
+                    content: 'Not your bag, darling! (っ˘ω˘ς)',
+                    flags: [MessageFlags.Ephemeral],
+                });
             if (i.customId === 'go_shop') {
                 return i.reply({
-                    content: '🏪 Use `Kshop` to visit Mommy\'s General Store and exchange Star Dust for characters! (｡♥‿♥｡)',
+                    content: "🏪 Use `Kshop` to visit Mommy's General Store and exchange Star Dust for characters! (｡♥‿♥｡)",
                     flags: [MessageFlags.Ephemeral],
                 });
             }
@@ -89,7 +107,10 @@ module.exports = {
             const boosters = userData.boosters || new Map();
             const currentBooster = boosters.get(type);
             if (currentBooster?.active && currentBooster?.oneTime) {
-                return i.reply({ content: `❌ You already have a **${type}** active for your next hunt, darling! (｡•́︿•̀｡)`, flags: [MessageFlags.Ephemeral] });
+                return i.reply({
+                    content: `❌ You already have a **${type}** active for your next hunt, darling! (｡•́︿•̀｡)`,
+                    flags: [MessageFlags.Ephemeral],
+                });
             }
             const result = await database.setPokeball(userId, type);
             if (!result.success) {

@@ -15,7 +15,6 @@ import path from 'path';
 const PokedexClass = (Pokedex as any).default || Pokedex;
 const P = new PokedexClass(); // Includes built-in auto-caching
 
-
 interface ZooStats {
   totalAnimals: number;
   totalValue: number;
@@ -27,12 +26,14 @@ class AnimalService {
    * Fetch Pokémon image buffer directly from PokeAPI GitHub (｡♥‿♥｡)
    * Includes local file caching to make Khunt and Kzoo super fast!
    */
-  public async getPokemonImageBuffer(key: string): Promise<{ buffer: Buffer, fileName: string } | null> {
+  public async getPokemonImageBuffer(
+    key: string
+  ): Promise<{ buffer: Buffer; fileName: string } | null> {
     const CACHE_DIR = path.join(process.cwd(), '.tmp', 'pokemon_cache');
     if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
 
     const localPath = path.join(CACHE_DIR, `${key}_full.png`);
-    
+
     // 1. Check local cache first! (•̀ᴗ•́)و
     if (fs.existsSync(localPath)) {
       return { buffer: fs.readFileSync(localPath), fileName: `${key}.png` };
@@ -54,8 +55,9 @@ class AnimalService {
       const response = await axios.get(url, {
         responseType: 'arraybuffer',
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
-        }
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36',
+        },
       });
 
       const buffer = Buffer.from(response.data);
@@ -77,7 +79,7 @@ class AnimalService {
     if (!fs.existsSync(CACHE_DIR)) fs.mkdirSync(CACHE_DIR, { recursive: true });
 
     const localPath = path.join(CACHE_DIR, `${key}_sprite.png`);
-    
+
     if (fs.existsSync(localPath)) {
       return fs.readFileSync(localPath);
     }
@@ -99,7 +101,7 @@ class AnimalService {
 
       const response = await axios.get(url, {
         responseType: 'arraybuffer',
-        headers: { 'User-Agent': 'Mozilla/5.0' }
+        headers: { 'User-Agent': 'Mozilla/5.0' },
       });
 
       const buffer = Buffer.from(response.data);
@@ -134,10 +136,10 @@ class AnimalService {
       // 3. Resize using Sharp
       const sharp = require('sharp');
       const resized = await sharp(originalBuffer)
-        .resize(size, size, { 
-          fit: 'contain', 
+        .resize(size, size, {
+          fit: 'contain',
           background: { r: 0, g: 0, b: 0, alpha: 0 },
-          kernel: 'nearest' 
+          kernel: 'nearest',
         })
         .toBuffer();
 
@@ -175,16 +177,16 @@ class AnimalService {
       const meta = await sharp(resizedBuffer).metadata();
       const alphaChannel = await sharp(resizedBuffer).extractChannel(3).toBuffer();
       const silhouette = await sharp({
-        create: { 
-          width: meta.width || size, 
-          height: meta.height || size, 
-          channels: 3, 
-          background: { r: 0, g: 0, b: 0 } 
-        }
+        create: {
+          width: meta.width || size,
+          height: meta.height || size,
+          channels: 3,
+          background: { r: 0, g: 0, b: 0 },
+        },
       })
-      .joinChannel(alphaChannel)
-      .png()
-      .toBuffer();
+        .joinChannel(alphaChannel)
+        .png()
+        .toBuffer();
 
       // 4. Save to cache
       fs.writeFileSync(localPath, silhouette);
@@ -207,7 +209,8 @@ class AnimalService {
       rarityStats[rarity] = { count: 0, value: 0 };
     }
 
-    const rarityEntries = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
+    const rarityEntries =
+      userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
 
     for (const [rarity, animals] of rarityEntries) {
       if (animalsData[rarity] && rarityStats[rarity]) {
@@ -218,9 +221,9 @@ class AnimalService {
 
           if (animalsData[rarity][animalKey]) {
             const val = animalsData[rarity][animalKey].value * (count as number);
-            totalAnimals += (count as number);
+            totalAnimals += count as number;
             totalValue += val;
-            rarityStats[rarity].count += (count as number);
+            rarityStats[rarity].count += count as number;
             rarityStats[rarity].value += val;
           }
         }
@@ -233,7 +236,11 @@ class AnimalService {
   /**
    * Determine badges based on collection status.
    */
-  public calculateBadges(totalAnimalsFound: number, totalValue: number, userAnimals: any): string[] {
+  public calculateBadges(
+    totalAnimalsFound: number,
+    totalValue: number,
+    userAnimals: any
+  ): string[] {
     const badges: string[] = [];
     if (totalAnimalsFound >= 100) badges.push('🦁 **Hunter**');
     if (totalAnimalsFound >= 500) badges.push('👑 **Master**');
@@ -251,50 +258,259 @@ class AnimalService {
   }
   private static readonly VALID_POKEMON = new Set([
     // GEN 1
-    'bulbasaur', 'ivysaur', 'venusaur', 'charmander', 'charmeleon', 'charizard',
-    'squirtle', 'wartortle', 'blastoise', 'caterpie', 'metapod', 'butterfree',
-    'weedle', 'kakuna', 'beedrill', 'pidgey', 'pidgeotto', 'pidgeot',
-    'rattata', 'raticate', 'spearow', 'fearow', 'ekans', 'arbok',
-    'pikachu', 'raichu', 'sandshrew', 'sandslash', 'nidoran-f', 'nidorina',
-    'nidoqueen', 'nidoran-m', 'nidorino', 'nidoking', 'clefairy', 'clefable',
-    'vulpix', 'ninetales', 'jigglypuff', 'wigglytuff', 'zubat', 'golbat',
-    'oddish', 'gloom', 'vileplume', 'paras', 'parasect', 'venonat',
-    'venomoth', 'diglett', 'dugtrio', 'meowth', 'persian', 'psyduck',
-    'golduck', 'mankey', 'primeape', 'growlithe', 'arcanine', 'poliwag',
-    'poliwhirl', 'poliwrath', 'abra', 'kadabra', 'alakazam', 'machop',
-    'machoke', 'machamp', 'bellsprout', 'weepinbell', 'victreebel', 'tentacool',
-    'tentacruel', 'geodude', 'graveler', 'golem', 'ponyta', 'rapidash',
-    'slowpoke', 'slowbro', 'magnemite', 'magneton', 'farfetchd', 'doduo',
-    'dodrio', 'seel', 'dewgong', 'grimer', 'muk', 'shellder', 'cloyster',
-    'gastly', 'haunter', 'gengar', 'onix', 'drowzee', 'hypno', 'krabby',
-    'kingler', 'voltorb', 'electrode', 'exeggcute', 'exeggutor', 'cubone',
-    'marowak', 'hitmonlee', 'hitmonchan', 'lickitung', 'koffing', 'weezing',
-    'rhyhorn', 'rhydon', 'chansey', 'tangela', 'kangaskhan', 'horsea',
-    'seadra', 'goldeen', 'seaking', 'staryu', 'starmie', 'mr-mime',
-    'scyther', 'jynx', 'electabuzz', 'magmar', 'pinsir', 'tauros',
-    'magikarp', 'gyarados', 'lapras', 'ditto', 'eevee', 'vaporeon',
-    'jolteon', 'flareon', 'porygon', 'omanyte', 'omastar', 'kabuto',
-    'kabutops', 'aerodactyl', 'snorlax', 'articuno', 'zapdos', 'moltres',
-    'dratini', 'dragonair', 'dragonite', 'mewtwo', 'mew', 'missingno', 'shinycharizard',
-    
+    'bulbasaur',
+    'ivysaur',
+    'venusaur',
+    'charmander',
+    'charmeleon',
+    'charizard',
+    'squirtle',
+    'wartortle',
+    'blastoise',
+    'caterpie',
+    'metapod',
+    'butterfree',
+    'weedle',
+    'kakuna',
+    'beedrill',
+    'pidgey',
+    'pidgeotto',
+    'pidgeot',
+    'rattata',
+    'raticate',
+    'spearow',
+    'fearow',
+    'ekans',
+    'arbok',
+    'pikachu',
+    'raichu',
+    'sandshrew',
+    'sandslash',
+    'nidoran-f',
+    'nidorina',
+    'nidoqueen',
+    'nidoran-m',
+    'nidorino',
+    'nidoking',
+    'clefairy',
+    'clefable',
+    'vulpix',
+    'ninetales',
+    'jigglypuff',
+    'wigglytuff',
+    'zubat',
+    'golbat',
+    'oddish',
+    'gloom',
+    'vileplume',
+    'paras',
+    'parasect',
+    'venonat',
+    'venomoth',
+    'diglett',
+    'dugtrio',
+    'meowth',
+    'persian',
+    'psyduck',
+    'golduck',
+    'mankey',
+    'primeape',
+    'growlithe',
+    'arcanine',
+    'poliwag',
+    'poliwhirl',
+    'poliwrath',
+    'abra',
+    'kadabra',
+    'alakazam',
+    'machop',
+    'machoke',
+    'machamp',
+    'bellsprout',
+    'weepinbell',
+    'victreebel',
+    'tentacool',
+    'tentacruel',
+    'geodude',
+    'graveler',
+    'golem',
+    'ponyta',
+    'rapidash',
+    'slowpoke',
+    'slowbro',
+    'magnemite',
+    'magneton',
+    'farfetchd',
+    'doduo',
+    'dodrio',
+    'seel',
+    'dewgong',
+    'grimer',
+    'muk',
+    'shellder',
+    'cloyster',
+    'gastly',
+    'haunter',
+    'gengar',
+    'onix',
+    'drowzee',
+    'hypno',
+    'krabby',
+    'kingler',
+    'voltorb',
+    'electrode',
+    'exeggcute',
+    'exeggutor',
+    'cubone',
+    'marowak',
+    'hitmonlee',
+    'hitmonchan',
+    'lickitung',
+    'koffing',
+    'weezing',
+    'rhyhorn',
+    'rhydon',
+    'chansey',
+    'tangela',
+    'kangaskhan',
+    'horsea',
+    'seadra',
+    'goldeen',
+    'seaking',
+    'staryu',
+    'starmie',
+    'mr-mime',
+    'scyther',
+    'jynx',
+    'electabuzz',
+    'magmar',
+    'pinsir',
+    'tauros',
+    'magikarp',
+    'gyarados',
+    'lapras',
+    'ditto',
+    'eevee',
+    'vaporeon',
+    'jolteon',
+    'flareon',
+    'porygon',
+    'omanyte',
+    'omastar',
+    'kabuto',
+    'kabutops',
+    'aerodactyl',
+    'snorlax',
+    'articuno',
+    'zapdos',
+    'moltres',
+    'dratini',
+    'dragonair',
+    'dragonite',
+    'mewtwo',
+    'mew',
+    'missingno',
+    'shinycharizard',
+
     // GEN 2
-    'chikorita', 'bayleef', 'meganium', 'cyndaquil', 'quilava', 'typhlosion',
-    'totodile', 'croconaw', 'feraligatr', 'sentret', 'furret', 'hoothoot',
-    'noctowl', 'ledyba', 'ledian', 'spinarak', 'ariados', 'crobat',
-    'chinchou', 'lanturn', 'pichu', 'cleffa', 'igglybuff', 'togepi',
-    'togetic', 'natu', 'xatu', 'mareep', 'flaaffy', 'ampharos',
-    'bellossom', 'marill', 'azumarill', 'sudowoodo', 'politoed', 'hoppip',
-    'skiploom', 'jumpluff', 'aipom', 'sunkern', 'sunflora', 'yanma',
-    'wooper', 'quagsire', 'espeon', 'umbreon', 'murkrow', 'slowking',
-    'misdreavus', 'girafarig', 'pineco', 'forretress', 'dunsparce', 'gligar',
-    'steelix', 'snubbull', 'granbull', 'qwilfish', 'scizor', 'shuckle',
-    'heracross', 'sneasel', 'teddiursa', 'ursaring', 'slugma', 'magcargo',
-    'swinub', 'piloswine', 'corsola', 'remoraid', 'octillery', 'delibird',
-    'mantine', 'skarmory', 'houndour', 'houndoom', 'kingdra', 'phanpy',
-    'donphan', 'porygon2', 'stantler', 'smeargle', 'tyrogue', 'hitmontop',
-    'smoochum', 'elekid', 'magby', 'miltank', 'blissey', 'raikou',
-    'entei', 'suicune', 'larvitar', 'pupitar', 'tyranitar', 'lugia',
-    'ho_oh', 'celebi'
+    'chikorita',
+    'bayleef',
+    'meganium',
+    'cyndaquil',
+    'quilava',
+    'typhlosion',
+    'totodile',
+    'croconaw',
+    'feraligatr',
+    'sentret',
+    'furret',
+    'hoothoot',
+    'noctowl',
+    'ledyba',
+    'ledian',
+    'spinarak',
+    'ariados',
+    'crobat',
+    'chinchou',
+    'lanturn',
+    'pichu',
+    'cleffa',
+    'igglybuff',
+    'togepi',
+    'togetic',
+    'natu',
+    'xatu',
+    'mareep',
+    'flaaffy',
+    'ampharos',
+    'bellossom',
+    'marill',
+    'azumarill',
+    'sudowoodo',
+    'politoed',
+    'hoppip',
+    'skiploom',
+    'jumpluff',
+    'aipom',
+    'sunkern',
+    'sunflora',
+    'yanma',
+    'wooper',
+    'quagsire',
+    'espeon',
+    'umbreon',
+    'murkrow',
+    'slowking',
+    'misdreavus',
+    'girafarig',
+    'pineco',
+    'forretress',
+    'dunsparce',
+    'gligar',
+    'steelix',
+    'snubbull',
+    'granbull',
+    'qwilfish',
+    'scizor',
+    'shuckle',
+    'heracross',
+    'sneasel',
+    'teddiursa',
+    'ursaring',
+    'slugma',
+    'magcargo',
+    'swinub',
+    'piloswine',
+    'corsola',
+    'remoraid',
+    'octillery',
+    'delibird',
+    'mantine',
+    'skarmory',
+    'houndour',
+    'houndoom',
+    'kingdra',
+    'phanpy',
+    'donphan',
+    'porygon2',
+    'stantler',
+    'smeargle',
+    'tyrogue',
+    'hitmontop',
+    'smoochum',
+    'elekid',
+    'magby',
+    'miltank',
+    'blissey',
+    'raikou',
+    'entei',
+    'suicune',
+    'larvitar',
+    'pupitar',
+    'tyranitar',
+    'lugia',
+    'ho_oh',
+    'celebi',
   ]);
 
   private imageCache: Map<string, string> = new Map();
@@ -304,7 +520,8 @@ class AnimalService {
    * Sanitize names for PokeAPI (e.g. Mr. Mime -> mr-mime)
    */
   private sanitizeName(name: string): string {
-    return name.toLowerCase()
+    return name
+      .toLowerCase()
       .replace(/nidoran\s?♀/g, 'nidoran-f')
       .replace(/nidoran\s?♂/g, 'nidoran-m')
       .replace(/farfetch['’]d/g, 'farfetchd')
@@ -337,7 +554,8 @@ class AnimalService {
     }
 
     if (lookup === 'missingno') {
-      const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
+      const url =
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
       this.imageCache.set(key, url);
       return url;
     }
@@ -352,8 +570,9 @@ class AnimalService {
       const pokemon = await P.getPokemonByName(lookup as any);
       const id = pokemon.id;
 
-      const baseUrl = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork';
-      const url = isShiny 
+      const baseUrl =
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork';
+      const url = isShiny
         ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${id}.png`
         : `${baseUrl}/${id}.png`;
 
@@ -366,7 +585,6 @@ class AnimalService {
       return null;
     }
   }
-
 
   /**
    * Fetch Pokémon sprites for PC Box style UI using PokeAPI GitHub (｡♥‿♥｡)
@@ -392,7 +610,8 @@ class AnimalService {
     }
 
     if (lookup === 'missingno') {
-      const url = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
+      const url =
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/25.png';
       this.spriteCache.set(key, url);
       return url;
     }
@@ -434,7 +653,7 @@ class AnimalService {
       // id 2 is the classic Kanto pokedex used in Red/Blue
       const dex = await P.getPokedexByName('kanto');
       const kantoNames = new Set<string>();
-      
+
       if (dex && dex.pokemon_entries) {
         for (const entry of dex.pokemon_entries) {
           if (entry.pokemon_species && entry.pokemon_species.name) {
@@ -442,7 +661,7 @@ class AnimalService {
           }
         }
       }
-      
+
       // Also add known manual overrides just in case (e.g. charizard being shiny)
       kantoNames.add('shinycharizard');
       kantoNames.add('missingno');

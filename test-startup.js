@@ -8,33 +8,35 @@ client.slashCommands = new Collection();
 client.aliases = new Collection();
 
 try {
-    // Test requiring core services
-    const db = require('./dist/services/DatabaseService');
-    const imgGen = require('./dist/services/ImageGenerationService');
+  // Test requiring core services
+  const db = require('./dist/services/DatabaseService');
+  const imgGen = require('./dist/services/ImageGenerationService');
 
-    // Test loading commands
-    const commandsPath = path.join(__dirname, 'dist', 'commands');
-    const commandFolders = fs.readdirSync(commandsPath);
-    let loaded = 0;
+  // Test loading commands
+  const commandsPath = path.join(__dirname, 'dist', 'commands');
+  const commandFolders = fs.readdirSync(commandsPath);
+  let loaded = 0;
 
-    for (const folder of commandFolders) {
-        const folderPath = path.join(commandsPath, folder);
-        if (!fs.statSync(folderPath).isDirectory()) continue;
+  for (const folder of commandFolders) {
+    const folderPath = path.join(commandsPath, folder);
+    if (!fs.statSync(folderPath).isDirectory()) continue;
 
-        const commandFiles = fs.readdirSync(folderPath).filter(file => file.endsWith('.js'));
-        for (const file of commandFiles) {
-            const filePath = path.join(folderPath, file);
-            const command = require(filePath);
-            if ('name' in command && 'execute' in command) {
-                loaded++;
-            }
-        }
+    const commandFiles = fs.readdirSync(folderPath).filter((file) => file.endsWith('.js'));
+    for (const file of commandFiles) {
+      const filePath = path.join(folderPath, file);
+      const command = require(filePath);
+      if ('name' in command && 'execute' in command) {
+        loaded++;
+      }
     }
+  }
 
-    console.log(`PASS: Required core services and successfully loaded ${loaded} command files with no missing dependencies!`);
-    process.exit(0);
+  console.log(
+    `PASS: Required core services and successfully loaded ${loaded} command files with no missing dependencies!`
+  );
+  process.exit(0);
 } catch (e) {
-    console.error("FAIL: Startup generated an exception:");
-    console.error(e);
-    process.exit(1);
+  console.error('FAIL: Startup generated an exception:');
+  console.error(e);
+  process.exit(1);
 }

@@ -2,7 +2,8 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
+const EconomyService =
+  require('../../services/EconomyService').default || require('../../services/EconomyService');
 
 module.exports = {
   name: 'balance',
@@ -44,7 +45,7 @@ function getTargetUser(message, args, client) {
 function createBalanceEmbed(target, userData) {
   const nextLevelExp = EconomyService.getLevelRequirement(userData.level);
   const expNeeded = Math.max(0, nextLevelExp - userData.experience);
-  
+
   // Progress bar calculation
   const progressPercent = Math.min(100, Math.max(0, (userData.experience / nextLevelExp) * 100));
   const filledBars = Math.round(progressPercent / 10);
@@ -58,14 +59,14 @@ function createBalanceEmbed(target, userData) {
     .setColor(colors.success)
     .setAuthor({
       name: `${target.username}'s Balance`,
-      iconURL: target.displayAvatarURL({ dynamic: true })
+      iconURL: target.displayAvatarURL({ dynamic: true }),
     })
     .setDescription(
       `💵 **Wallet:** ${walletVal}\n` +
-      `🏦 **Bank:** ${bankVal}\n` +
-      `💎 **Net Worth:** ${totalVal}\n\n` +
-      `📊 **Rank Level:** Level **${userData.level}** (${userData.experience.toLocaleString()} / ${nextLevelExp.toLocaleString()} XP)\n` +
-      `\`${progressBar}\` — *${expNeeded.toLocaleString()} XP to next level! (≧◡≦)*`
+        `🏦 **Bank:** ${bankVal}\n` +
+        `💎 **Net Worth:** ${totalVal}\n\n` +
+        `📊 **Rank Level:** Level **${userData.level}** (${userData.experience.toLocaleString()} / ${nextLevelExp.toLocaleString()} XP)\n` +
+        `\`${progressBar}\` — *${expNeeded.toLocaleString()} XP to next level! (≧◡≦)*`
     );
 }
 

@@ -2,13 +2,15 @@ const { AttachmentBuilder, MessageFlags, EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
+const EconomyService =
+  require('../../services/EconomyService').default || require('../../services/EconomyService');
 const sharp = require('sharp');
 const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
 const logger = require('../../utils/logger.js');
-const AnimalService = require('../../services/AnimalService').default || require('../../services/AnimalService');
+const AnimalService =
+  require('../../services/AnimalService').default || require('../../services/AnimalService');
 
 const TEMP_DIR = path.join(__dirname, '..', '..', '.tmp');
 if (!fs.existsSync(TEMP_DIR)) fs.mkdirSync(TEMP_DIR, { recursive: true });
@@ -25,13 +27,18 @@ function getRarestPokemon(rarityCount) {
 
 function escapeXml(unsafe) {
   return unsafe.replace(/[<>&'"]/g, function (c) {
-      switch (c) {
-          case '<': return '&lt;';
-          case '>': return '&gt;';
-          case '&': return '&amp;';
-          case '\'': return '&apos;';
-          case '"': return '&quot;';
-      }
+    switch (c) {
+      case '<':
+        return '&lt;';
+      case '>':
+        return '&gt;';
+      case '&':
+        return '&amp;';
+      case "'":
+        return '&apos;';
+      case '"':
+        return '&quot;';
+    }
   });
 }
 
@@ -51,7 +58,9 @@ module.exports = {
       if (foundUser) target = foundUser;
     }
 
-    try { await message.channel.sendTyping(); } catch (_) {}
+    try {
+      await message.channel.sendTyping();
+    } catch (_) {}
 
     // Ensure level is in sync with XP formula! (✧ω✧)
     await database.syncLevel(target.id);
@@ -65,12 +74,13 @@ module.exports = {
     let embedColor = colors.primary;
     let backgroundUrl = null;
 
-    const currentThemeId = (userData.profileTheme && typeof userData.profileTheme === 'object') 
-      ? userData.profileTheme.theme 
-      : (userData.profileTheme || 'default');
+    const currentThemeId =
+      userData.profileTheme && typeof userData.profileTheme === 'object'
+        ? userData.profileTheme.theme
+        : userData.profileTheme || 'default';
 
     if (currentThemeId && currentThemeId !== 'default') {
-      const theme = shopConfig.categories.themes.items.find(t => t.id === currentThemeId);
+      const theme = shopConfig.categories.themes.items.find((t) => t.id === currentThemeId);
       if (theme) {
         embedColor = theme.color;
         backgroundUrl = theme.image;
@@ -78,14 +88,16 @@ module.exports = {
     }
 
     // Calculate essential stats
-    const accountAge = Math.floor((Date.now() - (userData.joinedAt || Date.now())) / (1000 * 60 * 60 * 24));
+    const accountAge = Math.floor(
+      (Date.now() - (userData.joinedAt || Date.now())) / (1000 * 60 * 60 * 24)
+    );
     const nextLevelExp = EconomyService.getLevelRequirement(userData.level);
     const progressPercent = Math.min(100, Math.floor((userData.experience / nextLevelExp) * 100));
 
     // Favorite Pokemon Logic (｡♥‿♥｡)
     let favoritePokemonBuffer = null;
     if (userData.profileTheme && userData.profileTheme.favorites) {
-      const fav = userData.profileTheme.favorites.find(f => f.type === 'animal');
+      const fav = userData.profileTheme.favorites.find((f) => f.type === 'animal');
       if (fav) {
         try {
           const imgData = await AnimalService.getPokemonImageBuffer(fav.name);
@@ -110,7 +122,10 @@ module.exports = {
     }
 
     if (userData.animals) {
-      const rarityEntries = userData.animals instanceof Map ? userData.animals.entries() : Object.entries(userData.animals);
+      const rarityEntries =
+        userData.animals instanceof Map
+          ? userData.animals.entries()
+          : Object.entries(userData.animals);
       for (const [rarity, animals] of rarityEntries) {
         const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
         for (const [animalKey, count] of animalEntries) {
@@ -130,7 +145,7 @@ module.exports = {
     // Marriage Info
     let spouseTextPlain = 'None';
     if (userData.spouse && userData.spouse.name) {
-        spouseTextPlain = `${userData.spouse.name} (Lv. ${Math.floor(userData.spouse.affinity / 100) + 1})`;
+      spouseTextPlain = `${userData.spouse.name} (Lv. ${Math.floor(userData.spouse.affinity / 100) + 1})`;
     }
 
     // Calculate gambling stats
@@ -138,7 +153,7 @@ module.exports = {
     const totalGambled = stats.totalGambled || 0;
     const totalWon = stats.totalWon || 0;
     const totalLost = stats.totalLost || 0;
-    
+
     const winRate = totalGambled > 0 ? ((totalWon / totalGambled) * 100).toFixed(1) : '0.0';
     const rarest = getRarestPokemon(rarityCount);
     const isBuddyEquipped = !!favoritePokemonBuffer;
@@ -173,7 +188,8 @@ module.exports = {
 
     // Build the SVG overlay (The Card itself is always 800 wide)
     const cardWidth = 800;
-    const bgSvg = Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${canvasHeight}">
+    const bgSvg =
+      Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${cardWidth}" height="${canvasHeight}">
       <defs>
         <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#0d101e"/>
@@ -258,10 +274,12 @@ module.exports = {
       const avatarRes = await axios.get(avatarUrl, { responseType: 'arraybuffer' });
       const avatarBuffer = await sharp(avatarRes.data)
         .resize(120, 120)
-        .composite([{
-          input: Buffer.from(`<svg><circle cx="60" cy="60" r="60" fill="white"/></svg>`),
-          blend: 'dest-in'
-        }])
+        .composite([
+          {
+            input: Buffer.from(`<svg><circle cx="60" cy="60" r="60" fill="white"/></svg>`),
+            blend: 'dest-in',
+          },
+        ])
         .png()
         .toBuffer();
       composites.push({ input: avatarBuffer, top: 40, left: 40 });
@@ -269,37 +287,42 @@ module.exports = {
       logger.error('Failed to load avatar for profile', e);
     }
 
-// 4. Favorite Pokemon Overlay
-     if (favoritePokemonBuffer) {
-       // Resize to fit within canvas while keeping aspect ratio
-       const buddyMaxHeight = 400;
-       const buddyMaxWidth = 400;
-       const buddyResized = await sharp(favoritePokemonBuffer).resize(buddyMaxWidth, buddyMaxHeight, { fit: 'inside' }).toBuffer();
-       const { width, height } = await sharp(buddyResized).metadata();
-       composites.push({
-         input: buddyResized,
-         top: canvasHeight - height + 10,
-         left: canvasWidth - width - 20
-       });
-}
+    // 4. Favorite Pokemon Overlay
+    if (favoritePokemonBuffer) {
+      // Resize to fit within canvas while keeping aspect ratio
+      const buddyMaxHeight = 400;
+      const buddyMaxWidth = 400;
+      const buddyResized = await sharp(favoritePokemonBuffer)
+        .resize(buddyMaxWidth, buddyMaxHeight, { fit: 'inside' })
+        .toBuffer();
+      const { width, height } = await sharp(buddyResized).metadata();
+      composites.push({
+        input: buddyResized,
+        top: canvasHeight - height + 10,
+        left: canvasWidth - width - 20,
+      });
+    }
 
-     const outPath = path.join(TEMP_DIR, `profile-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
-    
+    const outPath = path.join(
+      TEMP_DIR,
+      `profile-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`
+    );
+
     // Generate Final Image
     await sharp({
-      create: { 
-        width: canvasWidth, 
-        height: canvasHeight, 
-        channels: 4, 
-        background: { r: 0, g: 0, b: 0, alpha: 0 } // Transparent canvas so the "next to" part looks clean
-      }
+      create: {
+        width: canvasWidth,
+        height: canvasHeight,
+        channels: 4,
+        background: { r: 0, g: 0, b: 0, alpha: 0 }, // Transparent canvas so the "next to" part looks clean
+      },
     })
       .composite(composites)
       .png()
       .toFile(outPath);
 
-    await message.reply({ 
-      files: [new AttachmentBuilder(outPath, { name: 'profile.png' })]
+    await message.reply({
+      files: [new AttachmentBuilder(outPath, { name: 'profile.png' })],
     });
 
     // Cleanup
@@ -309,4 +332,3 @@ module.exports = {
     await database.updateStats(message.author.id, 'command');
   },
 };
-

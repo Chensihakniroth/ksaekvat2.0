@@ -19,35 +19,36 @@ module.exports = {
     const userData = await database.getUser(userId, message.author.username);
 
     const unlocked = userData.unlockedThemes || ['default'];
-    
+
     // Get all theme info from shop config
     const allThemes = [
-      { id: 'default', name: 'Default', emoji: '⚙️', description: 'The classic look.' }
+      { id: 'default', name: 'Default', emoji: '⚙️', description: 'The classic look.' },
     ];
 
-    Object.values(shopConfig.categories.themes.items).forEach(t => {
+    Object.values(shopConfig.categories.themes.items).forEach((t) => {
       allThemes.push({
         id: t.id,
         name: t.name,
         emoji: t.emoji,
-        description: t.description
+        description: t.description,
       });
     });
 
-    const userThemes = allThemes.filter(t => unlocked.includes(t.id));
+    const userThemes = allThemes.filter((t) => unlocked.includes(t.id));
 
-    const currentThemeId = (userData.profileTheme && typeof userData.profileTheme === 'object') 
-      ? userData.profileTheme.theme 
-      : (userData.profileTheme || 'default');
-    
-    const currentThemeName = allThemes.find(t => t.id === currentThemeId)?.name || 'Default';
+    const currentThemeId =
+      userData.profileTheme && typeof userData.profileTheme === 'object'
+        ? userData.profileTheme.theme
+        : userData.profileTheme || 'default';
+
+    const currentThemeName = allThemes.find((t) => t.id === currentThemeId)?.name || 'Default';
 
     const embed = new EmbedBuilder()
       .setColor(colors.primary)
       .setTitle('🎨 Your Profile Themes')
       .setDescription(
         `Select a theme below to customize your \`Kprofile\`, sweetie! (｡♥‿♥｡)\n\n` +
-        `**Current Theme:** ${currentThemeName}`
+          `**Current Theme:** ${currentThemeName}`
       );
 
     const menu = new ActionRowBuilder().addComponents(
@@ -55,24 +56,24 @@ module.exports = {
         .setCustomId('select_theme')
         .setPlaceholder('✨ Choose a theme')
         .addOptions(
-          userThemes.map(t => ({
+          userThemes.map((t) => ({
             label: t.name,
             value: t.id,
             description: t.description,
             emoji: t.emoji,
-            default: t.id === currentThemeId
+            default: t.id === currentThemeId,
           }))
         )
     );
 
     const msg = await message.reply({
       embeds: [embed],
-      components: [menu]
+      components: [menu],
     });
 
     const collector = msg.createMessageComponentCollector({
       componentType: ComponentType.StringSelect,
-      time: 60000
+      time: 60000,
     });
 
     collector.on('collect', async (i) => {
@@ -81,12 +82,12 @@ module.exports = {
       const themeId = i.values[0];
       await database.setTheme(userId, themeId);
 
-      const theme = allThemes.find(t => t.id === themeId);
+      const theme = allThemes.find((t) => t.id === themeId);
 
       await i.update({
         content: `✅ Your profile theme has been set to **${theme.emoji} ${theme.name}**! It looks beautiful, darling! (｡♥‿♥｡)`,
         embeds: [],
-        components: []
+        components: [],
       });
     });
 

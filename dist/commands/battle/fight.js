@@ -9,12 +9,12 @@ const activeBattles = new Set();
 module.exports = {
     name: 'fight',
     aliases: ['battle', 'combat', 'kfight'],
-    description: "Start a turn-based team battle! Fully automatic tactical simulation. (¬‿¬)",
+    description: 'Start a turn-based team battle! Fully automatic tactical simulation. (¬‿¬)',
     usage: 'fight [bet/upgrade]',
     cooldown: 5,
     async execute(message, args, client) {
         if (activeBattles.has(message.author.id)) {
-            return message.reply("Wait! (・_・ヾ Your tactical simulation is still running. One at a time! (≧◡≦)");
+            return message.reply('Wait! (・_・ヾ Your tactical simulation is still running. One at a time! (≧◡≦)');
         }
         const userData = await database.getUser(message.author.id, message.author.username);
         if (!userData.worldLevel)
@@ -58,7 +58,7 @@ module.exports = {
         const betAmount = EconomyService.parseBet(args[0], userData.balance);
         if (betAmount > 0) {
             if (!(await database.hasBalance(message.author.id, betAmount)))
-                return message.reply("Wallet check failed! (ಥ﹏ಥ)");
+                return message.reply('Wallet check failed! (ಥ﹏ಥ)');
             await database.removeBalance(message.author.id, betAmount);
         }
         activeBattles.add(message.author.id);
@@ -82,7 +82,13 @@ module.exports = {
                 .setColor(enemy.rarity === 'LEGENDARY' ? 0xffd700 : colors.primary)
                 .setTitle(`⚔️ Tactical Simulation: Phase ${turn}`)
                 .setDescription(`${comboBar}\n${isActive ? '🛰️ Processing combat data...' : '🏁 Simulation Concluded.'}`)
-                .addFields({ name: '👥 Your Squad', value: tDisp, inline: true }, { name: '🆚 Target', value: eDisp, inline: true }, { name: '📟 System Log', value: `\`\`\`diff\n${battleLog.slice(-5).map(l => l.startsWith('!') ? l : `+ ${l}`).join('\n')}\n\`\`\`` })
+                .addFields({ name: '👥 Your Squad', value: tDisp, inline: true }, { name: '🆚 Target', value: eDisp, inline: true }, {
+                name: '📟 System Log',
+                value: `\`\`\`diff\n${battleLog
+                    .slice(-5)
+                    .map((l) => (l.startsWith('!') ? l : `+ ${l}`))
+                    .join('\n')}\n\`\`\``,
+            })
                 .setImage(getCharacterImage(activeChar))
                 .setFooter({ text: `World Level ${userData.worldLevel} | Hikari Tactical AI` });
         };
@@ -93,7 +99,7 @@ module.exports = {
             const activeChar = team.find((c) => c.hp > 0);
             if (!activeChar)
                 return finalizeBattle('lost');
-            team.forEach(c => c.isDefending = false);
+            team.forEach((c) => (c.isDefending = false));
             // --- PLAYER AI ---
             let actionId = comboPoints >= 4 ? 'combo' : 'attack';
             // Smarter AI: Defend if low HP and combo not ready
@@ -143,7 +149,7 @@ module.exports = {
                 const action = CombatService.getEnemyAction(enemy, team);
                 if (action.damage > 0) {
                     if (action.metadata?.aoe) {
-                        team.forEach(member => {
+                        team.forEach((member) => {
                             if (member.hp > 0) {
                                 let finalDmg = Math.floor(action.damage * 0.6);
                                 if (member.isDefending)
@@ -154,7 +160,7 @@ module.exports = {
                         battleLog.push(`! AOE: The squad took heavy damage!`);
                     }
                     else {
-                        const target = team.find(c => c.name === action.metadata?.target);
+                        const target = team.find((c) => c.name === action.metadata?.target);
                         if (target) {
                             let finalDmg = action.damage;
                             if (target.isDefending) {
@@ -192,17 +198,20 @@ module.exports = {
             await database.updateStats(message.author.id, won ? 'won' : 'lost', betAmount);
             const final = new EmbedBuilder()
                 .setColor(won ? colors.success : colors.error)
-                .setTitle(won ? '(✧ω✧) VICTORY' : "(ಥ﹏ಥ) SYSTEM OFFLINE")
+                .setTitle(won ? '(✧ω✧) VICTORY' : '(ಥ﹏ಥ) SYSTEM OFFLINE')
                 .setDescription(won
-                ? "Target eliminated. Simulation confirms peak tactical performance. (¬‿¬)"
-                : "Simulation failed. Critical damage sustained. Need more optimization... (・_・ヾ")
+                ? 'Target eliminated. Simulation confirms peak tactical performance. (¬‿¬)'
+                : 'Simulation failed. Critical damage sustained. Need more optimization... (・_・ヾ')
                 .addFields({
                 name: '💰 Loot Found',
                 value: `+${EconomyService.format(rewards.money)} <:coin:1480551418464305163>`,
                 inline: true,
             }, { name: '⭐ Data Gained', value: `+${rewards.exp} XP`, inline: true });
             if (expRes.leveledUp)
-                final.addFields({ name: '🎊 LEVEL UP!', value: `You've reached Rank **${expRes.newLevel}**! (≧◡≦)` });
+                final.addFields({
+                    name: '🎊 LEVEL UP!',
+                    value: `You've reached Rank **${expRes.newLevel}**! (≧◡≦)`,
+                });
             await battleMsg.edit({ embeds: [final] }).catch(() => { });
             await database.updateStats(message.author.id, 'command');
         };

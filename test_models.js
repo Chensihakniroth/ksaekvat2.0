@@ -26,9 +26,16 @@ const models = [
 
 async function test(m) {
   try {
-    const r = await axios.post('https://openrouter.ai/api/v1/chat/completions',
+    const r = await axios.post(
+      'https://openrouter.ai/api/v1/chat/completions',
       { model: m, messages: [{ role: 'user', content: 'hi' }], max_tokens: 10 },
-      { timeout: 15000, headers: { Authorization: 'Bearer ' + process.env.OPENROUTER_API_KEY, 'HTTP-Referer': 'https://github.com/discordjs/discord.js' } }
+      {
+        timeout: 15000,
+        headers: {
+          Authorization: 'Bearer ' + process.env.OPENROUTER_API_KEY,
+          'HTTP-Referer': 'https://github.com/discordjs/discord.js',
+        },
+      }
     );
     const c = r.data.choices?.[0]?.message?.content;
     console.log(`OK  ${m}  ->  ${c ? c.substring(0, 40) : 'NULL'}`);
@@ -41,6 +48,6 @@ async function test(m) {
   console.log('Quick ping test...\n');
   for (let i = 0; i < models.length; i += 5) {
     await Promise.all(models.slice(i, i + 5).map(test));
-    await new Promise(r => setTimeout(r, 1500));
+    await new Promise((r) => setTimeout(r, 1500));
   }
 })();

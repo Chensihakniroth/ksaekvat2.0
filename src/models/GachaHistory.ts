@@ -21,5 +21,8 @@ const GachaHistorySchema: Schema = new Schema({
 // Set auto-delete after 7 days to keep the database clean
 GachaHistorySchema.index({ timestamp: 1 }, { expireAfterSeconds: 604800 });
 
-const GachaHistory: Model<IGachaHistory> = mongoose.model<IGachaHistory>('GachaHistory', GachaHistorySchema);
+const GachaHistory: Model<IGachaHistory> = mongoose.model<IGachaHistory>(
+  'GachaHistory',
+  GachaHistorySchema
+);
 export default GachaHistory;

@@ -60,7 +60,7 @@ async function getContextGif(pool) {
 module.exports = {
     name: 'rob',
     aliases: ['steal', 'heist', 'plon'],
-    description: 'Attempt to rob another user\'s wallet! 50/50 odds... but you might end up in jail. (¬‿¬)',
+    description: "Attempt to rob another user's wallet! 50/50 odds... but you might end up in jail. (¬‿¬)",
     usage: 'rob <@user>',
     category: 'economy',
     cooldown: 60000, // 1 minute (60,000 ms)
@@ -89,15 +89,15 @@ module.exports = {
                     new EmbedBuilder()
                         .setColor(colors.error)
                         .setTitle('⚠️ Hoch plorn pi na ke?')
-                        .setDescription('oun eng plorn na ke? Mention neak ng mao! (・_・ヾ\n**Usage:** `krob @user`')
-                ]
+                        .setDescription('oun eng plorn na ke? Mention neak ng mao! (・_・ヾ\n**Usage:** `krob @user`'),
+                ],
             });
         }
         if (target.id === robber.id) {
-            return message.reply('You can\'t rob yourself... that\'s just moving money between pockets. (≧◡≦)');
+            return message.reply("You can't rob yourself... that's just moving money between pockets. (≧◡≦)");
         }
         if (target.bot) {
-            return message.reply('Bots don\'t carry cash. Nice try though. (¬‿¬)');
+            return message.reply("Bots don't carry cash. Nice try though. (¬‿¬)");
         }
         // ── Fetch both users ────────────────────────────────────────────────
         const robberData = await database.getUser(robber.id, robber.username);
@@ -109,14 +109,14 @@ module.exports = {
                     new EmbedBuilder()
                         .setColor(colors.warning)
                         .setTitle('💸 ah oun ng ot luy pg ng ')
-                        .setDescription(`**${target.username}** ror luy ma riel kmean. ror neak mean luy jeang ng mao (・_・ヾ`)
-                ]
+                        .setDescription(`**${target.username}** ror luy ma riel kmean. ror neak mean luy jeang ng mao (・_・ヾ`),
+                ],
             });
         }
         // ── Roll the dice ───────────────────────────────────────────────────
         const roll = Math.random();
         const jailChance = 0.15; // 15% chance of jail on failure
-        const successChance = 0.50; // 50% success rate
+        const successChance = 0.5; // 50% success rate
         // Random steal amount: 1,000 - 10,000, capped at target's wallet
         const stealAmount = Math.min(Math.floor(Math.random() * 9001) + 1000, // 1000–10000
         targetData.balance);
@@ -131,7 +131,15 @@ module.exports = {
                 .setTitle('💰 PLON BAN SOMRACH :3')
                 .setDescription(`**${robber.username}** plorn **${stealAmount.toLocaleString()}** ${config.economy.currencySymbol} from **${target.username}**'s wallet! (¬‿¬)\n\n` +
                 `Their bank was untouchable... but their wallet? Wide open.`)
-                .addFields({ name: '🏃 Your Wallet', value: `**${(robberData.balance + stealAmount).toLocaleString()}** ${config.economy.currencySymbol}`, inline: true }, { name: '😭 Victim\'s Wallet', value: `**${(targetData.balance - stealAmount).toLocaleString()}** ${config.economy.currencySymbol}`, inline: true })
+                .addFields({
+                name: '🏃 Your Wallet',
+                value: `**${(robberData.balance + stealAmount).toLocaleString()}** ${config.economy.currencySymbol}`,
+                inline: true,
+            }, {
+                name: "😭 Victim's Wallet",
+                value: `**${(targetData.balance - stealAmount).toLocaleString()}** ${config.economy.currencySymbol}`,
+                inline: true,
+            })
                 .setTimestamp();
             if (robGif)
                 embed.setImage(robGif);

@@ -31,7 +31,7 @@ router.get('/image/:key', async (req, res) => {
         if (imageUrl.startsWith('http')) {
             const response = await axios_1.default.get(imageUrl, {
                 responseType: 'stream',
-                headers: { 'User-Agent': 'Mozilla/5.0' }
+                headers: { 'User-Agent': 'Mozilla/5.0' },
             });
             res.setHeader('Content-Type', 'image/png');
             res.setHeader('Cache-Control', 'public, max-age=86400'); // 24h cache

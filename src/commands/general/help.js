@@ -14,7 +14,7 @@ module.exports = {
 
     if (args.length === 0) {
       // Get all unique commands (filter out aliases)
-      const commands = [...new Set(client.commands.values())].filter(cmd => !cmd.hidden);
+      const commands = [...new Set(client.commands.values())].filter((cmd) => !cmd.hidden);
 
       // Category Mapping
       const categoryNames = {
@@ -29,7 +29,7 @@ module.exports = {
         profile: '👤 Profile',
         slash: '⚡ Slash Commands',
         nsfw: '🔞 NSFW',
-        special: '✨ Special'
+        special: '✨ Special',
       };
 
       // Organize commands by category
@@ -38,11 +38,18 @@ module.exports = {
       commands.forEach((cmd) => {
         let category = cmd.category || 'general';
 
-        if (category === 'expressions' && cmd.description && cmd.description.toLowerCase().includes('nsfw')) {
+        if (
+          category === 'expressions' &&
+          cmd.description &&
+          cmd.description.toLowerCase().includes('nsfw')
+        ) {
           category = 'nsfw';
         }
 
-        if (category === 'expressions' && ['amongustwerk', 'beksloy', 'kaskeavat'].includes(cmd.name)) {
+        if (
+          category === 'expressions' &&
+          ['amongustwerk', 'beksloy', 'kaskeavat'].includes(cmd.name)
+        ) {
           category = 'special';
         }
 
@@ -79,7 +86,7 @@ module.exports = {
       try {
         const ud = await database.getUser(message.author.id, message.author.username);
         if (ud?.customPrefix) userPrefix = ud.customPrefix;
-      } catch (_) { }
+      } catch (_) {}
 
       const embed = new EmbedBuilder()
         .setColor(colors.primary || '#7289da')
@@ -125,7 +132,9 @@ module.exports = {
 
     // Detailed info for a specific command
     const search = args[0].toLowerCase();
-    const command = client.commands.get(search) || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(search));
+    const command =
+      client.commands.get(search) ||
+      client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(search));
 
     if (!command || command.hidden) {
       return message.reply({
@@ -143,7 +152,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor(colors.primary || '#7289da')
       .setTitle(`📖 Command: ${command.name}`)
-      .setDescription(command.description || "No description provided.")
+      .setDescription(command.description || 'No description provided.')
       .addFields({
         name: 'Usage',
         value: `\`${prefix}${command.usage || command.name}\``,

@@ -20,10 +20,10 @@ async function exportCharacters() {
         await registry.initializeRegistry();
         console.log('Registry initialized.');
         const allChars = registry.getAllCharacters();
-        const charData = allChars.map(c => ({
+        const charData = allChars.map((c) => ({
             name: c.name,
             game: c.game,
-            rarity: c.rarity
+            rarity: c.rarity,
         }));
         const outputPath = path.join(__dirname, 'characters.json');
         fs.writeFileSync(outputPath, JSON.stringify(charData, null, 2));

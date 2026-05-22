@@ -138,10 +138,10 @@ function getItemEmoji(item, client) {
     // Derive emoji name: replace one or more non-alphanumeric with a single underscore
     const emojiName = item.name.replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
     // 1. Search in Application Emojis
-    let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);
+    let customEmoji = client.application?.emojis.cache.find((e) => e.name === emojiName);
     // 2. Fallback to Guild Emojis
     if (!customEmoji) {
-        customEmoji = client.emojis.cache.find(e => e.name === emojiName);
+        customEmoji = client.emojis.cache.find((e) => e.name === emojiName);
     }
     if (customEmoji) {
         return customEmoji.toString();
@@ -192,17 +192,21 @@ function getRarityEmoji(rarity, client, item = null) {
     // 4. Dynamic Lookup Fallback
     if (!client)
         return '✨';
-    const emojiName = (isNumeric || isCharacter)
-        ? `${rarity}_star`
-        : `rarity_${rarity.toString().toLowerCase()}`;
-    const customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName)
-        || client.emojis.cache.find(e => e.name === emojiName);
+    const emojiName = isNumeric || isCharacter ? `${rarity}_star` : `rarity_${rarity.toString().toLowerCase()}`;
+    const customEmoji = client.application?.emojis.cache.find((e) => e.name === emojiName) ||
+        client.emojis.cache.find((e) => e.name === emojiName);
     if (customEmoji)
         return customEmoji.toString();
     // 5. Final Fallback
     const fallbackMap = {
-        5: '⭐', 4: '✨', 3: '💎',
-        legendary: '🟠', epic: '🟣', rare: '🔵', uncommon: '🟢', common: '⚪',
+        5: '⭐',
+        4: '✨',
+        3: '💎',
+        legendary: '🟠',
+        epic: '🟣',
+        rare: '🔵',
+        uncommon: '🟢',
+        common: '⚪',
     };
     return fallbackMap[rarity] || fallbackMap[rarity.toString().toLowerCase()] || '✨';
 }
@@ -210,9 +214,9 @@ function getElementEmoji(item, client) {
     if (!item || !client || !item.element)
         return '';
     const elementName = item.element.trim().replace(/[^a-zA-Z0-9]+/g, '');
-    let elementEmoji = client.application?.emojis.cache.find(e => e.name === elementName);
+    let elementEmoji = client.application?.emojis.cache.find((e) => e.name === elementName);
     if (!elementEmoji) {
-        elementEmoji = client.emojis.cache.find(e => e.name === elementName);
+        elementEmoji = client.emojis.cache.find((e) => e.name === elementName);
     }
     if (elementEmoji) {
         return elementEmoji.toString();
@@ -243,32 +247,35 @@ function getRoleEmoji(role, client) {
     if (!role || !client)
         return '';
     // Normalize: trim, uppercase for lookup
-    const roleName = role.trim().toUpperCase().replace(/[-\s]+/g, '_');
+    const roleName = role
+        .trim()
+        .toUpperCase()
+        .replace(/[-\s]+/g, '_');
     // Map common variants to emoji names
     const nameMap = {
-        'DPS': 'DPS',
-        'S_DPS': 'SDPS',
-        'SDPS': 'SDPS',
-        'SUPPORT': 'SUPPORT',
-        'HEAL': 'HEAL',
-        'HEALER': 'HEAL',
-        'TANK': 'TANK',
+        DPS: 'DPS',
+        S_DPS: 'SDPS',
+        SDPS: 'SDPS',
+        SUPPORT: 'SUPPORT',
+        HEAL: 'HEAL',
+        HEALER: 'HEAL',
+        TANK: 'TANK',
     };
     const emojiName = nameMap[roleName] || roleName;
-    let customEmoji = client.application?.emojis.cache.find(e => e.name === emojiName);
+    let customEmoji = client.application?.emojis.cache.find((e) => e.name === emojiName);
     if (!customEmoji) {
-        customEmoji = client.emojis.cache.find(e => e.name === emojiName);
+        customEmoji = client.emojis.cache.find((e) => e.name === emojiName);
     }
     if (customEmoji)
         return customEmoji.toString();
     // Unicode fallbacks
     const fallbacks = {
-        'DPS': '⚔️',
-        'SDPS': '🗡️',
-        'SUPPORT': '🔮',
-        'HEAL': '💚',
-        'HEALER': '💚',
-        'TANK': '🛡️',
+        DPS: '⚔️',
+        SDPS: '🗡️',
+        SUPPORT: '🔮',
+        HEAL: '💚',
+        HEALER: '💚',
+        TANK: '🛡️',
     };
     return fallbacks[roleName] || '✨';
 }

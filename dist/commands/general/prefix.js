@@ -8,7 +8,7 @@ const MAX_PREFIX_LEN = 5;
 module.exports = {
     name: 'prefix',
     aliases: ['setprefix', 'myprefix', 'changeprefix'],
-    description: "Change your personal command prefix! Only affects you, sweetie~ (｡♥‿♥｡)",
+    description: 'Change your personal command prefix! Only affects you, sweetie~ (｡♥‿♥｡)',
     usage: 'prefix',
     async execute(message, args, client) {
         const userId = message.author.id;
@@ -30,7 +30,9 @@ module.exports = {
             `What would you like to do? (｡♥‿♥｡)`,
         ].join('\n'))
             .setThumbnail(message.author.displayAvatarURL())
-            .setFooter({ text: 'This only affects YOU, darling! Other users keep their own prefixes. (っ˘ω˘ς)' });
+            .setFooter({
+            text: 'This only affects YOU, darling! Other users keep their own prefixes. (っ˘ω˘ς)',
+        });
         const row = new ActionRowBuilder().addComponents(new ButtonBuilder()
             .setCustomId('prefix_change_main')
             .setLabel('🔧 Change My Prefix')
@@ -64,7 +66,7 @@ module.exports = {
                         new EmbedBuilder()
                             .setColor(colors.success)
                             .setTitle('♻️ Prefix Reset!')
-                            .setDescription(`Your prefix has been reset to the default \`${config.prefix[1]}\`, darling! Everything is back to normal~ ヽ(>∀<☆)ノ`)
+                            .setDescription(`Your prefix has been reset to the default \`${config.prefix[1]}\`, darling! Everything is back to normal~ ヽ(>∀<☆)ノ`),
                     ],
                     components: [],
                 });
@@ -78,7 +80,7 @@ module.exports = {
                 `Current prefix: \`${currentMain}\``,
                 ``,
                 `Please **type your new prefix** in chat now!`,
-                `> ⚠️ Max **${MAX_PREFIX_LEN}** characters. Cannot use: ${FORBIDDEN_PREFIXES.map(p => `\`${p}\``).join(' ')}`,
+                `> ⚠️ Max **${MAX_PREFIX_LEN}** characters. Cannot use: ${FORBIDDEN_PREFIXES.map((p) => `\`${p}\``).join(' ')}`,
                 ``,
                 `*Type \`cancel\` to abort.*`,
             ].join('\n'))
@@ -88,7 +90,12 @@ module.exports = {
             const msgFilter = (m) => m.author.id === userId;
             let collected;
             try {
-                collected = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 30000, errors: ['time'] });
+                collected = await message.channel.awaitMessages({
+                    filter: msgFilter,
+                    max: 1,
+                    time: 30000,
+                    errors: ['time'],
+                });
             }
             catch {
                 await prompt.edit({
@@ -96,7 +103,7 @@ module.exports = {
                         new EmbedBuilder()
                             .setColor(colors.error)
                             .setTitle('⏰ Timed out!')
-                            .setDescription(`Oh no, darling! You took too long. Mommy had to cancel. (｡•́︿•̀｡)`)
+                            .setDescription(`Oh no, darling! You took too long. Mommy had to cancel. (｡•́︿•̀｡)`),
                     ],
                     components: [],
                 });
@@ -104,14 +111,17 @@ module.exports = {
             }
             const input = collected.first()?.content?.trim();
             // Try to delete user's message for cleanliness
-            collected.first()?.delete().catch(() => { });
+            collected
+                .first()
+                ?.delete()
+                .catch(() => { });
             if (!input || input.toLowerCase() === 'cancel') {
                 await prompt.edit({
                     embeds: [
                         new EmbedBuilder()
                             .setColor(colors.secondary)
                             .setTitle('✖ Cancelled')
-                            .setDescription(`No changes were made, sweetie~ (っ˘ω˘ς)`)
+                            .setDescription(`No changes were made, sweetie~ (っ˘ω˘ς)`),
                     ],
                     components: [],
                 });
@@ -124,19 +134,19 @@ module.exports = {
                         new EmbedBuilder()
                             .setColor(colors.error)
                             .setTitle('❌ Too long, darling!')
-                            .setDescription(`Your prefix must be **${MAX_PREFIX_LEN} characters or fewer**. Please try again with \`${config.prefix[1]}prefix\`! (｡•́︿•̀｡)`)
+                            .setDescription(`Your prefix must be **${MAX_PREFIX_LEN} characters or fewer**. Please try again with \`${config.prefix[1]}prefix\`! (｡•́︿•̀｡)`),
                     ],
                     components: [],
                 });
                 return;
             }
-            if (FORBIDDEN_PREFIXES.some(fp => input.includes(fp))) {
+            if (FORBIDDEN_PREFIXES.some((fp) => input.includes(fp))) {
                 await prompt.edit({
                     embeds: [
                         new EmbedBuilder()
                             .setColor(colors.error)
                             .setTitle('❌ Forbidden character!')
-                            .setDescription(`That prefix contains a forbidden character: ${FORBIDDEN_PREFIXES.map(p => `\`${p}\``).join(' ')}\nPlease try again! (｡•́︿•̀｡)`)
+                            .setDescription(`That prefix contains a forbidden character: ${FORBIDDEN_PREFIXES.map((p) => `\`${p}\``).join(' ')}\nPlease try again! (｡•́︿•̀｡)`),
                     ],
                     components: [],
                 });
@@ -172,7 +182,7 @@ module.exports = {
                             new EmbedBuilder()
                                 .setColor(colors.secondary)
                                 .setTitle('✖ Cancelled')
-                                .setDescription(`No problem, darling! Your prefix was not changed. (っ˘ω˘ς)`)
+                                .setDescription(`No problem, darling! Your prefix was not changed. (っ˘ω˘ς)`),
                         ],
                         components: [],
                     });
@@ -193,7 +203,7 @@ module.exports = {
                             ``,
                             `*(Only you use this prefix, darling~ Each person has their own! ｡♥‿♥｡)*`,
                         ].join('\n'))
-                            .setFooter({ text: `Use ${input}prefix anytime to change it again! (◕‿◕✿)` })
+                            .setFooter({ text: `Use ${input}prefix anytime to change it again! (◕‿◕✿)` }),
                     ],
                     components: [],
                 });

@@ -46,7 +46,7 @@ module.exports = {
                 embeds: [
                     {
                         color: colors.error,
-                        title: "🔍 TARGET NOT FOUND",
+                        title: '🔍 TARGET NOT FOUND',
                         description: "I can't find that user in the server database. (・_・ヾ Please mention them or use a valid ID! (≧◡≦)",
                     },
                 ],
@@ -61,7 +61,7 @@ module.exports = {
                 embeds: [
                     {
                         color: colors.warning,
-                        title: "📡 OFFLINE",
+                        title: '📡 OFFLINE',
                         description: "That user isn't in this server sector! (・_・ヾ (◕‿◕✿)",
                     },
                 ],
@@ -97,8 +97,8 @@ module.exports = {
                 embeds: [
                     {
                         color: colors.error,
-                        title: "🛡️ TARGET PROTECTED",
-                        description: "System error: User is not kickable. They might have a higher clearance than me! (ಥ﹏ಥ)",
+                        title: '🛡️ TARGET PROTECTED',
+                        description: 'System error: User is not kickable. They might have a higher clearance than me! (ಥ﹏ಥ)',
                     },
                 ],
             });
@@ -109,7 +109,7 @@ module.exports = {
                 embeds: [
                     {
                         color: colors.error,
-                        title: "⚡ HIERARCHY ERROR",
+                        title: '⚡ HIERARCHY ERROR',
                         description: "I can't kick this user because their role rank is higher or equal to my current simulation privileges! (・_・ヾ",
                     },
                 ],

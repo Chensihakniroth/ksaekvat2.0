@@ -20,13 +20,13 @@ router.get('/:userId', async (req, res) => {
         // 3. Try finding by Username (Case-insensitive)
         if (!user) {
             user = await User.findOne({
-                username: { $regex: new RegExp(`^${userId}$`, 'i') }
+                username: { $regex: new RegExp(`^${userId}$`, 'i') },
             }).lean();
         }
         // 4. Try finding by Custom Slug (Case-insensitive)
         if (!user) {
             user = await User.findOne({
-                'profileTheme.slug': { $regex: new RegExp(`^${userId}$`, 'i') }
+                'profileTheme.slug': { $regex: new RegExp(`^${userId}$`, 'i') },
             }).lean();
         }
         if (!user) {
@@ -62,7 +62,7 @@ router.get('/:userId', async (req, res) => {
                             if (sprite) {
                                 animalMap[rarity][pokemon] = {
                                     count: count,
-                                    sprite
+                                    sprite,
                                 };
                             }
                         }
@@ -85,7 +85,7 @@ router.get('/:userId', async (req, res) => {
                     name: fav.name,
                     rarity: char?.rarity || '4',
                     game: char?.game || 'unknown',
-                    emoji: char?.emoji || '✨'
+                    emoji: char?.emoji || '✨',
                 };
             }
             else {
@@ -93,7 +93,7 @@ router.get('/:userId', async (req, res) => {
                 return {
                     type: 'animal',
                     name: fav.name,
-                    sprite: sprite || null
+                    sprite: sprite || null,
                 };
             }
         }));
@@ -122,11 +122,11 @@ router.get('/:userId', async (req, res) => {
                         slug: null,
                         showStats: true,
                         showInventory: true,
-                        socials: {}
+                        socials: {},
                     }),
                     portfolio: user.profileTheme?.portfolio || [],
-                    favorites: hydratedFavorites
-                }
+                    favorites: hydratedFavorites,
+                },
             },
         });
     }
@@ -144,18 +144,27 @@ router.post('/update', async (req, res) => {
         const jwt = require('jsonwebtoken');
         const { env } = require('../../utils/env.js');
         const decoded = jwt.verify(token, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls');
-        const { bio, accentColor, background, music, socials, banner, bannerPosition, avatar, showStats, showInventory, portfolio, favorites, slug } = req.body;
+        const { bio, accentColor, background, music, socials, banner, bannerPosition, avatar, showStats, showInventory, portfolio, favorites, slug, } = req.body;
         const user = await User.findOne({ id: decoded.id });
         if (!user)
             return res.status(404).json({ success: false, error: 'User not found' });
         // Validate and check slug uniqueness if provided
         if (slug && slug !== user.profileTheme?.slug) {
             if (!/^[a-zA-Z0-9-_]+$/.test(slug)) {
-                return res.status(400).json({ success: false, error: 'Invalid slug format. Use only letters, numbers, dashes, and underscores.' });
+                return res
+                    .status(400)
+                    .json({
+                    success: false,
+                    error: 'Invalid slug format. Use only letters, numbers, dashes, and underscores.',
+                });
             }
-            const slugExists = await User.findOne({ 'profileTheme.slug': { $regex: new RegExp(`^${slug}$`, 'i') } });
+            const slugExists = await User.findOne({
+                'profileTheme.slug': { $regex: new RegExp(`^${slug}$`, 'i') },
+            });
             if (slugExists)
-                return res.status(400).json({ success: false, error: 'This custom URL slug is already taken.' });
+                return res
+                    .status(400)
+                    .json({ success: false, error: 'This custom URL slug is already taken.' });
         }
         // Update profile theme object
         user.profileTheme = {
@@ -174,8 +183,8 @@ router.post('/update', async (req, res) => {
             favorites: favorites !== undefined ? favorites : user.profileTheme.favorites,
             socials: {
                 ...user.profileTheme.socials,
-                ...(socials || {})
-            }
+                ...(socials || {}),
+            },
         };
         await user.save();
         res.json({ success: true, message: 'Profile updated successfully! (◕‿◕✿)' });
@@ -204,7 +213,7 @@ router.post('/upload-mp3', async (req, res) => {
             fs.mkdirSync(audioDir, { recursive: true });
         }
         // Process base64
-        const base64Data = base64Audio.replace(/^data:audio\/mpeg;base64,/, "");
+        const base64Data = base64Audio.replace(/^data:audio\/mpeg;base64,/, '');
         const filePath = path.join(audioDir, `user_${decoded.id}.mp3`);
         fs.writeFileSync(filePath, base64Data, 'base64');
         const publicUrl = `/assets/audio/user_${decoded.id}.mp3?t=${Date.now()}`;

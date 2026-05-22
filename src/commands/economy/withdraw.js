@@ -1,6 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
-const economy = require('../../services/EconomyService').default || require('../../services/EconomyService.js');
+const economy =
+  require('../../services/EconomyService').default || require('../../services/EconomyService.js');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 
@@ -12,15 +13,17 @@ module.exports = {
   category: 'economy',
   async execute(message, args, client) {
     const user = await database.getUser(message.author.id, message.author.username);
-    
+
     if (args.length === 0) {
       return message.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(colors.error)
             .setTitle('⚠️ TRANSACTION ERROR')
-            .setDescription('How much do you want to withdraw? (・_・ヾ\nUsage: `kwithdraw <amount/all>`')
-        ]
+            .setDescription(
+              'How much do you want to withdraw? (・_・ヾ\nUsage: `kwithdraw <amount/all>`'
+            ),
+        ],
       });
     }
 
@@ -32,8 +35,10 @@ module.exports = {
           new EmbedBuilder()
             .setColor(colors.error)
             .setTitle('❌ INVALID AMOUNT')
-            .setDescription("You can't withdraw that! (・_・ヾ Your bank vault seems a bit empty. (ಥ﹏ಥ)")
-        ]
+            .setDescription(
+              "You can't withdraw that! (・_・ヾ Your bank vault seems a bit empty. (ಥ﹏ಥ)"
+            ),
+        ],
       });
     }
 
@@ -43,8 +48,10 @@ module.exports = {
           new EmbedBuilder()
             .setColor(colors.error)
             .setTitle('🚫 INSUFFICIENT BANK FUNDS')
-            .setDescription(`You only have **${(user.bank || 0).toLocaleString()}** ${config.economy.currencySymbol} in your bank! (・_0)`)
-        ]
+            .setDescription(
+              `You only have **${(user.bank || 0).toLocaleString()}** ${config.economy.currencySymbol} in your bank! (・_0)`
+            ),
+        ],
       });
     }
 
@@ -54,10 +61,20 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor(colors.success)
       .setTitle('🏦 WITHDRAWAL SUCCESS')
-      .setDescription(`Transferred **${amount.toLocaleString()}** ${config.economy.currencySymbol} back to your wallet! (¬‿¬)`)
+      .setDescription(
+        `Transferred **${amount.toLocaleString()}** ${config.economy.currencySymbol} back to your wallet! (¬‿¬)`
+      )
       .addFields(
-        { name: '💵 Wallet', value: `**${updatedUser.balance.toLocaleString()}** ${config.economy.currencySymbol}`, inline: true },
-        { name: '🏦 Bank', value: `**${updatedUser.bank.toLocaleString()}** ${config.economy.currencySymbol}`, inline: true }
+        {
+          name: '💵 Wallet',
+          value: `**${updatedUser.balance.toLocaleString()}** ${config.economy.currencySymbol}`,
+          inline: true,
+        },
+        {
+          name: '🏦 Bank',
+          value: `**${updatedUser.bank.toLocaleString()}** ${config.economy.currencySymbol}`,
+          inline: true,
+        }
       )
       .setThumbnail(message.author.displayAvatarURL())
       .setTimestamp();

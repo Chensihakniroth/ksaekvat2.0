@@ -163,7 +163,9 @@ const logger = {
     },
     blank: () => console.log(''),
     loader: (message) => {
-        const timestamp = colors.dim + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + colors.reset;
+        const timestamp = colors.dim +
+            new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) +
+            colors.reset;
         process.stdout.write(`${timestamp} ${colors.cyan}⌬${colors.reset} ${message.padEnd(30)} `);
         return {
             done: () => process.stdout.write(`${colors.green}● COMPLETED${colors.reset}\n`),

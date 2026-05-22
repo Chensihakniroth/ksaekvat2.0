@@ -16,7 +16,8 @@ module.exports = {
 
     if (!userData.spouse || !userData.spouse.name) {
       return message.reply({
-        content: "💍 You aren't married yet, sweetie! (｡•́︿•̀｡) Use `Kshop` to buy a ring and `Kmarry` to propose!",
+        content:
+          "💍 You aren't married yet, sweetie! (｡•́︿•̀｡) Use `Kshop` to buy a ring and `Kmarry` to propose!",
       });
     }
 
@@ -40,19 +41,20 @@ module.exports = {
       .setTitle(`💞 Spending Time with ${spouse.name}`)
       .setDescription(
         `You spent a lovely afternoon with **${spouse.name}**, darling! (｡♥‿♥｡)\n\n` +
-        `💖 **Affinity Gained:** +${gain}\n` +
-        `📈 **Love Level:** ${level} (${spouse.affinity} total)\n` +
-        `✨ **Bond:** ${hearts || '🤍'}`
+          `💖 **Affinity Gained:** +${gain}\n` +
+          `📈 **Love Level:** ${level} (${spouse.affinity} total)\n` +
+          `✨ **Bond:** ${hearts || '🤍'}`
       )
       .setImage(splashArt)
-      .setFooter({ text: "Every moment together makes your bond stronger! ヽ(>∀<☆)ノ" });
+      .setFooter({ text: 'Every moment together makes your bond stronger! ヽ(>∀<☆)ノ' });
 
     message.reply({ embeds: [embed] });
-    
+
     // Update Quest Progress! (｡♥‿♥｡)
-    const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+    const QuestService =
+      require('../../services/QuestService').default || require('../../services/QuestService');
     await QuestService.updateProgress(userId, 'AFFINITY', 1);
-    
+
     await database.updateStats(userId, 'command');
   },
 };

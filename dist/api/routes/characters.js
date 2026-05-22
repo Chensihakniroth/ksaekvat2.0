@@ -62,19 +62,19 @@ const nameNormalizers = {
 const wikiConfigs = {
     genshin: {
         wiki: 'genshin-impact',
-        patterns: ['{name}_Icon.png', '{name}.png']
+        patterns: ['{name}_Icon.png', '{name}.png'],
     },
     hsr: {
         wiki: 'honkai-star-rail',
-        patterns: ['Character_{name}_Icon.png', 'Icon_Character_{name}.png', '{name}_Icon.png']
+        patterns: ['Character_{name}_Icon.png', 'Icon_Character_{name}.png', '{name}_Icon.png'],
     },
     wuwa: {
         wiki: 'wutheringwaves',
-        patterns: ['Resonator_{name}.png', '{name}.png']
+        patterns: ['Resonator_{name}.png', '{name}.png'],
     },
     zzz: {
         wiki: 'zenless-zone-zero',
-        patterns: ['Agent_{name}_Icon.png', '{name}_Icon.png']
+        patterns: ['Agent_{name}_Icon.png', '{name}_Icon.png'],
     },
 };
 // In-memory cache for icon URLs: "game:name" -> "url"

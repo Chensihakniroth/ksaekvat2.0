@@ -14,31 +14,38 @@ router.get('/', async (req: Request, res: Response) => {
       // 1. Build Query & Sort
       const mongoSort: Record<string, any> = {};
       if (sort === 'balance') mongoSort.balance = -1;
-      else if (sort === 'level') { mongoSort.level = -1; mongoSort.experience = -1; }
-      else if (sort === 'donations') { mongoSort['stats.totalDonated'] = -1; }
-      else mongoSort.balance = -1; // Default
+      else if (sort === 'level') {
+        mongoSort.level = -1;
+        mongoSort.experience = -1;
+      } else if (sort === 'donations') {
+        mongoSort['stats.totalDonated'] = -1;
+      } else mongoSort.balance = -1; // Default
 
       // 2. Fetch only what we need (The Scale Fix!)
       const users = await User.find({})
         .sort(mongoSort)
         .limit(limit * 2) // Fetch a bit extra for complex sorts
-        .select('id username level balance experience star_dust gacha_inventory animals stats profileTheme.slug')
+        .select(
+          'id username level balance experience star_dust gacha_inventory animals stats profileTheme.slug'
+        )
         .lean();
 
       const withCounts = users.map((u: any) => {
         let pokemonCount = 0;
         if (u.animals) {
-          const rarityValues = u.animals instanceof Map ? u.animals.values() : Object.values(u.animals);
+          const rarityValues =
+            u.animals instanceof Map ? u.animals.values() : Object.values(u.animals);
           for (const rarityGroup of rarityValues) {
             if (rarityGroup && typeof rarityGroup === 'object') {
-              const counts = rarityGroup instanceof Map ? rarityGroup.values() : Object.values(rarityGroup);
+              const counts =
+                rarityGroup instanceof Map ? rarityGroup.values() : Object.values(rarityGroup);
               for (const count of counts) {
                 pokemonCount += (count as number) || 0;
               }
             }
           }
         }
-        
+
         const characterCount = Array.isArray(u.gacha_inventory) ? u.gacha_inventory.length : 0;
 
         return {
@@ -51,7 +58,7 @@ router.get('/', async (req: Request, res: Response) => {
           collectionCount: characterCount + pokemonCount,
           commandsUsed: u.stats?.commandsUsed || 0,
           totalDonated: u.stats?.totalDonated || 0,
-          slug: u.profileTheme?.slug || null
+          slug: u.profileTheme?.slug || null,
         };
       });
 

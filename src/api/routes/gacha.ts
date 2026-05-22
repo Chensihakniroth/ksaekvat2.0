@@ -29,7 +29,7 @@ router.get('/history', async (_req: Request, res: Response) => {
       };
     });
 
-    // 3. Optional: Add a few recent legendary/mythical animals if you have a way to track them 
+    // 3. Optional: Add a few recent legendary/mythical animals if you have a way to track them
     // (For now, we'll just focus on the high-quality gacha history)
 
     res.json({ success: true, data: formatted });

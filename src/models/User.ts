@@ -44,7 +44,7 @@ export interface IUser extends Document {
   equipped: Map<string, any>;
   lootbox: number;
   team: string[];
-  pokemonTeam: any[];  // ObjectId refs to UserPokemon documents (max 3)
+  pokemonTeam: any[]; // ObjectId refs to UserPokemon documents (max 3)
   animals: Map<string, Map<string, number>>;
   boosters: Map<string, any>;
   pokeballs: number;
@@ -106,18 +106,21 @@ export interface IUser extends Document {
   lastWeeklyQuestReset: Date | null;
   stats: IUserStats;
   joinedAt: Date;
-  customPrefix?: string;   // User's personal main prefix (e.g. 'K', '!')
+  customPrefix?: string; // User's personal main prefix (e.g. 'K', '!')
   customSubPrefix?: string; // User's personal short/sub prefix override
 }
 
-const QuestSchema: Schema = new Schema({
-  questId: String,
-  type: String,
-  target: { type: Number, default: 0 },
-  current: { type: Number, default: 0 },
-  completed: { type: Boolean, default: false },
-  rewarded: { type: Boolean, default: false },
-}, { _id: false });
+const QuestSchema: Schema = new Schema(
+  {
+    questId: String,
+    type: String,
+    target: { type: Number, default: 0 },
+    current: { type: Number, default: 0 },
+    completed: { type: Boolean, default: false },
+    rewarded: { type: Boolean, default: false },
+  },
+  { _id: false }
+);
 
 /**
  * USER SCHEMA (Gold Standard)
@@ -165,7 +168,7 @@ const UserSchema: Schema = new Schema({
   // RPG & Stats
   animals: { type: Schema.Types.Map, of: Schema.Types.Map, default: {} }, // { rarity: { animalKey: count } }
   boosters: { type: Schema.Types.Map, of: Schema.Types.Mixed, default: {} },
-  
+
   // Simplified Items
   pokeballs: { type: Number, default: 0 },
   ultraballs: { type: Number, default: 0 },
@@ -215,7 +218,7 @@ const UserSchema: Schema = new Schema({
 
   quests: [QuestSchema],
   lastQuestReset: { type: Date, default: null },
-  
+
   // Weekly Quests
   weeklyQuests: [QuestSchema],
   lastWeeklyQuestReset: { type: Date, default: null },

@@ -24,11 +24,20 @@ module.exports = {
                 .setTitle(`🏪 Mommy's General Store — ${category.name}`)
                 .setThumbnail(client.user.displayAvatarURL());
             if (currentCategory === 'characters') {
-                const gameNames = { genshin: 'Genshin Impact', hsr: 'Honkai: Star Rail', wuwa: 'Wuthering Waves', zzz: 'Zenless Zone Zero' };
+                const gameNames = {
+                    genshin: 'Genshin Impact',
+                    hsr: 'Honkai: Star Rail',
+                    wuwa: 'Wuthering Waves',
+                    zzz: 'Zenless Zone Zero',
+                };
                 embed.setDescription(`Welcome sweetie! Here are all my beautiful characters from **${gameNames[selectedGame]}**! (◕‿◕✿)\n\n*Select a game or browse the pages below.*`);
-                const allChars = registry.getAllCharacters().filter(c => c.game === selectedGame && (c.rarity === '4' || c.rarity === '5'));
+                const allChars = registry
+                    .getAllCharacters()
+                    .filter((c) => c.game === selectedGame && (c.rarity === '4' || c.rarity === '5'));
                 const totalPages = Math.ceil(allChars.length / itemsPerPage);
-                embed.setFooter({ text: `Page ${currentPage + 1} of ${totalPages} • Each character costs 400 (4★) or 600 (5★) Star Dust` });
+                embed.setFooter({
+                    text: `Page ${currentPage + 1} of ${totalPages} • Each character costs 400 (4★) or 600 (5★) Star Dust`,
+                });
             }
             else {
                 embed.setDescription(`Welcome sweetie! What would you like to buy today? (◕‿◕✿)\n\n*Use the menu below to switch categories.*`);
@@ -62,14 +71,36 @@ module.exports = {
                     .setCustomId('shop_game')
                     .setPlaceholder('🎮 Select Game')
                     .addOptions([
-                    { label: 'Genshin Impact', value: 'genshin', emoji: '⚔️', default: selectedGame === 'genshin' },
-                    { label: 'Honkai: Star Rail', value: 'hsr', emoji: '🚂', default: selectedGame === 'hsr' },
-                    { label: 'Wuthering Waves', value: 'wuwa', emoji: '🌊', default: selectedGame === 'wuwa' },
-                    { label: 'Zenless Zone Zero', value: 'zzz', emoji: '📺', default: selectedGame === 'zzz' }
+                    {
+                        label: 'Genshin Impact',
+                        value: 'genshin',
+                        emoji: '⚔️',
+                        default: selectedGame === 'genshin',
+                    },
+                    {
+                        label: 'Honkai: Star Rail',
+                        value: 'hsr',
+                        emoji: '🚂',
+                        default: selectedGame === 'hsr',
+                    },
+                    {
+                        label: 'Wuthering Waves',
+                        value: 'wuwa',
+                        emoji: '🌊',
+                        default: selectedGame === 'wuwa',
+                    },
+                    {
+                        label: 'Zenless Zone Zero',
+                        value: 'zzz',
+                        emoji: '📺',
+                        default: selectedGame === 'zzz',
+                    },
                 ]));
                 rows.push(gameMenu);
                 // 3. Dynamic Character Menu
-                const allChars = registry.getAllCharacters().filter(c => c.game === selectedGame && (c.rarity === '4' || c.rarity === '5'));
+                const allChars = registry
+                    .getAllCharacters()
+                    .filter((c) => c.game === selectedGame && (c.rarity === '4' || c.rarity === '5'));
                 const totalPages = Math.ceil(allChars.length / itemsPerPage);
                 const start = currentPage * itemsPerPage;
                 const pageItems = allChars.slice(start, start + itemsPerPage);
@@ -77,11 +108,11 @@ module.exports = {
                     const charMenu = new ActionRowBuilder().addComponents(new StringSelectMenuBuilder()
                         .setCustomId('shop_buy_char')
                         .setPlaceholder('🎭 Select a character to buy')
-                        .addOptions(pageItems.map(c => ({
+                        .addOptions(pageItems.map((c) => ({
                         label: `${c.name} (${c.rarity}★)`,
                         value: c.name,
                         description: `${c.rarity === '5' ? 600 : 400} Star Dust`,
-                        emoji: c.emoji || (c.rarity === '5' ? '⭐' : '✨')
+                        emoji: c.emoji || (c.rarity === '5' ? '⭐' : '✨'),
                     }))));
                     rows.push(charMenu);
                 }
@@ -159,16 +190,18 @@ module.exports = {
                         name: charData.name,
                         price: charData.rarity === '5' ? 600 : 400,
                         emoji: charData.emoji,
-                        currency: 'star_dust'
+                        currency: 'star_dust',
                     };
                 }
                 else {
-                    selectedItem = shopConfig.categories[currentCategory].items.find(it => it.id === value);
+                    selectedItem = shopConfig.categories[currentCategory].items.find((it) => it.id === value);
                 }
                 if (!selectedItem)
                     return;
                 const userData = await database.getUser(userId, message.author.username);
-                const currency = isCharacter ? 'star_dust' : (shopConfig.categories[currentCategory].currency || 'coins');
+                const currency = isCharacter
+                    ? 'star_dust'
+                    : shopConfig.categories[currentCategory].currency || 'coins';
                 // Currency Check
                 if (currency === 'star_dust') {
                     if ((userData.star_dust || 0) < selectedItem.price) {

@@ -28,14 +28,17 @@ module.exports = {
 
     // Load user's custom prefix (if set)
     let userMainPrefixes = [...config.prefix]; // default: ['k','K']
-    let userSubPrefixes = config.shortPrefixes;  // default global short prefixes
+    let userSubPrefixes = config.shortPrefixes; // default global short prefixes
 
     try {
       const userData = await database.getUser(message.author.id, message.author.username);
       if (userData?.customPrefix) {
         // Replace global prefix with user's personal one
-        userMainPrefixes = [userData.customPrefix, userData.customPrefix.toLowerCase(), userData.customPrefix.toUpperCase()]
-          .filter((v, i, a) => a.indexOf(v) === i); // deduplicate
+        userMainPrefixes = [
+          userData.customPrefix,
+          userData.customPrefix.toLowerCase(),
+          userData.customPrefix.toUpperCase(),
+        ].filter((v, i, a) => a.indexOf(v) === i); // deduplicate
       }
       // subprefix override is applied globally; per-user sub handled via customSubPrefix field (for display only for now)
     } catch (_) {}
@@ -111,15 +114,19 @@ module.exports = {
           const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
 
           if (strikeData.count < 4) {
-            message.reply({
-              embeds: [{
-                color: parseInt(config.colors.warning.slice(1), 16),
-                title: 'Cooldown Active',
-                description: `${desc}\n\n**Time remaining: <t:${unixTime}:R>**`,
-                timestamp: new Date(),
-              }],
-              flags: [MessageFlags.Ephemeral]
-            }).catch(() => {});
+            message
+              .reply({
+                embeds: [
+                  {
+                    color: parseInt(config.colors.warning.slice(1), 16),
+                    title: 'Cooldown Active',
+                    description: `${desc}\n\n**Time remaining: <t:${unixTime}:R>**`,
+                    timestamp: new Date(),
+                  },
+                ],
+                flags: [MessageFlags.Ephemeral],
+              })
+              .catch(() => {});
           }
 
           strikeData.count++;
@@ -143,25 +150,41 @@ module.exports = {
 
         if (strikeData.count >= 3 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_60S)) {
           return handleSpam(GLOBAL_60S, 'Spam detected. Access restricted for 60 seconds.');
-        } else if (strikeData.count === 2 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_20S)) {
-          return handleSpam(GLOBAL_20S, "You're sending commands too quickly. Please wait 20 seconds.");
-        } else if (strikeData.count === 1 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_8S)) {
-          return handleSpam(GLOBAL_8S, "Rate limit exceeded. Please wait 8 seconds before your next request.");
+        } else if (
+          strikeData.count === 2 &&
+          cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_20S)
+        ) {
+          return handleSpam(
+            GLOBAL_20S,
+            "You're sending commands too quickly. Please wait 20 seconds."
+          );
+        } else if (
+          strikeData.count === 1 &&
+          cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_8S)
+        ) {
+          return handleSpam(
+            GLOBAL_8S,
+            'Rate limit exceeded. Please wait 8 seconds before your next request.'
+          );
         } else if (cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_3S)) {
           strikeData.count = 1;
           strikeData.lastSpam = now;
           spamStrikes.set(userId, strikeData);
           const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, GLOBAL_3S);
           const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
-          message.reply({
-            embeds: [{
-              color: parseInt(config.colors.warning.slice(1), 16),
-              title: 'Cooldown Active',
-              description: `Please wait until <t:${unixTime}:R> before your next command.`,
-              timestamp: new Date(),
-            }],
-            flags: [MessageFlags.Ephemeral]
-          }).catch(() => {});
+          message
+            .reply({
+              embeds: [
+                {
+                  color: parseInt(config.colors.warning.slice(1), 16),
+                  title: 'Cooldown Active',
+                  description: `Please wait until <t:${unixTime}:R> before your next command.`,
+                  timestamp: new Date(),
+                },
+              ],
+              flags: [MessageFlags.Ephemeral],
+            })
+            .catch(() => {});
           return;
         }
 
@@ -172,15 +195,19 @@ module.exports = {
         // Check if user is admin for admin-only commands
         if (command.adminOnly && !config.adminIds.includes(message.author.id)) {
           activeRequests.delete(userId);
-          message.reply({
-            embeds: [{
-              color: parseInt(config.colors.error.slice(1), 16),
-              title: 'Access Denied',
-              description: "This command is restricted to authorized personnel only.",
-              timestamp: new Date(),
-            }],
-            flags: [MessageFlags.Ephemeral]
-          }).catch(() => {});
+          message
+            .reply({
+              embeds: [
+                {
+                  color: parseInt(config.colors.error.slice(1), 16),
+                  title: 'Access Denied',
+                  description: 'This command is restricted to authorized personnel only.',
+                  timestamp: new Date(),
+                },
+              ],
+              flags: [MessageFlags.Ephemeral],
+            })
+            .catch(() => {});
           return;
         }
 
@@ -192,15 +219,19 @@ module.exports = {
             const timeLeft = cooldowns.getTimeLeft(cooldownKey, command.cooldown);
             const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
 
-            message.reply({
-              embeds: [{
-                color: parseInt(config.colors.warning.slice(1), 16),
-                title: 'Cooldown Active',
-                description: `Command is on cooldown. You can use it again <t:${unixTime}:R>.`,
-                timestamp: new Date(),
-              }],
-              flags: [MessageFlags.Ephemeral]
-            }).catch(() => {});
+            message
+              .reply({
+                embeds: [
+                  {
+                    color: parseInt(config.colors.warning.slice(1), 16),
+                    title: 'Cooldown Active',
+                    description: `Command is on cooldown. You can use it again <t:${unixTime}:R>.`,
+                    timestamp: new Date(),
+                  },
+                ],
+                flags: [MessageFlags.Ephemeral],
+              })
+              .catch(() => {});
             return;
           }
           cooldowns.setCooldown(cooldownKey);
@@ -219,25 +250,29 @@ module.exports = {
           );
         } catch (error) {
           logger.error(`Error executing command ${commandName}:`, error);
-          
-          const isDbError = 
-            error.name === 'MongoServerSelectionError' || 
-            error.name === 'MongooseError' || 
-            error.message?.includes('Mongo') || 
-            error.message?.includes('ECONNRESET') || 
+
+          const isDbError =
+            error.name === 'MongoServerSelectionError' ||
+            error.name === 'MongooseError' ||
+            error.message?.includes('Mongo') ||
+            error.message?.includes('ECONNRESET') ||
             error.message?.includes('connection');
 
-          message.reply({
-            embeds: [{
-              color: parseInt(config.colors.error.slice(1), 16),
-              title: isDbError ? '⚡ Database Connection Error' : 'Execution Error',
-              description: isDbError
-                ? 'Failed to connect to the database. The simulation database might be undergoing maintenance or experiencing a transient network hiccup. Please try again in a few moments! (ಥ﹏ಥ)'
-                : 'An unexpected error occurred while processing your request.',
-              timestamp: new Date(),
-            }],
-            flags: [MessageFlags.Ephemeral]
-          }).catch(() => {});
+          message
+            .reply({
+              embeds: [
+                {
+                  color: parseInt(config.colors.error.slice(1), 16),
+                  title: isDbError ? '⚡ Database Connection Error' : 'Execution Error',
+                  description: isDbError
+                    ? 'Failed to connect to the database. The simulation database might be undergoing maintenance or experiencing a transient network hiccup. Please try again in a few moments! (ಥ﹏ಥ)'
+                    : 'An unexpected error occurred while processing your request.',
+                  timestamp: new Date(),
+                },
+              ],
+              flags: [MessageFlags.Ephemeral],
+            })
+            .catch(() => {});
         } finally {
           activeRequests.delete(userId);
         }

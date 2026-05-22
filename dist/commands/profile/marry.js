@@ -1,5 +1,5 @@
 "use strict";
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const { getCharacterImage, getCharacterIcon } = require('../../utils/images.js');
@@ -30,14 +30,14 @@ module.exports = {
             });
         }
         // 2. Check if user has a Ring of Promise
-        const ring = userData.inventory.find(i => i.name === 'Ring of Promise' && i.count > 0);
+        const ring = userData.inventory.find((i) => i.name === 'Ring of Promise' && i.count > 0);
         if (!ring) {
             return message.reply({
                 content: `💍 Oh no, sweetie! You need a **Ring of Promise** from the \`Kshop\` to propose! (｡•́︿•̀｡)`,
             });
         }
         // 3. Check if user owns the character
-        const charEntry = userData.gacha_inventory.find(i => i.name.toLowerCase().includes(charName));
+        const charEntry = userData.gacha_inventory.find((i) => i.name.toLowerCase().includes(charName));
         if (!charEntry) {
             return message.reply({
                 content: `❌ You don't own that character yet, darling! You must find them in the gacha first. (っ˘ω˘ς)`,
@@ -51,7 +51,13 @@ module.exports = {
             .setDescription(`Are you sure you want to use your **Ring of Promise** to marry **${fullChar.name}**, sweetie? (｡♥‿♥｡)`)
             .setImage(splashArt)
             .setFooter({ text: 'This action cannot be undone easily! (っ˘ω˘ς)' });
-        const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('marry_confirm').setLabel('Yes, I do!').setStyle(ButtonStyle.Success), new ButtonBuilder().setCustomId('marry_cancel').setLabel('Not yet...').setStyle(ButtonStyle.Secondary));
+        const row = new ActionRowBuilder().addComponents(new ButtonBuilder()
+            .setCustomId('marry_confirm')
+            .setLabel('Yes, I do!')
+            .setStyle(ButtonStyle.Success), new ButtonBuilder()
+            .setCustomId('marry_cancel')
+            .setLabel('Not yet...')
+            .setStyle(ButtonStyle.Secondary));
         const msg = await message.reply({ embeds: [embed], components: [row] });
         const collector = msg.createMessageComponentCollector({ time: 30000 });
         collector.on('collect', async (i) => {
@@ -61,13 +67,13 @@ module.exports = {
                 // Consume Ring
                 ring.count--;
                 if (ring.count <= 0) {
-                    userData.inventory = userData.inventory.filter(item => item.name !== 'Ring of Promise');
+                    userData.inventory = userData.inventory.filter((item) => item.name !== 'Ring of Promise');
                 }
                 // Set Spouse
                 userData.spouse = {
                     name: fullChar.name,
                     affinity: 1,
-                    marriedAt: new Date()
+                    marriedAt: new Date(),
                 };
                 userData.markModified('inventory');
                 userData.markModified('spouse');
@@ -81,7 +87,11 @@ module.exports = {
                 await i.update({ embeds: [successEmbed], components: [] });
             }
             else {
-                await i.update({ content: 'Mommy understands, sweetie. Take your time! (◕‿◕✿)', embeds: [], components: [] });
+                await i.update({
+                    content: 'Mommy understands, sweetie. Take your time! (◕‿◕✿)',
+                    embeds: [],
+                    components: [],
+                });
             }
         });
         collector.on('end', () => {

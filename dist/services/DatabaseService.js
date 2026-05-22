@@ -47,7 +47,9 @@ class DatabaseService {
     }
     async saveUserUpdate(userId, updatePayload) {
         try {
-            return await User_1.default.findOneAndUpdate({ id: userId }, updatePayload, { returnDocument: 'after' });
+            return await User_1.default.findOneAndUpdate({ id: userId }, updatePayload, {
+                returnDocument: 'after',
+            });
         }
         catch (err) {
             logger.error(`MongoDB saveUserUpdate error:`, err);
@@ -117,14 +119,14 @@ class DatabaseService {
         // Set one-time-use flag
         user.boosters.set(type, {
             active: true,
-            oneTime: true
+            oneTime: true,
         });
         user.markModified('boosters');
         await this.saveUser(user);
         return { success: true };
     }
     async clearOneTimeBall(userId, type) {
-        return await User_1.default.findOneAndUpdate({ id: userId }, { $unset: { [`boosters.${type}`]: "" } }, { returnDocument: 'after' });
+        return await User_1.default.findOneAndUpdate({ id: userId }, { $unset: { [`boosters.${type}`]: '' } }, { returnDocument: 'after' });
     }
     async addItem(userId, itemName, amount = 1) {
         const user = await this.getUser(userId);
@@ -224,16 +226,16 @@ class DatabaseService {
         return await User_1.default.findOneAndUpdate({ id: userId }, {
             $inc: {
                 balance: -amount,
-                bank: amount
-            }
+                bank: amount,
+            },
         }, { returnDocument: 'after' });
     }
     async withdraw(userId, amount) {
         return await User_1.default.findOneAndUpdate({ id: userId }, {
             $inc: {
                 balance: amount,
-                bank: -amount
-            }
+                bank: -amount,
+            },
         }, { returnDocument: 'after' });
     }
     async updateStats(userId, type, amount = 1) {
@@ -364,7 +366,7 @@ class DatabaseService {
                     name: a.name,
                     emoji: a.emoji,
                     value: a.value,
-                    rarity: a.rarity
+                    rarity: a.rarity,
                 };
             });
             return registry;
@@ -382,8 +384,8 @@ class DatabaseService {
         return await User_1.default.findOneAndUpdate({ id: userId }, {
             $inc: {
                 [updatePath]: 1,
-                'stats.totalAnimalsFound': 1
-            }
+                'stats.totalAnimalsFound': 1,
+            },
         }, { upsert: true, returnDocument: 'after' });
     }
     async getUserAnimals(userId) {
@@ -508,7 +510,10 @@ class DatabaseService {
         try {
             const user = await this.getUser(userId);
             if (!user || !user.animals)
-                return { success: false, message: "You don't have any Pokémon yet! Go hunt some first. (・_・ヾ" };
+                return {
+                    success: false,
+                    message: "You don't have any Pokémon yet! Go hunt some first. (・_・ヾ",
+                };
             // Find the species in any rarity tier
             let foundRarity = null;
             const animalsMap = user.animals instanceof Map ? user.animals : new Map(Object.entries(user.animals));
@@ -521,7 +526,10 @@ class DatabaseService {
                 }
             }
             if (!foundRarity) {
-                return { success: false, message: `You don't have any **${speciesKey}** in your Zoo! (｡•́︿•̀｡)` };
+                return {
+                    success: false,
+                    message: `You don't have any **${speciesKey}** in your Zoo! (｡•́︿•̀｡)`,
+                };
             }
             // Consume 1 from Zoo count
             await this.removeAnimal(userId, speciesKey, foundRarity);

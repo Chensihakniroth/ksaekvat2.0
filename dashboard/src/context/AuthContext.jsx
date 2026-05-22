@@ -11,8 +11,8 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     // Check if user is logged in
     fetch('/api/auth/me')
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (data.success) {
           setUser(data.user);
         }
@@ -36,8 +36,6 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>{children}</AuthContext.Provider>
   );
 }

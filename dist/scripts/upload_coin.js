@@ -8,7 +8,7 @@ client.once('ready', async () => {
     const imagePath = path.join(__dirname, '../assets/coin.png');
     const name = 'coin';
     try {
-        const existing = client.application.emojis.cache.find(e => e.name === name);
+        const existing = client.application.emojis.cache.find((e) => e.name === name);
         if (existing) {
             console.log(`Emoji ${name} already exists: ${existing.toString()}`);
         }
@@ -16,7 +16,7 @@ client.once('ready', async () => {
             console.log(`Uploading ${name}...`);
             const emoji = await client.application.emojis.create({
                 attachment: imagePath,
-                name: name
+                name: name,
             });
             console.log(`Created custom emoji: ${emoji.name} ${emoji.toString()}`);
         }

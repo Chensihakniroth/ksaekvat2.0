@@ -54,14 +54,20 @@ class ImageGenerationService {
         if (!buf || buf.length < 12)
             return false;
         // PNG: 89 50 4E 47
-        if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47)
+        if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47)
             return true;
         // JPEG: FF D8 FF
-        if (buf[0] === 0xFF && buf[1] === 0xD8 && buf[2] === 0xFF)
+        if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff)
             return true;
         // WebP: 52 49 46 46 ... 57 45 42 50
-        if (buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46 &&
-            buf[8] === 0x57 && buf[9] === 0x45 && buf[10] === 0x42 && buf[11] === 0x50)
+        if (buf[0] === 0x52 &&
+            buf[1] === 0x49 &&
+            buf[2] === 0x46 &&
+            buf[3] === 0x46 &&
+            buf[8] === 0x57 &&
+            buf[9] === 0x45 &&
+            buf[10] === 0x42 &&
+            buf[11] === 0x50)
             return true;
         // GIF: 47 49 46 38
         if (buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x38)
@@ -78,7 +84,7 @@ class ImageGenerationService {
                 const dy = y - height / 2;
                 const dist = Math.sqrt(dx * dx + dy * dy);
                 const maxDist = (width > height ? width : height) * 0.7;
-                let light = 1 - (dist / maxDist);
+                let light = 1 - dist / maxDist;
                 if (light < 0)
                     light = 0;
                 r += light * 24;
@@ -162,8 +168,8 @@ class ImageGenerationService {
             const bb_ = Math.floor(bb * (1 - t) + bb2 * t);
             for (let x = 0; x < width; x++) {
                 let r = 0, g = 0, b = 0, a = Math.floor(fadeAlpha * 255);
-                if (y < 40 && x < (140 - y)) {
-                    const glowAlpha = 1 - (x / 140);
+                if (y < 40 && x < 140 - y) {
+                    const glowAlpha = 1 - x / 140;
                     const finalA = Math.floor(glowAlpha * 0.75 * 255);
                     if (finalA > a) {
                         r = rr;
@@ -197,9 +203,11 @@ class ImageGenerationService {
                 const rx = width / 2;
                 const ry = height / 2;
                 const borderDist = 4;
-                const onBorderX = (x >= borderDist && x <= borderDist + 3) || (x >= width - borderDist - 4 && x <= width - borderDist - 1);
-                const onBorderY = (y >= borderDist && y <= borderDist + 3) || (y >= height - borderDist - 4 && y <= height - borderDist - 1);
-                if ((onBorderX && (y % 24 < 12)) || (onBorderY && (x % 24 < 12)) || (onBorderX && onBorderY)) {
+                const onBorderX = (x >= borderDist && x <= borderDist + 3) ||
+                    (x >= width - borderDist - 4 && x <= width - borderDist - 1);
+                const onBorderY = (y >= borderDist && y <= borderDist + 3) ||
+                    (y >= height - borderDist - 4 && y <= height - borderDist - 1);
+                if ((onBorderX && y % 24 < 12) || (onBorderY && x % 24 < 12) || (onBorderX && onBorderY)) {
                     r = dashColor[0];
                     g = dashColor[1];
                     b = dashColor[2];
@@ -240,7 +248,11 @@ class ImageGenerationService {
         try {
             const composites = [];
             const rawBgArray = this.createGridBgRaw(canvasWidth, canvasHeight);
-            const bgBuffer = await (0, sharp_1.default)(rawBgArray, { raw: { width: canvasWidth, height: canvasHeight, channels: 4 } }).png().toBuffer();
+            const bgBuffer = await (0, sharp_1.default)(rawBgArray, {
+                raw: { width: canvasWidth, height: canvasHeight, channels: 4 },
+            })
+                .png()
+                .toBuffer();
             composites.push({ input: bgBuffer, top: 0, left: 0 });
             try {
                 const textUrl = `https://placehold.co/${canvasWidth}x${headerHeight}/000000/FFFFFF/png?text=BATTLE+TEAM&font=Rajdhani`;
@@ -249,10 +261,14 @@ class ImageGenerationService {
                 composites.push({ input: textBuffer, top: 0, left: 0, blend: 'screen' });
             }
             catch (textErr) {
-                console.error("Text generation error:", textErr.message);
+                console.error('Text generation error:', textErr.message);
             }
             const rarityColors = { 5: '#FFD700', 4: '#B366FF', 3: '#4DA6FF' };
-            const rarityGradients = { 5: ['#FFF0B3', '#D4AF37'], 4: ['#D9B3FF', '#8A2BE2'], 3: ['#B3D9FF', '#1E90FF'] };
+            const rarityGradients = {
+                5: ['#FFF0B3', '#D4AF37'],
+                4: ['#D9B3FF', '#8A2BE2'],
+                3: ['#B3D9FF', '#1E90FF'],
+            };
             for (let i = 0; i < 4; i++) {
                 const x = padding + i * (cardWidth + padding);
                 const y = headerHeight + padding;
@@ -262,7 +278,11 @@ class ImageGenerationService {
                 const item = charName && teamCharacters ? teamCharacters.find((c) => c.name === charName) : null;
                 let slotBuffer;
                 const rawMaskArray = this.createCardMaskRaw(cardWidth, cardHeight, 24);
-                const cardMaskBuffer = await (0, sharp_1.default)(rawMaskArray, { raw: { width: cardWidth, height: cardHeight, channels: 4 } }).png().toBuffer();
+                const cardMaskBuffer = await (0, sharp_1.default)(rawMaskArray, {
+                    raw: { width: cardWidth, height: cardHeight, channels: 4 },
+                })
+                    .png()
+                    .toBuffer();
                 if (item) {
                     try {
                         let imageUrl = item.image_url;
@@ -271,14 +291,29 @@ class ImageGenerationService {
                         let useCover = ['genshin', 'wuwa'].includes(game);
                         if (game === 'genshin') {
                             let apiId = item.name.toLowerCase().trim().replace(/ /g, '-');
-                            const genshinOverrides = { 'kamisato-ayato': 'ayato', 'kamisato-ayaka': 'ayaka', 'sangonomiya-kokomi': 'kokomi', 'kaedehara-kazuha': 'kazuha', 'shikanoin-heizou': 'heizou', 'kuki-shinobu': 'shinobu', 'kujou-sara': 'sara', 'arataki-itto': 'itto', 'tartaglia': 'childe' };
+                            const genshinOverrides = {
+                                'kamisato-ayato': 'ayato',
+                                'kamisato-ayaka': 'ayaka',
+                                'sangonomiya-kokomi': 'kokomi',
+                                'kaedehara-kazuha': 'kazuha',
+                                'shikanoin-heizou': 'heizou',
+                                'kuki-shinobu': 'shinobu',
+                                'kujou-sara': 'sara',
+                                'arataki-itto': 'itto',
+                                tartaglia: 'childe',
+                            };
                             if (genshinOverrides[apiId])
                                 apiId = genshinOverrides[apiId];
                             imageUrl = `https://genshin.jmp.blue/characters/${apiId}/icon-big`;
                             try {
-                                const jmpRes = await axios_1.default.get(imageUrl, { headers: { 'User-Agent': 'Mozilla/5.0' }, responseType: 'arraybuffer', timeout: 8000 });
+                                const jmpRes = await axios_1.default.get(imageUrl, {
+                                    headers: { 'User-Agent': 'Mozilla/5.0' },
+                                    responseType: 'arraybuffer',
+                                    timeout: 8000,
+                                });
                                 const jmpBuf = Buffer.from(jmpRes.data);
-                                if (jmpRes.headers['content-type']?.includes('image/') && this.isValidImageBuffer(jmpBuf))
+                                if (jmpRes.headers['content-type']?.includes('image/') &&
+                                    this.isValidImageBuffer(jmpBuf))
                                     imageBuffer = jmpBuf;
                                 else
                                     throw new Error('invalid format');
@@ -289,7 +324,10 @@ class ImageGenerationService {
                                 const res = await axios_1.default.get(apiUrl, { timeout: 8000 });
                                 const pageId = Object.keys(res.data.query.pages)[0];
                                 if (pageId !== '-1' && res.data.query.pages[pageId].imageinfo) {
-                                    const wikiRes = await axios_1.default.get(res.data.query.pages[pageId].imageinfo[0].url, { responseType: 'arraybuffer', timeout: 8000 });
+                                    const wikiRes = await axios_1.default.get(res.data.query.pages[pageId].imageinfo[0].url, {
+                                        responseType: 'arraybuffer',
+                                        timeout: 8000,
+                                    });
                                     const wikiBuf = Buffer.from(wikiRes.data);
                                     if (this.isValidImageBuffer(wikiBuf))
                                         imageBuffer = wikiBuf;
@@ -304,7 +342,10 @@ class ImageGenerationService {
                                 const res = await axios_1.default.get(apiUrl, { timeout: 8000 });
                                 const pageId = Object.keys(res.data.query.pages)[0];
                                 if (pageId !== '-1') {
-                                    const wikiRes = await axios_1.default.get(res.data.query.pages[pageId].imageinfo[0].url, { responseType: 'arraybuffer', timeout: 8000 });
+                                    const wikiRes = await axios_1.default.get(res.data.query.pages[pageId].imageinfo[0].url, {
+                                        responseType: 'arraybuffer',
+                                        timeout: 8000,
+                                    });
                                     imageBuffer = Buffer.from(wikiRes.data);
                                 }
                             }
@@ -318,7 +359,10 @@ class ImageGenerationService {
                                 const res = await axios_1.default.get(apiUrl, { timeout: 8000 });
                                 const pageId = Object.keys(res.data.query.pages)[0];
                                 if (pageId !== '-1') {
-                                    const wikiRes = await axios_1.default.get(res.data.query.pages[pageId].imageinfo[0].url, { responseType: 'arraybuffer', timeout: 8000 });
+                                    const wikiRes = await axios_1.default.get(res.data.query.pages[pageId].imageinfo[0].url, {
+                                        responseType: 'arraybuffer',
+                                        timeout: 8000,
+                                    });
                                     imageBuffer = Buffer.from(wikiRes.data);
                                 }
                             }
@@ -332,7 +376,10 @@ class ImageGenerationService {
                                 const res = await axios_1.default.get(apiUrl, { timeout: 8000 });
                                 const pageId = Object.keys(res.data.query.pages)[0];
                                 if (pageId !== '-1') {
-                                    const wikiRes = await axios_1.default.get(res.data.query.pages[pageId].imageinfo[0].url, { responseType: 'arraybuffer', timeout: 8000 });
+                                    const wikiRes = await axios_1.default.get(res.data.query.pages[pageId].imageinfo[0].url, {
+                                        responseType: 'arraybuffer',
+                                        timeout: 8000,
+                                    });
                                     imageBuffer = Buffer.from(wikiRes.data);
                                 }
                             }
@@ -340,41 +387,82 @@ class ImageGenerationService {
                             useCover = false;
                         }
                         if (!imageBuffer && imageUrl) {
-                            const fallbackRes = await axios_1.default.get(imageUrl, { responseType: 'arraybuffer', timeout: 8000 });
+                            const fallbackRes = await axios_1.default.get(imageUrl, {
+                                responseType: 'arraybuffer',
+                                timeout: 8000,
+                            });
                             imageBuffer = Buffer.from(fallbackRes.data);
                         }
                         if (!imageBuffer)
-                            throw new Error("Could not acquire image");
+                            throw new Error('Could not acquire image');
                         const rGrad = rarityGradients[item.rarity] || ['#777', '#444'];
-                        const cardBg = await (0, sharp_1.default)({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' } }).png().toBuffer();
-                        let charLayer = (0, sharp_1.default)(imageBuffer).resize(cardWidth, cardHeight, { fit: useCover ? 'cover' : 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } });
+                        const cardBg = await (0, sharp_1.default)({
+                            create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' },
+                        })
+                            .png()
+                            .toBuffer();
+                        let charLayer = (0, sharp_1.default)(imageBuffer).resize(cardWidth, cardHeight, {
+                            fit: useCover ? 'cover' : 'contain',
+                            background: { r: 0, g: 0, b: 0, alpha: 0 },
+                        });
                         const rawGradientArray = this.createCardGradientRaw(cardWidth, cardHeight, rGrad);
-                        const gradientBg = await (0, sharp_1.default)(rawGradientArray, { raw: { width: cardWidth, height: cardHeight, channels: 4 } }).png().toBuffer();
+                        const gradientBg = await (0, sharp_1.default)(rawGradientArray, {
+                            raw: { width: cardWidth, height: cardHeight, channels: 4 },
+                        })
+                            .png()
+                            .toBuffer();
                         let slotBaseBuffer = await (0, sharp_1.default)(cardBg)
-                            .composite([{ input: await charLayer.png().toBuffer(), blend: 'over' }, { input: gradientBg, blend: 'over' }])
-                            .png().toBuffer();
+                            .composite([
+                            { input: await charLayer.png().toBuffer(), blend: 'over' },
+                            { input: gradientBg, blend: 'over' },
+                        ])
+                            .png()
+                            .toBuffer();
                         slotBuffer = await (0, sharp_1.default)(slotBaseBuffer)
                             .composite([{ input: cardMaskBuffer, blend: 'dest-in' }])
-                            .png().toBuffer();
+                            .png()
+                            .toBuffer();
                     }
                     catch (err) {
                         console.error(`Error generating card for ${item?.name || 'Unknown'}:`, err.message);
-                        slotBuffer = await (0, sharp_1.default)({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#ff0000' } }).png().toBuffer();
+                        slotBuffer = await (0, sharp_1.default)({
+                            create: { width: cardWidth, height: cardHeight, channels: 4, background: '#ff0000' },
+                        })
+                            .png()
+                            .toBuffer();
                     }
                 }
                 else {
                     const emptyRawArray = this.createEmptySlotRaw(cardWidth, cardHeight);
-                    const emptyBaseBuffer = await (0, sharp_1.default)(emptyRawArray, { raw: { width: cardWidth, height: cardHeight, channels: 4 } }).png().toBuffer();
-                    slotBuffer = await (0, sharp_1.default)({ create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' } })
-                        .composite([{ input: emptyBaseBuffer, blend: 'over' }, { input: cardMaskBuffer, blend: 'dest-in' }])
-                        .png().toBuffer();
+                    const emptyBaseBuffer = await (0, sharp_1.default)(emptyRawArray, {
+                        raw: { width: cardWidth, height: cardHeight, channels: 4 },
+                    })
+                        .png()
+                        .toBuffer();
+                    slotBuffer = await (0, sharp_1.default)({
+                        create: { width: cardWidth, height: cardHeight, channels: 4, background: '#181a20' },
+                    })
+                        .composite([
+                        { input: emptyBaseBuffer, blend: 'over' },
+                        { input: cardMaskBuffer, blend: 'dest-in' },
+                    ])
+                        .png()
+                        .toBuffer();
                 }
                 composites.push({ input: slotBuffer, top: y, left: x });
             }
             const outputPath = path.join(TEMP_DIR, `team-banner-${Date.now()}.png`);
-            await (0, sharp_1.default)({ create: { width: canvasWidth, height: canvasHeight, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } } })
+            await (0, sharp_1.default)({
+                create: {
+                    width: canvasWidth,
+                    height: canvasHeight,
+                    channels: 4,
+                    background: { r: 0, g: 0, b: 0, alpha: 0 },
+                },
+            })
                 .composite(composites)
-                .png().toFile(outputPath);
+                .png()
+                .toFile(outputPath);
             return outputPath;
         }
         catch (globalErr) {

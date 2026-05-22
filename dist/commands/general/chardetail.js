@@ -18,8 +18,7 @@ module.exports = {
         const inventory = await database.getHydratedInventory(message.author.id);
         const userData = await database.getUser(message.author.id, message.author.username);
         // Search in inventory (partial match)
-        const match = inventory.find((i) => (i.type === 'character' || !i.type) &&
-            i.name.toLowerCase().includes(charName.toLowerCase()));
+        const match = inventory.find((i) => (i.type === 'character' || !i.type) && i.name.toLowerCase().includes(charName.toLowerCase()));
         if (!match) {
             return message.reply(`❌ Sweetie, you don't have **${charName}** in your collection yet! Use \`kwish\` to get them~ (っ˘ω˘ς)`);
         }
@@ -49,7 +48,7 @@ module.exports = {
         const createEmbed = () => {
             const conLabel = match.game?.toLowerCase() === 'hsr' ? 'Eidolon' : 'Constellation';
             const embed = new EmbedBuilder()
-                .setColor(match.rarity >= 5 ? 0xFFB13F : match.rarity >= 4 ? 0xA256FF : colors.primary)
+                .setColor(match.rarity >= 5 ? 0xffb13f : match.rarity >= 4 ? 0xa256ff : colors.primary)
                 .setTitle(`${charEmoji} ${match.name}`)
                 .setDescription([
                 `${rarityEmoji} ${elementEmoji} ${roleEmoji}`,
@@ -126,7 +125,7 @@ module.exports = {
                 userData.team = freshUser.team;
                 const nowInTeam = true;
                 const refreshedEmbed = new EmbedBuilder()
-                    .setColor(match.rarity >= 5 ? 0xFFB13F : match.rarity >= 4 ? 0xA256FF : colors.primary)
+                    .setColor(match.rarity >= 5 ? 0xffb13f : match.rarity >= 4 ? 0xa256ff : colors.primary)
                     .setTitle(`${charEmoji} ${match.name}`)
                     .setDescription([
                     `${rarityEmoji} ${elementEmoji} ${roleEmoji}`,
@@ -163,7 +162,7 @@ module.exports = {
                 freshUser.team.splice(idx, 1);
                 await database.saveUser(freshUser);
                 const refreshedEmbed = new EmbedBuilder()
-                    .setColor(match.rarity >= 5 ? 0xFFB13F : match.rarity >= 4 ? 0xA256FF : colors.primary)
+                    .setColor(match.rarity >= 5 ? 0xffb13f : match.rarity >= 4 ? 0xa256ff : colors.primary)
                     .setTitle(`${charEmoji} ${match.name}`)
                     .setDescription([
                     `${rarityEmoji} ${elementEmoji} ${roleEmoji}`,

@@ -2,7 +2,8 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService.js');
+const EconomyService =
+  require('../../services/EconomyService').default || require('../../services/EconomyService.js');
 
 module.exports = {
   name: 'slots',
@@ -17,8 +18,7 @@ module.exports = {
           {
             color: colors.error,
             title: '❌ Invalid Amount',
-            description:
-              "Please specify a valid amount to bet.\n**Usage:** `Kslots <amount>`",
+            description: 'Please specify a valid amount to bet.\n**Usage:** `Kslots <amount>`',
           },
         ],
       });
@@ -32,9 +32,25 @@ module.exports = {
 
     if (betAmount <= 0) {
       if (args[0]?.toLowerCase() === 'all' && userData.balance <= 0) {
-        return message.reply({ embeds: [{ color: colors.error, title: '💸 No Funds', description: `You don't have any balance to bet.` }] });
+        return message.reply({
+          embeds: [
+            {
+              color: colors.error,
+              title: '💸 No Funds',
+              description: `You don't have any balance to bet.`,
+            },
+          ],
+        });
       }
-      return message.reply({ embeds: [{ color: colors.error, title: '❌ Invalid Amount', description: 'Please provide a valid number.' }] });
+      return message.reply({
+        embeds: [
+          {
+            color: colors.error,
+            title: '❌ Invalid Amount',
+            description: 'Please provide a valid number.',
+          },
+        ],
+      });
     }
 
     // If user tries to bet "all" but it would exceed maxBet, use maxBet instead
@@ -43,7 +59,15 @@ module.exports = {
     }
 
     if (betAmount < minBet) {
-      return message.reply({ embeds: [{ color: colors.warning, title: '💸 Bet Too Low', description: `Minimum bet is **${minBet.toLocaleString()}** ${config.economy.currency}.` }] });
+      return message.reply({
+        embeds: [
+          {
+            color: colors.warning,
+            title: '💸 Bet Too Low',
+            description: `Minimum bet is **${minBet.toLocaleString()}** ${config.economy.currency}.`,
+          },
+        ],
+      });
     }
 
     if (!(await database.hasBalance(message.author.id, betAmount))) {
@@ -62,25 +86,25 @@ module.exports = {
     await database.removeBalance(message.author.id, betAmount);
     await database.updateStats(message.author.id, 'gambled', betAmount);
 
-const outcomes = [
-       {
-         type: 'diamond',
-         weight: 1,
-         emoji: '💎',
-         multiplier: 10,
-         name: 'Diamond Jackpot! ✨',
-       },
-       { type: 'rocket', weight: 4, emoji: '🚀', multiplier: 5, name: 'To the moon! 🚀' },
-       {
-         type: 'coin',
-         weight: 65,
-         emoji: '🪙',
-         multiplier: 2,
-         name: 'Coin Win! 💰',
-       },
-       { type: 'draw', weight: 65, emoji: '🤝', multiplier: 1, name: "It's a Draw" },
-       { type: 'lose', weight: 65, emoji: '💀', multiplier: 0, name: 'You Lost' },
-     ];
+    const outcomes = [
+      {
+        type: 'diamond',
+        weight: 1,
+        emoji: '💎',
+        multiplier: 10,
+        name: 'Diamond Jackpot! ✨',
+      },
+      { type: 'rocket', weight: 4, emoji: '🚀', multiplier: 5, name: 'To the moon! 🚀' },
+      {
+        type: 'coin',
+        weight: 65,
+        emoji: '🪙',
+        multiplier: 2,
+        name: 'Coin Win! 💰',
+      },
+      { type: 'draw', weight: 65, emoji: '🤝', multiplier: 1, name: "It's a Draw" },
+      { type: 'lose', weight: 65, emoji: '💀', multiplier: 0, name: 'You Lost' },
+    ];
 
     let outcomePool = [];
     for (const outcome of outcomes) {
@@ -148,8 +172,8 @@ const outcomes = [
 
       slotEmbed.setDescription(
         `**Bet:** ${betAmount.toLocaleString()} ${config.economy.currency}\n\n` +
-        `🎰 ┃ ${animationSymbols.first} ┃ ${animationSymbols.middle} ┃ ${animationSymbols.last} ┃\n\n` +
-        statusText
+          `🎰 ┃ ${animationSymbols.first} ┃ ${animationSymbols.middle} ┃ ${animationSymbols.last} ┃\n\n` +
+          statusText
       );
 
       try {
@@ -182,10 +206,10 @@ const outcomes = [
         .setTitle(`🎉 You Won!`)
         .setDescription(
           `**${selectedOutcome.name}**\n\n` +
-          `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-          `**Winnings:** +${winAmount.toLocaleString()} ${config.economy.currency}\n` +
-          `**New Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}\n` +
-          `**Multiplier:** x${selectedOutcome.multiplier}`
+            `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
+            `**Winnings:** +${winAmount.toLocaleString()} ${config.economy.currency}\n` +
+            `**New Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}\n` +
+            `**Multiplier:** x${selectedOutcome.multiplier}`
         );
 
       if (expGain && expGain.leveledUp) {
@@ -204,9 +228,9 @@ const outcomes = [
         .setTitle("🤝 It's a Draw")
         .setDescription(
           `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-          `*Bet refunded.*\n\n` +
-          `**Returned:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
-          `**Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}`
+            `*Bet refunded.*\n\n` +
+            `**Returned:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
+            `**Balance:** ${newBalance.toLocaleString()} ${config.economy.currency}`
         );
     } else {
       const userData = await database.getUser(message.author.id, message.author.username);
@@ -217,15 +241,16 @@ const outcomes = [
         .setTitle('💥 You Lost')
         .setDescription(
           `🎰 ┃ ${displaySymbols.first} ┃ ${displaySymbols.middle} ┃ ${displaySymbols.last} ┃\n\n` +
-          `**Loss:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
-          `**Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
+            `**Loss:** ${betAmount.toLocaleString()} ${config.economy.currency}\n` +
+            `**Balance:** ${userData.balance.toLocaleString()} ${config.economy.currency}`
         );
     }
 
     await sentMessage.edit({ embeds: [slotEmbed] });
 
     // Update Quest Progress! (｡♥‿♥｡)
-    const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+    const QuestService =
+      require('../../services/QuestService').default || require('../../services/QuestService');
     await QuestService.updateProgress(message.author.id, 'SLOTS', 1);
     await QuestService.updateWeeklyProgress(message.author.id, 'SLOTS', 1);
   },

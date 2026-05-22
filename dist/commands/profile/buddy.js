@@ -26,7 +26,9 @@ module.exports = {
         let owned = false;
         if (userData.animals) {
             // Handle both Map and plain object
-            const rarities = userData.animals instanceof Map ? userData.animals : new Map(Object.entries(userData.animals));
+            const rarities = userData.animals instanceof Map
+                ? userData.animals
+                : new Map(Object.entries(userData.animals));
             for (const [rarity, speciesMap] of rarities.entries()) {
                 const species = speciesMap instanceof Map ? speciesMap : new Map(Object.entries(speciesMap));
                 if (species.has(animalKey) && species.get(animalKey) > 0) {

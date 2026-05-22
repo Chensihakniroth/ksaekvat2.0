@@ -33,7 +33,10 @@ function fetchJson(url) {
             });
         });
         req.on('error', reject);
-        req.on('timeout', () => { req.destroy(); reject(new Error(`Timeout: ${url}`)); });
+        req.on('timeout', () => {
+            req.destroy();
+            reject(new Error(`Timeout: ${url}`));
+        });
     });
 }
 /**
@@ -75,18 +78,18 @@ const ZZZ_NAME_OVERRIDES = {
     'Jane Doe': 'Jane Doe', // Standard
     'Ju Fufu': 'Ju Fufu', // Standard
     'Koleda Belobog': 'Koleda', // Wiki uses "Koleda"
-    'Lucia Elowen': 'Lucia Elowen', // Standard  
+    'Lucia Elowen': 'Lucia Elowen', // Standard
     'Nangong Yu': 'Nangong Yu', // Standard
     'Nicole Demara': 'Nicole Demara', // Standard
     'Pan Yinhu': 'Pan Yinhu', // Standard
     'Piper Wheel': 'Piper Wheel', // Standard
-    'Qingyi': 'Qingyi', // Standard
+    Qingyi: 'Qingyi', // Standard
     'Seth Lowell': 'Seth Lowell', // Standard
     'Soldier 11': 'Soldier 11', // Standard
     'Soldier 0 - Anby': 'Soldier 0 - Anby', // Wiki keeps the hyphen
-    'Soukaku': 'Soukaku', // Standard
+    Soukaku: 'Soukaku', // Standard
     'Von Lycaon': 'Von Lycaon', // Standard
-    'Yanagi': 'Yanagi', // Standard
+    Yanagi: 'Yanagi', // Standard
     'Zhu Yuan': 'Zhu Yuan', // Standard
 };
 async function getZZZIconUrl(characterName) {
@@ -121,7 +124,11 @@ async function sleep(ms) {
     return new Promise((r) => setTimeout(r, ms));
 }
 async function updateCharacterIcons() {
-    const mongoUri = process.env.MONGO_URL || process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/kohi_bot';
+    const mongoUri = process.env.MONGO_URL ||
+        process.env.MONGODB_URI ||
+        process.env.MONGODB_URL ||
+        process.env.MONGO_URI ||
+        'mongodb://127.0.0.1:27017/kohi_bot';
     console.log('🔌 Connecting to MongoDB...');
     await mongoose.connect(mongoUri);
     console.log('✅ Connected!\n');

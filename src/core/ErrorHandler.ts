@@ -55,9 +55,9 @@ export class ErrorHandler {
     if (error instanceof AppError && error.isOperational) {
       // Known business logic error (e.g., InsufficientBalanceError)
       logger.warn(`Operational Error [${interaction.commandName}]: ${error.message}`);
-      
+
       const replyOptions = { content: `⚠️ ${error.message}`, ephemeral: true };
-      
+
       try {
         if (interaction.deferred || interaction.replied) {
           await interaction.followUp(replyOptions);
@@ -69,10 +69,17 @@ export class ErrorHandler {
       }
     } else {
       // Unknown programmer error / unhandled exception
-      logger.error(`Critical Error executing [${interaction.commandName || 'Unknown command'}]:`, error);
-      
-      const replyOptions = { content: '❌ An unexpected error occurred while processing your request. Please try again later.', ephemeral: true };
-      
+      logger.error(
+        `Critical Error executing [${interaction.commandName || 'Unknown command'}]:`,
+        error
+      );
+
+      const replyOptions = {
+        content:
+          '❌ An unexpected error occurred while processing your request. Please try again later.',
+        ephemeral: true,
+      };
+
       try {
         if (interaction.deferred || interaction.replied) {
           await interaction.followUp(replyOptions);
@@ -90,7 +97,9 @@ export class ErrorHandler {
    */
   static catchAsync(fn: Function) {
     return (interaction: any, ...args: any[]) => {
-      fn(interaction, ...args).catch((err: Error) => ErrorHandler.handleInteractionError(err, interaction));
+      fn(interaction, ...args).catch((err: Error) =>
+        ErrorHandler.handleInteractionError(err, interaction)
+      );
     };
   }
 }

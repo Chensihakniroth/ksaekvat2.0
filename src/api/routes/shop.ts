@@ -47,7 +47,7 @@ router.get('/characters', (req: Request, res: Response) => {
       rarity: c.rarity,
       element: c.element,
       emoji: c.emoji,
-      price: c.rarity === '5' ? 600 : 400
+      price: c.rarity === '5' ? 600 : 400,
     }));
 
     res.json({
@@ -55,7 +55,7 @@ router.get('/characters', (req: Request, res: Response) => {
       total,
       page,
       pages: Math.ceil(total / limit),
-      data
+      data,
     });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
@@ -73,21 +73,31 @@ router.post('/buy', async (req: any, res: Response) => {
   try {
     const jwt = require('jsonwebtoken');
     const { env } = require('../../utils/env.js');
-    const decoded: any = jwt.verify(token, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls');
-    
+    const decoded: any = jwt.verify(
+      token,
+      env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls'
+    );
+
     const { characterName } = req.body;
-    if (!characterName) return res.status(400).json({ success: false, error: 'Target character name required.' });
+    if (!characterName)
+      return res.status(400).json({ success: false, error: 'Target character name required.' });
 
     const user = await User.findOne({ id: decoded.id });
     if (!user) return res.status(404).json({ success: false, error: 'User not found' });
 
     const char = registry.getCharacter(characterName);
-    if (!char) return res.status(404).json({ success: false, error: 'Character not found in database.' });
+    if (!char)
+      return res.status(404).json({ success: false, error: 'Character not found in database.' });
 
     const price = char.rarity === '5' ? 600 : 400;
 
     if (user.star_dust < price) {
-      return res.status(400).json({ success: false, error: `Insufficient Star Dust! You need ${price} but only have ${user.star_dust}.` });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          error: `Insufficient Star Dust! You need ${price} but only have ${user.star_dust}.`,
+        });
     }
 
     // Deduct currency
@@ -103,18 +113,17 @@ router.post('/buy', async (req: any, res: Response) => {
         type: 'character',
         ascension: 0,
         refinement: 1,
-        count: 1
+        count: 1,
       });
     }
 
     await user.save();
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: `Successfully acquired ${char.name}! (｡♥‿♥｡)`,
-      newBalance: user.star_dust
+      newBalance: user.star_dust,
     });
-
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message });
   }

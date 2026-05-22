@@ -1,12 +1,12 @@
 "use strict";
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
 const colors = require('../../utils/colors.js');
 module.exports = {
     name: 'quests',
     aliases: ['q', 'task', 'quest'],
-    description: "View your daily tasks from Mommy! Complete them for big rewards! (｡♥‿♥｡)",
+    description: 'View your daily tasks from Mommy! Complete them for big rewards! (｡♥‿♥｡)',
     usage: 'quests',
     async execute(message, args, client) {
         const userId = message.author.id;
@@ -18,14 +18,16 @@ module.exports = {
         }
         // Check if reset is needed
         const today = new Date().setHours(0, 0, 0, 0);
-        const lastReset = userData.lastQuestReset ? new Date(userData.lastQuestReset).setHours(0, 0, 0, 0) : 0;
+        const lastReset = userData.lastQuestReset
+            ? new Date(userData.lastQuestReset).setHours(0, 0, 0, 0)
+            : 0;
         if (today > lastReset) {
             await QuestService.generateDailyQuests(userId);
             userData = await database.getUser(userId, message.author.username);
         }
         const embed = new EmbedBuilder()
             .setColor(colors.primary)
-            .setTitle('📜 Mommy\'s Daily Quest Board')
+            .setTitle("📜 Mommy's Daily Quest Board")
             .setDescription(`Complete these tasks today to earn extra rewards, sweetie! (◕‿◕✿)\n\n*Quests reset every day at midnight!*`)
             .setThumbnail(client.user.displayAvatarURL());
         let allCompleted = true;
@@ -43,7 +45,11 @@ module.exports = {
                 anyToClaim = true;
         });
         if (allCompleted) {
-            embed.addFields({ name: '🎊 All Done!', value: "You've finished everything for today! Mommy is so proud of you! (｡♥‿♥｡)", inline: false });
+            embed.addFields({
+                name: '🎊 All Done!',
+                value: "You've finished everything for today! Mommy is so proud of you! (｡♥‿♥｡)",
+                inline: false,
+            });
         }
         const row = new ActionRowBuilder().addComponents(new ButtonBuilder()
             .setCustomId('claim_quests')
@@ -61,7 +67,7 @@ module.exports = {
                 let rewardsGiven = 0;
                 let starDustReward = 0;
                 let pullReward = 0;
-                updatedUser.quests.forEach(q => {
+                updatedUser.quests.forEach((q) => {
                     if (q.completed && !q.rewarded) {
                         q.rewarded = true;
                         rewardsGiven++;
@@ -77,7 +83,7 @@ module.exports = {
                     await database.saveUser(updatedUser);
                     await i.reply({
                         content: `🎊 **REWARDS CLAIMED!** 🎊\nYou received **${starDustReward}** Star Dust and **${pullReward}** Extra Pulls! Mommy loves a hard worker! (｡♥‿♥｡)`,
-                        flags: [MessageFlags.Ephemeral]
+                        flags: [MessageFlags.Ephemeral],
                     });
                     // Update main embed
                     const finalEmbed = EmbedBuilder.from(embed).setFields([]);

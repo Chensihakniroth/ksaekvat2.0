@@ -44,7 +44,7 @@ const client = new Client({
   allowedMentions: {
     parse: ['users', 'roles'],
     repliedUser: true,
-  }
+  },
 }) as ExtendedClient;
 
 client.commands = new Collection();
@@ -55,15 +55,15 @@ async function connectDB() {
   const prog = logger.loader('Connecting to MongoDB');
   try {
     const uri = getMongoURI();
-    
+
     // Connection options for maximum resilience on cloud platforms like Railway
     const options = {
       serverSelectionTimeoutMS: 5000, // Fail fast if MongoDB is down (5 seconds)
-      socketTimeoutMS: 45000,         // Keep sockets from hanging (45 seconds)
-      connectTimeoutMS: 10000,        // Initial connection timeout (10 seconds)
-      maxPoolSize: 10,                // Max connections in the pool
-      minPoolSize: 2,                 // Minimum connections to keep open
-      heartbeatFrequencyMS: 10000,    // Ping MongoDB every 10 seconds to keep connection alive
+      socketTimeoutMS: 45000, // Keep sockets from hanging (45 seconds)
+      connectTimeoutMS: 10000, // Initial connection timeout (10 seconds)
+      maxPoolSize: 10, // Max connections in the pool
+      minPoolSize: 2, // Minimum connections to keep open
+      heartbeatFrequencyMS: 10000, // Ping MongoDB every 10 seconds to keep connection alive
     };
 
     // Connection lifecycle listeners
@@ -104,7 +104,7 @@ async function bootstrap() {
   logger.section('Web Server');
   const app = express();
   app.use(express.json({ limit: '15mb' }));
-  
+
   const cookieParser = require('cookie-parser');
   app.use(cookieParser());
 
@@ -161,8 +161,9 @@ bootstrap();
 cron.schedule('0 0 * * *', async () => {
   logger.debug('Running daily reset cron...');
   const users = await database.getAllUsers();
-  const QuestService = require('../services/QuestService').default || require('../services/QuestService');
-  
+  const QuestService =
+    require('../services/QuestService').default || require('../services/QuestService');
+
   for (const u of users) {
     u.dailyClaimed = false;
     // Generate new quests for everyone! (｡♥‿♥｡)

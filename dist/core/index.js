@@ -68,7 +68,7 @@ const client = new discord_js_1.Client({
     allowedMentions: {
         parse: ['users', 'roles'],
         repliedUser: true,
-    }
+    },
 });
 client.commands = new discord_js_1.Collection();
 // Database Connection

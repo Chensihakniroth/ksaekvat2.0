@@ -25,11 +25,16 @@ function getRarestPokemon(rarityCount) {
 function escapeXml(unsafe) {
     return unsafe.replace(/[<>&'"]/g, function (c) {
         switch (c) {
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '&': return '&amp;';
-            case '\'': return '&apos;';
-            case '"': return '&quot;';
+            case '<':
+                return '&lt;';
+            case '>':
+                return '&gt;';
+            case '&':
+                return '&amp;';
+            case "'":
+                return '&apos;';
+            case '"':
+                return '&quot;';
         }
     });
 }
@@ -62,11 +67,11 @@ module.exports = {
         const shopConfig = require('../../config/shopConfig.js');
         let embedColor = colors.primary;
         let backgroundUrl = null;
-        const currentThemeId = (userData.profileTheme && typeof userData.profileTheme === 'object')
+        const currentThemeId = userData.profileTheme && typeof userData.profileTheme === 'object'
             ? userData.profileTheme.theme
-            : (userData.profileTheme || 'default');
+            : userData.profileTheme || 'default';
         if (currentThemeId && currentThemeId !== 'default') {
-            const theme = shopConfig.categories.themes.items.find(t => t.id === currentThemeId);
+            const theme = shopConfig.categories.themes.items.find((t) => t.id === currentThemeId);
             if (theme) {
                 embedColor = theme.color;
                 backgroundUrl = theme.image;
@@ -79,7 +84,7 @@ module.exports = {
         // Favorite Pokemon Logic (｡♥‿♥｡)
         let favoritePokemonBuffer = null;
         if (userData.profileTheme && userData.profileTheme.favorites) {
-            const fav = userData.profileTheme.favorites.find(f => f.type === 'animal');
+            const fav = userData.profileTheme.favorites.find((f) => f.type === 'animal');
             if (fav) {
                 try {
                     const imgData = await AnimalService.getPokemonImageBuffer(fav.name);
@@ -102,7 +107,9 @@ module.exports = {
             rarityCount[rarity] = 0;
         }
         if (userData.animals) {
-            const rarityEntries = userData.animals instanceof Map ? userData.animals.entries() : Object.entries(userData.animals);
+            const rarityEntries = userData.animals instanceof Map
+                ? userData.animals.entries()
+                : Object.entries(userData.animals);
             for (const [rarity, animals] of rarityEntries) {
                 const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
                 for (const [animalKey, count] of animalEntries) {
@@ -242,10 +249,12 @@ module.exports = {
             const avatarRes = await axios.get(avatarUrl, { responseType: 'arraybuffer' });
             const avatarBuffer = await sharp(avatarRes.data)
                 .resize(120, 120)
-                .composite([{
+                .composite([
+                {
                     input: Buffer.from(`<svg><circle cx="60" cy="60" r="60" fill="white"/></svg>`),
-                    blend: 'dest-in'
-                }])
+                    blend: 'dest-in',
+                },
+            ])
                 .png()
                 .toBuffer();
             composites.push({ input: avatarBuffer, top: 40, left: 40 });
@@ -258,12 +267,14 @@ module.exports = {
             // Resize to fit within canvas while keeping aspect ratio
             const buddyMaxHeight = 400;
             const buddyMaxWidth = 400;
-            const buddyResized = await sharp(favoritePokemonBuffer).resize(buddyMaxWidth, buddyMaxHeight, { fit: 'inside' }).toBuffer();
+            const buddyResized = await sharp(favoritePokemonBuffer)
+                .resize(buddyMaxWidth, buddyMaxHeight, { fit: 'inside' })
+                .toBuffer();
             const { width, height } = await sharp(buddyResized).metadata();
             composites.push({
                 input: buddyResized,
                 top: canvasHeight - height + 10,
-                left: canvasWidth - width - 20
+                left: canvasWidth - width - 20,
             });
         }
         const outPath = path.join(TEMP_DIR, `profile-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
@@ -273,14 +284,14 @@ module.exports = {
                 width: canvasWidth,
                 height: canvasHeight,
                 channels: 4,
-                background: { r: 0, g: 0, b: 0, alpha: 0 } // Transparent canvas so the "next to" part looks clean
-            }
+                background: { r: 0, g: 0, b: 0, alpha: 0 }, // Transparent canvas so the "next to" part looks clean
+            },
         })
             .composite(composites)
             .png()
             .toFile(outPath);
         await message.reply({
-            files: [new AttachmentBuilder(outPath, { name: 'profile.png' })]
+            files: [new AttachmentBuilder(outPath, { name: 'profile.png' })],
         });
         // Cleanup
         fs.unlink(outPath, () => { });

@@ -1,12 +1,12 @@
 /**
  * update_character_icons.js
- * 
+ *
  * Fetches character icon URLs from Fandom wikis for ZZZ and WuWa characters,
  * then updates the MongoDB character documents with working image_url values.
- * 
+ *
  * ZZZ: https://zenless-zone-zero.fandom.com
  * WuWa: https://wutheringwaves.fandom.com
- * 
+ *
  * Run with: node src/scripts/update_character_icons.js
  */
 
@@ -19,22 +19,29 @@ const Character = require('../models/Character').default || require('../models/C
 
 function fetchJson(url) {
   return new Promise((resolve, reject) => {
-    const req = https.get(url, {
-      headers: { 'User-Agent': 'KOHI-Bot/2.0 (Discord bot; icon updater)' },
-      timeout: 15000,
-    }, (res) => {
-      let data = '';
-      res.on('data', (chunk) => (data += chunk));
-      res.on('end', () => {
-        try {
-          resolve(JSON.parse(data));
-        } catch {
-          reject(new Error(`Invalid JSON from ${url}`));
-        }
-      });
-    });
+    const req = https.get(
+      url,
+      {
+        headers: { 'User-Agent': 'KOHI-Bot/2.0 (Discord bot; icon updater)' },
+        timeout: 15000,
+      },
+      (res) => {
+        let data = '';
+        res.on('data', (chunk) => (data += chunk));
+        res.on('end', () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch {
+            reject(new Error(`Invalid JSON from ${url}`));
+          }
+        });
+      }
+    );
     req.on('error', reject);
-    req.on('timeout', () => { req.destroy(); reject(new Error(`Timeout: ${url}`)); });
+    req.on('timeout', () => {
+      req.destroy();
+      reject(new Error(`Timeout: ${url}`));
+    });
   });
 }
 
@@ -62,33 +69,33 @@ async function getFandomImageUrl(wiki, filename) {
 
 // Special name overrides for ZZZ characters where the wiki naming differs
 const ZZZ_NAME_OVERRIDES = {
-  'Anby Demara': 'Anby Demara',            // Standard
-  'Anton Ivanov': 'Anton Ivanov',          // Standard
-  'Ben Bigger': 'Ben Bigger',              // Standard
-  'Billy Kid': 'Billy Kid',               // Standard
-  'Burnice White': 'Burnice White',       // Standard
-  'Caesar King': 'Caesar King',           // Standard
-  'Corin Wickes': 'Corin Wickes',        // Standard
-  'Ellen Joe': 'Ellen Joe',              // Standard
-  'Grace Howard': 'Grace Howard',        // Standard
-  'Hoshimi Miyabi': 'Miyabi',            // Wiki uses just "Miyabi"
-  'Hugo Vlad': 'Hugo Vlad',             // Standard
-  'Jane Doe': 'Jane Doe',               // Standard
-  'Ju Fufu': 'Ju Fufu',                 // Standard
-  'Koleda Belobog': 'Koleda',           // Wiki uses "Koleda"
-  'Lucia Elowen': 'Lucia Elowen',       // Standard  
-  'Nangong Yu': 'Nangong Yu',           // Standard
-  'Nicole Demara': 'Nicole Demara',     // Standard
-  'Pan Yinhu': 'Pan Yinhu',            // Standard
-  'Piper Wheel': 'Piper Wheel',        // Standard
-  'Qingyi': 'Qingyi',                  // Standard
-  'Seth Lowell': 'Seth Lowell',        // Standard
-  'Soldier 11': 'Soldier 11',          // Standard
+  'Anby Demara': 'Anby Demara', // Standard
+  'Anton Ivanov': 'Anton Ivanov', // Standard
+  'Ben Bigger': 'Ben Bigger', // Standard
+  'Billy Kid': 'Billy Kid', // Standard
+  'Burnice White': 'Burnice White', // Standard
+  'Caesar King': 'Caesar King', // Standard
+  'Corin Wickes': 'Corin Wickes', // Standard
+  'Ellen Joe': 'Ellen Joe', // Standard
+  'Grace Howard': 'Grace Howard', // Standard
+  'Hoshimi Miyabi': 'Miyabi', // Wiki uses just "Miyabi"
+  'Hugo Vlad': 'Hugo Vlad', // Standard
+  'Jane Doe': 'Jane Doe', // Standard
+  'Ju Fufu': 'Ju Fufu', // Standard
+  'Koleda Belobog': 'Koleda', // Wiki uses "Koleda"
+  'Lucia Elowen': 'Lucia Elowen', // Standard
+  'Nangong Yu': 'Nangong Yu', // Standard
+  'Nicole Demara': 'Nicole Demara', // Standard
+  'Pan Yinhu': 'Pan Yinhu', // Standard
+  'Piper Wheel': 'Piper Wheel', // Standard
+  Qingyi: 'Qingyi', // Standard
+  'Seth Lowell': 'Seth Lowell', // Standard
+  'Soldier 11': 'Soldier 11', // Standard
   'Soldier 0 - Anby': 'Soldier 0 - Anby', // Wiki keeps the hyphen
-  'Soukaku': 'Soukaku',               // Standard
-  'Von Lycaon': 'Von Lycaon',         // Standard
-  'Yanagi': 'Yanagi',                  // Standard
-  'Zhu Yuan': 'Zhu Yuan',             // Standard
+  Soukaku: 'Soukaku', // Standard
+  'Von Lycaon': 'Von Lycaon', // Standard
+  Yanagi: 'Yanagi', // Standard
+  'Zhu Yuan': 'Zhu Yuan', // Standard
 };
 
 async function getZZZIconUrl(characterName) {
@@ -96,7 +103,7 @@ async function getZZZIconUrl(characterName) {
   const filename = `Agent_${wikiName.replace(/ /g, '_')}_Icon.png`;
   const url = await getFandomImageUrl('zenless-zone-zero', filename);
   if (url) return url;
-  
+
   // Fallback: try without space variations
   const altFilename = `Agent_${wikiName.replace(/ /g, '')}_Icon.png`;
   return await getFandomImageUrl('zenless-zone-zero', altFilename);
@@ -116,7 +123,7 @@ async function getWuWaIconUrl(characterName) {
   const filename = `Resonator_${wikiName.replace(/ /g, '_')}.png`;
   const url = await getFandomImageUrl('wutheringwaves', filename);
   if (url) return url;
-  
+
   // Fallback: try with different casing
   const altFilename = `Resonator_${wikiName.replace(/ /g, '')}.png`;
   return await getFandomImageUrl('wutheringwaves', altFilename);
@@ -129,8 +136,13 @@ async function sleep(ms) {
 }
 
 async function updateCharacterIcons() {
-  const mongoUri = process.env.MONGO_URL || process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/kohi_bot';
-  
+  const mongoUri =
+    process.env.MONGO_URL ||
+    process.env.MONGODB_URI ||
+    process.env.MONGODB_URL ||
+    process.env.MONGO_URI ||
+    'mongodb://127.0.0.1:27017/kohi_bot';
+
   console.log('🔌 Connecting to MongoDB...');
   await mongoose.connect(mongoUri);
   console.log('✅ Connected!\n');

@@ -31,13 +31,13 @@ const cache = {
     }
 
     const data = await fetchFn();
-    
+
     // Safety: Don't cache undefined/null results for long periods
     const effectiveTtl = data === null || data === undefined ? 5000 : ttlMs;
 
     cacheStore.set(key, {
       data,
-      expiry: now + effectiveTtl
+      expiry: now + effectiveTtl,
     });
 
     return data;
@@ -55,7 +55,7 @@ const cache = {
    */
   clear: () => {
     cacheStore.clear();
-  }
+  },
 };
 
 module.exports = cache;

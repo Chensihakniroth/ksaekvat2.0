@@ -22,7 +22,7 @@ module.exports = {
 
     const renderBag = async () => {
       const userData = await database.getUser(userId, message.author.username);
-      
+
       const stardustEmoji = getItemEmoji({ name: 'Star Dust' }, client);
       const pokeballEmoji = getItemEmoji({ name: 'Pokeball' }, client);
       const ultraballEmoji = getItemEmoji({ name: 'Ultraball' }, client);
@@ -30,24 +30,37 @@ module.exports = {
 
       const items = [
         { name: 'Pokeball', count: userData.pokeballs || 0, emoji: pokeballEmoji, key: 'pokeball' },
-        { name: 'Ultraball', count: userData.ultraballs || 0, emoji: ultraballEmoji, key: 'ultraball' },
-        { name: 'Master Ball', count: userData.masterballs || 0, emoji: masterballEmoji, key: 'masterball' }
+        {
+          name: 'Ultraball',
+          count: userData.ultraballs || 0,
+          emoji: ultraballEmoji,
+          key: 'ultraball',
+        },
+        {
+          name: 'Master Ball',
+          count: userData.masterballs || 0,
+          emoji: masterballEmoji,
+          key: 'masterball',
+        },
       ];
 
-      const hasItems = items.some(i => i.count > 0);
+      const hasItems = items.some((i) => i.count > 0);
 
       const embed = new EmbedBuilder()
         .setColor(colors.primary)
         .setTitle(`🎒 ${message.author.username}'s Bag`)
         .setDescription(
-            `✨ **Star Dust:** ${userData.star_dust || 0}\n\n` +
-            (hasItems 
-                ? items.filter(i => i.count > 0).map(i => `${i.emoji} **${i.name}** x${i.count}`).join('\n')
-                : '*Your bag is empty of balls, darling. Pull some from gacha! (｡•́︿•̀｡)*')
+          `✨ **Star Dust:** ${userData.star_dust || 0}\n\n` +
+            (hasItems
+              ? items
+                  .filter((i) => i.count > 0)
+                  .map((i) => `${i.emoji} **${i.name}** x${i.count}`)
+                  .join('\n')
+              : '*Your bag is empty of balls, darling. Pull some from gacha! (｡•́︿•̀｡)*')
         )
         .setFooter({ text: 'Select a ball below to use it for hunting! (◕‿✿)' });
 
-      return { embed, items: items.filter(i => i.count > 0) };
+      return { embed, items: items.filter((i) => i.count > 0) };
     };
 
     const getComponents = (items) => {
@@ -57,11 +70,11 @@ module.exports = {
         .setCustomId('use_item_select')
         .setPlaceholder('Select a ball to use...')
         .addOptions(
-          items.map(item => ({
+          items.map((item) => ({
             label: item.name,
             description: `Use 1x ${item.name}`,
             value: item.name,
-            emoji: item.emoji
+            emoji: item.emoji,
           }))
         );
 
@@ -71,7 +84,7 @@ module.exports = {
     try {
       const { embed, items: currentItems } = await renderBag();
       const components = getComponents(currentItems);
-      
+
       const msg = await message.reply({
         embeds: [embed],
         components: components,
@@ -86,43 +99,52 @@ module.exports = {
 
       collector.on('collect', async (i) => {
         if (i.user.id !== userId)
-          return i.reply({ content: "That's not yours, sweetheart! (っ˘ω˘ς)", flags: [MessageFlags.Ephemeral] });
+          return i.reply({
+            content: "That's not yours, sweetheart! (っ˘ω˘ς)",
+            flags: [MessageFlags.Ephemeral],
+          });
 
         const itemName = i.values[0];
         const userData = await database.getUser(userId, message.author.username);
-        
+
         let hasItem = false;
         let boosterKey = '';
         const boosters = userData.boosters || new Map();
 
         if (itemName === 'Pokeball') {
-            if (userData.pokeballs > 0) {
-                userData.pokeballs--;
-                hasItem = true;
-                boosterKey = 'pokeball';
-                stackLimit = 5;
-            }
+          if (userData.pokeballs > 0) {
+            userData.pokeballs--;
+            hasItem = true;
+            boosterKey = 'pokeball';
+            stackLimit = 5;
+          }
         } else if (itemName === 'Ultraball') {
-            if (userData.ultraballs > 0) {
-                userData.ultraballs--;
-                hasItem = true;
-                boosterKey = 'ultraball';
-            }
+          if (userData.ultraballs > 0) {
+            userData.ultraballs--;
+            hasItem = true;
+            boosterKey = 'ultraball';
+          }
         } else if (itemName === 'Master Ball') {
-            if (userData.masterballs > 0) {
-                userData.masterballs--;
-                hasItem = true;
-                boosterKey = 'masterball';
-            }
+          if (userData.masterballs > 0) {
+            userData.masterballs--;
+            hasItem = true;
+            boosterKey = 'masterball';
+          }
         }
 
         if (!hasItem) {
-          return i.reply({ content: `❌ You don't have any **${itemName}** left! (｡•́︿•̀｡)`, flags: [MessageFlags.Ephemeral] });
+          return i.reply({
+            content: `❌ You don't have any **${itemName}** left! (｡•́︿•̀｡)`,
+            flags: [MessageFlags.Ephemeral],
+          });
         }
 
         const currentBooster = boosters.get(boosterKey);
         if (currentBooster?.active && currentBooster?.oneTime) {
-          return i.reply({ content: `❌ You already have a **${itemName}** active for your next hunt, darling! (｡•́︿•̀｡)`, flags: [MessageFlags.Ephemeral] });
+          return i.reply({
+            content: `❌ You already have a **${itemName}** active for your next hunt, darling! (｡•́︿•̀｡)`,
+            flags: [MessageFlags.Ephemeral],
+          });
         }
 
         await database.setPokeball(userId, boosterKey);
@@ -137,11 +159,11 @@ module.exports = {
       });
 
       collector.on('end', () => {
-        msg.edit({ components: [] }).catch(() => { });
+        msg.edit({ components: [] }).catch(() => {});
       });
     } catch (error) {
-        logger.error('Bag command failed', error);
-        message.reply('❌ Oopsie! Something went wrong while opening your bag. (っ˘ω˘ς)');
+      logger.error('Bag command failed', error);
+      message.reply('❌ Oopsie! Something went wrong while opening your bag. (っ˘ω˘ς)');
     }
   },
 };

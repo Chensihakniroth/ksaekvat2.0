@@ -42,14 +42,14 @@ router.get('/characters', (req, res) => {
             rarity: c.rarity,
             element: c.element,
             emoji: c.emoji,
-            price: c.rarity === '5' ? 600 : 400
+            price: c.rarity === '5' ? 600 : 400,
         }));
         res.json({
             success: true,
             total,
             page,
             pages: Math.ceil(total / limit),
-            data
+            data,
         });
     }
     catch (err) {
@@ -79,7 +79,12 @@ router.post('/buy', async (req, res) => {
             return res.status(404).json({ success: false, error: 'Character not found in database.' });
         const price = char.rarity === '5' ? 600 : 400;
         if (user.star_dust < price) {
-            return res.status(400).json({ success: false, error: `Insufficient Star Dust! You need ${price} but only have ${user.star_dust}.` });
+            return res
+                .status(400)
+                .json({
+                success: false,
+                error: `Insufficient Star Dust! You need ${price} but only have ${user.star_dust}.`,
+            });
         }
         // Deduct currency
         user.star_dust -= price;
@@ -94,14 +99,14 @@ router.post('/buy', async (req, res) => {
                 type: 'character',
                 ascension: 0,
                 refinement: 1,
-                count: 1
+                count: 1,
             });
         }
         await user.save();
         res.json({
             success: true,
             message: `Successfully acquired ${char.name}! (｡♥‿♥｡)`,
-            newBalance: user.star_dust
+            newBalance: user.star_dust,
         });
     }
     catch (err) {

@@ -2,7 +2,8 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const economyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
+const economyService =
+  require('../../services/EconomyService').default || require('../../services/EconomyService');
 const cooldowns = require('../../utils/cooldowns.js');
 
 module.exports = {
@@ -53,7 +54,9 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor(colors.primary)
       .setTitle('💼 Work Finished!')
-      .setDescription(randomMessage.replace('{amount}', `**${economyService.format(finalReward)}**`))
+      .setDescription(
+        randomMessage.replace('{amount}', `**${economyService.format(finalReward)}**`)
+      )
       .addFields(
         {
           name: '💰 New Balance',

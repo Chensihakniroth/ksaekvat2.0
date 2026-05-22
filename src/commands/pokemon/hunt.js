@@ -2,7 +2,8 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const AnimalService = require('../../services/AnimalService.js').default || require('../../services/AnimalService.js');
+const AnimalService =
+  require('../../services/AnimalService.js').default || require('../../services/AnimalService.js');
 
 module.exports = {
   name: 'hunt',
@@ -11,40 +12,55 @@ module.exports = {
   usage: 'hunt',
   cooldown: 10000,
   async execute(message, args, client) {
-    try { await message.channel.sendTyping(); } catch (_) {}
+    try {
+      await message.channel.sendTyping();
+    } catch (_) {}
 
     // --- DIRECT HUNT ARGUMENTS (｡♥‿♥｡) ---
     const arg = args[0]?.toLowerCase();
     if (arg) {
       const ballTypeMap = {
-        'p': 'pokeball', 'poke': 'pokeball', 'pokeball': 'pokeball',
-        'u': 'ultraball', 'ultra': 'ultraball', 'ultraball': 'ultraball',
-        'm': 'masterball', 'master': 'masterball', 'masterball': 'masterball'
+        p: 'pokeball',
+        poke: 'pokeball',
+        pokeball: 'pokeball',
+        u: 'ultraball',
+        ultra: 'ultraball',
+        ultraball: 'ultraball',
+        m: 'masterball',
+        master: 'masterball',
+        masterball: 'masterball',
       };
-      
+
       const typeToUse = ballTypeMap[arg];
       if (typeToUse) {
         const useResult = await database.setPokeball(message.author.id, typeToUse);
         if (!useResult.success) {
-           return message.reply({ content: useResult.message });
+          return message.reply({ content: useResult.message });
         }
       }
     }
-    
+
     // Parallelize DB calls for speed! (｡♥‿♥｡)
     const [userData, animalsData] = await Promise.all([
       database.getUser(message.author.id, message.author.username),
-      database.loadAnimals()
+      database.loadAnimals(),
     ]);
 
     // Check for active one-time balls
     const boosters = userData.boosters || new Map();
     const activePokeball = boosters.get('pokeball')?.active && boosters.get('pokeball')?.oneTime;
     const activeUltraball = boosters.get('ultraball')?.active && boosters.get('ultraball')?.oneTime;
-    const activeMasterball = boosters.get('masterball')?.active && boosters.get('masterball')?.oneTime;
+    const activeMasterball =
+      boosters.get('masterball')?.active && boosters.get('masterball')?.oneTime;
 
     const activeBall = activeMasterball || activeUltraball || activePokeball;
-    let activeBallType = activeMasterball ? 'masterball' : activeUltraball ? 'ultraball' : activePokeball ? 'pokeball' : null;
+    let activeBallType = activeMasterball
+      ? 'masterball'
+      : activeUltraball
+        ? 'ultraball'
+        : activePokeball
+          ? 'pokeball'
+          : null;
 
     let distractionChance = config.hunting.distractionChance;
     if (activeMasterball) distractionChance = 0;
@@ -72,7 +88,8 @@ module.exports = {
       if (activeMasterball) {
         if (!['rare', 'epic', 'legendary', 'mythical', 'priceless'].includes(key)) continue;
       } else if (activeUltraball) {
-        if (!['uncommon', 'rare', 'epic', 'legendary', 'mythical', 'priceless'].includes(key)) continue;
+        if (!['uncommon', 'rare', 'epic', 'legendary', 'mythical', 'priceless'].includes(key))
+          continue;
       }
 
       let weight = r.weight;
@@ -90,7 +107,8 @@ module.exports = {
       if (activeMasterball) {
         if (!['rare', 'epic', 'legendary', 'mythical', 'priceless'].includes(key)) continue;
       } else if (activeUltraball) {
-        if (!['uncommon', 'rare', 'epic', 'legendary', 'mythical', 'priceless'].includes(key)) continue;
+        if (!['uncommon', 'rare', 'epic', 'legendary', 'mythical', 'priceless'].includes(key))
+          continue;
       }
 
       let weight = r.weight;
@@ -120,12 +138,12 @@ module.exports = {
 
     // Consume the ball flag (One-time use!)
     if (activeBallType) {
-        await database.clearOneTimeBall(message.author.id, activeBallType);
+      await database.clearOneTimeBall(message.author.id, activeBallType);
     }
 
     const imgData = await AnimalService.getPokemonImageBuffer(animalKey);
     const files = [];
-    
+
     let statusText = '';
     if (activeMasterball) statusText += ` | 🟣 Master Ball Active`;
     else if (activeUltraball) statusText += ` | 🟡 Ultraball Active`;
@@ -138,19 +156,24 @@ module.exports = {
       .setColor(parseInt(rarities[selectedRarity].color.slice(1), 16))
       .setTitle(`${rarityEmoji} ${animal.name}`)
       .setDescription(`*${rarities[selectedRarity].name} Rarity*`)
-      .setFooter({ text: `+${expReward} XP${statusText}${expRes.leveledUp ? ` | 🎊 Rank Up: ${expRes.newLevel}!` : ''}` });
+      .setFooter({
+        text: `+${expReward} XP${statusText}${expRes.leveledUp ? ` | 🎊 Rank Up: ${expRes.newLevel}!` : ''}`,
+      });
 
     if (imgData) {
-        const attachment = new (require('discord.js').AttachmentBuilder)(imgData.buffer, { name: imgData.fileName });
-        embed.setImage(`attachment://${imgData.fileName}`);
-        files.push(attachment);
+      const attachment = new (require('discord.js').AttachmentBuilder)(imgData.buffer, {
+        name: imgData.fileName,
+      });
+      embed.setImage(`attachment://${imgData.fileName}`);
+      files.push(attachment);
     }
 
     await database.updateStats(message.author.id, 'command');
     await database.updateStats(message.author.id, 'hunt_success', 1);
-    
+
     // Update Quest Progress! (｡♥‿♥｡)
-    const QuestService = require('../../services/QuestService').default || require('../../services/QuestService');
+    const QuestService =
+      require('../../services/QuestService').default || require('../../services/QuestService');
     await QuestService.updateProgress(message.author.id, 'HUNT', 1);
 
     message.reply({ embeds: [embed], files });

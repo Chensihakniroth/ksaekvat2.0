@@ -50,7 +50,7 @@ function createBalanceEmbed(target, userData) {
         .setColor(colors.success)
         .setAuthor({
         name: `${target.username}'s Balance`,
-        iconURL: target.displayAvatarURL({ dynamic: true })
+        iconURL: target.displayAvatarURL({ dynamic: true }),
     })
         .setDescription(`💵 **Wallet:** ${walletVal}\n` +
         `🏦 **Bank:** ${bankVal}\n` +

@@ -13,11 +13,11 @@ async function seedPokemon() {
         // Load the generated Gen 1 list
         const gen1Data = JSON.parse(fs.readFileSync(path.join(__dirname, '../../gen1_pokemon.json'), 'utf8'));
         // Prepare the final list with values from config
-        const finalPokemonList = gen1Data.map(pokemon => {
+        const finalPokemonList = gen1Data.map((pokemon) => {
             const rarityInfo = config.hunting.rarities[pokemon.rarity];
             return {
                 ...pokemon,
-                value: pokemon.value || (rarityInfo ? rarityInfo.value : 100)
+                value: pokemon.value || (rarityInfo ? rarityInfo.value : 100),
             };
         });
         console.log(`Clearing existing ${await AnimalRegistry.countDocuments()} animals...`);

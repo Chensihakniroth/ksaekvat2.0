@@ -2,7 +2,7 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, AttachmentBuilder, } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
-const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji, getRoleEmoji } = require('../../utils/images.js');
+const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji, getRoleEmoji, } = require('../../utils/images.js');
 const path = require('path');
 const fs = require('fs');
 const axios = require('axios');
@@ -150,13 +150,16 @@ module.exports = {
             if (i.customId === 'team_help_btn') {
                 return i.reply({
                     content: "**(◕‿◕✿) Mommy's Team Guide:**\nTo add someone to an empty slot, just use the command: \`kteam add <name>\`\nExample: \`kteam add Raiden\`\n\nYou can only have 4 characters in your squad!",
-                    flags: [MessageFlags.Ephemeral]
+                    flags: [MessageFlags.Ephemeral],
                 });
             }
             if (i.customId.startsWith('team_pop_')) {
                 const slot = parseInt(i.customId.replace('team_pop_', ''));
                 if (slot > userData.team.length || !userData.team[slot - 1]) {
-                    return i.reply({ content: "That slot is already empty!", flags: [MessageFlags.Ephemeral] });
+                    return i.reply({
+                        content: 'That slot is already empty!',
+                        flags: [MessageFlags.Ephemeral],
+                    });
                 }
                 const remName = userData.team[slot - 1];
                 userData.team.splice(slot - 1, 1);

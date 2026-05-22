@@ -20,7 +20,7 @@ class CombatService {
             atk: Math.floor(rarity * 20 + asc * 40 + userLevel * 6 + 40) + (bonuses.attack || 0),
             def: Math.floor(rarity * 12 + asc * 25 + userLevel * 5 + 25) + (bonuses.defense || 0),
             critRate: 0.05 + (bonuses.critRate || 0),
-            critDmg: 0.50 + (bonuses.critDmg || 0),
+            critDmg: 0.5 + (bonuses.critDmg || 0),
         };
     }
     /**
@@ -29,7 +29,9 @@ class CombatService {
     generateEnemy(userLevel, worldLevel) {
         const enemyLevel = Math.floor(Math.random() * (worldLevel * 10)) + worldLevel * 5;
         const isBoss = Math.random() < 0.1 || (worldLevel > 1 && enemyLevel % 10 === 0);
-        const classes = isBoss ? ['BOSS'] : ['TANK', 'STRIKER', 'SUPPORT'];
+        const classes = isBoss
+            ? ['BOSS']
+            : ['TANK', 'STRIKER', 'SUPPORT'];
         const enemyClass = classes[Math.floor(Math.random() * classes.length)];
         const enemies = {
             TANK: [
@@ -38,7 +40,7 @@ class CombatService {
                 { name: 'Ruin Guard', emoji: '🤖' },
                 { name: 'Zonai Soldier Construct', emoji: '🧱' },
                 { name: 'Obsidian Golem', emoji: '🌑' },
-                { name: 'Steel-Clad Rhino', emoji: '🦏' }
+                { name: 'Steel-Clad Rhino', emoji: '🦏' },
             ],
             STRIKER: [
                 { name: 'Shadow Stalker', emoji: '👤' },
@@ -46,7 +48,7 @@ class CombatService {
                 { name: 'Voidranger: Eliminator', emoji: '👾' },
                 { name: 'Neon Blade Assassin', emoji: '🗡️' },
                 { name: 'Thunder-Tail Raptor', emoji: '🦖' },
-                { name: 'Plasma Ghost', emoji: '👻' }
+                { name: 'Plasma Ghost', emoji: '👻' },
             ],
             SUPPORT: [
                 { name: 'Life-Bloom Fairy', emoji: '🧚' },
@@ -54,7 +56,7 @@ class CombatService {
                 { name: 'Mechanical Healer', emoji: '🩺' },
                 { name: 'Mana-Siphon Drone', emoji: '📡' },
                 { name: 'Solar Sprite', emoji: '☀️' },
-                { name: 'Chrono-Butterfly', emoji: '🦋' }
+                { name: 'Chrono-Butterfly', emoji: '🦋' },
             ],
             BOSS: [
                 { name: 'Calamity Dragon', emoji: '🐉' },
@@ -62,8 +64,8 @@ class CombatService {
                 { name: 'Interstellar Colossus', emoji: '🪐' },
                 { name: 'Void Herald', emoji: '🌌' },
                 { name: 'Ancient Automaton Lord', emoji: '🕍' },
-                { name: 'Primal Behemoth', emoji: '🐘' }
-            ]
+                { name: 'Primal Behemoth', emoji: '🐘' },
+            ],
         };
         const baseList = enemies[enemyClass];
         const base = baseList[Math.floor(Math.random() * baseList.length)];
@@ -91,7 +93,7 @@ class CombatService {
                 hpMod = 3.2;
                 defMod = 1.3;
                 atkMod = 1.6;
-                eva = 0.10;
+                eva = 0.1;
                 break;
         }
         const hp = Math.floor((enemyLevel * 100 + 300) * hpMod);
@@ -105,8 +107,8 @@ class CombatService {
             def: Math.floor((enemyLevel * 10 + 40) * defMod),
             class: enemyClass,
             shield: 0,
-            rarity: isBoss ? 'LEGENDARY' : (enemyLevel > 50 ? 'EPIC' : 'RARE'),
-            evasion: eva
+            rarity: isBoss ? 'LEGENDARY' : enemyLevel > 50 ? 'EPIC' : 'RARE',
+            evasion: eva,
         };
     }
     /**
@@ -114,41 +116,72 @@ class CombatService {
      */
     getEnemyAction(enemy, team) {
         const chance = Math.random();
-        const aliveMembers = team.filter(c => c.hp > 0);
+        const aliveMembers = team.filter((c) => c.hp > 0);
         // Check for Enrage (< 30% HP)
         let damageMultiplier = 1.0;
         if (enemy.hp / enemy.maxHp < 0.3 && !enemy.isEnraged) {
             enemy.isEnraged = true;
-            return { type: 'SKILL', damage: 0, log: `! RAGE: ${enemy.name} has entered a Berserk state!`, metadata: { effect: 'RAGE' } };
+            return {
+                type: 'SKILL',
+                damage: 0,
+                log: `! RAGE: ${enemy.name} has entered a Berserk state!`,
+                metadata: { effect: 'RAGE' },
+            };
         }
         if (enemy.isEnraged)
             damageMultiplier = 1.3;
         let target = aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
-        if (Math.random() < 0.6) { // Smarter targeting
-            target = aliveMembers.sort((a, b) => (a.hp / a.maxHp) - (b.hp / b.maxHp))[0];
+        if (Math.random() < 0.6) {
+            // Smarter targeting
+            target = aliveMembers.sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0];
         }
         if (chance < 0.35) {
             if (enemy.class === 'TANK') {
-                const shieldVal = Math.floor(enemy.maxHp * 0.20);
+                const shieldVal = Math.floor(enemy.maxHp * 0.2);
                 enemy.shield += shieldVal;
-                return { type: 'SKILL', damage: 0, log: `Stone Skin: +${shieldVal} shield!`, metadata: { effect: 'SHIELD' } };
+                return {
+                    type: 'SKILL',
+                    damage: 0,
+                    log: `Stone Skin: +${shieldVal} shield!`,
+                    metadata: { effect: 'SHIELD' },
+                };
             }
             if (enemy.class === 'SUPPORT') {
                 const healVal = Math.floor(enemy.maxHp * 0.15);
                 enemy.hp = Math.min(enemy.maxHp, enemy.hp + healVal);
-                return { type: 'SKILL', damage: 0, log: `Rejuvenation: +${healVal} HP!`, metadata: { effect: 'HEAL' } };
+                return {
+                    type: 'SKILL',
+                    damage: 0,
+                    log: `Rejuvenation: +${healVal} HP!`,
+                    metadata: { effect: 'HEAL' },
+                };
             }
             if (enemy.class === 'STRIKER') {
                 const dmg = this.calculateAttackDamage(enemy.atk * 1.8 * damageMultiplier, target.def);
-                return { type: 'SKILL', damage: dmg, log: `Precision Strike on ${target.name}!`, metadata: { critical: true, target: target.name } };
+                return {
+                    type: 'SKILL',
+                    damage: dmg,
+                    log: `Precision Strike on ${target.name}!`,
+                    metadata: { critical: true, target: target.name },
+                };
             }
             if (enemy.class === 'BOSS') {
                 const dmg = this.calculateAttackDamage(enemy.atk * 1.0 * damageMultiplier, target.def);
-                return { type: 'SKILL', damage: dmg, log: `Calamity Nova unleashed!`, metadata: { aoe: true } };
+                return {
+                    type: 'SKILL',
+                    damage: dmg,
+                    log: `Calamity Nova unleashed!`,
+                    metadata: { aoe: true },
+                };
             }
         }
         const dmg = this.calculateAttackDamage(enemy.atk * damageMultiplier, target.def);
-        return { type: 'ATTACK', damage: dmg, log: `${enemy.name} hit ${target.name}!`, metadata: { target: target.name } };
+        return {
+            type: 'ATTACK',
+            damage: dmg,
+            log: `${enemy.name} hit ${target.name}!`,
+            metadata: { target: target.name },
+        };
     }
     /**
      * Calculate damage with Evasion check.
@@ -170,7 +203,7 @@ class CombatService {
     calculateFollowUp(attacker, team) {
         if (Math.random() > 0.35)
             return null;
-        const others = team.filter(c => c.hp > 0 && c.name !== attacker.name);
+        const others = team.filter((c) => c.hp > 0 && c.name !== attacker.name);
         if (others.length === 0)
             return null;
         const assist = others[Math.floor(Math.random() * others.length)];

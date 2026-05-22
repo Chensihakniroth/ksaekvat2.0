@@ -1,5 +1,5 @@
 "use strict";
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, MessageFlags } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, AttachmentBuilder, MessageFlags, } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
@@ -54,11 +54,15 @@ async function createPCBoxImage(boxName, boxPokemons) {
     <rect x="12" y="10" width="${canvasWidth - 24}" height="50" rx="10" ry="10" fill="url(#hdr)"/>
     <text x="${canvasWidth / 2}" y="43" font-family="'Courier New',monospace" font-size="20" font-weight="bold" fill="#88aaff" text-anchor="middle" letter-spacing="4">${boxName}</text>
     <text x="30" y="44" font-family="sans-serif" font-size="22" fill="#5577cc">💻</text>
-    ${Array.from({ length: rows }).map((_, r) => Array.from({ length: cols }).map((_, c) => {
+    ${Array.from({ length: rows })
+        .map((_, r) => Array.from({ length: cols })
+        .map((_, c) => {
         const cx = padding + c * cellSize;
         const cy = headerHeight + padding + r * cellSize;
         return `<rect x="${cx + 3}" y="${cy + 3}" width="${cellSize - 6}" height="${cellSize - 6}" rx="10" ry="10" fill="#111827" stroke="#1e2d4a" stroke-width="1.5" opacity="0.9"/>`;
-    }).join('')).join('')}
+    })
+        .join(''))
+        .join('')}
   </svg>`);
     const composites = [{ input: bgSvg, top: 0, left: 0 }];
     // Parallel Sprite Fetching! (｡♥‿♥｡)
@@ -91,11 +95,19 @@ async function createPCBoxImage(boxName, boxPokemons) {
         return pkmnComposites;
     });
     const results = await Promise.all(spritePromises);
-    results.forEach(res => composites.push(...res));
+    results.forEach((res) => composites.push(...res));
     const outPath = path.join(TEMP_DIR, `box-${Date.now()}-${Math.floor(Math.random() * 9999)}.png`);
     await sharp({
-        create: { width: canvasWidth, height: canvasHeight, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } }
-    }).composite(composites).png().toFile(outPath);
+        create: {
+            width: canvasWidth,
+            height: canvasHeight,
+            channels: 4,
+            background: { r: 0, g: 0, b: 0, alpha: 0 },
+        },
+    })
+        .composite(composites)
+        .png()
+        .toFile(outPath);
     return outPath;
 }
 function buildRarityBreakdown(allCaught, client) {
@@ -103,14 +115,13 @@ function buildRarityBreakdown(allCaught, client) {
     for (const p of allCaught)
         counts[p.rarity] = (counts[p.rarity] || 0) + 1;
     const { getRarityEmoji } = require('../../utils/images.js');
-    return RARITY_ORDER
-        .filter(r => counts[r])
-        .map(r => `${getRarityEmoji(r, client)} **${counts[r]}**`)
+    return RARITY_ORDER.filter((r) => counts[r])
+        .map((r) => `${getRarityEmoji(r, client)} **${counts[r]}**`)
         .join('  ');
 }
 function pickEmbedColor(allCaught) {
     for (const r of RARITY_ORDER) {
-        if (allCaught.some(p => p.rarity === r))
+        if (allCaught.some((p) => p.rarity === r))
             return getRarityColor(r).hex;
     }
     return '#3a5fc8';
@@ -140,13 +151,19 @@ module.exports = {
             const [userDoc, animalsData, flatRegistry] = await Promise.all([
                 database.getUser(target.id, target.username),
                 database.loadAnimals(),
-                database.getAnimalRegistry()
+                database.getAnimalRegistry(),
             ]);
             const userData = userDoc.toObject();
             const animalsObj = userData.animals || {};
             const { totalAnimals, totalValue } = AnimalService.calculateZooStats(animalsObj, animalsData);
             if (totalAnimals === 0) {
-                return message.reply({ embeds: [new EmbedBuilder().setColor(colors.warning).setDescription(`Oh darling~ (｡•́︿•̀｡)\n**${target.username}** hasn't caught any Pokémon yet! Use \`Khunt\` to start your collection!`)] });
+                return message.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setColor(colors.warning)
+                            .setDescription(`Oh darling~ (｡•́︿•̀｡)\n**${target.username}** hasn't caught any Pokémon yet! Use \`Khunt\` to start your collection!`),
+                    ],
+                });
             }
             const allCaught = [];
             const rarityEntries = animalsObj instanceof Map ? animalsObj.entries() : Object.entries(animalsObj);
@@ -163,7 +180,7 @@ module.exports = {
                             rarity: def.rarity || rarity,
                             weight: config.hunting.rarities[def.rarity || rarity]?.weight ?? 50,
                             val: def.value,
-                            count: Number(count)
+                            count: Number(count),
                         });
                     }
                 }
@@ -181,18 +198,38 @@ module.exports = {
                     .setTitle(`💻 ${target.username}'s PC`)
                     .setImage('attachment://pc-box.png')
                     .setFooter({ text: `${boxLabel} / ${boxes.length}` });
-                const row = new ActionRowBuilder().addComponents(new ButtonBuilder().setCustomId('zoo_prev').setLabel('◀').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === 0), new ButtonBuilder().setCustomId('zoo_next').setLabel('▶').setStyle(ButtonStyle.Secondary).setDisabled(boxIndex === boxes.length - 1));
-                return { embed, files: [new AttachmentBuilder(imgPath, { name: 'pc-box.png' })], components: boxes.length > 1 ? [row] : [], imgPath };
+                const row = new ActionRowBuilder().addComponents(new ButtonBuilder()
+                    .setCustomId('zoo_prev')
+                    .setLabel('◀')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(boxIndex === 0), new ButtonBuilder()
+                    .setCustomId('zoo_next')
+                    .setLabel('▶')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(boxIndex === boxes.length - 1));
+                return {
+                    embed,
+                    files: [new AttachmentBuilder(imgPath, { name: 'pc-box.png' })],
+                    components: boxes.length > 1 ? [row] : [],
+                    imgPath,
+                };
             };
             const payload = await generatePCMessage(currentBox);
-            const msg = await message.reply({ embeds: [payload.embed], files: payload.files, components: payload.components });
+            const msg = await message.reply({
+                embeds: [payload.embed],
+                files: payload.files,
+                components: payload.components,
+            });
             if (payload.imgPath)
                 fs.unlink(payload.imgPath, () => { });
             if (boxes.length > 1) {
                 const collector = msg.createMessageComponentCollector({ time: 60_000 });
                 collector.on('collect', async (i) => {
                     if (i.user.id !== message.author.id)
-                        return i.reply({ content: "That's not yours, sweetheart! (っ˘ω˘ς)", flags: [MessageFlags.Ephemeral] });
+                        return i.reply({
+                            content: "That's not yours, sweetheart! (っ˘ω˘ς)",
+                            flags: [MessageFlags.Ephemeral],
+                        });
                     if (i.customId === 'zoo_prev' && currentBox > 0)
                         currentBox--;
                     else if (i.customId === 'zoo_next' && currentBox < boxes.length - 1)

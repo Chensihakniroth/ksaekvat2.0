@@ -18,20 +18,20 @@ async function exportCharacters() {
   try {
     await mongoose.connect(process.env.MONGO_URL);
     console.log('Database connected. Initializing registry...');
-    
+
     await registry.initializeRegistry();
     console.log('Registry initialized.');
 
     const allChars = registry.getAllCharacters();
-    const charData = allChars.map(c => ({ 
-      name: c.name, 
+    const charData = allChars.map((c) => ({
+      name: c.name,
       game: c.game,
-      rarity: c.rarity
+      rarity: c.rarity,
     }));
 
     const outputPath = path.join(__dirname, 'characters.json');
     fs.writeFileSync(outputPath, JSON.stringify(charData, null, 2));
-    
+
     console.log(`Successfully exported ${charData.length} characters to ${outputPath}`);
   } catch (error) {
     console.error('An error occurred during the export process:', error);

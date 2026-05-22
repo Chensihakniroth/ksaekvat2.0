@@ -2,7 +2,7 @@
 const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, MessageFlags, } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
-const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji, getRoleEmoji } = require('../../utils/images.js');
+const { getCharacterIcon, getItemEmoji, getRarityEmoji, getElementEmoji, getRoleEmoji, } = require('../../utils/images.js');
 module.exports = {
     name: 'char',
     aliases: ['characters', 'kchar', 'collection'],

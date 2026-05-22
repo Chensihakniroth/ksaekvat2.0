@@ -2,8 +2,10 @@ const { EmbedBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const AnimalService = require('../../services/AnimalService.js').default || require('../../services/AnimalService.js');
-const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
+const AnimalService =
+  require('../../services/AnimalService.js').default || require('../../services/AnimalService.js');
+const EconomyService =
+  require('../../services/EconomyService').default || require('../../services/EconomyService');
 
 module.exports = {
   name: 'sell',
@@ -31,9 +33,13 @@ module.exports = {
 
     // Check if user has any animals with Map-safe logic! (｡♥‿♥｡)
     let totalPokemon = 0;
-    const rarityEntries = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
+    const rarityEntries =
+      userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
     for (const [rarity, rarityAnimals] of rarityEntries) {
-      const animalEntries = rarityAnimals instanceof Map ? rarityAnimals.entries() : Object.entries(rarityAnimals || {});
+      const animalEntries =
+        rarityAnimals instanceof Map
+          ? rarityAnimals.entries()
+          : Object.entries(rarityAnimals || {});
       for (const [animal, count] of animalEntries) {
         totalPokemon += Number(count) || 0;
       }
@@ -62,10 +68,10 @@ module.exports = {
       let pokemonSold = 0;
       const soldPokemon = [];
 
-      const rarityEntriesAll = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
+      const rarityEntriesAll =
+        userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
       for (const [rarity, animals] of rarityEntriesAll) {
-        const animalEntries =
-          animals instanceof Map ? animals.entries() : Object.entries(animals);
+        const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
         for (const [animalKey, count] of animalEntries) {
           const animal = animalsData[rarity]?.[animalKey] || flatRegistry[animalKey];
           if (animal && count > 0) {
@@ -98,13 +104,21 @@ module.exports = {
       const confirmEmbed = new EmbedBuilder()
         .setColor('#ffaa00')
         .setTitle('⚠️ Wait, are you sure?')
-        .setDescription(`You are about to release **ALL ${pokemonSold}** of your Pokémon!\n\nThis will give you **${EconomyService.format(totalValue)}** ${config.economy.currency}, but it **cannot be undone!**\n\nType \`confirm\` in the next 15 seconds to proceed.`);
-        
+        .setDescription(
+          `You are about to release **ALL ${pokemonSold}** of your Pokémon!\n\nThis will give you **${EconomyService.format(totalValue)}** ${config.economy.currency}, but it **cannot be undone!**\n\nType \`confirm\` in the next 15 seconds to proceed.`
+        );
+
       await message.reply({ embeds: [confirmEmbed] });
 
       try {
-        const filter = m => m.author.id === message.author.id && m.content.toLowerCase() === 'confirm';
-        const collected = await message.channel.awaitMessages({ filter, max: 1, time: 15000, errors: ['time'] });
+        const filter = (m) =>
+          m.author.id === message.author.id && m.content.toLowerCase() === 'confirm';
+        const collected = await message.channel.awaitMessages({
+          filter,
+          max: 1,
+          time: 15000,
+          errors: ['time'],
+        });
         if (!collected.first()) return;
       } catch (e) {
         return message.channel.send('(っ˘ω˘ς) Release cancelled. Your Pokémon are safe!');
@@ -153,7 +167,8 @@ module.exports = {
       }
 
       if (rarityAnimals) {
-        const animalEntries = rarityAnimals instanceof Map ? rarityAnimals.entries() : Object.entries(rarityAnimals);
+        const animalEntries =
+          rarityAnimals instanceof Map ? rarityAnimals.entries() : Object.entries(rarityAnimals);
         for (const [animalKey, count] of animalEntries) {
           const animal = animalsData[sellRarity]?.[animalKey] || flatRegistry[animalKey];
           if (animal && count > 0) {
@@ -186,13 +201,21 @@ module.exports = {
       const confirmEmbed = new EmbedBuilder()
         .setColor('#ffaa00')
         .setTitle('⚠️ Wait, are you sure?')
-        .setDescription(`You are about to release **ALL ${pokemonSold}** of your ${sellRarity} Pokémon!\n\nThis will give you **${EconomyService.format(totalValue)}** ${config.economy.currency}, but it **cannot be undone!**\n\nType \`confirm\` in the next 15 seconds to proceed.`);
-        
+        .setDescription(
+          `You are about to release **ALL ${pokemonSold}** of your ${sellRarity} Pokémon!\n\nThis will give you **${EconomyService.format(totalValue)}** ${config.economy.currency}, but it **cannot be undone!**\n\nType \`confirm\` in the next 15 seconds to proceed.`
+        );
+
       await message.reply({ embeds: [confirmEmbed] });
 
       try {
-        const filter = m => m.author.id === message.author.id && m.content.toLowerCase() === 'confirm';
-        const collected = await message.channel.awaitMessages({ filter, max: 1, time: 15000, errors: ['time'] });
+        const filter = (m) =>
+          m.author.id === message.author.id && m.content.toLowerCase() === 'confirm';
+        const collected = await message.channel.awaitMessages({
+          filter,
+          max: 1,
+          time: 15000,
+          errors: ['time'],
+        });
         if (!collected.first()) return;
       } catch (e) {
         return message.channel.send('(っ˘ω˘ς) Release cancelled. Your Pokémon are safe!');
@@ -241,10 +264,10 @@ module.exports = {
       let foundKey = null;
 
       // Search for the animal in user's collection with Map-safe logic! (｡♥‿♥｡)
-      const rarityEntriesSingle = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
+      const rarityEntriesSingle =
+        userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
       for (const [rarity, animals] of rarityEntriesSingle) {
-        const animalEntries =
-          animals instanceof Map ? animals.entries() : Object.entries(animals);
+        const animalEntries = animals instanceof Map ? animals.entries() : Object.entries(animals);
         for (const [animalKey, count] of animalEntries) {
           const animal = animalsData[rarity]?.[animalKey] || flatRegistry[animalKey];
           if (animal && count > 0) {
@@ -324,7 +347,9 @@ module.exports = {
         });
 
       if (imgData && imgData.buffer) {
-        files.push(new (require('discord.js').AttachmentBuilder)(imgData.buffer, { name: imgData.fileName }));
+        files.push(
+          new (require('discord.js').AttachmentBuilder)(imgData.buffer, { name: imgData.fileName })
+        );
         embed.setThumbnail(`attachment://${imgData.fileName}`);
       }
 

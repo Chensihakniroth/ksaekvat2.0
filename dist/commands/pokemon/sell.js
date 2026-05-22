@@ -30,7 +30,9 @@ module.exports = {
         let totalPokemon = 0;
         const rarityEntries = userAnimals instanceof Map ? userAnimals.entries() : Object.entries(userAnimals);
         for (const [rarity, rarityAnimals] of rarityEntries) {
-            const animalEntries = rarityAnimals instanceof Map ? rarityAnimals.entries() : Object.entries(rarityAnimals || {});
+            const animalEntries = rarityAnimals instanceof Map
+                ? rarityAnimals.entries()
+                : Object.entries(rarityAnimals || {});
             for (const [animal, count] of animalEntries) {
                 totalPokemon += Number(count) || 0;
             }
@@ -88,8 +90,13 @@ module.exports = {
                 .setDescription(`You are about to release **ALL ${pokemonSold}** of your Pokémon!\n\nThis will give you **${EconomyService.format(totalValue)}** ${config.economy.currency}, but it **cannot be undone!**\n\nType \`confirm\` in the next 15 seconds to proceed.`);
             await message.reply({ embeds: [confirmEmbed] });
             try {
-                const filter = m => m.author.id === message.author.id && m.content.toLowerCase() === 'confirm';
-                const collected = await message.channel.awaitMessages({ filter, max: 1, time: 15000, errors: ['time'] });
+                const filter = (m) => m.author.id === message.author.id && m.content.toLowerCase() === 'confirm';
+                const collected = await message.channel.awaitMessages({
+                    filter,
+                    max: 1,
+                    time: 15000,
+                    errors: ['time'],
+                });
                 if (!collected.first())
                     return;
             }
@@ -165,8 +172,13 @@ module.exports = {
                 .setDescription(`You are about to release **ALL ${pokemonSold}** of your ${sellRarity} Pokémon!\n\nThis will give you **${EconomyService.format(totalValue)}** ${config.economy.currency}, but it **cannot be undone!**\n\nType \`confirm\` in the next 15 seconds to proceed.`);
             await message.reply({ embeds: [confirmEmbed] });
             try {
-                const filter = m => m.author.id === message.author.id && m.content.toLowerCase() === 'confirm';
-                const collected = await message.channel.awaitMessages({ filter, max: 1, time: 15000, errors: ['time'] });
+                const filter = (m) => m.author.id === message.author.id && m.content.toLowerCase() === 'confirm';
+                const collected = await message.channel.awaitMessages({
+                    filter,
+                    max: 1,
+                    time: 15000,
+                    errors: ['time'],
+                });
                 if (!collected.first())
                     return;
             }

@@ -3,7 +3,8 @@ const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const PokemonBattleService = require('../../services/PokemonBattleService').default || require('../../services/PokemonBattleService');
+const PokemonBattleService = require('../../services/PokemonBattleService').default ||
+    require('../../services/PokemonBattleService');
 const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
 const BattleRenderer = require('../../services/BattleRenderer').default || require('../../services/BattleRenderer');
 const activeDuels = new Set();
@@ -17,10 +18,11 @@ module.exports = {
         // ─── VALIDATION ──────────────────────────────────────────────────
         if (args.length < 1) {
             return message.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [
+                    new EmbedBuilder()
                         .setColor(colors.error)
                         .setTitle('(・_・ヾ Who are you challenging?')
-                        .setDescription('Usage: `Kduel @user [bet_amount]`\nExample: `Kduel @friend 1000`')
+                        .setDescription('Usage: `Kduel @user [bet_amount]`\nExample: `Kduel @friend 1000`'),
                 ],
             });
         }
@@ -34,33 +36,36 @@ module.exports = {
         }
         if (!target) {
             return message.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [
+                    new EmbedBuilder()
                         .setColor(colors.error)
                         .setTitle("(・_・ヾ Can't find them!")
-                        .setDescription("I couldn't find that trainer. Make sure to @mention them!")
+                        .setDescription("I couldn't find that trainer. Make sure to @mention them!"),
                 ],
             });
         }
         if (target.id === message.author.id) {
             return message.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [
+                    new EmbedBuilder()
                         .setColor(colors.warning)
                         .setTitle("(≧◡≦) Can't battle yourself!")
-                        .setDescription("Find another trainer to challenge!")
+                        .setDescription('Find another trainer to challenge!'),
                 ],
             });
         }
         if (target.bot) {
             return message.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [
+                    new EmbedBuilder()
                         .setColor(colors.warning)
                         .setTitle('(・_・ヾ Bots are busy!')
-                        .setDescription("Bots don't have Pokémon teams! Challenge a real trainer.")
+                        .setDescription("Bots don't have Pokémon teams! Challenge a real trainer."),
                 ],
             });
         }
         if (activeDuels.has(message.author.id) || activeDuels.has(target.id)) {
-            return message.reply("One of you is already in a duel! Wait for it to finish. (・_・ヾ");
+            return message.reply('One of you is already in a duel! Wait for it to finish. (・_・ヾ');
         }
         // ─── LOAD BOTH TEAMS ─────────────────────────────────────────────
         const [challengerTeamData, targetTeamData] = await Promise.all([
@@ -69,19 +74,21 @@ module.exports = {
         ]);
         if (challengerTeamData.length < config.pokemonBattle.maxTeamSize) {
             return message.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [
+                    new EmbedBuilder()
                         .setColor(colors.error)
                         .setTitle("(｡•́︿•̀｡) Your team isn't ready!")
-                        .setDescription(`You need ${config.pokemonBattle.maxTeamSize} Pokémon in your team.\nCurrent: **${challengerTeamData.length}/${config.pokemonBattle.maxTeamSize}**\nUse \`Kpteam add <pokemon>\` to fill your squad!`)
+                        .setDescription(`You need ${config.pokemonBattle.maxTeamSize} Pokémon in your team.\nCurrent: **${challengerTeamData.length}/${config.pokemonBattle.maxTeamSize}**\nUse \`Kpteam add <pokemon>\` to fill your squad!`),
                 ],
             });
         }
         if (targetTeamData.length < config.pokemonBattle.maxTeamSize) {
             return message.reply({
-                embeds: [new EmbedBuilder()
+                embeds: [
+                    new EmbedBuilder()
                         .setColor(colors.error)
                         .setTitle(`(｡•́︿•̀｡) ${target.username}'s team isn't ready!`)
-                        .setDescription(`They need ${config.pokemonBattle.maxTeamSize} Pokémon. They have **${targetTeamData.length}/${config.pokemonBattle.maxTeamSize}**.`)
+                        .setDescription(`They need ${config.pokemonBattle.maxTeamSize} Pokémon. They have **${targetTeamData.length}/${config.pokemonBattle.maxTeamSize}**.`),
                 ],
             });
         }
@@ -97,19 +104,21 @@ module.exports = {
         if (betAmount > 0) {
             if (!(await database.hasBalance(message.author.id, betAmount))) {
                 return message.reply({
-                    embeds: [new EmbedBuilder()
+                    embeds: [
+                        new EmbedBuilder()
                             .setColor(colors.error)
-                            .setTitle("(ಥ﹏ಥ) Not enough coins!")
-                            .setDescription(`You don't have enough ${config.economy.currency} for this bet!`)
+                            .setTitle('(ಥ﹏ಥ) Not enough coins!')
+                            .setDescription(`You don't have enough ${config.economy.currency} for this bet!`),
                     ],
                 });
             }
             if (!(await database.hasBalance(target.id, betAmount))) {
                 return message.reply({
-                    embeds: [new EmbedBuilder()
+                    embeds: [
+                        new EmbedBuilder()
                             .setColor(colors.error)
                             .setTitle(`(ಥ﹏ಥ) ${target.username} can't match that bet!`)
-                            .setDescription(`They don't have enough ${config.economy.currency}.`)
+                            .setDescription(`They don't have enough ${config.economy.currency}.`),
                     ],
                 });
             }
@@ -130,7 +139,7 @@ module.exports = {
         ]);
         // ─── INVITE EMBED ────────────────────────────────────────────────
         const inviteEmbed = new EmbedBuilder()
-            .setColor(0xFF6B35)
+            .setColor(0xff6b35)
             .setTitle('⚔️ Pokémon Duel Challenge!')
             .setDescription(`${message.author} challenges ${target} to a 3v3 battle!`)
             .addFields({ name: `🔴 ${message.author.username}'s Team`, value: challengerPreview, inline: true }, { name: `🔵 ${target.username}'s Team`, value: targetPreview, inline: true });
@@ -215,21 +224,36 @@ module.exports = {
                     if (currentChunk.length > 0)
                         logChunks.push(currentChunk);
                     const showChunks = logChunks.length > 5
-                        ? [logChunks[0], logChunks[1], logChunks[Math.floor(logChunks.length / 2)], logChunks[logChunks.length - 2], logChunks[logChunks.length - 1]]
+                        ? [
+                            logChunks[0],
+                            logChunks[1],
+                            logChunks[Math.floor(logChunks.length / 2)],
+                            logChunks[logChunks.length - 2],
+                            logChunks[logChunks.length - 1],
+                        ]
                         : logChunks;
                     for (let i = 0; i < showChunks.length; i++) {
                         const chunk = showChunks[i];
                         const turnNum = chunk[0]?.turn || i + 1;
                         // Find the matching HP snapshot for this turn
-                        const snapshot = result.snapshots.find(s => s.turn === turnNum) || result.snapshots[result.snapshots.length - 1];
+                        const snapshot = result.snapshots.find((s) => s.turn === turnNum) ||
+                            result.snapshots[result.snapshots.length - 1];
                         // 🎨 Render visual frame with correct HP for this turn
                         const frameBuffer = await BattleRenderer.renderFrame(teamA, teamB, snapshot ? { teamA: snapshot.teamA, teamB: snapshot.teamB } : undefined);
                         const attachment = new AttachmentBuilder(frameBuffer, { name: `duel_${turnNum}.png` });
                         // 📜 Battle log as plain text
-                        const logText = chunk.map((e) => {
-                            const prefix = e.type === 'faint' ? '💀' : e.type === 'super_effective' ? '⚡' : e.type === 'crit' ? '💥' : '▸';
+                        const logText = chunk
+                            .map((e) => {
+                            const prefix = e.type === 'faint'
+                                ? '💀'
+                                : e.type === 'super_effective'
+                                    ? '⚡'
+                                    : e.type === 'crit'
+                                        ? '💥'
+                                        : '▸';
                             return `${prefix} ${e.text}`;
-                        }).join('\n');
+                        })
+                            .join('\n');
                         const content = `⚔️ **Duel — Turn ${turnNum}/${result.turns}**\n${logText.slice(0, 1900)}`;
                         await sentMessage.edit({ content, files: [attachment], embeds: [] });
                         if (i < showChunks.length - 1) {

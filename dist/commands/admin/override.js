@@ -23,7 +23,9 @@ module.exports = {
             });
         }
         // Permission check for bot
-        const requiredPerm = mode === 'kick' ? PermissionsBitField.Flags.KickMembers : PermissionsBitField.Flags.BanMembers;
+        const requiredPerm = mode === 'kick'
+            ? PermissionsBitField.Flags.KickMembers
+            : PermissionsBitField.Flags.BanMembers;
         if (!message.guild.members.me.permissions.has(requiredPerm)) {
             return message.reply({
                 embeds: [
@@ -39,7 +41,8 @@ module.exports = {
         if (!targetArg) {
             return message.reply('Specify a target for the purge protocol. (・__・ヾ');
         }
-        const targetUser = message.mentions.users.first() || await client.users.fetch(targetArg.replace(/[<@!>]/g, '')).catch(() => null);
+        const targetUser = message.mentions.users.first() ||
+            (await client.users.fetch(targetArg.replace(/[<@!>]/g, '')).catch(() => null));
         if (!targetUser) {
             return message.reply('User not found in the simulation database. (・_・ヾ');
         }
@@ -49,7 +52,7 @@ module.exports = {
         if (targetUser.id === message.author.id)
             return message.reply("You can't purge yourself from the simulation! (≧◡≦)");
         if (targetUser.id === client.user.id)
-            return message.reply("Whoa! Trying to delete my source code? Not happening. (¬‿¬)");
+            return message.reply('Whoa! Trying to delete my source code? Not happening. (¬‿¬)');
         if (member) {
             const hierarchyCheck = mode === 'kick' ? member.kickable : member.bannable;
             if (!hierarchyCheck) {
@@ -71,7 +74,9 @@ module.exports = {
                 await message.guild.members.kick(targetUser.id, `${reason} | Purged by ${message.author.tag}`);
             }
             else {
-                await message.guild.members.ban(targetUser.id, { reason: `${reason} | Purged by ${message.author.tag}` });
+                await message.guild.members.ban(targetUser.id, {
+                    reason: `${reason} | Purged by ${message.author.tag}`,
+                });
             }
             const success = new EmbedBuilder()
                 .setColor(colors.success)

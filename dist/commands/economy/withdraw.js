@@ -18,8 +18,8 @@ module.exports = {
                     new EmbedBuilder()
                         .setColor(colors.error)
                         .setTitle('⚠️ TRANSACTION ERROR')
-                        .setDescription('How much do you want to withdraw? (・_・ヾ\nUsage: `kwithdraw <amount/all>`')
-                ]
+                        .setDescription('How much do you want to withdraw? (・_・ヾ\nUsage: `kwithdraw <amount/all>`'),
+                ],
             });
         }
         const amount = economy.parseBet(args[0], user.bank || 0, 1, user.bank || 0);
@@ -29,8 +29,8 @@ module.exports = {
                     new EmbedBuilder()
                         .setColor(colors.error)
                         .setTitle('❌ INVALID AMOUNT')
-                        .setDescription("You can't withdraw that! (・_・ヾ Your bank vault seems a bit empty. (ಥ﹏ಥ)")
-                ]
+                        .setDescription("You can't withdraw that! (・_・ヾ Your bank vault seems a bit empty. (ಥ﹏ಥ)"),
+                ],
             });
         }
         if ((user.bank || 0) < amount) {
@@ -39,8 +39,8 @@ module.exports = {
                     new EmbedBuilder()
                         .setColor(colors.error)
                         .setTitle('🚫 INSUFFICIENT BANK FUNDS')
-                        .setDescription(`You only have **${(user.bank || 0).toLocaleString()}** ${config.economy.currencySymbol} in your bank! (・_0)`)
-                ]
+                        .setDescription(`You only have **${(user.bank || 0).toLocaleString()}** ${config.economy.currencySymbol} in your bank! (・_0)`),
+                ],
             });
         }
         // Perform atomic withdrawal
@@ -49,7 +49,15 @@ module.exports = {
             .setColor(colors.success)
             .setTitle('🏦 WITHDRAWAL SUCCESS')
             .setDescription(`Transferred **${amount.toLocaleString()}** ${config.economy.currencySymbol} back to your wallet! (¬‿¬)`)
-            .addFields({ name: '💵 Wallet', value: `**${updatedUser.balance.toLocaleString()}** ${config.economy.currencySymbol}`, inline: true }, { name: '🏦 Bank', value: `**${updatedUser.bank.toLocaleString()}** ${config.economy.currencySymbol}`, inline: true })
+            .addFields({
+            name: '💵 Wallet',
+            value: `**${updatedUser.balance.toLocaleString()}** ${config.economy.currencySymbol}`,
+            inline: true,
+        }, {
+            name: '🏦 Bank',
+            value: `**${updatedUser.bank.toLocaleString()}** ${config.economy.currencySymbol}`,
+            inline: true,
+        })
             .setThumbnail(message.author.displayAvatarURL())
             .setTimestamp();
         // Update command usage stats

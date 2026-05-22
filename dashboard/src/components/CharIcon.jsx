@@ -4,18 +4,18 @@ import { getFallbackEmoji } from '../utils/charImages.js';
 // Pre-import all local character icons to resolve them dynamically
 const localIcons = import.meta.glob('../assets/char_icon/**/*.webp', { eager: true });
 
-export default function CharIcon({ name, game, rarity, emoji, className = "char-icon-img" }) {
+export default function CharIcon({ name, game, rarity, emoji, className = 'char-icon-img' }) {
   const [error, setError] = useState(false);
 
   // 1. Determine local path if possible
   // Pattern: ../assets/char_icon/[game]/[rarity]/[Name_With_Underscores].webp
   const localUrl = useMemo(() => {
     if (!name || !game || !rarity) return null;
-    
+
     const g = game.toLowerCase();
     const r = String(rarity);
     const n = name.replace(/ /g, '_');
-    
+
     // Check various path possibilities
     const path = `../assets/char_icon/${g}/${r}/${n}.webp`;
     return localIcons[path]?.default || null;
@@ -25,11 +25,7 @@ export default function CharIcon({ name, game, rarity, emoji, className = "char-
   const proxyUrl = `/api/characters/icon/${encodeURIComponent(game?.toLowerCase() || 'unknown')}/${encodeURIComponent(name)}`;
 
   if (error || !name) {
-    return (
-      <div className="char-icon-fallback">
-        {emoji || getFallbackEmoji(rarity)}
-      </div>
-    );
+    return <div className="char-icon-fallback">{emoji || getFallbackEmoji(rarity)}</div>;
   }
 
   return (

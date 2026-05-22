@@ -2,9 +2,13 @@ const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
-const PokemonBattleService = require('../../services/PokemonBattleService').default || require('../../services/PokemonBattleService');
-const EconomyService = require('../../services/EconomyService').default || require('../../services/EconomyService');
-const BattleRenderer = require('../../services/BattleRenderer').default || require('../../services/BattleRenderer');
+const PokemonBattleService =
+  require('../../services/PokemonBattleService').default ||
+  require('../../services/PokemonBattleService');
+const EconomyService =
+  require('../../services/EconomyService').default || require('../../services/EconomyService');
+const BattleRenderer =
+  require('../../services/BattleRenderer').default || require('../../services/BattleRenderer');
 
 const activeDuels = new Set();
 
@@ -18,10 +22,11 @@ module.exports = {
     // ─── VALIDATION ──────────────────────────────────────────────────
     if (args.length < 1) {
       return message.reply({
-        embeds: [new EmbedBuilder()
-          .setColor(colors.error)
-          .setTitle('(・_・ヾ Who are you challenging?')
-          .setDescription('Usage: `Kduel @user [bet_amount]`\nExample: `Kduel @friend 1000`')
+        embeds: [
+          new EmbedBuilder()
+            .setColor(colors.error)
+            .setTitle('(・_・ヾ Who are you challenging?')
+            .setDescription('Usage: `Kduel @user [bet_amount]`\nExample: `Kduel @friend 1000`'),
         ],
       });
     }
@@ -36,36 +41,39 @@ module.exports = {
 
     if (!target) {
       return message.reply({
-        embeds: [new EmbedBuilder()
-          .setColor(colors.error)
-          .setTitle("(・_・ヾ Can't find them!")
-          .setDescription("I couldn't find that trainer. Make sure to @mention them!")
+        embeds: [
+          new EmbedBuilder()
+            .setColor(colors.error)
+            .setTitle("(・_・ヾ Can't find them!")
+            .setDescription("I couldn't find that trainer. Make sure to @mention them!"),
         ],
       });
     }
 
     if (target.id === message.author.id) {
       return message.reply({
-        embeds: [new EmbedBuilder()
-          .setColor(colors.warning)
-          .setTitle("(≧◡≦) Can't battle yourself!")
-          .setDescription("Find another trainer to challenge!")
+        embeds: [
+          new EmbedBuilder()
+            .setColor(colors.warning)
+            .setTitle("(≧◡≦) Can't battle yourself!")
+            .setDescription('Find another trainer to challenge!'),
         ],
       });
     }
 
     if (target.bot) {
       return message.reply({
-        embeds: [new EmbedBuilder()
-          .setColor(colors.warning)
-          .setTitle('(・_・ヾ Bots are busy!')
-          .setDescription("Bots don't have Pokémon teams! Challenge a real trainer.")
+        embeds: [
+          new EmbedBuilder()
+            .setColor(colors.warning)
+            .setTitle('(・_・ヾ Bots are busy!')
+            .setDescription("Bots don't have Pokémon teams! Challenge a real trainer."),
         ],
       });
     }
 
     if (activeDuels.has(message.author.id) || activeDuels.has(target.id)) {
-      return message.reply("One of you is already in a duel! Wait for it to finish. (・_・ヾ");
+      return message.reply('One of you is already in a duel! Wait for it to finish. (・_・ヾ');
     }
 
     // ─── LOAD BOTH TEAMS ─────────────────────────────────────────────
@@ -76,20 +84,26 @@ module.exports = {
 
     if (challengerTeamData.length < config.pokemonBattle.maxTeamSize) {
       return message.reply({
-        embeds: [new EmbedBuilder()
-          .setColor(colors.error)
-          .setTitle("(｡•́︿•̀｡) Your team isn't ready!")
-          .setDescription(`You need ${config.pokemonBattle.maxTeamSize} Pokémon in your team.\nCurrent: **${challengerTeamData.length}/${config.pokemonBattle.maxTeamSize}**\nUse \`Kpteam add <pokemon>\` to fill your squad!`)
+        embeds: [
+          new EmbedBuilder()
+            .setColor(colors.error)
+            .setTitle("(｡•́︿•̀｡) Your team isn't ready!")
+            .setDescription(
+              `You need ${config.pokemonBattle.maxTeamSize} Pokémon in your team.\nCurrent: **${challengerTeamData.length}/${config.pokemonBattle.maxTeamSize}**\nUse \`Kpteam add <pokemon>\` to fill your squad!`
+            ),
         ],
       });
     }
 
     if (targetTeamData.length < config.pokemonBattle.maxTeamSize) {
       return message.reply({
-        embeds: [new EmbedBuilder()
-          .setColor(colors.error)
-          .setTitle(`(｡•́︿•̀｡) ${target.username}'s team isn't ready!`)
-          .setDescription(`They need ${config.pokemonBattle.maxTeamSize} Pokémon. They have **${targetTeamData.length}/${config.pokemonBattle.maxTeamSize}**.`)
+        embeds: [
+          new EmbedBuilder()
+            .setColor(colors.error)
+            .setTitle(`(｡•́︿•̀｡) ${target.username}'s team isn't ready!`)
+            .setDescription(
+              `They need ${config.pokemonBattle.maxTeamSize} Pokémon. They have **${targetTeamData.length}/${config.pokemonBattle.maxTeamSize}**.`
+            ),
         ],
       });
     }
@@ -106,19 +120,21 @@ module.exports = {
     if (betAmount > 0) {
       if (!(await database.hasBalance(message.author.id, betAmount))) {
         return message.reply({
-          embeds: [new EmbedBuilder()
-            .setColor(colors.error)
-            .setTitle("(ಥ﹏ಥ) Not enough coins!")
-            .setDescription(`You don't have enough ${config.economy.currency} for this bet!`)
+          embeds: [
+            new EmbedBuilder()
+              .setColor(colors.error)
+              .setTitle('(ಥ﹏ಥ) Not enough coins!')
+              .setDescription(`You don't have enough ${config.economy.currency} for this bet!`),
           ],
         });
       }
       if (!(await database.hasBalance(target.id, betAmount))) {
         return message.reply({
-          embeds: [new EmbedBuilder()
-            .setColor(colors.error)
-            .setTitle(`(ಥ﹏ಥ) ${target.username} can't match that bet!`)
-            .setDescription(`They don't have enough ${config.economy.currency}.`)
+          embeds: [
+            new EmbedBuilder()
+              .setColor(colors.error)
+              .setTitle(`(ಥ﹏ಥ) ${target.username} can't match that bet!`)
+              .setDescription(`They don't have enough ${config.economy.currency}.`),
           ],
         });
       }
@@ -130,7 +146,9 @@ module.exports = {
       for (const p of teamData) {
         const base = await PokemonBattleService.getBaseStats(p.speciesKey);
         const typeStr = base ? PokemonBattleService.getTypeEmojis(base.types) : '❓';
-        lines.push(`${typeStr} **${p.speciesKey.charAt(0).toUpperCase() + p.speciesKey.slice(1)}** (Lv.${p.level})`);
+        lines.push(
+          `${typeStr} **${p.speciesKey.charAt(0).toUpperCase() + p.speciesKey.slice(1)}** (Lv.${p.level})`
+        );
       }
       return lines.join('\n');
     };
@@ -142,12 +160,12 @@ module.exports = {
 
     // ─── INVITE EMBED ────────────────────────────────────────────────
     const inviteEmbed = new EmbedBuilder()
-      .setColor(0xFF6B35)
+      .setColor(0xff6b35)
       .setTitle('⚔️ Pokémon Duel Challenge!')
       .setDescription(`${message.author} challenges ${target} to a 3v3 battle!`)
       .addFields(
         { name: `🔴 ${message.author.username}'s Team`, value: challengerPreview, inline: true },
-        { name: `🔵 ${target.username}'s Team`, value: targetPreview, inline: true },
+        { name: `🔵 ${target.username}'s Team`, value: targetPreview, inline: true }
       );
 
     if (betAmount > 0) {
@@ -169,7 +187,8 @@ module.exports = {
       await sentMessage.react('⚔️');
       await sentMessage.react('❌');
 
-      const filter = (reaction, user) => ['⚔️', '❌'].includes(reaction.emoji.name) && user.id === target.id;
+      const filter = (reaction, user) =>
+        ['⚔️', '❌'].includes(reaction.emoji.name) && user.id === target.id;
       const collector = sentMessage.createReactionCollector({ filter, time: 60000, max: 1 });
 
       let processed = false;
@@ -222,7 +241,11 @@ module.exports = {
           }
 
           // Run simulation
-          const result = PokemonBattleService.simulateBattle(teamA, teamB, config.pokemonBattle.maxTurns);
+          const result = PokemonBattleService.simulateBattle(
+            teamA,
+            teamB,
+            config.pokemonBattle.maxTurns
+          );
           const won = result.winner === 'A';
           const winner = won ? message.author : target;
           const loser = won ? target : message.author;
@@ -242,26 +265,48 @@ module.exports = {
           }
           if (currentChunk.length > 0) logChunks.push(currentChunk);
 
-          const showChunks = logChunks.length > 5
-            ? [logChunks[0], logChunks[1], logChunks[Math.floor(logChunks.length / 2)], logChunks[logChunks.length - 2], logChunks[logChunks.length - 1]]
-            : logChunks;
+          const showChunks =
+            logChunks.length > 5
+              ? [
+                  logChunks[0],
+                  logChunks[1],
+                  logChunks[Math.floor(logChunks.length / 2)],
+                  logChunks[logChunks.length - 2],
+                  logChunks[logChunks.length - 1],
+                ]
+              : logChunks;
 
           for (let i = 0; i < showChunks.length; i++) {
             const chunk = showChunks[i];
             const turnNum = chunk[0]?.turn || i + 1;
 
             // Find the matching HP snapshot for this turn
-            const snapshot = result.snapshots.find(s => s.turn === turnNum) || result.snapshots[result.snapshots.length - 1];
+            const snapshot =
+              result.snapshots.find((s) => s.turn === turnNum) ||
+              result.snapshots[result.snapshots.length - 1];
 
             // 🎨 Render visual frame with correct HP for this turn
-            const frameBuffer = await BattleRenderer.renderFrame(teamA, teamB, snapshot ? { teamA: snapshot.teamA, teamB: snapshot.teamB } : undefined);
+            const frameBuffer = await BattleRenderer.renderFrame(
+              teamA,
+              teamB,
+              snapshot ? { teamA: snapshot.teamA, teamB: snapshot.teamB } : undefined
+            );
             const attachment = new AttachmentBuilder(frameBuffer, { name: `duel_${turnNum}.png` });
 
             // 📜 Battle log as plain text
-            const logText = chunk.map((e) => {
-              const prefix = e.type === 'faint' ? '💀' : e.type === 'super_effective' ? '⚡' : e.type === 'crit' ? '💥' : '▸';
-              return `${prefix} ${e.text}`;
-            }).join('\n');
+            const logText = chunk
+              .map((e) => {
+                const prefix =
+                  e.type === 'faint'
+                    ? '💀'
+                    : e.type === 'super_effective'
+                      ? '⚡'
+                      : e.type === 'crit'
+                        ? '💥'
+                        : '▸';
+                return `${prefix} ${e.text}`;
+              })
+              .join('\n');
 
             const content = `⚔️ **Duel — Turn ${turnNum}/${result.turns}**\n${logText.slice(0, 1900)}`;
 
@@ -278,8 +323,18 @@ module.exports = {
           const loserTeamData = won ? targetTeamData : challengerTeamData;
           const loserTeam = won ? teamB : teamA;
 
-          const winnerRewards = PokemonBattleService.calculateBattleRewards(true, winnerTeam, loserTeam, config.pokemonBattle.faintedXpPenalty);
-          const loserRewards = PokemonBattleService.calculateBattleRewards(false, loserTeam, winnerTeam, config.pokemonBattle.faintedXpPenalty);
+          const winnerRewards = PokemonBattleService.calculateBattleRewards(
+            true,
+            winnerTeam,
+            loserTeam,
+            config.pokemonBattle.faintedXpPenalty
+          );
+          const loserRewards = PokemonBattleService.calculateBattleRewards(
+            false,
+            loserTeam,
+            winnerTeam,
+            config.pokemonBattle.faintedXpPenalty
+          );
 
           // Apply XP to winner's Pokémon
           const winnerXpLines = [];
@@ -324,7 +379,11 @@ module.exports = {
 
           // ─── FINAL RESULT MESSAGE ───────────────────────────────────────
           const finalSnapshot = result.snapshots[result.snapshots.length - 1];
-          const finalFrame = await BattleRenderer.renderFrame(teamA, teamB, finalSnapshot ? { teamA: finalSnapshot.teamA, teamB: finalSnapshot.teamB } : undefined);
+          const finalFrame = await BattleRenderer.renderFrame(
+            teamA,
+            teamB,
+            finalSnapshot ? { teamA: finalSnapshot.teamA, teamB: finalSnapshot.teamB } : undefined
+          );
           const finalAttachment = new AttachmentBuilder(finalFrame, { name: 'duel_final.png' });
 
           const finalContent = `🏆 **${winner.username} wins the duel in ${result.turns} turns!**
@@ -338,7 +397,6 @@ ${loserXpLines.join('\n') || 'None'}`;
 
           await sentMessage.edit({ content: finalContent, embeds: [], files: [finalAttachment] });
           await database.updateStats(message.author.id, 'command');
-
         } finally {
           activeDuels.delete(message.author.id);
           activeDuels.delete(target.id);
@@ -356,7 +414,6 @@ ${loserXpLines.join('\n') || 'None'}`;
           await sentMessage.reactions.removeAll().catch(() => {});
         }
       });
-
     } catch (error) {
       console.error('❌ Error in duel:', error);
       activeDuels.delete(message.author.id);

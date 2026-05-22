@@ -1,7 +1,8 @@
 import { Router, Request, Response } from 'express';
 const User = require('../../models/User').default || require('../../models/User');
 const registry = require('../../utils/registry.js');
-const animalService = require('../../services/AnimalService').default || require('../../services/AnimalService');
+const animalService =
+  require('../../services/AnimalService').default || require('../../services/AnimalService');
 const mongoose = require('mongoose');
 
 const router = Router();
@@ -15,7 +16,7 @@ router.get('/:userId', async (req: Request, res: Response) => {
 
     // 1. Try finding by Discord ID (Numeric string)
     let user = await User.findOne({ id: userId }).lean();
-    
+
     // 2. Try finding by MongoDB _id
     if (!user && mongoose.Types.ObjectId.isValid(userId)) {
       user = await User.findById(userId).lean();
@@ -23,15 +24,15 @@ router.get('/:userId', async (req: Request, res: Response) => {
 
     // 3. Try finding by Username (Case-insensitive)
     if (!user) {
-      user = await User.findOne({ 
-        username: { $regex: new RegExp(`^${userId}$`, 'i') } 
+      user = await User.findOne({
+        username: { $regex: new RegExp(`^${userId}$`, 'i') },
       }).lean();
     }
 
     // 4. Try finding by Custom Slug (Case-insensitive)
     if (!user) {
       user = await User.findOne({
-        'profileTheme.slug': { $regex: new RegExp(`^${userId}$`, 'i') }
+        'profileTheme.slug': { $regex: new RegExp(`^${userId}$`, 'i') },
       }).lean();
     }
 
@@ -72,7 +73,7 @@ router.get('/:userId', async (req: Request, res: Response) => {
               if (sprite) {
                 animalMap[rarity][pokemon] = {
                   count: count as number,
-                  sprite
+                  sprite,
                 };
               }
             } catch (err) {
@@ -88,25 +89,27 @@ router.get('/:userId', async (req: Request, res: Response) => {
     }, 0);
 
     // Hydrate Favorites
-    const hydratedFavorites = await Promise.all((user.profileTheme?.favorites || []).map(async (fav: any) => {
-      if (fav.type === 'character') {
-        const char = registry.getCharacter(fav.name);
-        return {
-          type: 'character',
-          name: fav.name,
-          rarity: char?.rarity || '4',
-          game: char?.game || 'unknown',
-          emoji: char?.emoji || '✨'
-        };
-      } else {
-        const sprite = await animalService.getPokemonSprite(fav.name);
-        return {
-          type: 'animal',
-          name: fav.name,
-          sprite: sprite || null
-        };
-      }
-    }));
+    const hydratedFavorites = await Promise.all(
+      (user.profileTheme?.favorites || []).map(async (fav: any) => {
+        if (fav.type === 'character') {
+          const char = registry.getCharacter(fav.name);
+          return {
+            type: 'character',
+            name: fav.name,
+            rarity: char?.rarity || '4',
+            game: char?.game || 'unknown',
+            emoji: char?.emoji || '✨',
+          };
+        } else {
+          const sprite = await animalService.getPokemonSprite(fav.name);
+          return {
+            type: 'animal',
+            name: fav.name,
+            sprite: sprite || null,
+          };
+        }
+      })
+    );
 
     res.json({
       success: true,
@@ -133,11 +136,11 @@ router.get('/:userId', async (req: Request, res: Response) => {
             slug: null,
             showStats: true,
             showInventory: true,
-            socials: {}
+            socials: {},
           }),
           portfolio: user.profileTheme?.portfolio || [],
-          favorites: hydratedFavorites
-        }
+          favorites: hydratedFavorites,
+        },
       },
     });
   } catch (err: any) {
@@ -154,9 +157,26 @@ router.post('/update', async (req: any, res: Response) => {
   try {
     const jwt = require('jsonwebtoken');
     const { env } = require('../../utils/env.js');
-    const decoded: any = jwt.verify(token, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls');
-    
-    const { bio, accentColor, background, music, socials, banner, bannerPosition, avatar, showStats, showInventory, portfolio, favorites, slug } = req.body;
+    const decoded: any = jwt.verify(
+      token,
+      env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls'
+    );
+
+    const {
+      bio,
+      accentColor,
+      background,
+      music,
+      socials,
+      banner,
+      bannerPosition,
+      avatar,
+      showStats,
+      showInventory,
+      portfolio,
+      favorites,
+      slug,
+    } = req.body;
 
     const user = await User.findOne({ id: decoded.id });
     if (!user) return res.status(404).json({ success: false, error: 'User not found' });
@@ -164,10 +184,20 @@ router.post('/update', async (req: any, res: Response) => {
     // Validate and check slug uniqueness if provided
     if (slug && slug !== user.profileTheme?.slug) {
       if (!/^[a-zA-Z0-9-_]+$/.test(slug)) {
-        return res.status(400).json({ success: false, error: 'Invalid slug format. Use only letters, numbers, dashes, and underscores.' });
+        return res
+          .status(400)
+          .json({
+            success: false,
+            error: 'Invalid slug format. Use only letters, numbers, dashes, and underscores.',
+          });
       }
-      const slugExists = await User.findOne({ 'profileTheme.slug': { $regex: new RegExp(`^${slug}$`, 'i') } });
-      if (slugExists) return res.status(400).json({ success: false, error: 'This custom URL slug is already taken.' });
+      const slugExists = await User.findOne({
+        'profileTheme.slug': { $regex: new RegExp(`^${slug}$`, 'i') },
+      });
+      if (slugExists)
+        return res
+          .status(400)
+          .json({ success: false, error: 'This custom URL slug is already taken.' });
     }
 
     // Update profile theme object
@@ -178,7 +208,8 @@ router.post('/update', async (req: any, res: Response) => {
       background: background !== undefined ? background : user.profileTheme.background,
       music: music !== undefined ? music : user.profileTheme.music,
       banner: banner !== undefined ? banner : user.profileTheme.banner,
-      bannerPosition: bannerPosition !== undefined ? bannerPosition : user.profileTheme.bannerPosition,
+      bannerPosition:
+        bannerPosition !== undefined ? bannerPosition : user.profileTheme.bannerPosition,
       avatar: avatar !== undefined ? avatar : user.profileTheme.avatar,
       slug: slug !== undefined ? slug : user.profileTheme.slug,
       showStats: showStats !== undefined ? showStats : user.profileTheme.showStats,
@@ -187,8 +218,8 @@ router.post('/update', async (req: any, res: Response) => {
       favorites: favorites !== undefined ? favorites : user.profileTheme.favorites,
       socials: {
         ...user.profileTheme.socials,
-        ...(socials || {})
-      }
+        ...(socials || {}),
+      },
     };
 
     await user.save();
@@ -208,8 +239,11 @@ router.post('/upload-mp3', async (req: any, res: Response) => {
     const { env } = require('../../utils/env.js');
     const fs = require('fs');
     const path = require('path');
-    const decoded: any = jwt.verify(token, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls');
-    
+    const decoded: any = jwt.verify(
+      token,
+      env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls'
+    );
+
     const { base64Audio } = req.body;
     if (!base64Audio) return res.status(400).json({ success: false, error: 'Audio data missing.' });
 
@@ -220,9 +254,9 @@ router.post('/upload-mp3', async (req: any, res: Response) => {
     }
 
     // Process base64
-    const base64Data = base64Audio.replace(/^data:audio\/mpeg;base64,/, "");
+    const base64Data = base64Audio.replace(/^data:audio\/mpeg;base64,/, '');
     const filePath = path.join(audioDir, `user_${decoded.id}.mp3`);
-    
+
     fs.writeFileSync(filePath, base64Data, 'base64');
 
     const publicUrl = `/assets/audio/user_${decoded.id}.mp3?t=${Date.now()}`;

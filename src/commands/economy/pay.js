@@ -63,7 +63,7 @@ module.exports = {
     // Initialize stats if they don't exist
     if (!senderData.stats) senderData.stats = {};
     if (!targetData.stats) targetData.stats = {};
-    
+
     senderData.stats.totalDonated = (senderData.stats.totalDonated || 0) + amount;
     targetData.stats.totalReceived = (targetData.stats.totalReceived || 0) + amount;
 

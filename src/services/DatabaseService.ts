@@ -4,7 +4,7 @@ import Listener from '../models/Listener';
 import TalkTarget from '../models/TalkTarget';
 import CharacterCard from '../models/CharacterCard';
 import AnimalRegistry from '../models/AnimalRegistry';
-import Character from '../models/Character'; 
+import Character from '../models/Character';
 import GachaHistory from '../models/GachaHistory';
 import UserPokemon from '../models/UserPokemon';
 import type { IUserPokemon } from '../models/UserPokemon';
@@ -46,7 +46,9 @@ class DatabaseService {
 
   async saveUserUpdate(userId: string, updatePayload: any) {
     try {
-      return await User.findOneAndUpdate({ id: userId }, updatePayload, { returnDocument: 'after' });
+      return await User.findOneAndUpdate({ id: userId }, updatePayload, {
+        returnDocument: 'after',
+      });
     } catch (err) {
       logger.error(`MongoDB saveUserUpdate error:`, err);
       throw err;
@@ -117,7 +119,8 @@ class DatabaseService {
   }
 
   async addPokeball(userId: string, type: string, amount = 1) {
-    const field = type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
+    const field =
+      type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
     return await User.findOneAndUpdate(
       { id: userId },
       { $inc: { [field]: amount } },
@@ -127,8 +130,9 @@ class DatabaseService {
 
   async setPokeball(userId: string, type: string) {
     const user = await this.getUser(userId);
-    const field = type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
-    
+    const field =
+      type === 'pokeball' ? 'pokeballs' : type === 'ultraball' ? 'ultraballs' : 'masterballs';
+
     if (!user[field as keyof IUser] || (user[field as keyof IUser] as number) <= 0) {
       return { success: false, message: `You don't have any ${type}s, darling! (｡•́︿•̀｡)` };
     }
@@ -137,11 +141,11 @@ class DatabaseService {
     (user[field as keyof IUser] as number)--;
 
     if (!user.boosters) user.boosters = new Map();
-    
+
     // Set one-time-use flag
     user.boosters.set(type, {
       active: true,
-      oneTime: true
+      oneTime: true,
     });
 
     user.markModified('boosters');
@@ -152,7 +156,7 @@ class DatabaseService {
   async clearOneTimeBall(userId: string, type: string) {
     return await User.findOneAndUpdate(
       { id: userId },
-      { $unset: { [`boosters.${type}`]: "" } },
+      { $unset: { [`boosters.${type}`]: '' } },
       { returnDocument: 'after' }
     );
   }
@@ -175,7 +179,7 @@ class DatabaseService {
   async unlockTheme(userId: string, themeId: string) {
     const user = await this.getUser(userId);
     if (!user.unlockedThemes) user.unlockedThemes = ['default'];
-    
+
     if (!user.unlockedThemes.includes(themeId)) {
       user.unlockedThemes.push(themeId);
       user.markModified('unlockedThemes');
@@ -188,7 +192,7 @@ class DatabaseService {
   async setTheme(userId: string, themeId: string) {
     const user = await this.getUser(userId);
     if (!user) return false;
-    
+
     if (user.unlockedThemes && user.unlockedThemes.includes(themeId)) {
       if (!user.profileTheme) {
         user.profileTheme = { theme: themeId, favorites: [] };
@@ -207,19 +211,19 @@ class DatabaseService {
     if (!user) return false;
 
     if (!user.profileTheme) {
-        user.profileTheme = { theme: 'default', favorites: [] };
+      user.profileTheme = { theme: 'default', favorites: [] };
     }
-    
+
     if (!Array.isArray(user.profileTheme.favorites)) {
-        user.profileTheme.favorites = [];
+      user.profileTheme.favorites = [];
     }
 
     // Remove existing of same type to prevent duplicates (only 1 animal buddy allowed!)
     user.profileTheme.favorites = user.profileTheme.favorites.filter((f: any) => f.type !== type);
-    
+
     // Add new one
     user.profileTheme.favorites.push({ type, name });
-    
+
     user.markModified('profileTheme');
     await this.saveUser(user);
     return true;
@@ -259,7 +263,7 @@ class DatabaseService {
   async payWithAnyBalance(userId: string, amount: number) {
     const user = await User.findOne({ id: userId });
     if (!user) return false;
-    
+
     if ((user.balance || 0) >= amount) {
       user.balance -= amount;
     } else {
@@ -274,11 +278,11 @@ class DatabaseService {
   async deposit(userId: string, amount: number) {
     return await User.findOneAndUpdate(
       { id: userId },
-      { 
-        $inc: { 
+      {
+        $inc: {
           balance: -amount,
-          bank: amount 
-        } 
+          bank: amount,
+        },
       },
       { returnDocument: 'after' }
     );
@@ -287,28 +291,34 @@ class DatabaseService {
   async withdraw(userId: string, amount: number) {
     return await User.findOneAndUpdate(
       { id: userId },
-      { 
-        $inc: { 
+      {
+        $inc: {
           balance: amount,
-          bank: -amount 
-        } 
+          bank: -amount,
+        },
       },
       { returnDocument: 'after' }
     );
   }
 
-async updateStats(userId: string, type: string, amount = 1) {
-     const update: any = {};
-     if (type === 'won') update['stats.totalWon'] = amount;
-     else if (type === 'lost') update['stats.totalLost'] = amount;
-     else if (type === 'command') update['stats.commandsUsed'] = 1;
-     else if (type === 'gambled') update['stats.totalGambled'] = amount;
-     else update[`stats.${type}`] = amount;
+  async updateStats(userId: string, type: string, amount = 1) {
+    const update: any = {};
+    if (type === 'won') update['stats.totalWon'] = amount;
+    else if (type === 'lost') update['stats.totalLost'] = amount;
+    else if (type === 'command') update['stats.commandsUsed'] = 1;
+    else if (type === 'gambled') update['stats.totalGambled'] = amount;
+    else update[`stats.${type}`] = amount;
 
     await User.findOneAndUpdate({ id: userId }, { $inc: update });
   }
 
-  async logGachaPull(userId: string, username: string, itemName: string, game: string, rarity: number) {
+  async logGachaPull(
+    userId: string,
+    username: string,
+    itemName: string,
+    game: string,
+    rarity: number
+  ) {
     try {
       if (rarity < 4) return; // Only log high-rarity (4* and 5*) for the ticker! (｡♥‿♥｡)
       await GachaHistory.create({ userId, username, itemName, game, rarity });
@@ -362,7 +372,7 @@ async updateStats(userId: string, type: string, amount = 1) {
       } else if (itemName === 'Master Ball') {
         user.masterballs = (user.masterballs || 0) + 1;
       }
-      
+
       // Items are now stored in dedicated fields, but we still return the item info
       await this.saveUser(user);
       return { ...item, count: 1, isNew: true };
@@ -422,7 +432,7 @@ async updateStats(userId: string, type: string, amount = 1) {
           name: a.name,
           emoji: a.emoji,
           value: a.value,
-          rarity: a.rarity
+          rarity: a.rarity,
         };
       });
       return registry;
@@ -439,11 +449,11 @@ async updateStats(userId: string, type: string, amount = 1) {
     const updatePath = `animals.${rarity}.${animalKey}`;
     return await User.findOneAndUpdate(
       { id: userId },
-      { 
-        $inc: { 
+      {
+        $inc: {
           [updatePath]: 1,
-          'stats.totalAnimalsFound': 1 
-        } 
+          'stats.totalAnimalsFound': 1,
+        },
       },
       { upsert: true, returnDocument: 'after' }
     );
@@ -466,7 +476,6 @@ async updateStats(userId: string, type: string, amount = 1) {
     user.markModified('boosters');
     await this.saveUser(user);
   }
-
 
   async getActiveBooster(userId: string, type: string) {
     const user = await this.getUser(userId);
@@ -557,7 +566,7 @@ async updateStats(userId: string, type: string, amount = 1) {
         if (commonPool[rarityStr]) {
           const isBoosted = item.name === 'Master Ball' || item.name === 'Ultraball';
           const weight = isBoosted ? 20 : 1; // Super 20x boost! (｡♥‿♥｡)
-          
+
           for (let i = 0; i < weight; i++) {
             commonPool[rarityStr].push(itemPayload);
           }
@@ -594,14 +603,20 @@ async updateStats(userId: string, type: string, amount = 1) {
   async trainPokemon(userId: string, speciesKey: string): Promise<any> {
     try {
       const user = await this.getUser(userId);
-      if (!user || !user.animals) return { success: false, message: "You don't have any Pokémon yet! Go hunt some first. (・_・ヾ" };
+      if (!user || !user.animals)
+        return {
+          success: false,
+          message: "You don't have any Pokémon yet! Go hunt some first. (・_・ヾ",
+        };
 
       // Find the species in any rarity tier
       let foundRarity: string | null = null;
-      const animalsMap = user.animals instanceof Map ? user.animals : new Map(Object.entries(user.animals));
+      const animalsMap =
+        user.animals instanceof Map ? user.animals : new Map(Object.entries(user.animals));
 
       for (const [rarity, animals] of animalsMap.entries()) {
-        const animalMap = animals instanceof Map ? animals : new Map(Object.entries(animals as any));
+        const animalMap =
+          animals instanceof Map ? animals : new Map(Object.entries(animals as any));
         const count = animalMap.get(speciesKey);
         if (count && count > 0) {
           foundRarity = rarity;
@@ -610,7 +625,10 @@ async updateStats(userId: string, type: string, amount = 1) {
       }
 
       if (!foundRarity) {
-        return { success: false, message: `You don't have any **${speciesKey}** in your Zoo! (｡•́︿•̀｡)` };
+        return {
+          success: false,
+          message: `You don't have any **${speciesKey}** in your Zoo! (｡•́︿•̀｡)`,
+        };
       }
 
       // Consume 1 from Zoo count
@@ -663,10 +681,7 @@ async updateStats(userId: string, type: string, amount = 1) {
   async setPokemonTeam(userId: string, pokemonIds: string[]): Promise<boolean> {
     try {
       const trimmed = pokemonIds.slice(0, 3);
-      await User.findOneAndUpdate(
-        { id: userId },
-        { $set: { pokemonTeam: trimmed } }
-      );
+      await User.findOneAndUpdate({ id: userId }, { $set: { pokemonTeam: trimmed } });
       return true;
     } catch (err) {
       logger.error('setPokemonTeam error:', err);
@@ -678,7 +693,10 @@ async updateStats(userId: string, type: string, amount = 1) {
    * Add XP to a specific UserPokemon and handle level-ups.
    * Level cap: 100.
    */
-  async addPokemonExp(pokemonId: string, amount: number): Promise<{ leveledUp: boolean; newLevel: number; pokemon: IUserPokemon | null }> {
+  async addPokemonExp(
+    pokemonId: string,
+    amount: number
+  ): Promise<{ leveledUp: boolean; newLevel: number; pokemon: IUserPokemon | null }> {
     try {
       const pokemon = await UserPokemon.findById(pokemonId);
       if (!pokemon) return { leveledUp: false, newLevel: 0, pokemon: null };

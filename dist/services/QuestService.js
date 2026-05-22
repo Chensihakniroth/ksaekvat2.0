@@ -30,7 +30,7 @@ const QUEST_TYPES = {
         name: 'Wish Maker',
         description: 'Perform {target} Gacha pulls!',
         targets: [10, 20, 30],
-    }
+    },
 };
 class QuestService {
     /**
@@ -42,7 +42,7 @@ class QuestService {
             return null;
         const questPool = Object.keys(QUEST_TYPES);
         const selectedTypes = questPool.sort(() => 0.5 - Math.random()).slice(0, 3);
-        const newQuests = selectedTypes.map(type => {
+        const newQuests = selectedTypes.map((type) => {
             const config = QUEST_TYPES[type];
             const target = config.targets[Math.floor(Math.random() * config.targets.length)];
             return {
@@ -51,7 +51,7 @@ class QuestService {
                 target: target,
                 current: 0,
                 completed: false,
-                rewarded: false
+                rewarded: false,
             };
         });
         user.quests = newQuests;
@@ -98,7 +98,7 @@ class QuestService {
             return null;
         const questPool = Object.keys(QUEST_TYPES);
         const selectedTypes = questPool.sort(() => 0.5 - Math.random()).slice(0, 3);
-        const newWeeklyQuests = selectedTypes.map(type => {
+        const newWeeklyQuests = selectedTypes.map((type) => {
             const config = QUEST_TYPES[type];
             const target = config.targets[Math.floor(Math.random() * config.targets.length)];
             return {
@@ -107,7 +107,7 @@ class QuestService {
                 target: target,
                 current: 0,
                 completed: false,
-                rewarded: false
+                rewarded: false,
             };
         });
         user.weeklyQuests = newWeeklyQuests;
@@ -162,7 +162,7 @@ class QuestService {
             name: config.name,
             description: config.description.replace('{target}', quest.target),
             progress: `${quest.current}/${quest.target}`,
-            status: quest.completed ? '✅ Completed' : '⏳ In Progress'
+            status: quest.completed ? '✅ Completed' : '⏳ In Progress',
         };
     }
 }

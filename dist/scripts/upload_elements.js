@@ -7,14 +7,14 @@ const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 client.once('ready', async () => {
     console.log('Logged in as ' + client.user.tag);
     const assetsDir = path.join(__dirname, '../assets/element_icon');
-    const files = fs.readdirSync(assetsDir).filter(f => f.endsWith('.png'));
+    const files = fs.readdirSync(assetsDir).filter((f) => f.endsWith('.png'));
     for (const file of files) {
         const name = path.parse(file).name;
         const filePath = path.join(assetsDir, file);
         try {
             // Check if emoji exists - fetch first to be sure
             await client.application.emojis.fetch();
-            const existing = client.application.emojis.cache.find(e => e.name === name);
+            const existing = client.application.emojis.cache.find((e) => e.name === name);
             if (existing) {
                 console.log(`Emoji ${name} already exists: ${existing.toString()}`);
             }
@@ -25,7 +25,7 @@ client.once('ready', async () => {
                 const dataURI = `data:image/png;base64,${base64}`;
                 const emoji = await client.application.emojis.create({
                     attachment: dataURI,
-                    name: name
+                    name: name,
                 });
                 console.log(`Created custom emoji: ${emoji.name} ${emoji.toString()}`);
             }

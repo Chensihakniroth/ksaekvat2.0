@@ -11,57 +11,64 @@ A high-end Discord Bot and Web Dashboard ecosystem featuring a robust RPG Gacha 
 ## ✨ Key Features
 
 ### 🤖 Discord Bot
-*   **Deep RPG Gacha System**: Collect characters from Genshin Impact, Honkai: Star Rail, Wuthering Waves, and ZZZ.
-*   **Dynamic Combat Engine**: Strategic RPG battles with class-specific skills (Tank, Striker, Support, Boss).
-*   **Integrated Economy**: Gambling games (Blackjack, Slots, Coinflip), daily rewards, and work systems.
-*   **Hunting & Zoo**: Collect rare specimens and manage your digital menagerie.
-*   **AI Chatbot**: Context-aware AI interactions with a unique personality.
+
+- **Deep RPG Gacha System**: Collect characters from Genshin Impact, Honkai: Star Rail, Wuthering Waves, and ZZZ.
+- **Dynamic Combat Engine**: Strategic RPG battles with class-specific skills (Tank, Striker, Support, Boss).
+- **Integrated Economy**: Gambling games (Blackjack, Slots, Coinflip), daily rewards, and work systems.
+- **Hunting & Zoo**: Collect rare specimens and manage your digital menagerie.
+- **AI Chatbot**: Context-aware AI interactions with a unique personality.
 
 ### 🖼️ Zen Portfolio (New!)
-*   **Ultra-Minimalist Interface**: A high-end, transparent profile page inspired by modern digital bio sites (gun.lol).
-*   **2-Column Pro Layout**: Facebook-style header with a fixed identity sidebar and scrollable content area.
-*   **Spotify Integration**: Embed your favorite tracks directly into your profile with a sleek mini-player.
-*   **Showcase Your Work**: Link GitHub repositories and upload artwork/galleries.
-*   **Gaming Arsenal**: Opt-in to show your RPG stats and collected character roster.
-*   **Atmospheric Audio**: Support for auto-playing background music with ambient low-volume settings.
+
+- **Ultra-Minimalist Interface**: A high-end, transparent profile page inspired by modern digital bio sites (gun.lol).
+- **2-Column Pro Layout**: Facebook-style header with a fixed identity sidebar and scrollable content area.
+- **Spotify Integration**: Embed your favorite tracks directly into your profile with a sleek mini-player.
+- **Showcase Your Work**: Link GitHub repositories and upload artwork/galleries.
+- **Gaming Arsenal**: Opt-in to show your RPG stats and collected character roster.
+- **Atmospheric Audio**: Support for auto-playing background music with ambient low-volume settings.
 
 ---
 
 ## 🛠️ Tech Stack
 
 ### Backend
-*   **Runtime**: Node.js (TypeScript)
-*   **Framework**: Discord.js v14
-*   **API**: Express.js
-*   **Database**: MongoDB (Mongoose)
-*   **Validation**: Zod (Runtime environment safety)
-*   **Image Processing**: Sharp (High-performance pixel manipulation)
+
+- **Runtime**: Node.js (TypeScript)
+- **Framework**: Discord.js v14
+- **API**: Express.js
+- **Database**: MongoDB (Mongoose)
+- **Validation**: Zod (Runtime environment safety)
+- **Image Processing**: Sharp (High-performance pixel manipulation)
 
 ### Frontend (Dashboard)
-*   **Framework**: React 19 + Vite
-*   **Styling**: Vanilla CSS (Zen Minimalism)
-*   **Animations**: Framer Motion
-*   **Icons**: Lucide React
-*   **Charts**: Recharts
+
+- **Framework**: React 19 + Vite
+- **Styling**: Vanilla CSS (Zen Minimalism)
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Charts**: Recharts
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-*   Node.js (v18+)
-*   MongoDB Instance
-*   Discord Bot Token
+
+- Node.js (v18+)
+- MongoDB Instance
+- Discord Bot Token
 
 ### Installation
 
 1.  **Clone the repository**:
+
     ```bash
     git clone https://github.com/your-repo/ksaekvat-revamp.git
     cd ksaekvat-revamp
     ```
 
 2.  **Install dependencies**:
+
     ```bash
     npm install
     cd dashboard && npm install
@@ -70,6 +77,7 @@ A high-end Discord Bot and Web Dashboard ecosystem featuring a robust RPG Gacha 
 
 3.  **Environment Setup**:
     Create a `.env` file in the root directory:
+
     ```env
     DISCORD_TOKEN=your_token
     CLIENT_ID=your_client_id
@@ -80,6 +88,7 @@ A high-end Discord Bot and Web Dashboard ecosystem featuring a robust RPG Gacha 
     ```
 
 4.  **Build & Run**:
+
     ```bash
     # Development (Bot + Dashboard)
     npm run dev:all
@@ -113,8 +122,9 @@ ksaekvat_revamp/
 ---
 
 ## 📜 License
+
 Internal Project. All rights reserved.
 
 ---
 
-*Made with 💖 by @_callme_.mo 
+\*Made with 💖 by @_callme_.mo

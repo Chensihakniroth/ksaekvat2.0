@@ -53,7 +53,7 @@ router.get('/', async (req, res) => {
                     collectionCount: characterCount + pokemonCount,
                     commandsUsed: u.stats?.commandsUsed || 0,
                     totalDonated: u.stats?.totalDonated || 0,
-                    slug: u.profileTheme?.slug || null
+                    slug: u.profileTheme?.slug || null,
                 };
             });
             // 3. Final refinement for cases where MongoDB can't sort (like Collection count)

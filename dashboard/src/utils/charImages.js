@@ -4,8 +4,8 @@
 
 /**
  * Get the proxy URL for a character icon.
- * @param {string} name 
- * @param {string} game 
+ * @param {string} name
+ * @param {string} game
  * @returns {string}
  */
 export function getCharacterIconUrl(name, game) {

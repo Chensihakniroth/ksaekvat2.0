@@ -30,7 +30,14 @@ class BattleRenderer {
             base = (0, sharp_1.default)(this.BG_PATH).resize(this.W, this.H);
         }
         else {
-            base = (0, sharp_1.default)({ create: { width: this.W, height: this.H, channels: 4, background: { r: 15, g: 15, b: 30, alpha: 1 } } });
+            base = (0, sharp_1.default)({
+                create: {
+                    width: this.W,
+                    height: this.H,
+                    channels: 4,
+                    background: { r: 15, g: 15, b: 30, alpha: 1 },
+                },
+            });
         }
         const composites = [];
         const totalH = this.CARD_H * 3 + this.ROW_GAP * 2;
@@ -47,19 +54,20 @@ class BattleRenderer {
             // Left side stats (Team A) — anchored right of sprite
             if (pA) {
                 const sx = this.CARD_X + this.SPRITE + 20;
-                const ov = hpOverrides?.teamA.find(o => o.id === pA.id);
+                const ov = hpOverrides?.teamA.find((o) => o.id === pA.id);
                 svg += this.statsBlock(pA, sx, cy, 'left', ov);
             }
             // Right side stats (Team B) — anchored left of sprite
             if (pB) {
                 const sx = this.CARD_X + this.CARD_W - this.SPRITE - 20;
-                const ov = hpOverrides?.teamB.find(o => o.id === pB.id);
+                const ov = hpOverrides?.teamB.find((o) => o.id === pB.id);
                 svg += this.statsBlock(pB, sx, cy, 'right', ov);
             }
         }
         composites.push({
             input: Buffer.from(`<svg width="${this.W}" height="${this.H}" xmlns="http://www.w3.org/2000/svg">${svg}</svg>`),
-            top: 0, left: 0,
+            top: 0,
+            left: 0,
         });
         // Composite sprites
         for (let i = 0; i < 3; i++) {
@@ -73,7 +81,11 @@ class BattleRenderer {
             if (i < teamB.length) {
                 const sp = await this.getSprite(teamB[i].speciesKey, teamB[i].hp <= 0, true);
                 if (sp)
-                    composites.push({ input: sp, top: sy, left: this.CARD_X + this.CARD_W - this.SPRITE - 8 });
+                    composites.push({
+                        input: sp,
+                        top: sy,
+                        left: this.CARD_X + this.CARD_W - this.SPRITE - 8,
+                    });
             }
         }
         return await base.composite(composites).png().toBuffer();
@@ -105,7 +117,11 @@ class BattleRenderer {
         const buf = await AnimalService_1.default.getPokemonSpriteBuffer(key);
         if (!buf)
             return null;
-        let s = (0, sharp_1.default)(buf).resize(this.SPRITE, this.SPRITE, { kernel: 'nearest', fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } });
+        let s = (0, sharp_1.default)(buf).resize(this.SPRITE, this.SPRITE, {
+            kernel: 'nearest',
+            fit: 'contain',
+            background: { r: 0, g: 0, b: 0, alpha: 0 },
+        });
         if (flip)
             s = s.flop();
         if (fainted)

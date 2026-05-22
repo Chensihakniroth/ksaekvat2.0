@@ -67,21 +67,21 @@ const nameNormalizers: Record<string, (n: string) => string> = {
 };
 
 const wikiConfigs: Record<string, { wiki: string; patterns: string[] }> = {
-  genshin: { 
-    wiki: 'genshin-impact', 
-    patterns: ['{name}_Icon.png', '{name}.png'] 
+  genshin: {
+    wiki: 'genshin-impact',
+    patterns: ['{name}_Icon.png', '{name}.png'],
   },
-  hsr: { 
-    wiki: 'honkai-star-rail', 
-    patterns: ['Character_{name}_Icon.png', 'Icon_Character_{name}.png', '{name}_Icon.png'] 
+  hsr: {
+    wiki: 'honkai-star-rail',
+    patterns: ['Character_{name}_Icon.png', 'Icon_Character_{name}.png', '{name}_Icon.png'],
   },
-  wuwa: { 
-    wiki: 'wutheringwaves', 
-    patterns: ['Resonator_{name}.png', '{name}.png'] 
+  wuwa: {
+    wiki: 'wutheringwaves',
+    patterns: ['Resonator_{name}.png', '{name}.png'],
   },
-  zzz: { 
-    wiki: 'zenless-zone-zero', 
-    patterns: ['Agent_{name}_Icon.png', '{name}_Icon.png'] 
+  zzz: {
+    wiki: 'zenless-zone-zero',
+    patterns: ['Agent_{name}_Icon.png', '{name}_Icon.png'],
   },
 };
 
@@ -104,12 +104,12 @@ router.get('/icon/:game/:name', async (req: Request, res: Response) => {
     if (!config) return res.status(404).send('Game not supported');
 
     const normalized = nameNormalizers[game]?.(name) || name.replace(/ /g, '_');
-    
+
     for (const pattern of config.patterns) {
       try {
         const filename = pattern.replace('{name}', normalized);
         const apiUrl = `https://${config.wiki}.fandom.com/api.php?action=query&titles=File:${encodeURIComponent(filename)}&prop=imageinfo&iiprop=url&format=json`;
-        
+
         const response = await axios.get(apiUrl, { timeout: 3000 });
         const pages = response.data?.query?.pages;
         if (!pages) continue;
@@ -126,9 +126,13 @@ router.get('/icon/:game/:name', async (req: Request, res: Response) => {
     }
 
     // Final fallback to a generic silhouette or placeholder
-    res.redirect('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png');
+    res.redirect(
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'
+    );
   } catch (err) {
-    res.redirect('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png');
+    res.redirect(
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'
+    );
   }
 });
 
