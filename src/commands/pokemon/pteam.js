@@ -44,25 +44,44 @@ module.exports = {
         });
       }
 
-      // Train the Pokémon (consumes 1 from Zoo)
-      await message.channel.sendTyping();
-      const result = await database.trainPokemon(message.author.id, speciesName);
+      const currentTeamIds = new Set(currentTeam.map((p) => p._id.toString()));
 
-      if (!result.success) {
-        return message.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setColor(colors.error)
-              .setTitle('(｡•́︿•̀｡) Training Failed')
-              .setDescription(result.message),
-          ],
-        });
+      // 1) Check if the user already has this species benched (trained but not in team)
+      const trainedPokemon = await database.getTrainedPokemon(message.author.id);
+      const availableBenched = trainedPokemon.filter(
+        (p) => p.speciesKey === speciesName && !currentTeamIds.has(p._id.toString())
+      );
+
+      let pokemonToAdd;
+      let usedFromBench = false;
+
+      if (availableBenched.length > 0) {
+        // Pick the highest level benched pokemon of this species
+        availableBenched.sort((a, b) => b.level - a.level);
+        pokemonToAdd = availableBenched[0];
+        usedFromBench = true;
+      } else {
+        // 2) Train a new one from the Zoo (consumes 1 from Zoo count)
+        await message.channel.sendTyping();
+        const result = await database.trainPokemon(message.author.id, speciesName);
+
+        if (!result.success) {
+          return message.reply({
+            embeds: [
+              new EmbedBuilder()
+                .setColor(colors.error)
+                .setTitle('(｡•́︿•̀｡) Training Failed')
+                .setDescription(result.message + "\n*(Or maybe they're already in your team!)*"),
+            ],
+          });
+        }
+        pokemonToAdd = result.pokemon;
       }
 
-      // Add to team
+      // Add to team array
       const user = await database.getUser(message.author.id);
       const teamIds = (user.pokemonTeam || []).map((id) => id.toString());
-      teamIds.push(result.pokemon._id.toString());
+      teamIds.push(pokemonToAdd._id.toString());
       await database.setPokemonTeam(message.author.id, teamIds);
 
       // Get type info for display
@@ -76,21 +95,23 @@ module.exports = {
             .join(' / ')
         : 'Unknown';
 
+      const capitalizedName = speciesName.charAt(0).toUpperCase() + speciesName.slice(1);
+
       return message.reply({
         embeds: [
           new EmbedBuilder()
             .setColor(colors.success)
-            .setTitle(
-              `(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧ ${speciesName.charAt(0).toUpperCase() + speciesName.slice(1)} is ready to battle!`
-            )
+            .setTitle(`(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧ ${capitalizedName} joined the team!`)
             .setDescription(
               [
-                `**Species:** ${speciesName.charAt(0).toUpperCase() + speciesName.slice(1)}`,
+                `**Species:** ${capitalizedName}`,
                 `**Type:** ${typeDisplay}`,
-                `**Level:** 1`,
+                `**Level:** ${pokemonToAdd.level}`,
                 `**Team Slot:** ${teamIds.length}/${config.pokemonBattle.maxTeamSize}`,
                 '',
-                `*1 ${speciesName} was consumed from your Zoo for training!*`,
+                usedFromBench
+                  ? `*Re-added from your benched Pokémon!*`
+                  : `*1 ${capitalizedName} was consumed from your Zoo for training!*`,
               ].join('\n')
             ),
         ],
