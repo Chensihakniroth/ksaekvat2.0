@@ -155,11 +155,10 @@ module.exports = {
         lastRenderedTurn = turn;
 
         if (!isLastTurn) {
-          await message.channel.sendTyping();
           await new Promise((r) =>
             setTimeout(
               r,
-              highlight?.type === 'faint' ? 1200 : highlight?.type === 'crit' ? 800 : 700
+              highlight?.type === 'faint' ? 600 : highlight?.type === 'crit' ? 400 : 300
             )
           );
         }
