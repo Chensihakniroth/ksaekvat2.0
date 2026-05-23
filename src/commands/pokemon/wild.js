@@ -113,11 +113,12 @@ module.exports = {
       const turns = groupByTurn(result.log);
 
       // ─── REAL-TIME TURN LOOP ──────────────────────────────────────
-      // Only render on notable events (faint/crit/super_effective) or
-      // every QUIET_FLUSH turns — skips quiet turns to keep it snappy.
+      // We only render an image on notable events or every QUIET_FLUSH turns.
+      // We accumulate logs so skipped turns still show up in text!
       const NOTABLE = new Set(['faint', 'crit', 'super_effective']);
       const QUIET_FLUSH = 3;
       let lastRenderedTurn = 0;
+      let accumulatedLogs = [];
 
       for (let i = 0; i < turns.length; i++) {
         const { turn, entries } = turns[i];
@@ -125,7 +126,27 @@ module.exports = {
         const highlight = entries.find((e) => NOTABLE.has(e.type));
         const turnsSinceLast = turn - lastRenderedTurn;
 
-        if (!highlight && !isLastTurn && turnsSinceLast < QUIET_FLUSH) continue;
+        const topEvent = highlight ?? entries[0];
+        if (topEvent) {
+          const prefix =
+            topEvent.type === 'faint'
+              ? '💀'
+              : topEvent.type === 'crit'
+                ? '💥'
+                : topEvent.type === 'super_effective'
+                  ? '⚡'
+                  : '▸';
+          accumulatedLogs.push(`\`Turn ${turn}/${result.turns}\` ${prefix} ${topEvent.text}`);
+        }
+
+        // Keep maximum of 4 log lines on screen
+        if (accumulatedLogs.length > 4) {
+          accumulatedLogs = accumulatedLogs.slice(-4);
+        }
+
+        if (!highlight && !isLastTurn && turnsSinceLast < QUIET_FLUSH) {
+          continue; // Skip rendering image, but we saved the log!
+        }
 
         const snap = snapshotMap.get(turn) ?? result.snapshots[result.snapshots.length - 1];
 
@@ -135,19 +156,8 @@ module.exports = {
         });
         const frameAttachment = new AttachmentBuilder(frameBuffer, { name: `battle_t${turn}.png` });
 
-        const topEvent = highlight ?? entries[0];
-        const prefix =
-          topEvent?.type === 'faint'
-            ? '💀'
-            : topEvent?.type === 'crit'
-              ? '💥'
-              : topEvent?.type === 'super_effective'
-                ? '⚡'
-                : '▸';
-        const eventLine = topEvent ? `  ${prefix} ${topEvent.text}` : '';
-
         await safeEdit(battleMsg, {
-          content: `\`Turn ${turn}/${result.turns}\`${eventLine}`,
+          content: accumulatedLogs.join('\n'),
           files: [frameAttachment],
           embeds: [],
         });
@@ -155,10 +165,12 @@ module.exports = {
         lastRenderedTurn = turn;
 
         if (!isLastTurn) {
+          // ⚠️ IMPORTANT: We must wait at least 1500ms when sending an image, 
+          // otherwise Discord CDN gets overwhelmed and shows a blurry placeholder forever.
           await new Promise((r) =>
             setTimeout(
               r,
-              highlight?.type === 'faint' ? 600 : highlight?.type === 'crit' ? 400 : 300
+              highlight?.type === 'faint' ? 2200 : highlight?.type === 'crit' ? 1800 : 1500
             )
           );
         }
