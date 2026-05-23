@@ -20,6 +20,10 @@ module.exports = {
         const channelId = message.channel.id;
         const userId = message.author.id;
         const memoryKey = `${userId}-${channelId}`;
+        if (text.toLowerCase() === 'reset' || text.toLowerCase() === 'clear') {
+            conversationMemory.delete(memoryKey);
+            return message.reply("I've reset our conversation history for this channel, darling! Let's start fresh... (◕‿◕✿)");
+        }
         if (!conversationMemory.has(memoryKey)) {
             conversationMemory.set(memoryKey, []);
         }
