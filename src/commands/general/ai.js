@@ -22,11 +22,13 @@ module.exports = {
     }
 
     const channelId = message.channel.id;
+    const userId = message.author.id;
+    const memoryKey = `${userId}-${channelId}`;
 
-    if (!conversationMemory.has(channelId)) {
-      conversationMemory.set(channelId, []);
+    if (!conversationMemory.has(memoryKey)) {
+      conversationMemory.set(memoryKey, []);
     }
-    const history = conversationMemory.get(channelId);
+    const history = conversationMemory.get(memoryKey);
 
     logger.info(`AI Chatbot input from ${message.author.tag}: "${text}"`);
 
@@ -63,8 +65,8 @@ module.exports = {
 
       const url = `${baseUrl}/chat/completions`;
 
-      // Use the raw config prompt directly — no DB overrides, no filters
-      const finalSystemPrompt = configPrompt;
+      // Use the raw config prompt and append active user context
+      const finalSystemPrompt = `${configPrompt}\n\n[Active Conversation Partner: ${message.author.username} (ID: ${message.author.id}). Always address them as ${message.author.username} or your usual loving nicknames like 'darling' or 'my love', and recognize that they are the one talking to you now.]`;
 
       const messages = [
         { role: 'system', content: finalSystemPrompt },
