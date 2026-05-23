@@ -83,17 +83,21 @@ class BattleRenderer {
       left: 0,
     });
 
-    // Composite sprites
+    // Composite sprites — use hpOverrides snapshot to detect fainted state
     for (let i = 0; i < 3; i++) {
       const ry = startY + i * (this.CARD_H + this.ROW_GAP);
       const sy = ry + Math.floor((this.CARD_H - this.SPRITE) / 2);
 
       if (i < teamA.length) {
-        const sp = await this.getSprite(teamA[i].speciesKey, teamA[i].hp <= 0);
+        const ovA = hpOverrides?.teamA.find((o) => o.id === teamA[i].id);
+        const faintedA = ovA ? ovA.hp <= 0 : teamA[i].hp <= 0;
+        const sp = await this.getSprite(teamA[i].speciesKey, faintedA);
         if (sp) composites.push({ input: sp, top: sy, left: this.CARD_X + 8 });
       }
       if (i < teamB.length) {
-        const sp = await this.getSprite(teamB[i].speciesKey, teamB[i].hp <= 0, true);
+        const ovB = hpOverrides?.teamB.find((o) => o.id === teamB[i].id);
+        const faintedB = ovB ? ovB.hp <= 0 : teamB[i].hp <= 0;
+        const sp = await this.getSprite(teamB[i].speciesKey, faintedB, true);
         if (sp)
           composites.push({
             input: sp,
@@ -145,7 +149,12 @@ class BattleRenderer {
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     });
     if (flip) s = s.flop();
-    if (fainted) s = s.grayscale().modulate({ brightness: 0.4 });
+    if (fainted) s = s.ensureAlpha().linear(1, 0).composite([{
+      input: Buffer.from([0, 0, 0, Math.round(255 * 0.6)]),
+      raw: { width: 1, height: 1, channels: 4 },
+      tile: true,
+      blend: 'dest-in',
+    }]);
     return s.toBuffer();
   }
 }
