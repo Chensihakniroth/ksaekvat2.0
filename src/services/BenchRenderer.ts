@@ -2,7 +2,6 @@ import sharp from 'sharp';
 import path from 'path';
 import fs from 'fs';
 import AnimalService from './AnimalService';
-import type { UserPokemonDocument } from '../models/UserPokemon';
 
 export interface BenchPokemon {
   _id: string | any;
