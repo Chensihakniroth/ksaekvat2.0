@@ -16,6 +16,9 @@ module.exports = {
     // Determine the target user
     target = getTargetUser(message, args, client);
 
+    // Ensure level is in sync with XP formula! (✧ω✧)
+    await database.syncLevel(target.id);
+
     const userData = await database.getUser(target.id, target.username);
     const embed = createBalanceEmbed(target, userData);
 
@@ -48,7 +51,7 @@ function createBalanceEmbed(target, userData) {
 
   // Progress bar calculation
   const progressPercent = Math.min(100, Math.max(0, (userData.experience / nextLevelExp) * 100));
-  const filledBars = Math.round(progressPercent / 10);
+  const filledBars = Math.floor(progressPercent / 10);
   const progressBar = '▰'.repeat(filledBars) + '▱'.repeat(10 - filledBars);
 
   const walletVal = `**${userData.balance.toLocaleString()}** ${config.economy.currency}`;

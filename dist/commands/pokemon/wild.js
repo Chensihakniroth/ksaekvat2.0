@@ -76,68 +76,10 @@ module.exports = {
             }
             const avgLevel = Math.floor(playerTeam.reduce((s, p) => s + p.level, 0) / playerTeam.length);
             const wildTeam = await PokemonBattleService.generateWildTeam(avgLevel);
-            // ─── INTRO: Two-stage battle open ────────────────────────────
-            // Stage 1 — "Wild appeared!" flash (dark card, 1.2 s)
-            // Stage 2 — Full matchup embed with HP bars + power scores
-            // Stage 1 ── dark flash card
-            const wildNames = wildTeam.map((p) => p.name).join(', ');
+            // ─── SEND INITIAL MESSAGE (will be overwritten by first turn) ──
             const battleMsg = await message.reply({
-                embeds: [
-                    new EmbedBuilder()
-                        .setColor(0x1a1a2e)
-                        .setDescription('```\n' + '  ！！！ A wild team appeared ！！！\n' + '```')
-                        .addFields({
-                        name: '\u200B',
-                        value: `> **${wildNames}**\n> *blocked your path!*`,
-                    })
-                        .setFooter({ text: 'Checking your team…' }),
-                ],
+                content: '`Loading battle…`',
             });
-            await new Promise((r) => setTimeout(r, 700));
-            // ─── INTRO STAGE 2: Clean matchup card ───────────────────────
-            // Name + type + level only — image already shows HP bars.
-            const buildMatchupField = (team, side) => {
-                return team
-                    .map((p, i) => {
-                    const typeStr = PokemonBattleService.getTypeEmojis(p.types);
-                    const slot = side === 'player'
-                        ? (['①', '②', '③'][i] ?? `${i + 1}.`)
-                        : (['Ⅰ', 'Ⅱ', 'Ⅲ'][i] ?? `${i + 1}.`);
-                    return `${slot} ${typeStr} **${p.name}** \`Lv.${p.level}\``;
-                })
-                    .join('\n');
-            };
-            const powerScore = (team) => {
-                const avg = team.reduce((s, p) => s + p.level, 0) / team.length;
-                const stars = Math.min(5, Math.max(1, Math.round(avg / 20)));
-                return '★'.repeat(stars) + '☆'.repeat(5 - stars);
-            };
-            const initialSnapshot = {
-                teamA: playerTeam.map((p) => ({ hp: p.hp, status: 'none' })),
-                teamB: wildTeam.map((p) => ({ hp: p.hp, status: 'none' })),
-            };
-            const introFrame = await BattleRenderer.renderFrame(playerTeam, wildTeam, initialSnapshot);
-            const introAttachment = new AttachmentBuilder(introFrame, { name: 'battle_intro.png' });
-            const matchupEmbed = new EmbedBuilder()
-                .setColor(0xff4500)
-                .setTitle('⚔️  B A T T L E  S T A R T')
-                .addFields({
-                name: `🔴  ${message.author.username}  ${powerScore(playerTeam)}`,
-                value: buildMatchupField(playerTeam, 'player'),
-                inline: true,
-            }, {
-                name: `🔵  Wild Team  ${powerScore(wildTeam)}`,
-                value: buildMatchupField(wildTeam, 'wild'),
-                inline: true,
-            })
-                .setImage('attachment://battle_intro.png')
-                .setFooter({ text: '3v3  ·  Auto-Battle  ·  Starting in 2s…' });
-            await safeEdit(battleMsg, {
-                content: null,
-                embeds: [matchupEmbed],
-                files: [introAttachment],
-            });
-            await new Promise((r) => setTimeout(r, 2000));
             // ─── RUN SIMULATION ──────────────────────────────────────────
             const result = PokemonBattleService.simulateBattle(playerTeam, wildTeam, config.pokemonBattle.maxTurns);
             const won = result.winner === 'A';

@@ -22,6 +22,7 @@ module.exports = {
             'https://media.giphy.com/media/Ap5ztbZZvCK9BawPX4/giphy.gif',
             'https://media.giphy.com/media/bEgKvOtbIvbRXZ4VOf/giphy.gif',
             'https://media.giphy.com/media/ZyaTZLqOE7X3SPLIQa/giphy.gif',
+            'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmxsaGh4Z2UzMTU3N2xsaGFrMWttdDRybGY3bTBoajU0bXVpeTVvbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ldmMVdW0T2V7Z3cclc/giphy.gif',
         ];
         try {
             const randomGif = gifLinks[Math.floor(Math.random() * gifLinks.length)];
