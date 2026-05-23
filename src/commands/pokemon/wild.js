@@ -216,7 +216,9 @@ module.exports = {
       );
       const finalAttachment = new AttachmentBuilder(finalFrame, { name: 'battle_final.png' });
 
-      await safeEdit(battleMsg, {
+      // Send final message as a NEW message to avoid Discord's "Image failed to load" edit cache bug
+      await battleMsg.delete().catch(() => {});
+      await message.reply({
         content: finalContent,
         embeds: [],
         files: [finalAttachment],
