@@ -190,7 +190,17 @@ module.exports = {
       const generatePage = async (page) => {
         const start = page * ITEMS_PER_PAGE;
         const chunk = trained.slice(start, start + ITEMS_PER_PAGE);
-        const buffer = await BenchRenderer.renderPage(chunk, teamIds);
+
+        // Fetch type data for each Pokémon in this chunk
+        const typeMap = new Map();
+        for (const p of chunk) {
+          const baseStats = await PokemonBattleService.getBaseStats(p.speciesKey);
+          if (baseStats) {
+            typeMap.set(p._id.toString(), baseStats.types);
+          }
+        }
+
+        const buffer = await BenchRenderer.renderPage(chunk, teamIds, typeMap);
         return new AttachmentBuilder(buffer, { name: 'bench.png' });
       };
 
