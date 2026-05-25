@@ -198,154 +198,258 @@ export default function Navbar() {
 
       <style>{`
         .zen-nav-wrap {
-          position: fixed; top: 0; left: 0; right: 0; height: 100px; z-index: 1000;
-          display: flex; align-items: center; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 85px;
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          background: transparent;
+          border-bottom: 1px solid transparent;
+          transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
           font-family: 'Outfit', sans-serif;
         }
         .zen-nav-wrap.scrolled {
-          height: 80px;
+          height: 68px;
+          background: rgba(11, 11, 12, 0.85);
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
         .zen-nav-inner {
-          display: flex; justify-content: space-between; align-items: center;
-          padding: 0 40px; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0 48px;
           width: 100%;
-        }
-        .zen-nav-wrap.scrolled .zen-nav-inner {
-          background: rgba(20, 20, 22, 0.9);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.06);
-          border-radius: 50px;
-          margin-top: 15px;
-          height: 60px;
-          width: calc(100% - 40px);
-          max-width: 1200px;
-          padding: 0 25px;
-        }
-
-        .zen-logo-mark {
-          width: 32px; height: 32px; background: #fff; color: #000;
-          border-radius: 8px; display: flex; align-items: center; justify-content: center;
-          font-weight: 900; font-size: 1.2rem;
-          flex-shrink: 0;
-        }
-        .zen-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .zen-brand-name { font-weight: 900; font-size: 1.1rem; letter-spacing: -0.04em; color: #fff; }
-
-        .zen-desktop-nav { display: flex; gap: 40px; position: absolute; left: 50%; transform: translateX(-50%); }
-        .zen-nav-item { 
-          font-size: 0.75rem; font-weight: 900; color: rgba(255,255,255,0.4); 
-          letter-spacing: 0.2em; position: relative; transition: color 0.4s; text-decoration: none;
-        }
-        .zen-nav-item:hover, .zen-nav-item.active { color: #fff; }
-
-        .zen-search { position: relative; }
-        .zen-search-box {
-          background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
-          border-radius: 50px; padding: 8px 15px 8px 40px; position: relative; width: 160px;
+          max-width: 1400px;
+          margin: 0 auto;
           transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .zen-search-box:focus-within { width: 220px; border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); }
-        .zen-search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.3; transition: opacity 0.4s; }
-        .zen-search-box:focus-within .zen-search-icon { opacity: 0.8; }
-        .zen-search-box input { 
-          background: transparent; border: none; outline: none; color: #fff; 
-          font-size: 0.75rem; font-weight: 600; width: 100%; letter-spacing: 0.05em;
-        }
-        .zen-search-box input::placeholder { color: rgba(255,255,255,0.2); }
-
-        .zen-search-results {
-          position: absolute; top: 55px; right: 0; width: 280px;
-          background: rgba(20, 20, 22, 0.95); backdrop-filter: blur(25px);
-          border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 20px;
-          padding: 8px; z-index: 100;
-        }
-        .zen-res-item {
-          display: flex; align-items: center; gap: 12px; padding: 10px;
-          border-radius: 12px; transition: 0.3s; cursor: pointer;
-        }
-        .zen-res-item:hover { background: rgba(255,255,255,0.03); }
-        .zen-res-avatar { 
-          width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.05); 
-          display: flex; align-items: center; justify-content: center; font-size: 0.8rem;
-          color: #fff; font-weight: bold;
-        }
-        .zen-res-info { display: flex; flex-direction: column; }
-        .zen-res-name { font-weight: 800; font-size: 0.85rem; color: #fff; }
-        .zen-res-lvl { font-size: 0.65rem; opacity: 0.4; font-weight: 900; letter-spacing: 0.1em; }
-        .zen-empty { padding: 15px; font-size: 0.75rem; color: rgba(255,255,255,0.3); text-align: center; font-weight: 800; letter-spacing: 0.1em; }
-
-        .zen-clock { font-size: 0.75rem; font-weight: 300; opacity: 0.4; letter-spacing: 0.1em; }
-        .nav-right { display: flex; align-items: center; gap: 20px; }
-
-        .zen-user-section { display: flex; align-items: center; gap: 12px; }
-        .zen-action-btn {
-          background: none; border: none; color: rgba(255,255,255,0.4);
-          font-size: 0.65rem; font-weight: 900; letter-spacing: 0.15em;
-          cursor: pointer; transition: color 0.3s; padding: 4px 8px;
-        }
-        .zen-action-btn:hover { color: #fff; }
         
-        .zen-avatar-wrap { 
-          width: 34px; height: 34px; border-radius: 50%; overflow: hidden; 
-          border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.4s;
+        .zen-logo-mark {
+          width: 28px;
+          height: 28px;
+          background: #fff;
+          color: #0b0b0c;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justifyContent: center;
+          font-weight: 900;
+          font-size: 1.1rem;
           flex-shrink: 0;
         }
-        .zen-avatar-wrap:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.3); }
-        .zen-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
+        .zen-brand {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          text-decoration: none;
+        }
+        .zen-brand-name {
+          font-weight: 900;
+          font-size: 1.1rem;
+          letter-spacing: -0.02em;
+          color: #fff;
+        }
+
+        .zen-desktop-nav {
+          display: flex;
+          gap: 36px;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+        .zen-nav-item { 
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: rgba(255,255,255,0.45); 
+          letter-spacing: 0.15em;
+          position: relative;
+          transition: color 0.3s;
+          text-decoration: none;
+          padding: 8px 0;
+        }
+        .zen-nav-item:hover, .zen-nav-item.active {
+          color: #fff;
+        }
+
+        .zen-clock {
+          font-size: 0.75rem;
+          font-weight: 400;
+          color: rgba(255,255,255,0.4);
+          letter-spacing: 0.05em;
+        }
+        .nav-right {
+          display: flex;
+          align-items: center;
+          gap: 24px;
+        }
+
+        .zen-user-section {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+        }
+        .zen-action-btn {
+          background: none;
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: 6px;
+          color: rgba(255,255,255,0.7);
+          font-size: 0.65rem;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          cursor: pointer;
+          transition: all 0.2s;
+          padding: 6px 14px;
+        }
+        .zen-action-btn:hover {
+          color: #fff;
+          background: rgba(255,255,255,0.05);
+          border-color: rgba(255,255,255,0.25);
+        }
+        
+        .zen-avatar-wrap { 
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          overflow: hidden; 
+          border: 1px solid rgba(255,255,255,0.15);
+          cursor: pointer;
+          transition: all 0.2s;
+          flex-shrink: 0;
+        }
+        .zen-avatar-wrap:hover {
+          transform: scale(1.05);
+          border-color: #fff;
+        }
+        .zen-avatar-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
         
         .zen-logout-btn { 
-          opacity: 0.3; color: rgba(255,255,255,0.4); transition: 0.3s; background: none; border: none; padding: 5px; cursor: pointer; 
+          opacity: 0.4;
+          color: rgba(255,255,255,0.6);
+          transition: opacity 0.2s;
+          background: none;
+          border: none;
+          padding: 5px;
+          cursor: pointer; 
         }
-        .zen-logout-btn:hover { opacity: 1; transform: scale(1.1); }
+        .zen-logout-btn:hover {
+          opacity: 1;
+          color: #ff3b5c;
+        }
 
         .zen-login-btn {
-          padding: 10px 24px; background: #fff; color: #000; border-radius: 50px;
-          font-size: 0.7rem; font-weight: 900; letter-spacing: 0.15em; border: none;
-          transition: 0.4s; cursor: pointer;
+          padding: 8px 20px;
+          background: #fff;
+          color: #0b0b0c;
+          border-radius: 6px;
+          font-size: 0.7rem;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          border: none;
+          transition: all 0.2s;
+          cursor: pointer;
         }
-        .zen-login-btn:hover { transform: translateY(-2px); }
+        .zen-login-btn:hover {
+          background: rgba(255,255,255,0.9);
+          transform: translateY(-1px);
+        }
 
         .zen-mobile-toggle { 
-          display: none; background: none; border: none; color: #fff; padding: 5px; cursor: pointer;
-          opacity: 0.6; transition: 0.3s;
+          display: none;
+          background: none;
+          border: none;
+          color: #fff;
+          padding: 5px;
+          cursor: pointer;
+          opacity: 0.7;
+          transition: opacity 0.2s;
         }
-        .zen-mobile-toggle:hover { opacity: 1; }
+        .zen-mobile-toggle:hover {
+          opacity: 1;
+        }
 
         .zen-mobile-overlay {
-          position: fixed; inset: 0; background: rgba(11,11,12,0.92); backdrop-filter: blur(20px);
-          z-index: 999; display: flex; align-items: center; justify-content: center;
+          position: fixed;
+          inset: 0;
+          background: rgba(11,11,12,0.95);
+          backdrop-filter: blur(20px);
+          z-index: 999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
-        .zen-mobile-menu { text-align: center; width: 100%; }
-        .zen-mobile-links { display: flex; flex-direction: column; gap: 30px; align-items: center; }
-        .zen-mobile-links a { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.15em; color: #fff; opacity: 0.4; transition: opacity 0.4s, color 0.4s; text-decoration: none; }
-        .zen-mobile-links a:hover { opacity: 1; }
+        .zen-mobile-menu {
+          text-align: center;
+          width: 100%;
+        }
+        .zen-mobile-links {
+          display: flex;
+          flex-direction: column;
+          gap: 28px;
+          align-items: center;
+        }
+        .zen-mobile-links a {
+          font-size: 1.5rem;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          color: #fff;
+          opacity: 0.5;
+          transition: all 0.3s;
+          text-decoration: none;
+        }
+        .zen-mobile-links a:hover {
+          opacity: 1;
+        }
         .zen-mobile-logout {
-          background: none; border: none; font-size: 1.5rem; font-weight: 900; letter-spacing: 0.15em; 
-          opacity: 0.5; color: #ff3b5c; cursor: pointer; margin-top: 20px; transition: 0.4s;
+          background: none;
+          border: none;
+          font-size: 1.3rem;
+          font-weight: 700;
+          letter-spacing: 0.1em; 
+          opacity: 0.6;
+          color: #ff3b5c;
+          cursor: pointer;
+          margin-top: 15px;
+          transition: all 0.3s;
         }
-        .zen-mobile-logout:hover { opacity: 1; }
+        .zen-mobile-logout:hover {
+          opacity: 1;
+        }
         .zen-mobile-login {
-          background: #fff; color: #000; border: none; padding: 15px 40px; border-radius: 50px;
-          font-size: 1.2rem; font-weight: 900; letter-spacing: 0.15em; cursor: pointer; margin-top: 20px; transition: 0.4s;
+          background: #fff;
+          color: #0b0b0c;
+          border: none;
+          padding: 12px 36px;
+          border-radius: 6px;
+          font-size: 1.1rem;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          cursor: pointer;
+          margin-top: 15px;
+          transition: all 0.3s;
         }
 
         @media (max-width: 1100px) {
           .zen-desktop-nav { display: none; }
           .zen-mobile-toggle { display: block; }
           .zen-clock { display: none; }
-          .zen-nav-inner { padding: 0 25px; }
+          .zen-nav-inner { padding: 0 24px; }
           .zen-action-btn { display: none; }
         }
 
         @media (max-width: 600px) {
           .zen-brand-name { display: none; }
-          .zen-search { display: none; }
-          .zen-nav-wrap.scrolled .zen-nav-inner {
-             width: calc(100% - 20px);
-             margin-top: 10px;
-             padding: 0 15px;
-          }
-          .nav-right { gap: 15px; }
+          .zen-nav-wrap { height: 70px; }
+          .zen-nav-wrap.scrolled { height: 60px; }
+          .zen-nav-inner { padding: 0 16px; }
+          .nav-right { gap: 16px; }
         }
       `}</style>
     </header>

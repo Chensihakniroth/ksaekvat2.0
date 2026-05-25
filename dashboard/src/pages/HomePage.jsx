@@ -22,19 +22,82 @@ import {
 import { Link } from 'react-router-dom';
 
 const INVITE_LINK = 'https://discord.com/oauth2/authorize?client_id=1399459454889754805';
-const MO_DISCORD_ID = '886';
+const MO_DISCORD_ID = '703266672022388789';
 const MO_PROFILE_LINK = 'https://ksaekvat.up.railway.app/profile/mo';
+
+// Discord Avatar Component with Decoration Overlaid
+function DiscordAvatar({ userId, avatarHash, decorationAsset, size = 70 }) {
+  const avatarUrl = avatarHash
+    ? `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.png`
+    : '/assets/default-avatar.png';
+
+  const decorationUrl = decorationAsset
+    ? `https://cdn.discordapp.com/avatar-decoration-presets/${decorationAsset}.png`
+    : null;
+
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: `${size}px`,
+        height: `${size}px`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {/* Base Avatar Circle */}
+      <img
+        src={avatarUrl}
+        alt="User Avatar"
+        style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: '50%',
+          objectFit: 'cover',
+        }}
+      />
+      {/* Overlaid Decoration Preset */}
+      {decorationUrl && (
+        <img
+          src={decorationUrl}
+          alt="Avatar Decoration"
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: `${size * 1.5}px`,
+            height: `${size * 1.5}px`,
+            zIndex: 2,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+    </div>
+  );
+}
 
 export default function HomePage() {
   const [stats, setStats] = useState(null);
   const [activeFeature, setActiveFeature] = useState('combat');
   const [copied, setCopied] = useState(false);
+  const [ownerProfile, setOwnerProfile] = useState(null);
 
   useEffect(() => {
+    // Fetch stats
     fetch('/api/stats')
       .then((r) => r.json())
       .then((res) => {
         if (res.success) setStats(res.data);
+      })
+      .catch(() => {});
+
+    // Fetch owner details
+    fetch(`/api/profile/${MO_DISCORD_ID}`)
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.success) setOwnerProfile(res.data);
       })
       .catch(() => {});
   }, []);
@@ -119,335 +182,13 @@ export default function HomePage() {
         {/* HERO SECTION - SPLIT PANE */}
         <section className="hero-split">
           
-          {/* LEFT PANE: DISCORD PROFILE POPOUT */}
+          {/* LEFT PANE: BOT CALL TO ACTIONS */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}
+            style={{ display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'center' }}
           >
-            {/* Discord-style profile card */}
-            <div style={{
-              background: '#111214',
-              borderRadius: '16px',
-              overflow: 'hidden',
-              border: '1px solid rgba(255,255,255,0.06)',
-              maxWidth: '380px',
-              width: '100%'
-            }}>
-              
-              {/* Banner */}
-              <div style={{
-                height: '120px',
-                background: 'linear-gradient(135deg, #1a0508 0%, #3d0a15 40%, #2a0810 100%)',
-                position: 'relative',
-                overflow: 'hidden'
-              }}>
-                {/* Decorative skulls/pattern overlay */}
-                <div style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'radial-gradient(circle at 30% 50%, rgba(120,20,30,0.4) 0%, transparent 60%), radial-gradient(circle at 70% 40%, rgba(80,10,20,0.5) 0%, transparent 50%)',
-                }} />
-                {/* Subtle noise texture */}
-                <div style={{
-                  position: 'absolute',
-                  inset: 0,
-                  opacity: 0.15,
-                  backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)',
-                }} />
-              </div>
-
-              {/* Avatar overlapping banner */}
-              <div style={{ position: 'relative', padding: '0 20px' }}>
-                <div style={{
-                  position: 'absolute',
-                  top: '-40px',
-                  left: '20px',
-                  width: '80px',
-                  height: '80px',
-                  borderRadius: '50%',
-                  border: '5px solid #111214',
-                  background: '#2b2d31',
-                  overflow: 'hidden',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  {/* Avatar placeholder - manga style dark silhouette */}
-                  <div style={{
-                    width: '100%',
-                    height: '100%',
-                    background: 'linear-gradient(180deg, #1a1a1e 0%, #2a2a30 100%)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '2rem',
-                    color: 'rgba(255,255,255,0.2)',
-                    fontWeight: 300
-                  }}>
-                    M
-                  </div>
-                  
-                  {/* DND status indicator */}
-                  <div style={{
-                    position: 'absolute',
-                    bottom: '2px',
-                    right: '2px',
-                    width: '16px',
-                    height: '16px',
-                    borderRadius: '50%',
-                    background: '#111214',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <div style={{
-                      width: '10px',
-                      height: '10px',
-                      borderRadius: '50%',
-                      background: '#f23f43',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <div style={{
-                        width: '6px',
-                        height: '2px',
-                        background: '#111214',
-                        borderRadius: '1px'
-                      }} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Discord badges row - top right */}
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
-                  gap: '4px',
-                  paddingTop: '10px'
-                }}>
-                  {/* Active Developer badge */}
-                  <div style={{
-                    width: '22px',
-                    height: '22px',
-                    borderRadius: '50%',
-                    background: 'rgba(88, 101, 242, 0.15)',
-                    border: '1px solid rgba(88, 101, 242, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.55rem',
-                    color: '#5865f2'
-                  }}>
-                    {'</>'}
-                  </div>
-                  {/* Nitro badge */}
-                  <div style={{
-                    width: '22px',
-                    height: '22px',
-                    borderRadius: '50%',
-                    background: 'rgba(235, 69, 158, 0.15)',
-                    border: '1px solid rgba(235, 69, 158, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.65rem',
-                    color: '#eb459e'
-                  }}>
-                    ✦
-                  </div>
-                  {/* Boost badge */}
-                  <div style={{
-                    width: '22px',
-                    height: '22px',
-                    borderRadius: '50%',
-                    background: 'rgba(244, 127, 255, 0.15)',
-                    border: '1px solid rgba(244, 127, 255, 0.3)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.6rem',
-                    color: '#f47fff'
-                  }}>
-                    ⚡
-                  </div>
-                </div>
-              </div>
-
-              {/* Name & username section */}
-              <div style={{ padding: '12px 20px 0' }}>
-                <div style={{
-                  fontSize: '1.3rem',
-                  fontWeight: 800,
-                  color: '#ed4245',
-                  fontStyle: 'italic',
-                  letterSpacing: '-0.01em',
-                  lineHeight: 1.2
-                }}>
-                  bawlsag
-                </div>
-                <div style={{
-                  fontSize: '0.8rem',
-                  color: 'rgba(255,255,255,0.6)',
-                  fontWeight: 500,
-                  marginTop: '2px'
-                }}>
-                  bombaclat_._.
-                </div>
-              </div>
-
-              {/* Separator */}
-              <div style={{ margin: '14px 20px', height: '1px', background: 'rgba(255,255,255,0.06)' }} />
-
-              {/* Profile link */}
-              <div style={{ padding: '0 20px' }}>
-                <a 
-                  href={MO_PROFILE_LINK}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{
-                    fontSize: '0.8rem',
-                    color: '#00a8fc',
-                    fontWeight: 500,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    textDecoration: 'none'
-                  }}
-                >
-                  ksaekvat.up.railway.app/profile/mo
-                  <ExternalLink size={10} style={{ opacity: 0.6 }} />
-                </a>
-              </div>
-
-              {/* Separator */}
-              <div style={{ margin: '14px 20px', height: '1px', background: 'rgba(255,255,255,0.06)' }} />
-
-              {/* User Reviews */}
-              <div style={{ padding: '0 20px' }}>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  fontSize: '0.8rem'
-                }}>
-                  <span style={{ fontWeight: 700, color: '#fff' }}>User Reviews</span>
-                  <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 500, fontSize: '0.75rem' }}>No reviews yet</span>
-                </div>
-              </div>
-
-              {/* Separator */}
-              <div style={{ margin: '14px 20px', height: '1px', background: 'rgba(255,255,255,0.06)' }} />
-
-              {/* Menu items */}
-              <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                
-                {/* Edit Profile */}
-                <Link 
-                  to="/dashboard"
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '10px 12px',
-                    borderRadius: '6px',
-                    fontSize: '0.85rem',
-                    fontWeight: 500,
-                    color: 'rgba(255,255,255,0.8)',
-                    transition: 'background 0.15s',
-                    textDecoration: 'none'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                >
-                  <Pencil size={16} style={{ opacity: 0.5 }} />
-                  <span>Edit Profile</span>
-                </Link>
-
-                {/* Do Not Disturb */}
-                <div 
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '10px 12px',
-                    borderRadius: '6px',
-                    fontSize: '0.85rem',
-                    fontWeight: 500,
-                    color: 'rgba(255,255,255,0.8)',
-                    cursor: 'default'
-                  }}
-                >
-                  <div style={{
-                    width: '16px',
-                    height: '16px',
-                    borderRadius: '4px',
-                    background: '#f23f43',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <MinusCircle size={10} color="#111214" />
-                  </div>
-                  <span>Do Not Disturb</span>
-                  <ChevronRight size={14} style={{ marginLeft: 'auto', opacity: 0.3 }} />
-                </div>
-
-                {/* Copy User ID */}
-                <div 
-                  onClick={handleCopyId}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    padding: '10px 12px',
-                    borderRadius: '6px',
-                    fontSize: '0.85rem',
-                    fontWeight: 500,
-                    color: 'rgba(255,255,255,0.8)',
-                    cursor: 'pointer',
-                    transition: 'background 0.15s'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                >
-                  {copied ? <Check size={16} style={{ color: '#4ade80' }} /> : <Copy size={16} style={{ opacity: 0.5 }} />}
-                  <span>{copied ? 'Copied!' : 'Copy User ID'}</span>
-                </div>
-
-              </div>
-
-              {/* Discord Profile Info footer */}
-              <div style={{
-                padding: '12px 20px',
-                borderTop: '1px solid rgba(255,255,255,0.06)',
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '8px'
-              }}>
-                <div>
-                  <div style={{ fontSize: '0.6rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>
-                    Username
-                  </div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#fff' }}>
-                    bombaclat_._.
-                  </div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.6rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>
-                    User ID
-                  </div>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#fff', fontFamily: 'monospace' }}>
-                    {MO_DISCORD_ID}
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            {/* BOT CALL TO ACTIONS */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <h1 style={{ fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1.1, color: '#fff' }}>
                 KSAEKVAT BOT
@@ -476,7 +217,6 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
-
           </motion.div>
 
           {/* RIGHT PANE: INTERACTIVE BOT FEATURE SHOWCASE */}
@@ -640,7 +380,7 @@ export default function HomePage() {
         </section>
 
         {/* JOURNEY TIMELINE SECTION */}
-        <section style={{ padding: '80px 0' }}>
+        <section style={{ padding: '80px 0 20px' }}>
           
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', opacity: 0.5, marginBottom: '12px' }}>
@@ -678,6 +418,267 @@ export default function HomePage() {
           </div>
 
         </section>
+
+        {/* BOT OWNER CARD (Discord Landscape Style) */}
+        <section style={{ padding: '40px 0 80px', display: 'flex', justifyContent: 'center' }}>
+          <div style={{
+            background: '#111214',
+            borderRadius: '16px',
+            border: '1px solid rgba(255,255,255,0.06)',
+            width: '100%',
+            maxWidth: '850px',
+            overflow: 'hidden',
+            fontFamily: "'Outfit', sans-serif"
+          }}>
+            <div className="creator-landscape-inner" style={{
+              display: 'flex',
+              flexDirection: 'row',
+              minHeight: '260px'
+            }}>
+              
+              {/* Left Column: Banner + Profile Info */}
+              <div style={{
+                flex: '1.2',
+                position: 'relative',
+                background: '#18191c',
+                borderRight: '1px solid rgba(255,255,255,0.06)',
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                {/* Top Banner inside Left Column */}
+                <div style={{
+                  height: '80px',
+                  background: 'linear-gradient(135deg, #1a0508 0%, #3d0a15 40%, #2a0810 100%)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'radial-gradient(circle at 30% 50%, rgba(120,20,30,0.4) 0%, transparent 60%), radial-gradient(circle at 70% 40%, rgba(80,10,20,0.5) 0%, transparent 50%)'
+                  }} />
+                </div>
+
+                {/* Avatar Area */}
+                <div style={{ position: 'relative', padding: '0 20px', height: '40px' }}>
+                  <div style={{
+                    position: 'absolute',
+                    top: '-40px',
+                    left: '20px',
+                    background: '#18191c',
+                    borderRadius: '50%',
+                    padding: '5px'
+                  }}>
+                    <DiscordAvatar 
+                      userId={ownerProfile?.userId || MO_DISCORD_ID}
+                      avatarHash={ownerProfile?.profileTheme?.avatar || null}
+                      decorationAsset={ownerProfile?.profileTheme?.avatarDecoration || null}
+                      size={70}
+                    />
+                  </div>
+
+                  {/* Badges on right side of avatar line */}
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    gap: '6px',
+                    paddingTop: '10px'
+                  }}>
+                    {/* Active Developer */}
+                    <div style={{
+                      width: '22px',
+                      height: '22px',
+                      borderRadius: '50%',
+                      background: 'rgba(88, 101, 242, 0.15)',
+                      border: '1px solid rgba(88, 101, 242, 0.3)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.55rem',
+                      color: '#5865f2',
+                      fontWeight: 700
+                    }} title="Active Developer">
+                      {'</>'}
+                    </div>
+                    {/* Nitro */}
+                    <div style={{
+                      width: '22px',
+                      height: '22px',
+                      borderRadius: '50%',
+                      background: 'rgba(235, 69, 158, 0.15)',
+                      border: '1px solid rgba(235, 69, 158, 0.3)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.65rem',
+                      color: '#eb459e',
+                      fontWeight: 700
+                    }} title="Discord Nitro">
+                      ✦
+                    </div>
+                    {/* Boost */}
+                    <div style={{
+                      width: '22px',
+                      height: '22px',
+                      borderRadius: '50%',
+                      background: 'rgba(244, 127, 255, 0.15)',
+                      border: '1px solid rgba(244, 127, 255, 0.3)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.6rem',
+                      color: '#f47fff',
+                      fontWeight: 700
+                    }} title="Server Booster">
+                      ⚡
+                    </div>
+                  </div>
+                </div>
+
+                {/* Identity Details */}
+                <div style={{ padding: '15px 20px 20px', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div>
+                    <div style={{
+                      fontSize: '1.4rem',
+                      fontWeight: 800,
+                      color: '#ed4245',
+                      fontStyle: 'italic',
+                      letterSpacing: '-0.01em',
+                      lineHeight: 1.2
+                    }}>
+                      {ownerProfile?.username === 'Unknown Traveler' ? 'bawlsag' : (ownerProfile?.username || 'bawlsag')}
+                    </div>
+                    <div style={{
+                      fontSize: '0.85rem',
+                      color: 'rgba(255,255,255,0.6)',
+                      fontWeight: 500,
+                      marginTop: '2px'
+                    }}>
+                      @{ownerProfile?.profileTheme?.slug || 'mo'}
+                    </div>
+                  </div>
+
+                  <p style={{
+                    fontSize: '0.85rem',
+                    color: 'rgba(255,255,255,0.7)',
+                    lineHeight: 1.5,
+                    margin: '8px 0 0'
+                  }}>
+                    {ownerProfile?.profileTheme?.bio || 'Building immersive digital worlds, one line of TypeScript at a time. Mo designed KSAEKVAT to connect RPG systems, live Gacha, and collectible hunting directly inside Discord.'}
+                  </p>
+                </div>
+
+              </div>
+
+              {/* Right Column: Actions & Meta Info */}
+              <div style={{
+                flex: '1',
+                padding: '24px',
+                background: '#111214',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                gap: '20px'
+              }}>
+                {/* Info Grid */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    fontSize: '0.8rem'
+                  }}>
+                    <span style={{ fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>User Reviews</span>
+                    <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 500 }}>No reviews yet</span>
+                  </div>
+
+                  <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+
+                  {/* Links */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <span style={{ fontSize: '0.65rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Uplink Profile
+                    </span>
+                    <a 
+                      href={MO_PROFILE_LINK}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        fontSize: '0.85rem',
+                        color: '#00a8fc',
+                        fontWeight: 500,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      ksaekvat.up.railway.app/profile/mo
+                      <ExternalLink size={12} style={{ opacity: 0.6 }} />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Buttons / Actions */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <Link 
+                      to="/dashboard"
+                      className="matte-btn"
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        padding: '10px 16px',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        textDecoration: 'none'
+                      }}
+                    >
+                      <Pencil size={14} />
+                      <span>Edit Profile</span>
+                    </Link>
+
+                    <button 
+                      onClick={handleCopyId}
+                      className="matte-btn"
+                      style={{
+                        flex: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        padding: '10px 16px',
+                        fontSize: '0.8rem',
+                        fontWeight: 600
+                      }}
+                    >
+                      {copied ? <Check size={14} style={{ color: '#4ade80' }} /> : <Copy size={14} />}
+                      <span>{copied ? 'Copied ID!' : 'Copy User ID'}</span>
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        {/* Custom CSS styles for landscape collapsible layout */}
+        <style>{`
+          @media (max-width: 768px) {
+            .creator-landscape-inner {
+              flex-direction: column !important;
+            }
+            .creator-landscape-inner > div {
+              border-right: none !important;
+              border-bottom: 1px solid rgba(255,255,255,0.06);
+            }
+          }
+        `}</style>
 
       </div>
     </div>

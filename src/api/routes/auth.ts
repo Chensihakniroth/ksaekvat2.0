@@ -42,6 +42,16 @@ router.get('/discord/callback', async (req, res) => {
     // Ensure user exists in our DB
     const dbUser = await database.getUser(userData.id, userData.username);
 
+    if (dbUser) {
+      if (!dbUser.profileTheme) {
+        dbUser.profileTheme = { theme: 'default', favorites: [] };
+      }
+      dbUser.profileTheme.avatar = userData.avatar || null;
+      dbUser.profileTheme.avatarDecoration = userData.avatar_decoration_data?.asset || null;
+      dbUser.markModified('profileTheme');
+      await database.saveUser(dbUser);
+    }
+
     // Create JWT
     const token = jwt.sign(
       { id: userData.id, username: userData.username, avatar: userData.avatar },
@@ -81,6 +91,7 @@ router.get('/me', async (req: any, res) => {
         id: decoded.id,
         username: decoded.username,
         avatar: decoded.avatar,
+        avatarDecoration: user.profileTheme?.avatarDecoration || null,
         slug: user.profileTheme?.slug || null,
         balance: user.balance || 0,
         level: user.level || 1,

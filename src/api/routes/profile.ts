@@ -140,6 +140,7 @@ router.get('/:userId', async (req: Request, res: Response) => {
           }),
           portfolio: user.profileTheme?.portfolio || [],
           favorites: hydratedFavorites,
+          avatarDecoration: user.profileTheme?.avatarDecoration || null,
         },
       },
     });
