@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import DiscordAvatar from '../components/DiscordAvatar';
 import {
   Settings,
   Palette,
@@ -70,52 +71,22 @@ export default function DashboardPage() {
     },
   });
 
-  // Simulated Bot Shard Server Configuration States
-  const [selectedGuild, setSelectedGuild] = useState('1');
-  const [serverConfigs, setServerConfigs] = useState({
-    '1': {
-      name: 'KSAEKVAT Official Support',
-      icon: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=150',
-      prefix: 'k!',
-      welcomeEnabled: true,
-      welcomeChannel: 'welcome-gate',
-      welcomeMessage: 'Welcome to the digital sector, {user}! Sync complete. (｡♥‿♥｡)',
-      loggingEnabled: true,
-      logChannel: 'audit-log',
-      modules: {
-        rpg: true,
-        economy: true,
-        gacha: true,
-        hunting: true,
-        aiChat: true,
-      }
-    },
-    '2': {
-      name: "Momo's Retro Lounge",
-      icon: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=150',
-      prefix: 'K',
-      welcomeEnabled: false,
-      welcomeChannel: 'general',
-      welcomeMessage: 'Hello {user}! Hope you enjoy your stay in Retro Lounge.',
-      loggingEnabled: false,
-      logChannel: 'logs',
-      modules: {
-        rpg: true,
-        economy: true,
-        gacha: false,
-        hunting: true,
-        aiChat: false,
-      }
-    }
-  });
+  // Guild Configuration & Bot Telemetry States
+  const [guilds, setGuilds] = useState([]);
+  const [guildsLoading, setGuildsLoading] = useState(true);
+  const [guildsError, setGuildsError] = useState(null);
+  const [guildChannels, setGuildChannels] = useState({});
+  const [selectedGuild, setSelectedGuild] = useState('');
+  const [serverConfigs, setServerConfigs] = useState({});
 
   // Creator Control Console System Actions Logs
   const [consoleLogs, setConsoleLogs] = useState([
     '[SYSTEM] Kernel core initialized successfully.',
-    '[MONITOR] CPU load optimal at 0.8%. Connected database pool: 12 units.',
-    '[WEBSOCKET] Shards established and active. Ping: 24ms.'
+    '[MONITOR] CPU load optimal. Connected database pool active.',
+    '[WEBSOCKET] Shards established and active.'
   ]);
   const [consoleInput, setConsoleInput] = useState('');
+  const [adminStats, setAdminStats] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -265,10 +236,62 @@ export default function DashboardPage() {
     };
   };
 
-  // Bot configuration helper functions (Simulated)
-  const handleServerSave = () => {
-    setMessage({ type: 'success', text: `Server [${serverConfigs[selectedGuild].name}] configuration updated successfully! ＼(≧▽≦)／` });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Fetch specific guild configuration and text channels
+  const fetchGuildConfig = async (guildId) => {
+    try {
+      const res = await fetch(`/api/guild/${guildId}`);
+      const data = await res.json();
+      if (data.success) {
+        setServerConfigs((prev) => ({
+          ...prev,
+          [guildId]: data.config,
+        }));
+        setGuildChannels((prev) => ({
+          ...prev,
+          [guildId]: data.channels,
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch config for guild:', guildId, err);
+    }
+  };
+
+  const handleGuildChange = (guildId) => {
+    setSelectedGuild(guildId);
+    const targetGuild = guilds.find((g) => g.id === guildId);
+    if (targetGuild && targetGuild.botIn && !serverConfigs[guildId]) {
+      fetchGuildConfig(guildId);
+    }
+  };
+
+  // Bot configuration helper functions (Connected to Backend API)
+  const handleServerSave = async () => {
+    const config = serverConfigs[selectedGuild];
+    if (!config) return;
+
+    setSaving(true);
+    setMessage(null);
+    try {
+      const res = await fetch(`/api/guild/${selectedGuild}/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setMessage({ type: 'success', text: `Configuration for [${data.config.guildName}] updated successfully! ＼(≧▽≦)／` });
+        setServerConfigs((prev) => ({
+          ...prev,
+          [selectedGuild]: data.config,
+        }));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Failed to save configuration.' });
+      }
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Network error saving configuration.' });
+    }
+    setSaving(false);
   };
 
   const handleServerConfigChange = (field, val) => {
@@ -294,30 +317,90 @@ export default function DashboardPage() {
     }));
   };
 
-  // Creator trigger simulated commands
-  const handleConsoleSubmit = (e) => {
+  // Creator Control Remote Terminal Command Execution
+  const handleConsoleSubmit = async (e) => {
     e.preventDefault();
     if (!consoleInput.trim()) return;
-    const cmd = consoleInput.toLowerCase().trim();
-    let resp = '';
+
+    const input = consoleInput.trim();
+    const cmd = input.toLowerCase();
 
     if (cmd === 'clear') {
       setConsoleLogs([]);
       setConsoleInput('');
       return;
-    } else if (cmd === 'reload') {
-      resp = '[SYSTEM] Commencing commands registry flush... Loaded 38 standard and custom modules successfully.';
-    } else if (cmd === 'shard status') {
-      resp = '[MONITOR] All shards operational. Shard #0: active (Ping: 24ms). Shard #1: active (Ping: 22ms).';
-    } else if (cmd === 'flush cache') {
-      resp = '[CDN] Cleared sprite buffer registers. Flushed 1,280 entries cleanly.';
-    } else {
-      resp = `[ERROR] Unknown matrix control command "${cmd}". Try: "reload", "shard status", "flush cache", or "clear".`;
     }
 
-    setConsoleLogs(prev => [...prev, `> ${consoleInput}`, resp]);
+    setConsoleLogs((prev) => [...prev, `> ${input}`]);
     setConsoleInput('');
+
+    try {
+      const res = await fetch('/api/admin/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: input }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setConsoleLogs((prev) => [...prev, data.output]);
+      } else {
+        setConsoleLogs((prev) => [...prev, `[ERROR] ${data.error || 'Execution failed.'}`]);
+      }
+    } catch (err) {
+      setConsoleLogs((prev) => [...prev, '[ERROR] Network connection failure to host system.']);
+    }
   };
+
+  // Load User Admin Guilds List
+  useEffect(() => {
+    if (activeTab === 'server' && user) {
+      setGuildsLoading(true);
+      setGuildsError(null);
+      fetch('/api/guild/list')
+        .then((r) => r.json())
+        .then((res) => {
+          if (res.success) {
+            setGuilds(res.guilds);
+            // Pre-select first guild
+            if (res.guilds.length > 0) {
+              const firstGuild = res.guilds[0];
+              setSelectedGuild(firstGuild.id);
+              if (firstGuild.botIn) {
+                fetchGuildConfig(firstGuild.id);
+              }
+            }
+          } else {
+            setGuildsError(res.error || 'Failed to load servers.');
+          }
+          setGuildsLoading(false);
+        })
+        .catch((err) => {
+          setGuildsError('Network error loading servers.');
+          setGuildsLoading(false);
+        });
+    }
+  }, [activeTab, user]);
+
+  // Poll Creator Telemetry Stats
+  useEffect(() => {
+    if (activeTab === 'creator' && user?.id === '703266672022388789') {
+      const fetchStats = async () => {
+        try {
+          const res = await fetch('/api/admin/stats');
+          const data = await res.json();
+          if (data.success) {
+            setAdminStats(data.stats);
+          }
+        } catch (err) {
+          console.error('Failed to fetch admin stats:', err);
+        }
+      };
+
+      fetchStats();
+      const interval = setInterval(fetchStats, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [activeTab, user]);
 
   if (loading)
     return (
@@ -397,42 +480,15 @@ export default function DashboardPage() {
                   position: 'absolute',
                   bottom: '-30px',
                   left: '20px',
-                  width: '60px',
-                  height: '60px',
-                  borderRadius: '50%',
-                  border: '3px solid #0b0b0c',
-                  overflow: 'hidden',
-                  background: '#0b0b0c',
+                  zIndex: 2,
                 }}
               >
-                {formData.avatar ? (
-                  <img
-                    src={formData.avatar}
-                    alt="Avatar"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                ) : user?.avatar ? (
-                  <img
-                    src={`https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`}
-                    alt="Avatar"
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '1.5rem',
-                      fontWeight: 300,
-                      opacity: 0.5,
-                    }}
-                  >
-                    {user?.username[0]}
-                  </div>
-                )}
+                <DiscordAvatar
+                  userId={user?.id}
+                  avatarHash={formData.avatar || profile?.profileTheme?.avatar || user?.avatar}
+                  decorationAsset={profile?.profileTheme?.avatarDecoration}
+                  size={60}
+                />
               </div>
             </div>
             <div style={{ padding: '40px 20px 20px' }}>
@@ -1120,7 +1176,7 @@ export default function DashboardPage() {
                       opacity: 0.8,
                     }}
                   >
-                    <Eye size={16} />
+                    <Shield size={16} />
                     <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                       Privacy & Visibility
                     </h3>
@@ -1131,14 +1187,14 @@ export default function DashboardPage() {
                       style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 15px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem' }}
                     >
                       <span>Display Statistics</span>
-                      {formData.showStats ? <Eye color="#4ade80" size={16} /> : <EyeOff color="#ff3b5c" size={16} />}
+                      <div className={`switch-toggle-matte ${formData.showStats ? 'active' : 'inactive'}`}><div className="switch-handle-matte" /></div>
                     </div>
                     <div
                       onClick={() => setFormData({ ...formData, showInventory: !formData.showInventory })}
                       style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 15px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem' }}
                     >
                       <span>Show Arsenal/Inventory</span>
-                      {formData.showInventory ? <Eye color="#4ade80" size={16} /> : <EyeOff color="#ff3b5c" size={16} />}
+                      <div className={`switch-toggle-matte ${formData.showInventory ? 'active' : 'inactive'}`}><div className="switch-handle-matte" /></div>
                     </div>
                   </div>
                 </section>
@@ -1247,7 +1303,7 @@ export default function DashboardPage() {
                       opacity: 0.8,
                     }}
                   >
-                    <Eye size={16} />
+                    <Bell size={16} />
                     <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                       Alerts & System Preferences
                     </h3>
@@ -1264,7 +1320,7 @@ export default function DashboardPage() {
                           Let your account appear on the global wealth and RPG rankings.
                         </span>
                       </div>
-                      {formData.publicLeaderboard ? <Eye color="#4ade80" size={16} /> : <EyeOff color="#ff3b5c" size={16} />}
+                      <div className={`switch-toggle-matte ${formData.publicLeaderboard ? 'active' : 'inactive'}`}><div className="switch-handle-matte" /></div>
                     </div>
 
                     <div
@@ -1277,7 +1333,7 @@ export default function DashboardPage() {
                           Receive direct system alerts from the bot whenever you scale up Resonance levels.
                         </span>
                       </div>
-                      {formData.dmOnLevelUp ? <Eye color="#4ade80" size={16} /> : <EyeOff color="#ff3b5c" size={16} />}
+                      <div className={`switch-toggle-matte ${formData.dmOnLevelUp ? 'active' : 'inactive'}`}><div className="switch-handle-matte" /></div>
                     </div>
 
                     <div
@@ -1290,7 +1346,7 @@ export default function DashboardPage() {
                           Condense battle and gacha results into minimal text formats to reduce chat clutter.
                         </span>
                       </div>
-                      {formData.compactLogs ? <Eye color="#4ade80" size={16} /> : <EyeOff color="#ff3b5c" size={16} />}
+                      <div className={`switch-toggle-matte ${formData.compactLogs ? 'active' : 'inactive'}`}><div className="switch-handle-matte" /></div>
                     </div>
                   </div>
                 </section>
@@ -1318,224 +1374,368 @@ export default function DashboardPage() {
                 exit={{ opacity: 0, y: -15 }}
                 style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}
               >
-                <div
-                  className="matte-card"
-                  style={{
-                    padding: '20px',
-                    borderRadius: '16px',
-                    border: '1px solid var(--border-matte)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '15px',
-                  }}
-                >
-                  <Bot size={24} color="rgba(255,255,255,0.6)" />
-                  <div style={{ flex: 1 }}>
-                    <label style={{ fontSize: '0.6rem', opacity: 0.4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      Select Active Sector Guild
-                    </label>
-                    <select
-                      value={selectedGuild}
-                      onChange={(e) => setSelectedGuild(e.target.value)}
-                      className="matte-input"
+                {guildsLoading ? (
+                  <div
+                    className="matte-card"
+                    style={{
+                      padding: '40px 20px',
+                      borderRadius: '16px',
+                      border: '1px solid var(--border-matte)',
+                      textAlign: 'center',
+                      opacity: 0.5,
+                      letterSpacing: '0.1em',
+                      fontSize: '0.8rem'
+                    }}
+                  >
+                    SCANNING DISCORD SECTOR FOR COMPATIBLE GUILDS...
+                  </div>
+                ) : guildsError ? (
+                  <div
+                    className="matte-card"
+                    style={{
+                      padding: '30px 20px',
+                      borderRadius: '16px',
+                      border: '1px solid var(--border-matte)',
+                      textAlign: 'center',
+                      color: '#ff3b5c'
+                    }}
+                  >
+                    <AlertTriangle size={24} style={{ marginBottom: '10px' }} />
+                    <p style={{ fontSize: '0.85rem', fontWeight: 600 }}>{guildsError}</p>
+                    <p style={{ fontSize: '0.75rem', opacity: 0.6, marginTop: '5px' }}>
+                      Make sure you have authorized the bot to read your guilds. You may need to log out and log back in.
+                    </p>
+                  </div>
+                ) : guilds.length === 0 ? (
+                  <div
+                    className="matte-card"
+                    style={{
+                      padding: '40px 20px',
+                      borderRadius: '16px',
+                      border: '1px solid var(--border-matte)',
+                      textAlign: 'center',
+                      opacity: 0.6
+                    }}
+                  >
+                    <AlertTriangle size={24} style={{ marginBottom: '10px' }} />
+                    <p style={{ fontSize: '0.85rem', fontWeight: 600 }}>No Managed Servers Found</p>
+                    <p style={{ fontSize: '0.75rem', marginTop: '5px' }}>
+                      You must possess the "Manage Server" or "Administrator" permission in at least one server to configure settings.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div
+                      className="matte-card"
                       style={{
-                        padding: '6px 12px',
-                        fontSize: '0.8rem',
-                        width: '100%',
-                        maxWidth: '300px',
-                        marginTop: '5px',
+                        padding: '20px',
+                        borderRadius: '16px',
                         border: '1px solid var(--border-matte)',
-                        background: 'rgba(255,255,255,0.02)'
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '15px',
                       }}
                     >
-                      <option value="1">🛡️ KSAEKVAT Official Support</option>
-                      <option value="2">👾 Momo's Retro Lounge</option>
-                    </select>
-                  </div>
-                  <img
-                    src={serverConfigs[selectedGuild].icon}
-                    alt="Guild Icon"
-                    style={{ width: '50px', height: '50px', borderRadius: '12px', border: '1px solid var(--border-matte)' }}
-                  />
-                </div>
-
-                <section
-                  className="matte-card"
-                  style={{
-                    padding: '20px',
-                    borderRadius: '16px',
-                    border: '1px solid var(--border-matte)',
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      marginBottom: '15px',
-                      opacity: 0.8,
-                    }}
-                  >
-                    <Settings size={16} />
-                    <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                      General Server Settings
-                    </h3>
-                  </div>
-
-                  <div className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                      <label style={{ fontSize: '0.65rem' }}>Server Command Prefix</label>
-                      <HelpCircle size={10} style={{ opacity: 0.4 }} title="Sets the base command trigger for all regular members." />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="k!"
-                      maxLength="5"
-                      value={serverConfigs[selectedGuild].prefix}
-                      onChange={(e) => handleServerConfigChange('prefix', e.target.value)}
-                      className="matte-input"
-                      style={{ padding: '6px 12px', fontSize: '0.75rem', maxWidth: '150px' }}
-                    />
-                  </div>
-                </section>
-
-                <section
-                  className="matte-card"
-                  style={{
-                    padding: '20px',
-                    borderRadius: '16px',
-                    border: '1px solid var(--border-matte)',
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      marginBottom: '15px',
-                      opacity: 0.8,
-                    }}
-                  >
-                    <MessageSquare size={16} />
-                    <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                      Welcome gate greetings
-                    </h3>
-                  </div>
-
-                  <div
-                    onClick={() => handleServerConfigChange('welcomeEnabled', !serverConfigs[selectedGuild].welcomeEnabled)}
-                    style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 15px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem', marginBottom: '15px' }}
-                  >
-                    <div>
-                      <span style={{ display: 'block', fontWeight: 600 }}>Enable Welcome Greetings</span>
-                      <span style={{ display: 'block', fontSize: '0.65rem', opacity: 0.4, marginTop: '2px' }}>
-                        Greet new sector members when they initialize synchronization protocols.
-                      </span>
-                    </div>
-                    {serverConfigs[selectedGuild].welcomeEnabled ? <Eye color="#4ade80" size={16} /> : <EyeOff color="#ff3b5c" size={16} />}
-                  </div>
-
-                  {serverConfigs[selectedGuild].welcomeEnabled && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                      <div className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
-                        <label style={{ fontSize: '0.65rem' }}>Welcome Target Channel</label>
-                        <div className="icon-input">
-                          <Hash size={12} />
-                          <input
-                            type="text"
-                            placeholder="welcome"
-                            value={serverConfigs[selectedGuild].welcomeChannel}
-                            onChange={(e) => handleServerConfigChange('welcomeChannel', e.target.value)}
-                            className="matte-input"
-                            style={{ padding: '6px 12px 6px 35px', fontSize: '0.75rem' }}
-                          />
-                        </div>
-                      </div>
-                      <div className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
-                        <label style={{ fontSize: '0.65rem' }}>Welcome Message Template</label>
-                        <textarea
-                          placeholder="Welcome {user}!"
-                          value={serverConfigs[selectedGuild].welcomeMessage}
-                          onChange={(e) => handleServerConfigChange('welcomeMessage', e.target.value)}
+                      <Bot size={24} color="rgba(255,255,255,0.6)" />
+                      <div style={{ flex: 1 }}>
+                        <label style={{ fontSize: '0.6rem', opacity: 0.4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          Select Active Sector Guild
+                        </label>
+                        <select
+                          value={selectedGuild}
+                          onChange={(e) => handleGuildChange(e.target.value)}
                           className="matte-input"
                           style={{
-                            minHeight: '60px',
-                            resize: 'vertical',
-                            background: 'rgba(255,255,255,0.02)',
-                            padding: '10px',
-                            borderRadius: '12px',
-                            fontSize: '0.75rem',
+                            padding: '6px 12px',
+                            fontSize: '0.8rem',
+                            width: '100%',
+                            maxWidth: '300px',
+                            marginTop: '5px',
+                            border: '1px solid var(--border-matte)',
+                            background: 'rgba(255,255,255,0.02)'
                           }}
+                        >
+                          {guilds.map((g) => (
+                            <option key={g.id} value={g.id}>
+                              {g.botIn ? '🛡️' : '🔗'} {g.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      {guilds.find((g) => g.id === selectedGuild)?.iconUrl ? (
+                        <img
+                          src={guilds.find((g) => g.id === selectedGuild)?.iconUrl}
+                          alt="Guild Icon"
+                          style={{ width: '50px', height: '50px', borderRadius: '12px', border: '1px solid var(--border-matte)' }}
                         />
-                        <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>
-                          Available wildcards: `{`{user}`}` (mentions user), `{`{guild}`}` (server name).
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                </section>
-
-                <section
-                  className="matte-card"
-                  style={{
-                    padding: '20px',
-                    borderRadius: '16px',
-                    border: '1px solid var(--border-matte)',
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      marginBottom: '15px',
-                      opacity: 0.8,
-                    }}
-                  >
-                    <Layers size={16} />
-                    <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                      Operational Bot Modules
-                    </h3>
-                  </div>
-                  <p style={{ fontSize: '0.75rem', opacity: 0.6, lineHeight: 1.4, marginBottom: '15px' }}>
-                    De-authorize or load specific KSAEKVAT core mechanics on this server. Members will not be able to execute commands associated with disabled modules.
-                  </p>
-
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {[
-                      { key: 'rpg', label: '⚔️ Advanced RPG Combat & Battle System', desc: 'Allows dungeoneering, boss duels, battles, and operative ranks.' },
-                      { key: 'economy', label: '🪙 Economic ledger & Trade Systems', desc: 'Activates credits claims, bank accounts, daily bonuses, and transfers.' },
-                      { key: 'gacha', label: '🎲 Gacha Resonance Pools', desc: 'Unlocks resonator character rolls, pity counters, and pulls inventory.' },
-                      { key: 'hunting', label: '🐾 Pokemon Wilderness Hunting', desc: 'Spawns wild beasts, specimen logging, capturing, and zoo displays.' },
-                      { key: 'aiChat', label: '💬 SEA-LION AI Chat System', desc: 'Enables direct context conversations with the bot waifu companion.' },
-                    ].map((mod) => (
-                      <div
-                        key={mod.key}
-                        onClick={() => handleServerModuleChange(mod.key, !serverConfigs[selectedGuild].modules[mod.key])}
-                        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 15px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem' }}
-                      >
-                        <div>
-                          <span style={{ display: 'block', fontWeight: 600 }}>{mod.label}</span>
-                          <span style={{ display: 'block', fontSize: '0.65rem', opacity: 0.4, marginTop: '2px' }}>
-                            {mod.desc}
-                          </span>
+                      ) : (
+                        <div
+                          style={{
+                            width: '50px',
+                            height: '50px',
+                            borderRadius: '12px',
+                            border: '1px solid var(--border-matte)',
+                            background: 'rgba(255,255,255,0.05)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.8rem',
+                            fontWeight: 700
+                          }}
+                        >
+                          {guilds.find((g) => g.id === selectedGuild)?.name?.slice(0, 2).toUpperCase() || '??'}
                         </div>
-                        {serverConfigs[selectedGuild].modules[mod.key] ? <Eye color="#4ade80" size={16} /> : <EyeOff color="#ff3b5c" size={16} />}
-                      </div>
-                    ))}
-                  </div>
-                </section>
+                      )}
+                    </div>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-                  <button
-                    className="matte-btn"
-                    onClick={handleServerSave}
-                    style={{ padding: '12px 30px', fontSize: '0.75rem', background: '#fff', color: '#0b0b0c', border: 'none', display: 'flex', alignItems: 'center', gap: '8px', borderRadius: '50px', fontWeight: 900, letterSpacing: '0.1em', cursor: 'pointer' }}
-                  >
-                    <Save size={14} />
-                    <span>SAVE GUILD CONFIG</span>
-                  </button>
-                </div>
+                    {!guilds.find((g) => g.id === selectedGuild)?.botIn ? (
+                      <div
+                        className="matte-card"
+                        style={{
+                          padding: '40px 20px',
+                          borderRadius: '16px',
+                          border: '1px solid var(--border-matte)',
+                          textAlign: 'center',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: '15px'
+                        }}
+                      >
+                        <Bot size={48} color="rgba(255,255,255,0.3)" />
+                        <div>
+                          <h4 style={{ fontSize: '0.95rem', fontWeight: 900, marginBottom: '5px' }}>KSAEKVAT Bot Offline in Sector</h4>
+                          <p style={{ fontSize: '0.75rem', opacity: 0.6, maxWidth: '420px', margin: '0 auto', lineHeight: 1.4 }}>
+                            To configure custom prefix, enable modular systems, and activate welcome greetings, authorize KSAEKVAT for this guild.
+                          </p>
+                        </div>
+                        <a
+                          href={`https://discord.com/api/oauth2/authorize?client_id=1399459454889754805&permissions=8&scope=bot%20applications.commands&guild_id=${selectedGuild}&disable_guild_select=true`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="matte-btn"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '10px 24px',
+                            fontSize: '0.75rem',
+                            background: '#fff',
+                            color: '#0b0b0c',
+                            border: 'none',
+                            borderRadius: '50px',
+                            fontWeight: 900,
+                            letterSpacing: '0.05em',
+                            textDecoration: 'none',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          INVITE BOT INTO SECTOR
+                        </a>
+                      </div>
+                    ) : !serverConfigs[selectedGuild] ? (
+                      <div
+                        className="matte-card"
+                        style={{
+                          padding: '30px',
+                          borderRadius: '16px',
+                          border: '1px solid var(--border-matte)',
+                          textAlign: 'center',
+                          opacity: 0.5,
+                          fontSize: '0.8rem'
+                        }}
+                      >
+                        SYNCHRONIZING GUILD MATRIX CONFIGURATION...
+                      </div>
+                    ) : (
+                      <>
+                        <section
+                          className="matte-card"
+                          style={{
+                            padding: '20px',
+                            borderRadius: '16px',
+                            border: '1px solid var(--border-matte)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              marginBottom: '15px',
+                              opacity: 0.8,
+                            }}
+                          >
+                            <Settings size={16} />
+                            <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                              General Server Settings
+                            </h3>
+                          </div>
+
+                          <div className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                              <label style={{ fontSize: '0.65rem' }}>Server Command Prefix</label>
+                              <HelpCircle size={10} style={{ opacity: 0.4 }} title="Sets the base command trigger for all regular members." />
+                            </div>
+                            <input
+                              type="text"
+                              placeholder="k"
+                              maxLength="5"
+                              value={serverConfigs[selectedGuild].prefix || ''}
+                              onChange={(e) => handleServerConfigChange('prefix', e.target.value)}
+                              className="matte-input"
+                              style={{ padding: '6px 12px', fontSize: '0.75rem', maxWidth: '150px' }}
+                            />
+                          </div>
+                        </section>
+
+                        <section
+                          className="matte-card"
+                          style={{
+                            padding: '20px',
+                            borderRadius: '16px',
+                            border: '1px solid var(--border-matte)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              marginBottom: '15px',
+                              opacity: 0.8,
+                            }}
+                          >
+                            <MessageSquare size={16} />
+                            <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                              Welcome gate greetings
+                            </h3>
+                          </div>
+
+                          <div
+                            onClick={() => handleServerConfigChange('welcomeEnabled', !serverConfigs[selectedGuild].welcomeEnabled)}
+                            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 15px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem', marginBottom: '15px' }}
+                          >
+                            <div>
+                              <span style={{ display: 'inline', fontWeight: 600 }}>Enable Welcome Greetings</span>
+                              <span style={{ display: 'block', fontSize: '0.65rem', opacity: 0.4, marginTop: '2px' }}>
+                                Greet new sector members when they initialize synchronization protocols.
+                              </span>
+                            </div>
+                            <div className={`switch-toggle-matte ${serverConfigs[selectedGuild].welcomeEnabled ? 'active' : 'inactive'}`}><div className="switch-handle-matte" /></div>
+                          </div>
+
+                          {serverConfigs[selectedGuild].welcomeEnabled && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                              <div className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
+                                <label style={{ fontSize: '0.65rem' }}>Welcome Target Channel</label>
+                                <div className="icon-input">
+                                  <Hash size={12} />
+                                  <select
+                                    value={serverConfigs[selectedGuild].welcomeChannel || ''}
+                                    onChange={(e) => handleServerConfigChange('welcomeChannel', e.target.value || null)}
+                                    className="matte-input"
+                                    style={{ padding: '6px 12px 6px 35px', fontSize: '0.75rem', width: '100%', appearance: 'none', WebkitAppearance: 'none' }}
+                                  >
+                                    <option value="">None (Send to default/system channel)</option>
+                                    {guildChannels[selectedGuild]?.map((ch) => (
+                                      <option key={ch.id} value={ch.id}>
+                                        {ch.name}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </div>
+                              </div>
+                              <div className="input-group" style={{ marginBottom: 0, gap: '4px' }}>
+                                <label style={{ fontSize: '0.65rem' }}>Welcome Message Template</label>
+                                <textarea
+                                  placeholder="Welcome {user}!"
+                                  value={serverConfigs[selectedGuild].welcomeMessage || ''}
+                                  onChange={(e) => handleServerConfigChange('welcomeMessage', e.target.value)}
+                                  className="matte-input"
+                                  style={{
+                                    minHeight: '60px',
+                                    resize: 'vertical',
+                                    background: 'rgba(255,255,255,0.02)',
+                                    padding: '10px',
+                                    borderRadius: '12px',
+                                    fontSize: '0.75rem',
+                                  }}
+                                />
+                                <span style={{ fontSize: '0.6rem', opacity: 0.3 }}>
+                                  Available wildcards: `{{user}}` (mentions user), `{{guild}}` (server name).
+                                </span>
+                              </div>
+                            </div>
+                          )}
+                        </section>
+
+                        <section
+                          className="matte-card"
+                          style={{
+                            padding: '20px',
+                            borderRadius: '16px',
+                            border: '1px solid var(--border-matte)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '10px',
+                              marginBottom: '15px',
+                              opacity: 0.8,
+                            }}
+                          >
+                            <Layers size={16} />
+                            <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                              Operational Bot Modules
+                            </h3>
+                          </div>
+                          <p style={{ fontSize: '0.75rem', opacity: 0.6, lineHeight: 1.4, marginBottom: '15px' }}>
+                            De-authorize or load specific KSAEKVAT core mechanics on this server. Members will not be able to execute commands associated with disabled modules.
+                          </p>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                            {[
+                              { key: 'rpg', label: '⚔️ Advanced RPG Combat & Battle System', desc: 'Allows dungeoneering, boss duels, battles, and operative ranks.' },
+                              { key: 'economy', label: '🪙 Economic ledger & Trade Systems', desc: 'Activates credits claims, bank accounts, daily bonuses, and transfers.' },
+                              { key: 'gacha', label: '🎲 Gacha Resonance Pools', desc: 'Unlocks resonator character rolls, pity counters, and pulls inventory.' },
+                              { key: 'hunting', label: '🐾 Pokemon Wilderness Hunting', desc: 'Spawns wild beasts, specimen logging, capturing, and zoo displays.' },
+                              { key: 'aiChat', label: '💬 SEA-LION AI Chat System', desc: 'Enables direct context conversations with the bot waifu companion.' },
+                            ].map((mod) => (
+                              <div
+                                key={mod.key}
+                                onClick={() => handleServerModuleChange(mod.key, !serverConfigs[selectedGuild].modules[mod.key])}
+                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 15px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem' }}
+                              >
+                                <div>
+                                  <span style={{ display: 'block', fontWeight: 600 }}>{mod.label}</span>
+                                  <span style={{ display: 'block', fontSize: '0.65rem', opacity: 0.4, marginTop: '2px' }}>
+                                    {mod.desc}
+                                  </span>
+                                </div>
+                                <div className={`switch-toggle-matte ${serverConfigs[selectedGuild].modules?.[mod.key] ? 'active' : 'inactive'}`}><div className="switch-handle-matte" /></div>
+                              </div>
+                            ))}
+                          </div>
+                        </section>
+
+                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+                          <button
+                            className="matte-btn"
+                            onClick={handleServerSave}
+                            disabled={saving}
+                            style={{ padding: '12px 30px', fontSize: '0.75rem', background: '#fff', color: '#0b0b0c', border: 'none', display: 'flex', alignItems: 'center', gap: '8px', borderRadius: '50px', fontWeight: 900, letterSpacing: '0.1em', cursor: 'pointer' }}
+                          >
+                            <Save size={14} />
+                            <span>{saving ? 'SAVING...' : 'SAVE GUILD CONFIG'}</span>
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
               </motion.div>
             )}
 
@@ -1550,24 +1750,30 @@ export default function DashboardPage() {
               >
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
                   <div className="matte-card" style={{ padding: '15px', borderRadius: '12px', border: '1px solid var(--border-matte)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <Activity size={24} color="#ffd700" />
+                    <Activity size={24} color="#4ade80" />
                     <div>
                       <span style={{ display: 'block', fontSize: '0.6rem', opacity: 0.4, textTransform: 'uppercase' }}>System Status</span>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 900, color: '#ffd700' }}>HEALTHY [SHARD_0]</span>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 900, color: '#4ade80' }}>
+                        {adminStats ? `ONLINE | WS: ${adminStats.ping}ms` : 'CONNECTING...'}
+                      </span>
                     </div>
                   </div>
                   <div className="matte-card" style={{ padding: '15px', borderRadius: '12px', border: '1px solid var(--border-matte)', display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <Bot size={24} color="rgba(255,255,255,0.6)" />
                     <div>
-                      <span style={{ display: 'block', fontSize: '0.6rem', opacity: 0.4, textTransform: 'uppercase' }}>Cached Guilds</span>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 900 }}>4 ACTIVE SECTORS</span>
+                      <span style={{ display: 'block', fontSize: '0.6rem', opacity: 0.4, textTransform: 'uppercase' }}>Active Guilds</span>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 900 }}>
+                        {adminStats ? `${adminStats.guildCount} ACTIVE SECTORS` : 'LOADING...'}
+                      </span>
                     </div>
                   </div>
                   <div className="matte-card" style={{ padding: '15px', borderRadius: '12px', border: '1px solid var(--border-matte)', display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <Cpu size={24} color="rgba(255,255,255,0.6)" />
                     <div>
-                      <span style={{ display: 'block', fontSize: '0.6rem', opacity: 0.4, textTransform: 'uppercase' }}>Specs Core Load</span>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 900 }}>0.8% CPU / 12 POOLS</span>
+                      <span style={{ display: 'block', fontSize: '0.6rem', opacity: 0.4, textTransform: 'uppercase' }}>Telemetry Memory</span>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 900 }}>
+                        {adminStats ? `${adminStats.memory.heapUsed}MB HEAP / ${adminStats.cachedUsers} USERS` : 'LOADING...'}
+                      </span>
                     </div>
                   </div>
                 </div>

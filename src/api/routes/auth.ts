@@ -9,7 +9,7 @@ const router = Router();
 
 // Redirect to Discord OAuth
 router.get('/discord', (req, res) => {
-  const url = `https://discord.com/api/oauth2/authorize?client_id=${config.clientId}&redirect_uri=${encodeURIComponent(config.redirectUri)}&response_type=code&scope=identify`;
+  const url = `https://discord.com/api/oauth2/authorize?client_id=${config.clientId}&redirect_uri=${encodeURIComponent(config.redirectUri)}&response_type=code&scope=identify%20guilds`;
   res.redirect(url);
 });
 
@@ -60,7 +60,7 @@ router.get('/discord/callback', async (req, res) => {
 
     // Create JWT
     const token = jwt.sign(
-      { id: userData.id, username: userData.username, avatar: userData.avatar },
+      { id: userData.id, username: userData.username, avatar: userData.avatar, accessToken: access_token },
       env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls',
       { expiresIn: '7d' }
     );

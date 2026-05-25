@@ -85,6 +85,9 @@ export interface IUser extends Document {
     }[];
     showStats: boolean;
     showInventory: boolean;
+    publicLeaderboard: boolean;
+    dmOnLevelUp: boolean;
+    compactLogs: boolean;
   };
   unlockedThemes: string[];
   quests: {
@@ -215,6 +218,9 @@ const UserSchema: Schema = new Schema({
     ],
     showStats: { type: Boolean, default: true },
     showInventory: { type: Boolean, default: true },
+    publicLeaderboard: { type: Boolean, default: true },
+    dmOnLevelUp: { type: Boolean, default: true },
+    compactLogs: { type: Boolean, default: false },
   },
   unlockedThemes: { type: [String], default: ['default'] },
 

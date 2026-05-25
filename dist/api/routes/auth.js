@@ -12,7 +12,7 @@ const database = require('../../services/DatabaseService');
 const router = (0, express_1.Router)();
 // Redirect to Discord OAuth
 router.get('/discord', (req, res) => {
-    const url = `https://discord.com/api/oauth2/authorize?client_id=${config.clientId}&redirect_uri=${encodeURIComponent(config.redirectUri)}&response_type=code&scope=identify`;
+    const url = `https://discord.com/api/oauth2/authorize?client_id=${config.clientId}&redirect_uri=${encodeURIComponent(config.redirectUri)}&response_type=code&scope=identify%20guilds`;
     res.redirect(url);
 });
 // Callback from Discord
@@ -54,7 +54,7 @@ router.get('/discord/callback', async (req, res) => {
             await database.saveUser(dbUser);
         }
         // Create JWT
-        const token = jsonwebtoken_1.default.sign({ id: userData.id, username: userData.username, avatar: userData.avatar }, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls', { expiresIn: '7d' });
+        const token = jsonwebtoken_1.default.sign({ id: userData.id, username: userData.username, avatar: userData.avatar, accessToken: access_token }, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls', { expiresIn: '7d' });
         // Set HTTP-Only Cookie
         res.cookie('ksaekvat_session', token, {
             httpOnly: true,

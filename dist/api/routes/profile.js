@@ -152,15 +152,16 @@ router.get('/:userId', async (req, res) => {
                 customPrefix: user.customPrefix || null,
                 customSubPrefix: user.customSubPrefix || null,
                 profileTheme: {
-                    ...(user.profileTheme || {
-                        theme: 'default',
-                        accentColor: '#22d3ee',
-                        bio: 'Exploring the digital realm.',
-                        slug: null,
-                        showStats: true,
-                        showInventory: true,
-                        socials: {},
-                    }),
+                    theme: 'default',
+                    accentColor: '#22d3ee',
+                    bio: 'Exploring the digital realm.',
+                    slug: null,
+                    showStats: true,
+                    showInventory: true,
+                    publicLeaderboard: true,
+                    dmOnLevelUp: true,
+                    compactLogs: false,
+                    ...(user.profileTheme || {}),
                     portfolio: user.profileTheme?.portfolio || [],
                     favorites: hydratedFavorites,
                     // Use live Discord data first, fallback to DB
@@ -186,7 +187,7 @@ router.post('/update', async (req, res) => {
         const jwt = require('jsonwebtoken');
         const { env } = require('../../utils/env.js');
         const decoded = jwt.verify(token, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls');
-        const { bio, accentColor, background, music, socials, banner, bannerPosition, avatar, showStats, showInventory, portfolio, favorites, slug, customPrefix, customSubPrefix, } = req.body;
+        const { bio, accentColor, background, music, socials, banner, bannerPosition, avatar, showStats, showInventory, publicLeaderboard, dmOnLevelUp, compactLogs, portfolio, favorites, slug, customPrefix, customSubPrefix, } = req.body;
         const user = await User.findOne({ id: decoded.id });
         if (!user)
             return res.status(404).json({ success: false, error: 'User not found' });
@@ -246,6 +247,9 @@ router.post('/update', async (req, res) => {
             slug: slug !== undefined ? slug : user.profileTheme.slug,
             showStats: showStats !== undefined ? showStats : user.profileTheme.showStats,
             showInventory: showInventory !== undefined ? showInventory : user.profileTheme.showInventory,
+            publicLeaderboard: publicLeaderboard !== undefined ? publicLeaderboard : user.profileTheme.publicLeaderboard,
+            dmOnLevelUp: dmOnLevelUp !== undefined ? dmOnLevelUp : user.profileTheme.dmOnLevelUp,
+            compactLogs: compactLogs !== undefined ? compactLogs : user.profileTheme.compactLogs,
             portfolio: portfolio !== undefined ? portfolio : user.profileTheme.portfolio,
             favorites: favorites !== undefined ? favorites : user.profileTheme.favorites,
             socials: {

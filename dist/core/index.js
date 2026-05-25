@@ -125,6 +125,7 @@ async function bootstrap() {
     // Static assets
     app.use('/assets', express.static(path.join(__dirname, '../../assets')));
     // API Routes
+    app.locals.client = client;
     app.use('/api', require('../api/index'));
     // Serve dashboard static build
     const dashboardDist = path.join(__dirname, '../../dashboard/dist');

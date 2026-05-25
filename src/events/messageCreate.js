@@ -31,6 +31,18 @@ module.exports = {
     let userSubPrefixes = config.shortPrefixes; // default global short prefixes
 
     try {
+      if (message.guild) {
+        const GuildConfig = require('../models/GuildConfig').default || require('../models/GuildConfig');
+        const guildConf = await GuildConfig.findOne({ guildId: message.guild.id }).lean();
+        if (guildConf && guildConf.prefix) {
+          userMainPrefixes = [
+            guildConf.prefix,
+            guildConf.prefix.toLowerCase(),
+            guildConf.prefix.toUpperCase(),
+          ].filter((v, i, a) => a.indexOf(v) === i);
+        }
+      }
+
       const userData = await database.getUser(message.author.id, message.author.username);
       if (userData?.customPrefix) {
         // Replace global prefix with user's personal one
@@ -191,6 +203,41 @@ module.exports = {
         // 3. Clear to go!
         cooldowns.setCooldown(`GLOBAL-${userId}`);
         activeRequests.add(userId);
+
+        // Check Guild Module status
+        if (message.guild) {
+          try {
+            const GuildConfig = require('../models/GuildConfig').default || require('../models/GuildConfig');
+            const guildConf = await GuildConfig.findOne({ guildId: message.guild.id }).lean();
+            if (guildConf && guildConf.modules) {
+              const category = command.category;
+              let isEnabled = true;
+
+              if (category === 'battle') isEnabled = guildConf.modules.rpg;
+              else if (category === 'economy' || category === 'gambling') isEnabled = guildConf.modules.economy;
+              else if (category === 'pokemon') isEnabled = guildConf.modules.hunting;
+              else if (category === 'gacha' || commandName === 'gacha') isEnabled = guildConf.modules.gacha;
+              else if (category === 'ai' || commandName === 'ai') isEnabled = guildConf.modules.aiChat;
+
+              if (!isEnabled) {
+                activeRequests.delete(userId);
+                message.reply({
+                  embeds: [
+                    {
+                      color: parseInt(config.colors.error.slice(1), 16),
+                      title: '⚔️ Module Disabled',
+                      description: `The **${category || commandName}** module is currently disabled on this server. An administrator can enable it via the web dashboard! (｡•́︿•̀｡)`,
+                      timestamp: new Date(),
+                    },
+                  ],
+                }).catch(() => {});
+                return;
+              }
+            }
+          } catch (e) {
+            logger.error('Failed to verify guild module state:', e);
+          }
+        }
 
         // Check if user is admin for admin-only commands
         if (command.adminOnly && !config.adminIds.includes(message.author.id)) {

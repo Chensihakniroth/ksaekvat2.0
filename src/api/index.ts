@@ -47,6 +47,8 @@ router.use('/zoo', require('./routes/zoo'));
 router.use('/auth', require('./routes/auth'));
 router.use('/shop', require('./routes/shop'));
 router.use('/history', require('./routes/history'));
+router.use('/guild', require('./routes/guild'));
+router.use('/admin', require('./routes/admin'));
 
 // --- Health ---
 router.get('/ping', (_req, res) =>
