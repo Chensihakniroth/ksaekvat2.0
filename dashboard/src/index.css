@@ -1142,3 +1142,13 @@ img {
   }
 }
 
+@media (max-width: 768px) {
+  .creator-landscape-inner {
+    flex-direction: column !important;
+  }
+  .creator-landscape-inner > div {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+}
+

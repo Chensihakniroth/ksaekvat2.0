@@ -29,12 +29,14 @@ const MO_PROFILE_LINK = 'https://ksaekvat.up.railway.app/profile/mo';
 // Discord Avatar Component with Decoration Overlaid
 function DiscordAvatar({ userId, avatarHash, decorationAsset, size = 70 }) {
   const avatarUrl = avatarHash
-    ? `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.png`
+    ? `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.png?size=256`
     : 'https://cdn.discordapp.com/embed/avatars/0.png';
 
   const decorationUrl = decorationAsset
-    ? `https://cdn.discordapp.com/avatar-decoration-presets/${decorationAsset}.png`
+    ? `https://cdn.discordapp.com/avatar-decoration-presets/${decorationAsset}.png?size=256&passthrough=true`
     : null;
+
+  const decoSize = size * 1.25;
 
   return (
     <div
@@ -62,14 +64,15 @@ function DiscordAvatar({ userId, avatarHash, decorationAsset, size = 70 }) {
       {decorationUrl && (
         <img
           src={decorationUrl}
-          alt="Avatar Decoration"
+          alt=""
           style={{
             position: 'absolute',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: `${size * 1.5}px`,
-            height: `${size * 1.5}px`,
+            width: `${decoSize}px`,
+            height: `${decoSize}px`,
+            objectFit: 'contain',
             zIndex: 2,
             pointerEvents: 'none',
           }}
@@ -574,7 +577,7 @@ export default function HomePage() {
 
               </div>
 
-              {/* Right Column: Actions & Meta Info */}
+              {/* Right Column: Creator Info & Stats */}
               <div style={{
                 flex: '1',
                 padding: '24px',
@@ -585,23 +588,88 @@ export default function HomePage() {
                 gap: '20px'
               }}>
                 {/* Info Grid */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    fontSize: '0.8rem'
-                  }}>
-                    <span style={{ fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>User Reviews</span>
-                    <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 500 }}>No reviews yet</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div>
+                    <div style={{
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
+                      color: 'rgba(255,255,255,0.4)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                      marginBottom: '8px'
+                    }}>
+                      SYSTEM METRICS
+                    </div>
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '8px'
+                    }}>
+                      <div style={{
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px solid rgba(255,255,255,0.04)',
+                        borderRadius: '8px',
+                        padding: '8px 10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '2px'
+                      }}>
+                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>LEVEL</span>
+                        <span style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 700 }}>
+                          {ownerProfile?.level || 1}
+                        </span>
+                      </div>
+                      <div style={{
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px solid rgba(255,255,255,0.04)',
+                        borderRadius: '8px',
+                        padding: '8px 10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '2px'
+                      }}>
+                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>CREDITS</span>
+                        <span style={{ fontSize: '0.9rem', color: '#4ade80', fontWeight: 700 }}>
+                          {(ownerProfile?.balance || 0).toLocaleString()}
+                        </span>
+                      </div>
+                      <div style={{
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px solid rgba(255,255,255,0.04)',
+                        borderRadius: '8px',
+                        padding: '8px 10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '2px'
+                      }}>
+                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>GACHA RESONANCE</span>
+                        <span style={{ fontSize: '0.9rem', color: '#f47fff', fontWeight: 700 }}>
+                          {ownerProfile?.characterCount || 0} Chars
+                        </span>
+                      </div>
+                      <div style={{
+                        background: 'rgba(255,255,255,0.02)',
+                        border: '1px solid rgba(255,255,255,0.04)',
+                        borderRadius: '8px',
+                        padding: '8px 10px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '2px'
+                      }}>
+                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>HUNT DECK</span>
+                        <span style={{ fontSize: '0.9rem', color: '#00a8fc', fontWeight: 700 }}>
+                          {ownerProfile?.pokemonCount || 0} Beasts
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
                   <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)' }} />
 
                   {/* Links */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <span style={{ fontSize: '0.65rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      Uplink Profile
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                      UPLINK PROFILE
                     </span>
                     <a 
                       href={MO_PROFILE_LINK}
@@ -611,10 +679,11 @@ export default function HomePage() {
                         fontSize: '0.85rem',
                         color: '#00a8fc',
                         fontWeight: 500,
-                        display: 'flex',
+                        display: 'inline-flex',
                         alignItems: 'center',
                         gap: '4px',
-                        textDecoration: 'none'
+                        textDecoration: 'none',
+                        width: 'fit-content'
                       }}
                     >
                       ksaekvat.up.railway.app/profile/mo
@@ -625,44 +694,24 @@ export default function HomePage() {
 
                 {/* Buttons / Actions */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <Link 
-                      to="/dashboard"
-                      className="matte-btn"
-                      style={{
-                        flex: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px',
-                        padding: '10px 16px',
-                        fontSize: '0.8rem',
-                        fontWeight: 600,
-                        textDecoration: 'none'
-                      }}
-                    >
-                      <Pencil size={14} />
-                      <span>Edit Profile</span>
-                    </Link>
-
-                    <button 
-                      onClick={handleCopyId}
-                      className="matte-btn"
-                      style={{
-                        flex: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px',
-                        padding: '10px 16px',
-                        fontSize: '0.8rem',
-                        fontWeight: 600
-                      }}
-                    >
-                      {copied ? <Check size={14} style={{ color: '#4ade80' }} /> : <Copy size={14} />}
-                      <span>{copied ? 'Copied ID!' : 'Copy User ID'}</span>
-                    </button>
-                  </div>
+                  <button 
+                    onClick={handleCopyId}
+                    className="matte-btn"
+                    style={{
+                      width: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      padding: '10px 16px',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {copied ? <Check size={14} style={{ color: '#4ade80' }} /> : <Copy size={14} />}
+                    <span>{copied ? 'Copied ID!' : 'Copy Discord ID'}</span>
+                  </button>
                 </div>
 
               </div>
