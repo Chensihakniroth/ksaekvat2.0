@@ -1,11 +1,33 @@
 import { Router, Request, Response } from 'express';
+import axios from 'axios';
 const User = require('../../models/User').default || require('../../models/User');
 const registry = require('../../utils/registry.js');
 const animalService =
   require('../../services/AnimalService').default || require('../../services/AnimalService');
 const mongoose = require('mongoose');
+const { env } = require('../../utils/env.js');
 
 const router = Router();
+
+// Fetch live Discord user data using the bot token
+// This ensures avatar and decoration are always up-to-date
+async function fetchDiscordUser(discordId: string): Promise<{ avatar: string | null; avatarDecoration: string | null; username: string | null } | null> {
+  try {
+    const res = await axios.get(`https://discord.com/api/v10/users/${discordId}`, {
+      headers: { Authorization: `Bot ${env.DISCORD_TOKEN}` },
+      timeout: 5000,
+    });
+    const data = res.data;
+    return {
+      avatar: data.avatar || null,
+      avatarDecoration: data.avatar_decoration_data?.asset || null,
+      username: data.username || null,
+    };
+  } catch (err: any) {
+    console.warn(`[Backend] Failed to fetch Discord user ${discordId}:`, err?.message || err);
+    return null;
+  }
+}
 
 // ... existing search route ...
 
@@ -42,6 +64,9 @@ router.get('/:userId', async (req: Request, res: Response) => {
     }
 
     console.log(`[Backend] Loading profile for: ${user.username} (${user.id})`);
+
+    // Fetch live Discord data (avatar + decoration) using the bot token
+    const discordData = await fetchDiscordUser(user.id);
 
     // Hydrate inventory
     const hydratedInventory = (user.gacha_inventory || [])
@@ -140,7 +165,9 @@ router.get('/:userId', async (req: Request, res: Response) => {
           }),
           portfolio: user.profileTheme?.portfolio || [],
           favorites: hydratedFavorites,
-          avatarDecoration: user.profileTheme?.avatarDecoration || null,
+          // Use live Discord data first, fallback to DB
+          avatar: discordData?.avatar || user.profileTheme?.avatar || null,
+          avatarDecoration: discordData?.avatarDecoration || user.profileTheme?.avatarDecoration || null,
         },
       },
     });

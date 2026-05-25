@@ -429,7 +429,7 @@ export default function HomePage() {
             border: '1px solid rgba(255,255,255,0.06)',
             width: '100%',
             maxWidth: '850px',
-            overflow: 'hidden',
+            overflow: 'visible',
             fontFamily: "'Outfit', sans-serif"
           }}>
             <div className="creator-landscape-inner" style={{
@@ -469,7 +469,9 @@ export default function HomePage() {
                     left: '20px',
                     background: '#18191c',
                     borderRadius: '50%',
-                    padding: '5px'
+                    padding: '5px',
+                    overflow: 'visible',
+                    zIndex: 5
                   }}>
                     <DiscordAvatar 
                       userId={ownerProfile?.userId || MO_DISCORD_ID}
