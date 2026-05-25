@@ -48,6 +48,12 @@ router.get('/discord/callback', async (req, res) => {
       }
       dbUser.profileTheme.avatar = userData.avatar || null;
       dbUser.profileTheme.avatarDecoration = userData.avatar_decoration_data?.asset || null;
+      // Build full banner CDN URL from hash
+      const bannerHash = userData.banner || null;
+      if (bannerHash) {
+        const ext = bannerHash.startsWith('a_') ? 'gif' : 'png';
+        dbUser.profileTheme.banner = `https://cdn.discordapp.com/banners/${userData.id}/${bannerHash}.${ext}?size=1024`;
+      }
       dbUser.markModified('profileTheme');
       await database.saveUser(dbUser);
     }

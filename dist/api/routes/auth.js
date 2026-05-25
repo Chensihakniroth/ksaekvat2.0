@@ -38,6 +38,21 @@ router.get('/discord/callback', async (req, res) => {
         const userData = userRes.data;
         // Ensure user exists in our DB
         const dbUser = await database.getUser(userData.id, userData.username);
+        if (dbUser) {
+            if (!dbUser.profileTheme) {
+                dbUser.profileTheme = { theme: 'default', favorites: [] };
+            }
+            dbUser.profileTheme.avatar = userData.avatar || null;
+            dbUser.profileTheme.avatarDecoration = userData.avatar_decoration_data?.asset || null;
+            // Build full banner CDN URL from hash
+            const bannerHash = userData.banner || null;
+            if (bannerHash) {
+                const ext = bannerHash.startsWith('a_') ? 'gif' : 'png';
+                dbUser.profileTheme.banner = `https://cdn.discordapp.com/banners/${userData.id}/${bannerHash}.${ext}?size=1024`;
+            }
+            dbUser.markModified('profileTheme');
+            await database.saveUser(dbUser);
+        }
         // Create JWT
         const token = jsonwebtoken_1.default.sign({ id: userData.id, username: userData.username, avatar: userData.avatar }, env.JWT_SECRET || 'ksaekvat-super-secret-jwt-key-change-me-in-prod-pls', { expiresIn: '7d' });
         // Set HTTP-Only Cookie
@@ -67,6 +82,7 @@ router.get('/me', async (req, res) => {
                 id: decoded.id,
                 username: decoded.username,
                 avatar: decoded.avatar,
+                avatarDecoration: user.profileTheme?.avatarDecoration || null,
                 slug: user.profileTheme?.slug || null,
                 balance: user.balance || 0,
                 level: user.level || 1,

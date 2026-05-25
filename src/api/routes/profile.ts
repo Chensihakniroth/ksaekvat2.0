@@ -24,11 +24,17 @@ async function fetchDiscordUser(discordId: string): Promise<{
       timeout: 5000,
     });
     const data = res.data;
+    const bannerHash = data.banner || null;
+    let bannerUrl: string | null = null;
+    if (bannerHash) {
+      const ext = bannerHash.startsWith('a_') ? 'gif' : 'png';
+      bannerUrl = `https://cdn.discordapp.com/banners/${discordId}/${bannerHash}.${ext}?size=1024`;
+    }
     return {
       avatar: data.avatar || null,
       avatarDecoration: data.avatar_decoration_data?.asset || null,
       username: data.username || null,
-      banner: data.banner || null,
+      banner: bannerUrl,
       bannerColor: data.banner_color || null,
     };
   } catch (err: any) {

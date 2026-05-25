@@ -101,6 +101,7 @@ const UserSchema = new mongoose_1.Schema({
         banner: { type: String, default: null },
         bannerPosition: { type: String, default: '50%' },
         avatar: { type: String, default: null },
+        avatarDecoration: { type: String, default: null },
         music: { type: String, default: null },
         slug: { type: String, default: null, index: true },
         socials: {

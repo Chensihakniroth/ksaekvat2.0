@@ -468,10 +468,7 @@ export default function HomePage() {
         {/* BOT OWNER CARD (Discord Landscape Style) */}
         {(() => {
           const bannerColor = ownerProfile?.profileTheme?.bannerColor || '#2a0810';
-          const hasBannerImage = !!ownerProfile?.profileTheme?.banner;
-          const bannerUrl = hasBannerImage 
-            ? `https://cdn.discordapp.com/banners/${ownerProfile.userId || MO_DISCORD_ID}/${ownerProfile.profileTheme.banner}.${ownerProfile.profileTheme.banner.startsWith('a_') ? 'gif' : 'png'}?size=600` 
-            : null;
+          const bannerUrl = ownerProfile?.profileTheme?.banner || null;
           const socials = ownerProfile?.profileTheme?.socials || {
             github: 'Chensihakniroth',
             instagram: '_callme_.mo'

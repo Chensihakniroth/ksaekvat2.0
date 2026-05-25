@@ -38,23 +38,38 @@ module.exports = {
                     ],
                 });
             }
-            // Train the Pokémon (consumes 1 from Zoo)
-            await message.channel.sendTyping();
-            const result = await database.trainPokemon(message.author.id, speciesName);
-            if (!result.success) {
-                return message.reply({
-                    embeds: [
-                        new EmbedBuilder()
-                            .setColor(colors.error)
-                            .setTitle('(｡•́︿•̀｡) Training Failed')
-                            .setDescription(result.message),
-                    ],
-                });
+            const currentTeamIds = new Set(currentTeam.map((p) => p._id.toString()));
+            // 1) Check if the user already has this species benched (trained but not in team)
+            const trainedPokemon = await database.getTrainedPokemon(message.author.id);
+            const availableBenched = trainedPokemon.filter((p) => p.speciesKey === speciesName && !currentTeamIds.has(p._id.toString()));
+            let pokemonToAdd;
+            let usedFromBench = false;
+            if (availableBenched.length > 0) {
+                // Pick the highest level benched pokemon of this species
+                availableBenched.sort((a, b) => b.level - a.level);
+                pokemonToAdd = availableBenched[0];
+                usedFromBench = true;
             }
-            // Add to team
+            else {
+                // 2) Train a new one from the Zoo (consumes 1 from Zoo count)
+                await message.channel.sendTyping();
+                const result = await database.trainPokemon(message.author.id, speciesName);
+                if (!result.success) {
+                    return message.reply({
+                        embeds: [
+                            new EmbedBuilder()
+                                .setColor(colors.error)
+                                .setTitle('(｡•́︿•̀｡) Training Failed')
+                                .setDescription(result.message + "\n*(Or maybe they're already in your team!)*"),
+                        ],
+                    });
+                }
+                pokemonToAdd = result.pokemon;
+            }
+            // Add to team array
             const user = await database.getUser(message.author.id);
             const teamIds = (user.pokemonTeam || []).map((id) => id.toString());
-            teamIds.push(result.pokemon._id.toString());
+            teamIds.push(pokemonToAdd._id.toString());
             await database.setPokemonTeam(message.author.id, teamIds);
             // Get type info for display
             const baseStats = await PokemonBattleService.getBaseStats(speciesName);
@@ -63,18 +78,21 @@ module.exports = {
                     .map((t) => `${PokemonBattleService.getTypeEmoji(t)} ${t.charAt(0).toUpperCase() + t.slice(1)}`)
                     .join(' / ')
                 : 'Unknown';
+            const capitalizedName = speciesName.charAt(0).toUpperCase() + speciesName.slice(1);
             return message.reply({
                 embeds: [
                     new EmbedBuilder()
                         .setColor(colors.success)
-                        .setTitle(`(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧ ${speciesName.charAt(0).toUpperCase() + speciesName.slice(1)} is ready to battle!`)
+                        .setTitle(`(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧ ${capitalizedName} joined the team!`)
                         .setDescription([
-                        `**Species:** ${speciesName.charAt(0).toUpperCase() + speciesName.slice(1)}`,
+                        `**Species:** ${capitalizedName}`,
                         `**Type:** ${typeDisplay}`,
-                        `**Level:** 1`,
+                        `**Level:** ${pokemonToAdd.level}`,
                         `**Team Slot:** ${teamIds.length}/${config.pokemonBattle.maxTeamSize}`,
                         '',
-                        `*1 ${speciesName} was consumed from your Zoo for training!*`,
+                        usedFromBench
+                            ? `*Re-added from your benched Pokémon!*`
+                            : `*1 ${capitalizedName} was consumed from your Zoo for training!*`,
                     ].join('\n')),
                 ],
             });
@@ -132,22 +150,78 @@ module.exports = {
             }
             const currentTeam = await database.getPokemonTeam(message.author.id);
             const teamIds = new Set(currentTeam.map((p) => p._id.toString()));
-            const lines = [];
-            for (const p of trained) {
-                const baseStats = await PokemonBattleService.getBaseStats(p.speciesKey);
-                const typeEmoji = baseStats ? PokemonBattleService.getTypeEmojis(baseStats.types) : '❓';
-                const inTeam = teamIds.has(p._id.toString()) ? ' ⚔️' : '';
-                lines.push(`${typeEmoji} **${p.speciesKey.charAt(0).toUpperCase() + p.speciesKey.slice(1)}** — Lv.${p.level}${inTeam}`);
-            }
-            return message.reply({
-                embeds: [
-                    new EmbedBuilder()
-                        .setColor(colors.primary)
-                        .setTitle(`📋 ${message.author.username}'s Trained Pokémon`)
-                        .setDescription(lines.join('\n'))
-                        .setFooter({ text: `${trained.length} trained | ⚔️ = In battle team` }),
-                ],
+            const BenchRenderer = require('../../services/BenchRenderer').default || require('../../services/BenchRenderer');
+            const { AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
+            let currentPage = 0;
+            const ITEMS_PER_PAGE = 6;
+            const totalPages = Math.ceil(trained.length / ITEMS_PER_PAGE);
+            const generatePage = async (page) => {
+                const start = page * ITEMS_PER_PAGE;
+                const chunk = trained.slice(start, start + ITEMS_PER_PAGE);
+                // Fetch type data for each Pokémon in this chunk
+                const typeMap = new Map();
+                for (const p of chunk) {
+                    const baseStats = await PokemonBattleService.getBaseStats(p.speciesKey);
+                    if (baseStats) {
+                        typeMap.set(p._id.toString(), baseStats.types);
+                    }
+                }
+                const buffer = await BenchRenderer.renderPage(chunk, teamIds, typeMap);
+                return new AttachmentBuilder(buffer, { name: 'bench.png' });
+            };
+            const getRow = (page) => {
+                const row = new ActionRowBuilder();
+                row.addComponents(new ButtonBuilder()
+                    .setCustomId('prev_page')
+                    .setEmoji('◀️')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(page === 0), new ButtonBuilder()
+                    .setCustomId('next_page')
+                    .setEmoji('▶️')
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(page === totalPages - 1));
+                return row;
+            };
+            await message.channel.sendTyping();
+            const initialAttachment = await generatePage(currentPage);
+            const embed = new EmbedBuilder()
+                .setColor(colors.primary)
+                .setTitle(`📋 ${message.author.username}'s Trained Pokémon`)
+                .setDescription(`Showing page **${currentPage + 1}** of **${totalPages}**\n*(Total trained: ${trained.length})*`)
+                .setImage('attachment://bench.png');
+            const responseMsg = await message.reply({
+                embeds: [embed],
+                files: [initialAttachment],
+                components: totalPages > 1 ? [getRow(currentPage)] : [],
             });
+            if (totalPages <= 1)
+                return;
+            const collector = responseMsg.createMessageComponentCollector({
+                componentType: ComponentType.Button,
+                time: config.ui.longCollectorTimeout || 300000,
+            });
+            collector.on('collect', async (i) => {
+                if (i.user.id !== message.author.id) {
+                    return i.reply({ content: "These aren't your Pokémon! (・_・ヾ", ephemeral: true });
+                }
+                if (i.customId === 'prev_page')
+                    currentPage--;
+                if (i.customId === 'next_page')
+                    currentPage++;
+                await i.deferUpdate();
+                const newAttachment = await generatePage(currentPage);
+                embed.setDescription(`Showing page **${currentPage + 1}** of **${totalPages}**\n*(Total trained: ${trained.length})*`);
+                // To avoid Discord attachment CDN bugs, we clear the old files and send the new one
+                await responseMsg.edit({
+                    embeds: [embed],
+                    files: [newAttachment],
+                    components: [getRow(currentPage)],
+                });
+            });
+            collector.on('end', () => {
+                responseMsg.edit({ components: [] }).catch(() => { });
+            });
+            return;
         }
         // ─── DEFAULT: SHOW CURRENT TEAM ──────────────────────────────────
         const currentTeam = await database.getPokemonTeam(message.author.id);

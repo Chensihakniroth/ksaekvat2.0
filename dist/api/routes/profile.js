@@ -1,11 +1,44 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const axios_1 = __importDefault(require("axios"));
 const User = require('../../models/User').default || require('../../models/User');
 const registry = require('../../utils/registry.js');
 const animalService = require('../../services/AnimalService').default || require('../../services/AnimalService');
 const mongoose = require('mongoose');
+const { env } = require('../../utils/env.js');
 const router = (0, express_1.Router)();
+// Fetch live Discord user data using the bot token
+// This ensures avatar and decoration are always up-to-date
+async function fetchDiscordUser(discordId) {
+    try {
+        const res = await axios_1.default.get(`https://discord.com/api/v10/users/${discordId}`, {
+            headers: { Authorization: `Bot ${env.DISCORD_TOKEN}` },
+            timeout: 5000,
+        });
+        const data = res.data;
+        const bannerHash = data.banner || null;
+        let bannerUrl = null;
+        if (bannerHash) {
+            const ext = bannerHash.startsWith('a_') ? 'gif' : 'png';
+            bannerUrl = `https://cdn.discordapp.com/banners/${discordId}/${bannerHash}.${ext}?size=1024`;
+        }
+        return {
+            avatar: data.avatar || null,
+            avatarDecoration: data.avatar_decoration_data?.asset || null,
+            username: data.username || null,
+            banner: bannerUrl,
+            bannerColor: data.banner_color || null,
+        };
+    }
+    catch (err) {
+        console.warn(`[Backend] Failed to fetch Discord user ${discordId}:`, err?.message || err);
+        return null;
+    }
+}
 // ... existing search route ...
 // GET /api/profile/:userId
 router.get('/:userId', async (req, res) => {
@@ -34,6 +67,8 @@ router.get('/:userId', async (req, res) => {
             return res.status(404).json({ success: false, error: 'User not found' });
         }
         console.log(`[Backend] Loading profile for: ${user.username} (${user.id})`);
+        // Fetch live Discord data (avatar + decoration) using the bot token
+        const discordData = await fetchDiscordUser(user.id);
         // Hydrate inventory
         const hydratedInventory = (user.gacha_inventory || [])
             .filter((item) => item.type !== 'weapon')
@@ -126,6 +161,11 @@ router.get('/:userId', async (req, res) => {
                     }),
                     portfolio: user.profileTheme?.portfolio || [],
                     favorites: hydratedFavorites,
+                    // Use live Discord data first, fallback to DB
+                    avatar: discordData?.avatar || user.profileTheme?.avatar || null,
+                    avatarDecoration: discordData?.avatarDecoration || user.profileTheme?.avatarDecoration || null,
+                    banner: discordData?.banner || user.profileTheme?.banner || null,
+                    bannerColor: discordData?.bannerColor || user.profileTheme?.bannerColor || null,
                 },
             },
         });
