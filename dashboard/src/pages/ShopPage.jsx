@@ -1,25 +1,14 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search,
   Sparkles,
-  Globe,
-  Sword,
-  Train,
-  Tv,
-  Waves,
   X,
-  Info,
-  Shield,
   Zap,
-  Target,
-  Activity,
   Star,
   ShoppingBag,
   ChevronLeft,
   ChevronRight,
-  PawPrint,
-  Layers,
   Filter,
 } from 'lucide-react';
 import CharIcon from '../components/CharIcon';
@@ -34,22 +23,20 @@ const RARITY_COLORS = {
   common: '#9ca3af',
 };
 
-// --- MODALS ---
-
+// --- REDESIGNED MODAL ---
 function CharacterModal({ char, onClose, onBuy }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="modal-overlay"
       onClick={onClose}
       style={{
         zIndex: 2000,
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,0.95)',
-        backdropFilter: 'blur(40px)',
+        background: 'rgba(5, 5, 5, 0.85)',
+        backdropFilter: 'blur(16px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -59,159 +46,135 @@ function CharacterModal({ char, onClose, onBuy }) {
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="glass-panel"
+        exit={{ scale: 0.95, opacity: 0 }}
+        className="matte-card"
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
-          maxWidth: '1000px',
-          borderRadius: '40px',
+          maxWidth: '850px',
+          padding: '0px',
           overflow: 'hidden',
-          border: '1px solid rgba(255,255,255,0.05)',
-          background: 'rgba(255,255,255,0.01)',
         }}
       >
+        {/* Close Button */}
         <button
-          className="bs-close"
           onClick={onClose}
+          className="matte-btn"
           style={{
             position: 'absolute',
-            top: '30px',
-            right: '30px',
+            top: '20px',
+            right: '20px',
             zIndex: 10,
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.05)',
+            padding: '8px',
+            borderRadius: '50%',
+            background: 'rgba(255, 255, 255, 0.02)',
           }}
         >
-          <X size={20} />
+          <X size={16} />
         </button>
+
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+          
+          {/* Left panel - Avatar image */}
           <div
             style={{
-              flex: '1 1 280px',
-              minWidth: '280px',
-              padding: '80px 40px',
-              background: 'rgba(255,255,255,0.01)',
+              flex: '1 1 300px',
+              padding: '60px 40px',
+              background: 'rgba(255, 255, 255, 0.01)',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              borderRight: '1px solid rgba(255,255,255,0.03)',
+              borderRight: '1px solid var(--border-matte)',
             }}
           >
-            <div
-              style={{ width: '240px', height: '240px', marginBottom: '40px', maxWidth: '100%' }}
-            >
+            <div style={{ width: '200px', height: '200px', marginBottom: '30px' }}>
               <CharIcon name={char.name} game={char.game?.toLowerCase()} rarity={char.rarity} />
             </div>
+            
             <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  gap: '6px',
-                  justifyContent: 'center',
-                  marginBottom: '20px',
-                  opacity: 0.5,
-                }}
-              >
-                {[...Array(parseInt(char.rarity))].map((_, i) => (
-                  <Star key={i} size={14} fill="var(--gold)" color="var(--gold)" />
+              <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', marginBottom: '15px' }}>
+                {[...Array(parseInt(char.rarity) || 5)].map((_, i) => (
+                  <Star key={i} size={12} fill="#f59e0b" color="#f59e0b" />
                 ))}
               </div>
-              <h1
-                style={{
-                  fontSize: 'clamp(2rem, 6vw, 3rem)',
-                  fontWeight: 900,
-                  letterSpacing: '-0.04em',
-                  lineHeight: 1,
-                }}
-              >
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fff', letterSpacing: '-0.02em' }}>
                 {char.name}
-              </h1>
+              </h2>
             </div>
           </div>
+
+          {/* Right panel - Details & Buy */}
           <div
             style={{
-              flex: '1.2 1 280px',
-              minWidth: '280px',
-              padding: '60px 40px',
+              flex: '1.2 1 320px',
+              padding: '50px 40px',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
+              gap: '30px'
             }}
           >
-            <div style={{ display: 'flex', gap: '15px', marginBottom: '40px' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
               <span
                 style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  color: 'var(--accent)',
-                  padding: '6px 18px',
-                  borderRadius: '50px',
-                  fontSize: '0.65rem',
-                  fontWeight: 900,
-                  letterSpacing: '0.1em',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid var(--border-matte)',
+                  color: '#fff',
+                  padding: '5px 12px',
+                  borderRadius: '6px',
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.05em',
                 }}
               >
                 {char.game?.toUpperCase()}
               </span>
               <span
                 style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  color: '#fff',
-                  padding: '6px 18px',
-                  borderRadius: '50px',
-                  fontSize: '0.65rem',
-                  fontWeight: 900,
-                  letterSpacing: '0.1em',
-                  opacity: 0.5,
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid var(--border-matte)',
+                  color: 'var(--text-muted)',
+                  padding: '5px 12px',
+                  borderRadius: '6px',
+                  fontSize: '0.7rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.05em',
                 }}
               >
                 {char.element || 'NEUTRAL'}
               </span>
             </div>
 
-            <div style={{ marginBottom: '50px' }}>
-              <h2
+            <div>
+              <h4
                 style={{
-                  fontSize: '0.65rem',
-                  fontWeight: 900,
-                  opacity: 0.2,
+                  fontSize: '0.7rem',
+                  fontWeight: 800,
+                  color: 'var(--text-muted)',
                   textTransform: 'uppercase',
-                  letterSpacing: '0.3em',
-                  marginBottom: '25px',
+                  letterSpacing: '0.15em',
+                  marginBottom: '16px',
                 }}
               >
-                Asset Specifications
-              </h2>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-                <div>
-                  <div
-                    style={{
-                      fontSize: '0.6rem',
-                      fontWeight: 900,
-                      opacity: 0.3,
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                    }}
-                  >
+                Specifications
+              </h4>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-matte)', borderRadius: '10px', padding: '15px' }}>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
                     Classification
                   </div>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 800 }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff' }}>
                     {char.role || 'Resonator'}
                   </div>
                 </div>
-                <div>
-                  <div
-                    style={{
-                      fontSize: '0.6rem',
-                      fontWeight: 900,
-                      opacity: 0.3,
-                      marginBottom: '8px',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Exchange Rate
+
+                <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-matte)', borderRadius: '10px', padding: '15px' }}>
+                  <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
+                    Exchange Value
                   </div>
-                  <div style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--gold)' }}>
+                  <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff' }}>
                     {char.price?.toLocaleString() ?? 0} DUST
                   </div>
                 </div>
@@ -219,22 +182,23 @@ function CharacterModal({ char, onClose, onBuy }) {
             </div>
 
             <button
-              className="btn-v3 btn-v3-primary w-full"
               onClick={() => onBuy(char.name)}
-              style={{ padding: '24px' }}
+              className="matte-btn matte-btn-primary"
+              style={{ padding: '18px', width: '100%', borderRadius: '12px' }}
             >
-              <span>ACQUIRE RESONANCE</span>
-              <Zap size={18} />
+              <span>Acquire Resonance</span>
+              <Zap size={14} />
             </button>
+
           </div>
+
         </div>
       </motion.div>
     </motion.div>
   );
 }
 
-// --- MAIN PAGE ---
-
+// --- MAIN SHOP PAGE ---
 export default function ShopPage() {
   const { user } = useAuth();
   const [activeCategory, setActiveCategory] = useState('characters');
@@ -244,7 +208,6 @@ export default function ShopPage() {
   const [pages, setPages] = useState(1);
   const [filter, setFilter] = useState({ game: 'all', rarity: 'all', search: '' });
   const [selectedItem, setSelectedItem] = useState(null);
-
   const [starDust, setStarDust] = useState(0);
 
   useEffect(() => {
@@ -306,127 +269,124 @@ export default function ShopPage() {
   return (
     <div className="shop-page-container" style={{ paddingBottom: '120px' }}>
       <div className="wrap">
-        <header style={{ padding: '80px 0', textAlign: 'center' }}>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '10px',
-              opacity: 0.3,
-              marginBottom: '20px',
-            }}
-          >
+        
+        {/* HEADER BLOCK */}
+        <header style={{ padding: '80px 0 60px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
+          
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', opacity: 0.5 }}>
             <ShoppingBag size={14} />
-            <span
-              style={{
-                fontSize: '0.7rem',
-                fontWeight: 900,
-                textTransform: 'uppercase',
-                letterSpacing: '0.4em',
-              }}
-            >
+            <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.2em' }}>
               Resonance Exchange Terminal
             </span>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            style={{
-              fontSize: 'clamp(2.5rem, 8vw, 5rem)',
-              fontWeight: 900,
-              letterSpacing: '-0.05em',
-              marginBottom: '40px',
+          <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 900, letterSpacing: '-0.04em', color: '#fff', margin: 0 }}>
+            THE EXCHANGE
+          </h1>
+
+          <div 
+            style={{ 
+              background: 'var(--card-matte)', 
+              border: '1px solid var(--border-matte)',
+              borderRadius: '16px',
+              padding: '12px 24px',
+              display: 'inline-flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              marginTop: '10px'
             }}
           >
-            THE <span className="landing-title-grad">EXCHANGE</span>
-          </motion.h1>
-
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', opacity: 0.6 }}>
-            <div style={{ textAlign: 'center' }}>
-              <div
-                style={{
-                  fontSize: '0.6rem',
-                  fontWeight: 900,
-                  opacity: 0.4,
-                  letterSpacing: '0.2em',
-                  marginBottom: '5px',
-                }}
-              >
-                AVAILABLE RESONANCE
-              </div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--gold)' }}>
-                {starDust.toLocaleString()} DUST
-              </div>
-            </div>
+            <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>
+              Your Balance
+            </span>
+            <span style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>
+              {starDust.toLocaleString()} DUST
+            </span>
           </div>
+
         </header>
 
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '60px' }}>
-          <div className="portfolio-tabs-fb" style={{ border: 'none', gap: '40px' }}>
+        {/* CATEGORY SWITCHER */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '40px' }}>
+          <div 
+            style={{ 
+              display: 'flex', 
+              background: 'var(--card-matte)', 
+              border: '1px solid var(--border-matte)', 
+              borderRadius: '12px',
+              padding: '6px'
+            }}
+          >
             <button
               onClick={() => {
                 setActiveCategory('characters');
                 setPage(1);
               }}
-              className={`p-tab-fb ${activeCategory === 'characters' ? 'active' : ''}`}
-              style={{ padding: '15px 0' }}
+              className="matte-btn"
+              style={{ 
+                border: 'none', 
+                background: activeCategory === 'characters' ? 'rgba(255,255,255,0.05)' : 'transparent',
+                color: activeCategory === 'characters' ? '#fff' : 'var(--text-muted)',
+                padding: '10px 24px',
+                borderRadius: '8px'
+              }}
             >
-              RESONATORS
+              Resonators
             </button>
             <button
               onClick={() => {
                 setActiveCategory('zoo');
                 setPage(1);
               }}
-              className={`p-tab-fb ${activeCategory === 'zoo' ? 'active' : ''}`}
-              style={{ padding: '15px 0' }}
+              className="matte-btn"
+              style={{ 
+                border: 'none', 
+                background: activeCategory === 'zoo' ? 'rgba(255,255,255,0.05)' : 'transparent',
+                color: activeCategory === 'zoo' ? '#fff' : 'var(--text-muted)',
+                padding: '10px 24px',
+                borderRadius: '8px'
+              }}
             >
-              SPECIMENS
+              Specimens
             </button>
           </div>
         </div>
 
+        {/* FILTERS CONTAINER */}
         <div
-          className="glass-panel"
+          className="matte-card"
           style={{
-            padding: '30px',
-            borderRadius: '24px',
+            padding: '20px',
             display: 'flex',
-            gap: '20px',
-            marginBottom: '60px',
-            border: '1px solid rgba(255,255,255,0.03)',
-            background: 'rgba(255,255,255,0.01)',
+            gap: '15px',
+            marginBottom: '40px',
             flexWrap: 'wrap',
+            borderRadius: '16px'
           }}
         >
-          <div style={{ flex: '1 1 300px', position: 'relative' }}>
+          <div style={{ flex: '2 1 300px', position: 'relative' }}>
             <Search
               size={16}
               style={{
                 position: 'absolute',
-                left: '20px',
+                left: '16px',
                 top: '50%',
                 transform: 'translateY(-50%)',
-                opacity: 0.2,
+                opacity: 0.3,
               }}
             />
             <input
-              className="dash-input"
-              placeholder="Filter archives..."
+              className="matte-input"
+              placeholder="Search registry database..."
               value={filter.search}
               onChange={(e) => {
                 setFilter({ ...filter, search: e.target.value });
                 setPage(1);
               }}
               style={{
-                paddingLeft: '50px',
-                background: 'transparent',
-                border: 'none',
-                width: '100%',
+                paddingLeft: '45px',
+                height: '46px',
+                borderRadius: '10px'
               }}
             />
           </div>
@@ -434,8 +394,14 @@ export default function ShopPage() {
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', flex: '1 1 300px' }}>
             {activeCategory === 'characters' && (
               <select
-                className="dash-input"
-                style={{ flex: '1 1 140px', fontSize: '0.75rem' }}
+                className="matte-input"
+                style={{ 
+                  flex: '1 1 120px', 
+                  fontSize: '0.8rem', 
+                  height: '46px', 
+                  borderRadius: '10px',
+                  paddingRight: '10px'
+                }}
                 value={filter.game}
                 onChange={(e) => {
                   setFilter({ ...filter, game: e.target.value });
@@ -451,8 +417,14 @@ export default function ShopPage() {
             )}
 
             <select
-              className="dash-input"
-              style={{ flex: '1 1 140px', fontSize: '0.75rem' }}
+              className="matte-input"
+              style={{ 
+                flex: '1 1 120px', 
+                fontSize: '0.8rem', 
+                height: '46px', 
+                borderRadius: '10px',
+                paddingRight: '10px'
+              }}
               value={filter.rarity}
               onChange={(e) => {
                 setFilter({ ...filter, rarity: e.target.value });
@@ -460,45 +432,60 @@ export default function ShopPage() {
               }}
             >
               <option value="all">ALL TIERS</option>
-              <option value="5">LEGENDARY</option>
-              <option value="4">RARE</option>
+              <option value="5">LEGENDARY (5★)</option>
+              <option value="4">RARE (4★)</option>
             </select>
           </div>
         </div>
 
+        {/* LOADING & GRID */}
         {loading ? (
-          <div className="units-grid-fb">
-            {[...Array(12)].map((_, i) => (
+          <div 
+            style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
+              gap: '24px' 
+            }}
+          >
+            {[...Array(8)].map((_, i) => (
               <div
                 key={i}
-                className="glass-panel"
-                style={{ height: '320px', borderRadius: '32px', opacity: 0.1 }}
+                className="matte-card"
+                style={{ height: '240px', borderRadius: '16px', opacity: 0.15 }}
               />
             ))}
           </div>
         ) : (
           <>
-            <div className="units-grid-fb">
+            <div 
+              style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
+                gap: '24px' 
+              }}
+            >
               <AnimatePresence mode="popLayout">
                 {data.map((item, i) => (
                   <motion.div
                     layout
                     key={item.name}
-                    initial={{ opacity: 0, scale: 0.95 }}
+                    initial={{ opacity: 0, scale: 0.98 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ delay: (i % 12) * 0.02 }}
-                    className="char-card-fb"
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.3, ease: 'easeOut', delay: (i % 12) * 0.01 }}
+                    className="matte-card"
                     onClick={() => activeCategory === 'characters' && setSelectedItem(item)}
                     style={{
                       cursor: activeCategory === 'characters' ? 'pointer' : 'default',
-                      padding: '40px 30px',
-                      borderRadius: '32px',
-                      border: '1px solid rgba(255,255,255,0.03)',
-                      background: 'rgba(255,255,255,0.01)',
+                      padding: '30px 20px',
+                      borderRadius: '16px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      textAlign: 'center'
                     }}
                   >
-                    <div style={{ width: '120px', height: '120px', margin: '0 auto 30px' }}>
+                    <div style={{ width: '100px', height: '100px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {activeCategory === 'characters' ? (
                         <CharIcon
                           name={item.name}
@@ -509,28 +496,25 @@ export default function ShopPage() {
                         <img
                           src={`/api/zoo/image/${item.key}`}
                           alt={item.name}
-                          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                          style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
                         />
                       )}
                     </div>
-                    <div
-                      style={{
-                        fontWeight: 800,
-                        fontSize: '0.9rem',
-                        marginBottom: '10px',
-                        letterSpacing: '-0.02em',
-                      }}
-                    >
+                    
+                    <h3 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#fff', marginBottom: '8px', letterSpacing: '-0.01em' }}>
                       {item.name}
-                    </div>
+                    </h3>
 
                     {activeCategory === 'characters' ? (
                       <div
                         style={{
                           fontSize: '0.75rem',
-                          fontWeight: 900,
-                          color: 'var(--gold)',
-                          opacity: 0.8,
+                          fontWeight: 700,
+                          color: '#fff',
+                          background: 'rgba(255,255,255,0.03)',
+                          border: '1px solid var(--border-matte)',
+                          padding: '4px 10px',
+                          borderRadius: '6px'
                         }}
                       >
                         {item.price.toLocaleString()} DUST
@@ -538,10 +522,14 @@ export default function ShopPage() {
                     ) : (
                       <div
                         style={{
-                          fontSize: '0.65rem',
-                          fontWeight: 900,
-                          color: RARITY_COLORS[item.rarity],
-                          opacity: 0.6,
+                          fontSize: '0.7rem',
+                          fontWeight: 700,
+                          color: RARITY_COLORS[item.rarity] || '#fff',
+                          background: `${RARITY_COLORS[item.rarity]}10`,
+                          border: `1px solid ${RARITY_COLORS[item.rarity]}25`,
+                          padding: '4px 10px',
+                          borderRadius: '6px',
+                          textTransform: 'uppercase'
                         }}
                       >
                         {String(item.rarity).toUpperCase()}
@@ -552,41 +540,44 @@ export default function ShopPage() {
               </AnimatePresence>
             </div>
 
+            {/* PAGINATION */}
             {pages > 1 && (
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  gap: '30px',
-                  marginTop: '80px',
+                  gap: '24px',
+                  marginTop: '60px',
                 }}
               >
                 <button
                   disabled={page === 1}
                   onClick={() => setPage((p) => p - 1)}
-                  className="btn-v3 btn-v3-ghost"
-                  style={{ width: '50px', height: '50px', padding: 0, borderRadius: '50%' }}
+                  className="matte-btn"
+                  style={{ width: '40px', height: '40px', padding: 0, borderRadius: '50%' }}
                 >
-                  <ChevronLeft size={20} />
+                  <ChevronLeft size={16} />
                 </button>
+                
                 <span
                   style={{
-                    fontSize: '0.7rem',
-                    fontWeight: 900,
-                    opacity: 0.2,
-                    letterSpacing: '0.4em',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    color: 'var(--text-muted)',
+                    letterSpacing: '0.15em',
                   }}
                 >
-                  ARCHIVE {page} / {pages}
+                  PAGE {page} OF {pages}
                 </span>
+                
                 <button
                   disabled={page === pages}
                   onClick={() => setPage((p) => p + 1)}
-                  className="btn-v3 btn-v3-ghost"
-                  style={{ width: '50px', height: '50px', padding: 0, borderRadius: '50%' }}
+                  className="matte-btn"
+                  style={{ width: '40px', height: '40px', padding: 0, borderRadius: '50%' }}
                 >
-                  <ChevronRight size={20} />
+                  <ChevronRight size={16} />
                 </button>
               </div>
             )}

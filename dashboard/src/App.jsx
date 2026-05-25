@@ -87,6 +87,7 @@ function LoadingGateway() {
 function AppContent() {
   const location = useLocation();
   const isProfile = location.pathname.startsWith('/profile/');
+  const isMattePage = ['/', '/shop', '/leaderboard', '/characters', '/zoo'].includes(location.pathname);
 
   // Setup Parallax Background
   const { scrollYProgress } = useScroll();
@@ -96,32 +97,38 @@ function AppContent() {
 
   return (
     <div
-      className="app-wrapper"
-      style={{ position: 'relative', minHeight: '100vh', background: '#050505' }}
+      className={`app-wrapper ${isMattePage ? 'matte-theme' : ''}`}
+      style={{ 
+        position: 'relative', 
+        minHeight: '100vh', 
+        background: isMattePage ? '#0b0b0c' : '#050505' 
+      }}
     >
       {!isProfile && (
         <>
-          <div className="cyber-grid" />
-          <motion.div
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 0,
-              y: yBg,
-              pointerEvents: 'none',
-            }}
-          >
-            <div
+          {!isMattePage && <div className="cyber-grid" />}
+          {!isMattePage && (
+            <motion.div
               style={{
-                position: 'absolute',
-                inset: '-10%',
-                backgroundImage: 'url("/bg-cyberpunk.jpg")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                opacity: 0.3,
+                position: 'fixed',
+                inset: 0,
+                zIndex: 0,
+                y: yBg,
+                pointerEvents: 'none',
               }}
-            />
-          </motion.div>
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: '-10%',
+                  backgroundImage: 'url("/bg-cyberpunk.jpg")',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  opacity: 0.3,
+                }}
+              />
+            </motion.div>
+          )}
           <header className="fixed-top-section" style={{ zIndex: 100 }}>
             <Navbar />
           </header>
