@@ -20,6 +20,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const INVITE_LINK = 'https://discord.com/oauth2/authorize?client_id=1399459454889754805';
 const MO_DISCORD_ID = '703266672022388789';
@@ -29,7 +30,7 @@ const MO_PROFILE_LINK = 'https://ksaekvat.up.railway.app/profile/mo';
 function DiscordAvatar({ userId, avatarHash, decorationAsset, size = 70 }) {
   const avatarUrl = avatarHash
     ? `https://cdn.discordapp.com/avatars/${userId}/${avatarHash}.png`
-    : '/assets/default-avatar.png';
+    : 'https://cdn.discordapp.com/embed/avatars/0.png';
 
   const decorationUrl = decorationAsset
     ? `https://cdn.discordapp.com/avatar-decoration-presets/${decorationAsset}.png`
@@ -49,7 +50,7 @@ function DiscordAvatar({ userId, avatarHash, decorationAsset, size = 70 }) {
       {/* Base Avatar Circle */}
       <img
         src={avatarUrl}
-        alt="User Avatar"
+        alt=""
         style={{
           width: '100%',
           height: '100%',
@@ -79,6 +80,7 @@ function DiscordAvatar({ userId, avatarHash, decorationAsset, size = 70 }) {
 }
 
 export default function HomePage() {
+  const { user } = useAuth();
   const [stats, setStats] = useState(null);
   const [activeFeature, setActiveFeature] = useState('combat');
   const [copied, setCopied] = useState(false);
@@ -471,8 +473,8 @@ export default function HomePage() {
                   }}>
                     <DiscordAvatar 
                       userId={ownerProfile?.userId || MO_DISCORD_ID}
-                      avatarHash={ownerProfile?.profileTheme?.avatar || null}
-                      decorationAsset={ownerProfile?.profileTheme?.avatarDecoration || null}
+                      avatarHash={ownerProfile?.profileTheme?.avatar || (user?.id === MO_DISCORD_ID ? user.avatar : null)}
+                      decorationAsset={ownerProfile?.profileTheme?.avatarDecoration || (user?.id === MO_DISCORD_ID ? user.avatarDecoration : null)}
                       size={70}
                     />
                   </div>

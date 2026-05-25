@@ -69,7 +69,6 @@ export default function Navbar() {
         {/* --- BRANDING --- */}
         <div className="nav-left">
           <Link to="/" className="zen-brand" onClick={() => setMobileMenuOpen(false)}>
-            <div className="zen-logo-mark">✦</div>
             <span className="zen-brand-name">KSAEKVAT</span>
           </Link>
         </div>
