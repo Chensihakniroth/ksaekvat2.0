@@ -167,6 +167,8 @@ router.get('/:userId', async (req: Request, res: Response) => {
         characterCount: hydratedInventory.length,
         pokemon: animalMap,
         pokemonCount: totalPokemon,
+        customPrefix: user.customPrefix || null,
+        customSubPrefix: user.customSubPrefix || null,
         profileTheme: {
           ...(user.profileTheme || {
             theme: 'default',
@@ -220,10 +222,37 @@ router.post('/update', async (req: any, res: Response) => {
       portfolio,
       favorites,
       slug,
+      customPrefix,
+      customSubPrefix,
     } = req.body;
 
     const user = await User.findOne({ id: decoded.id });
     if (!user) return res.status(404).json({ success: false, error: 'User not found' });
+
+    // Validate prefix if provided
+    if (customPrefix !== undefined) {
+      if (customPrefix !== null && customPrefix !== '') {
+        const trimmed = customPrefix.trim();
+        const FORBIDDEN_PREFIXES = ['@', '#', '/', '\\', '`'];
+        if (trimmed.length > 5) {
+          return res.status(400).json({ success: false, error: 'Prefix must be 5 characters or fewer.' });
+        }
+        if (FORBIDDEN_PREFIXES.some(p => trimmed.includes(p))) {
+          return res.status(400).json({ success: false, error: 'Prefix contains forbidden characters.' });
+        }
+        user.customPrefix = trimmed;
+      } else {
+        user.customPrefix = null;
+      }
+    }
+
+    if (customSubPrefix !== undefined) {
+      if (customSubPrefix !== null && customSubPrefix !== '') {
+        user.customSubPrefix = customSubPrefix.trim().slice(0, 5);
+      } else {
+        user.customSubPrefix = null;
+      }
+    }
 
     // Validate and check slug uniqueness if provided
     if (slug && slug !== user.profileTheme?.slug) {
