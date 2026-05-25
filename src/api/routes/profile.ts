@@ -11,7 +11,13 @@ const router = Router();
 
 // Fetch live Discord user data using the bot token
 // This ensures avatar and decoration are always up-to-date
-async function fetchDiscordUser(discordId: string): Promise<{ avatar: string | null; avatarDecoration: string | null; username: string | null } | null> {
+async function fetchDiscordUser(discordId: string): Promise<{ 
+  avatar: string | null; 
+  avatarDecoration: string | null; 
+  username: string | null;
+  banner: string | null;
+  bannerColor: string | null;
+} | null> {
   try {
     const res = await axios.get(`https://discord.com/api/v10/users/${discordId}`, {
       headers: { Authorization: `Bot ${env.DISCORD_TOKEN}` },
@@ -22,6 +28,8 @@ async function fetchDiscordUser(discordId: string): Promise<{ avatar: string | n
       avatar: data.avatar || null,
       avatarDecoration: data.avatar_decoration_data?.asset || null,
       username: data.username || null,
+      banner: data.banner || null,
+      bannerColor: data.banner_color || null,
     };
   } catch (err: any) {
     console.warn(`[Backend] Failed to fetch Discord user ${discordId}:`, err?.message || err);
@@ -168,6 +176,8 @@ router.get('/:userId', async (req: Request, res: Response) => {
           // Use live Discord data first, fallback to DB
           avatar: discordData?.avatar || user.profileTheme?.avatar || null,
           avatarDecoration: discordData?.avatarDecoration || user.profileTheme?.avatarDecoration || null,
+          banner: discordData?.banner || user.profileTheme?.banner || null,
+          bannerColor: discordData?.bannerColor || user.profileTheme?.bannerColor || null,
         },
       },
     });

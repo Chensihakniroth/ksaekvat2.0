@@ -17,7 +17,11 @@ import {
   Check,
   ChevronRight,
   MinusCircle,
-  ExternalLink
+  ExternalLink,
+  Github,
+  Instagram,
+  Twitter,
+  Globe
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -425,300 +429,461 @@ export default function HomePage() {
         </section>
 
         {/* BOT OWNER CARD (Discord Landscape Style) */}
-        <section style={{ padding: '40px 0 80px', display: 'flex', justifyContent: 'center' }}>
-          <div style={{
-            background: '#111214',
-            borderRadius: '16px',
-            border: '1px solid rgba(255,255,255,0.06)',
-            width: '100%',
-            maxWidth: '850px',
-            overflow: 'visible',
-            fontFamily: "'Outfit', sans-serif"
-          }}>
-            <div className="creator-landscape-inner" style={{
-              display: 'flex',
-              flexDirection: 'row',
-              minHeight: '260px'
+        {(() => {
+          const bannerColor = ownerProfile?.profileTheme?.bannerColor || '#2a0810';
+          const hasBannerImage = !!ownerProfile?.profileTheme?.banner;
+          const bannerUrl = hasBannerImage 
+            ? `https://cdn.discordapp.com/banners/${ownerProfile.userId || MO_DISCORD_ID}/${ownerProfile.profileTheme.banner}.${ownerProfile.profileTheme.banner.startsWith('a_') ? 'gif' : 'png'}?size=600` 
+            : null;
+          const socials = ownerProfile?.profileTheme?.socials || {
+            github: 'Chensihakniroth',
+            instagram: '_callme_.mo'
+          };
+          
+          return (
+            <section style={{ 
+              padding: '40px 0 80px', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              alignItems: 'center',
+              gap: '24px',
+              width: '100%'
             }}>
-              
-              {/* Left Column: Banner + Profile Info */}
-              <div style={{
-                flex: '1.2',
-                position: 'relative',
-                background: '#18191c',
-                borderRight: '1px solid rgba(255,255,255,0.06)',
-                display: 'flex',
-                flexDirection: 'column'
+              <h2 style={{
+                fontSize: '1.8rem',
+                fontWeight: 800,
+                color: '#fff',
+                fontFamily: "'Outfit', sans-serif",
+                letterSpacing: '-0.02em',
+                margin: 0,
+                textTransform: 'uppercase'
               }}>
-                {/* Top Banner inside Left Column */}
-                <div style={{
-                  height: '80px',
-                  background: 'linear-gradient(135deg, #1a0508 0%, #3d0a15 40%, #2a0810 100%)',
-                  position: 'relative',
-                  overflow: 'hidden'
-                }}>
-                  <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'radial-gradient(circle at 30% 50%, rgba(120,20,30,0.4) 0%, transparent 60%), radial-gradient(circle at 70% 40%, rgba(80,10,20,0.5) 0%, transparent 50%)'
-                  }} />
-                </div>
+                Ksaekvat Creator
+              </h2>
 
-                {/* Avatar Area */}
-                <div style={{ position: 'relative', padding: '0 20px', height: '40px' }}>
-                  <div style={{
-                    position: 'absolute',
-                    top: '-40px',
-                    left: '20px',
-                    background: '#18191c',
-                    borderRadius: '50%',
-                    padding: '5px',
-                    overflow: 'visible',
-                    zIndex: 5
-                  }}>
-                    <DiscordAvatar 
-                      userId={ownerProfile?.userId || MO_DISCORD_ID}
-                      avatarHash={ownerProfile?.profileTheme?.avatar || (user?.id === MO_DISCORD_ID ? user.avatar : null)}
-                      decorationAsset={ownerProfile?.profileTheme?.avatarDecoration || (user?.id === MO_DISCORD_ID ? user.avatarDecoration : null)}
-                      size={70}
-                    />
-                  </div>
-
-                  {/* Badges on right side of avatar line */}
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    gap: '6px',
-                    paddingTop: '10px'
-                  }}>
-                    {/* Active Developer */}
-                    <div style={{
-                      width: '22px',
-                      height: '22px',
-                      borderRadius: '50%',
-                      background: 'rgba(88, 101, 242, 0.15)',
-                      border: '1px solid rgba(88, 101, 242, 0.3)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.55rem',
-                      color: '#5865f2',
-                      fontWeight: 700
-                    }} title="Active Developer">
-                      {'</>'}
-                    </div>
-                    {/* Nitro */}
-                    <div style={{
-                      width: '22px',
-                      height: '22px',
-                      borderRadius: '50%',
-                      background: 'rgba(235, 69, 158, 0.15)',
-                      border: '1px solid rgba(235, 69, 158, 0.3)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.65rem',
-                      color: '#eb459e',
-                      fontWeight: 700
-                    }} title="Discord Nitro">
-                      ✦
-                    </div>
-                    {/* Boost */}
-                    <div style={{
-                      width: '22px',
-                      height: '22px',
-                      borderRadius: '50%',
-                      background: 'rgba(244, 127, 255, 0.15)',
-                      border: '1px solid rgba(244, 127, 255, 0.3)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.6rem',
-                      color: '#f47fff',
-                      fontWeight: 700
-                    }} title="Server Booster">
-                      ⚡
-                    </div>
-                  </div>
-                </div>
-
-                {/* Identity Details */}
-                <div style={{ padding: '15px 20px 20px', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div>
-                    <div style={{
-                      fontSize: '1.4rem',
-                      fontWeight: 800,
-                      color: '#ed4245',
-                      fontStyle: 'italic',
-                      letterSpacing: '-0.01em',
-                      lineHeight: 1.2
-                    }}>
-                      {ownerProfile?.username === 'Unknown Traveler' ? 'bawlsag' : (ownerProfile?.username || 'bawlsag')}
-                    </div>
-                    <div style={{
-                      fontSize: '0.85rem',
-                      color: 'rgba(255,255,255,0.6)',
-                      fontWeight: 500,
-                      marginTop: '2px'
-                    }}>
-                      @{ownerProfile?.profileTheme?.slug || 'mo'}
-                    </div>
-                  </div>
-
-                  <p style={{
-                    fontSize: '0.85rem',
-                    color: 'rgba(255,255,255,0.7)',
-                    lineHeight: 1.5,
-                    margin: '8px 0 0'
-                  }}>
-                    {ownerProfile?.profileTheme?.bio || 'Building immersive digital worlds, one line of TypeScript at a time. Mo designed KSAEKVAT to connect RPG systems, live Gacha, and collectible hunting directly inside Discord.'}
-                  </p>
-                </div>
-
-              </div>
-
-              {/* Right Column: Creator Info & Stats */}
               <div style={{
-                flex: '1',
-                padding: '24px',
                 background: '#111214',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                gap: '20px'
+                borderRadius: '16px',
+                border: '1px solid rgba(255,255,255,0.06)',
+                width: '100%',
+                maxWidth: '850px',
+                overflow: 'visible',
+                fontFamily: "'Outfit', sans-serif"
               }}>
-                {/* Info Grid */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div>
+                <div className="creator-landscape-inner" style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  minHeight: '280px'
+                }}>
+                  
+                  {/* Left Column: Banner + Profile Info */}
+                  <div style={{
+                    flex: '1.2',
+                    position: 'relative',
+                    background: '#18191c',
+                    borderRight: '1px solid rgba(255,255,255,0.06)',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}>
+                    {/* Top Banner inside Left Column */}
                     <div style={{
-                      fontSize: '0.7rem',
-                      fontWeight: 700,
-                      color: 'rgba(255,255,255,0.4)',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.08em',
-                      marginBottom: '8px'
+                      height: '110px',
+                      background: bannerUrl ? `url(${bannerUrl}) center/cover no-repeat` : bannerColor,
+                      position: 'relative',
+                      overflow: 'hidden'
                     }}>
-                      SYSTEM METRICS
+                      {!bannerUrl && (
+                        <div style={{
+                          position: 'absolute',
+                          inset: 0,
+                          background: 'radial-gradient(circle at 30% 50%, rgba(120,20,30,0.4) 0%, transparent 60%), radial-gradient(circle at 70% 40%, rgba(80,10,20,0.5) 0%, transparent 50%)'
+                        }} />
+                      )}
                     </div>
-                    <div style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '8px'
-                    }}>
-                      <div style={{
-                        background: 'rgba(255,255,255,0.02)',
-                        border: '1px solid rgba(255,255,255,0.04)',
-                        borderRadius: '8px',
-                        padding: '8px 10px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '2px'
-                      }}>
-                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>LEVEL</span>
-                        <span style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 700 }}>
-                          {ownerProfile?.level || 1}
-                        </span>
-                      </div>
-                      <div style={{
-                        background: 'rgba(255,255,255,0.02)',
-                        border: '1px solid rgba(255,255,255,0.04)',
-                        borderRadius: '8px',
-                        padding: '8px 10px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '2px'
-                      }}>
-                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>CREDITS</span>
-                        <span style={{ fontSize: '0.9rem', color: '#4ade80', fontWeight: 700 }}>
-                          {(ownerProfile?.balance || 0).toLocaleString()}
-                        </span>
-                      </div>
-                      <div style={{
-                        background: 'rgba(255,255,255,0.02)',
-                        border: '1px solid rgba(255,255,255,0.04)',
-                        borderRadius: '8px',
-                        padding: '8px 10px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '2px'
-                      }}>
-                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>GACHA RESONANCE</span>
-                        <span style={{ fontSize: '0.9rem', color: '#f47fff', fontWeight: 700 }}>
-                          {ownerProfile?.characterCount || 0} Chars
-                        </span>
-                      </div>
-                      <div style={{
-                        background: 'rgba(255,255,255,0.02)',
-                        border: '1px solid rgba(255,255,255,0.04)',
-                        borderRadius: '8px',
-                        padding: '8px 10px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: '2px'
-                      }}>
-                        <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>HUNT DECK</span>
-                        <span style={{ fontSize: '0.9rem', color: '#00a8fc', fontWeight: 700 }}>
-                          {ownerProfile?.pokemonCount || 0} Beasts
-                        </span>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+                    {/* Avatar Area */}
+                    <div style={{ position: 'relative', padding: '0 20px', height: '50px' }}>
+                      <div style={{
+                        position: 'absolute',
+                        top: '-55px',
+                        left: '20px',
+                        background: '#18191c',
+                        borderRadius: '50%',
+                        padding: '5px',
+                        overflow: 'visible',
+                        zIndex: 5
+                      }}>
+                        <DiscordAvatar 
+                          userId={ownerProfile?.userId || MO_DISCORD_ID}
+                          avatarHash={ownerProfile?.profileTheme?.avatar || (user?.id === MO_DISCORD_ID ? user.avatar : null)}
+                          decorationAsset={ownerProfile?.profileTheme?.avatarDecoration || (user?.id === MO_DISCORD_ID ? user.avatarDecoration : null)}
+                          size={90}
+                        />
+                      </div>
 
-                  {/* Links */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                      UPLINK PROFILE
-                    </span>
-                    <a 
-                      href={MO_PROFILE_LINK}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{
-                        fontSize: '0.85rem',
-                        color: '#00a8fc',
-                        fontWeight: 500,
-                        display: 'inline-flex',
+                      {/* Badges on right side of avatar line */}
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
                         alignItems: 'center',
-                        gap: '4px',
-                        textDecoration: 'none',
-                        width: 'fit-content'
-                      }}
-                    >
-                      ksaekvat.up.railway.app/profile/mo
-                      <ExternalLink size={12} style={{ opacity: 0.6 }} />
-                    </a>
+                        gap: '6px',
+                        paddingTop: '10px'
+                      }}>
+                        {/* Creator Pill Badge */}
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          background: 'rgba(255, 215, 0, 0.12)',
+                          border: '1px solid rgba(255, 215, 0, 0.3)',
+                          borderRadius: '12px',
+                          padding: '3px 10px',
+                          fontSize: '0.65rem',
+                          color: '#ffd700',
+                          fontWeight: 800,
+                          letterSpacing: '0.08em',
+                          textTransform: 'uppercase'
+                        }} title="KSAEKVAT Bot Creator">
+                          <span style={{ fontSize: '0.8rem', lineHeight: 1 }}>👑</span>
+                          <span>Creator</span>
+                        </div>
+
+                        {/* Active Developer */}
+                        <div style={{
+                          width: '22px',
+                          height: '22px',
+                          borderRadius: '50%',
+                          background: 'rgba(88, 101, 242, 0.15)',
+                          border: '1px solid rgba(88, 101, 242, 0.3)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.55rem',
+                          color: '#5865f2',
+                          fontWeight: 700
+                        }} title="Active Developer">
+                          {'</>'}
+                        </div>
+                        {/* Nitro */}
+                        <div style={{
+                          width: '22px',
+                          height: '22px',
+                          borderRadius: '50%',
+                          background: 'rgba(235, 69, 158, 0.15)',
+                          border: '1px solid rgba(235, 69, 158, 0.3)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.65rem',
+                          color: '#eb459e',
+                          fontWeight: 700
+                        }} title="Discord Nitro">
+                          ✦
+                        </div>
+                        {/* Boost */}
+                        <div style={{
+                          width: '22px',
+                          height: '22px',
+                          borderRadius: '50%',
+                          background: 'rgba(244, 127, 255, 0.15)',
+                          border: '1px solid rgba(244, 127, 255, 0.3)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '0.6rem',
+                          color: '#f47fff',
+                          fontWeight: 700
+                        }} title="Server Booster">
+                          ⚡
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Identity Details */}
+                    <div style={{ padding: '15px 20px 20px', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div>
+                        <div style={{
+                          fontSize: '1.4rem',
+                          fontWeight: 800,
+                          color: '#ed4245',
+                          fontStyle: 'italic',
+                          letterSpacing: '-0.01em',
+                          lineHeight: 1.2
+                        }}>
+                          {ownerProfile?.username === 'Unknown Traveler' ? 'bawlsag' : (ownerProfile?.username || 'bawlsag')}
+                        </div>
+                        <div style={{
+                          fontSize: '0.85rem',
+                          color: 'rgba(255,255,255,0.6)',
+                          fontWeight: 500,
+                          marginTop: '2px'
+                        }}>
+                          @{ownerProfile?.profileTheme?.slug || 'mo'}
+                        </div>
+                      </div>
+
+                      <p style={{
+                        fontSize: '0.85rem',
+                        color: 'rgba(255,255,255,0.7)',
+                        lineHeight: 1.5,
+                        margin: '8px 0 0'
+                      }}>
+                        {ownerProfile?.profileTheme?.bio || 'Building immersive digital worlds, one line of TypeScript at a time. Mo designed KSAEKVAT to connect RPG systems, live Gacha, and collectible hunting directly inside Discord.'}
+                      </p>
+
+                      {/* Social Links */}
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        marginTop: 'auto',
+                        paddingTop: '12px'
+                      }}>
+                        {socials.github && (
+                          <a 
+                            href={socials.github.startsWith('http') ? socials.github : `https://github.com/${socials.github}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '8px',
+                              background: 'rgba(255,255,255,0.03)',
+                              border: '1px solid rgba(255,255,255,0.06)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'rgba(255,255,255,0.6)',
+                              transition: 'all 0.2s ease',
+                              cursor: 'pointer'
+                            }}
+                            className="social-icon-hover"
+                            title="GitHub"
+                          >
+                            <Github size={16} />
+                          </a>
+                        )}
+                        {socials.instagram && (
+                          <a 
+                            href={socials.instagram.startsWith('http') ? socials.instagram : `https://instagram.com/${socials.instagram}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '8px',
+                              background: 'rgba(255,255,255,0.03)',
+                              border: '1px solid rgba(255,255,255,0.06)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'rgba(255,255,255,0.6)',
+                              transition: 'all 0.2s ease',
+                              cursor: 'pointer'
+                            }}
+                            className="social-icon-hover"
+                            title="Instagram"
+                          >
+                            <Instagram size={16} />
+                          </a>
+                        )}
+                        {socials.twitter && (
+                          <a 
+                            href={socials.twitter.startsWith('http') ? socials.twitter : `https://twitter.com/${socials.twitter}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '8px',
+                              background: 'rgba(255,255,255,0.03)',
+                              border: '1px solid rgba(255,255,255,0.06)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'rgba(255,255,255,0.6)',
+                              transition: 'all 0.2s ease',
+                              cursor: 'pointer'
+                            }}
+                            className="social-icon-hover"
+                            title="Twitter"
+                          >
+                            <Twitter size={16} />
+                          </a>
+                        )}
+                        {socials.website && (
+                          <a 
+                            href={socials.website.startsWith('http') ? socials.website : `https://${socials.website}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                              width: '32px',
+                              height: '32px',
+                              borderRadius: '8px',
+                              background: 'rgba(255,255,255,0.03)',
+                              border: '1px solid rgba(255,255,255,0.06)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: 'rgba(255,255,255,0.6)',
+                              transition: 'all 0.2s ease',
+                              cursor: 'pointer'
+                            }}
+                            className="social-icon-hover"
+                            title="Website"
+                          >
+                            <Globe size={16} />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+
                   </div>
-                </div>
 
-                {/* Buttons / Actions */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <button 
-                    onClick={handleCopyId}
-                    className="matte-btn"
-                    style={{
-                      width: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      padding: '10px 16px',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      cursor: 'pointer'
-                    }}
-                  >
-                    {copied ? <Check size={14} style={{ color: '#4ade80' }} /> : <Copy size={14} />}
-                    <span>{copied ? 'Copied ID!' : 'Copy Discord ID'}</span>
-                  </button>
-                </div>
+                  {/* Right Column: Creator Info & Stats */}
+                  <div style={{
+                    flex: '1',
+                    padding: '24px',
+                    background: '#111214',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: '20px'
+                  }}>
+                    {/* Info Grid */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                      <div>
+                        <div style={{
+                          fontSize: '0.7rem',
+                          fontWeight: 700,
+                          color: 'rgba(255,255,255,0.4)',
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.08em',
+                          marginBottom: '8px'
+                        }}>
+                          SYSTEM METRICS
+                        </div>
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr 1fr',
+                          gap: '8px'
+                        }}>
+                          <div style={{
+                            background: 'rgba(255,255,255,0.02)',
+                            border: '1px solid rgba(255,255,255,0.04)',
+                            borderRadius: '8px',
+                            padding: '8px 10px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '2px'
+                          }}>
+                            <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>LEVEL</span>
+                            <span style={{ fontSize: '0.9rem', color: '#fff', fontWeight: 700 }}>
+                              {ownerProfile?.level || 1}
+                            </span>
+                          </div>
+                          <div style={{
+                            background: 'rgba(255,255,255,0.02)',
+                            border: '1px solid rgba(255,255,255,0.04)',
+                            borderRadius: '8px',
+                            padding: '8px 10px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '2px'
+                          }}>
+                            <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>CREDITS</span>
+                            <span style={{ fontSize: '0.9rem', color: '#4ade80', fontWeight: 700 }}>
+                              {(ownerProfile?.balance || 0).toLocaleString()}
+                            </span>
+                          </div>
+                          <div style={{
+                            background: 'rgba(255,255,255,0.02)',
+                            border: '1px solid rgba(255,255,255,0.04)',
+                            borderRadius: '8px',
+                            padding: '8px 10px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '2px'
+                          }}>
+                            <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>GACHA RESONANCE</span>
+                            <span style={{ fontSize: '0.9rem', color: '#f47fff', fontWeight: 700 }}>
+                              {ownerProfile?.characterCount || 0} Chars
+                            </span>
+                          </div>
+                          <div style={{
+                            background: 'rgba(255,255,255,0.02)',
+                            border: '1px solid rgba(255,255,255,0.04)',
+                            borderRadius: '8px',
+                            padding: '8px 10px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '2px'
+                          }}>
+                            <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.4)', fontWeight: 600 }}>HUNT DECK</span>
+                            <span style={{ fontSize: '0.9rem', color: '#00a8fc', fontWeight: 700 }}>
+                              {ownerProfile?.pokemonCount || 0} Beasts
+                            </span>
+                          </div>
+                        </div>
+                      </div>
 
+                      <div style={{ height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+
+                      {/* Links */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                          UPLINK PROFILE
+                        </span>
+                        <a 
+                          href={MO_PROFILE_LINK}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={{
+                            fontSize: '0.85rem',
+                            color: '#00a8fc',
+                            fontWeight: 500,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            textDecoration: 'none',
+                            width: 'fit-content'
+                          }}
+                        >
+                          ksaekvat.up.railway.app/profile/mo
+                          <ExternalLink size={12} style={{ opacity: 0.6 }} />
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Buttons / Actions */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <button 
+                        onClick={handleCopyId}
+                        className="matte-btn"
+                        style={{
+                          width: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          padding: '10px 16px',
+                          fontSize: '0.8rem',
+                          fontWeight: 600,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {copied ? <Check size={14} style={{ color: '#4ade80' }} /> : <Copy size={14} />}
+                        <span>{copied ? 'Copied ID!' : 'Copy Discord ID'}</span>
+                      </button>
+                    </div>
+
+                  </div>
+
+                </div>
               </div>
-
-            </div>
-          </div>
-        </section>
+            </section>
+          );
+        })()}
 
         {/* Custom CSS styles for landscape collapsible layout */}
         <style>{`
@@ -730,6 +895,15 @@ export default function HomePage() {
               border-right: none !important;
               border-bottom: 1px solid rgba(255,255,255,0.06);
             }
+          }
+          .social-icon-hover {
+            transition: all 0.2s ease !important;
+          }
+          .social-icon-hover:hover {
+            background: rgba(255,255,255,0.08) !important;
+            color: #fff !important;
+            border-color: rgba(255,255,255,0.15) !important;
+            transform: translateY(-2px);
           }
         `}</style>
 
