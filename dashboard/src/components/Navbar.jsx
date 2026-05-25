@@ -3,6 +3,7 @@ import { Menu, X, Search, LogOut } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import DiscordAvatar from './DiscordAvatar';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -56,13 +57,6 @@ export default function Navbar() {
     return () => clearTimeout(delay);
   }, [search]);
 
-  const handleSelect = (userId) => {
-    setSearch('');
-    setShowResults(false);
-    setMobileMenuOpen(false);
-    navigate(`/profile/${userId}`);
-  };
-
   return (
     <header className={`zen-nav-wrap ${isScrolled ? 'scrolled' : ''}`}>
       <div className="zen-nav-inner wrap">
@@ -98,14 +92,21 @@ export default function Navbar() {
               <div
                 className="zen-avatar-wrap"
                 onClick={() => navigate(`/profile/${user.slug || user.username}`)}
+                style={{
+                  overflow: 'visible',
+                  border: 'none',
+                  background: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer'
+                }}
               >
-                <img
-                  src={
-                    user.avatar
-                      ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
-                      : '/assets/default-avatar.png'
-                  }
-                  alt=""
+                <DiscordAvatar
+                  userId={user.id}
+                  avatarHash={user.avatar}
+                  decorationAsset={user.avatarDecoration}
+                  size={32}
                 />
               </div>
               <button onClick={logout} className="zen-logout-btn" title="Logout">

@@ -402,15 +402,14 @@ img {
   gap: 40px;
   width: 100%;
 }
+
 .portfolio-avatar-fb {
-  width: 200px;
-  height: 200px;
+  position: relative;
+  width: 184px;
+  height: 184px;
   border-radius: 50%;
-  border: 8px solid #000;
-  background: #111;
-  overflow: hidden;
-  z-index: 20;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  overflow: visible;
+  flex-shrink: 0;
 }
 .portfolio-avatar-fb img {
   width: 100%;

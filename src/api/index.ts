@@ -46,6 +46,7 @@ router.use('/gacha', require('./routes/gacha'));
 router.use('/zoo', require('./routes/zoo'));
 router.use('/auth', require('./routes/auth'));
 router.use('/shop', require('./routes/shop'));
+router.use('/history', require('./routes/history'));
 
 // --- Health ---
 router.get('/ping', (_req, res) =>

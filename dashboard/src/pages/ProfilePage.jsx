@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import CharIcon from '../components/CharIcon';
 import { useAuth } from '../context/AuthContext';
+import DiscordAvatar from '../components/DiscordAvatar';
 
 const SOCIAL_ICONS = {
   instagram: <Instagram size={20} />,
@@ -424,17 +425,13 @@ export default function ProfilePage() {
         </div>
 
         <div className="portfolio-identity-bar">
-          <div className="portfolio-avatar-fb">
-            {theme.avatar ? (
-              <img src={theme.avatar} alt="Avatar" />
-            ) : p.avatar ? (
-              <img
-                src={`https://cdn.discordapp.com/avatars/${p.userId}/${p.avatar}.png`}
-                alt="Avatar"
-              />
-            ) : (
-              <div className="avatar-initial-fb">{p.username[0]}</div>
-            )}
+          <div className="portfolio-avatar-fb" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <DiscordAvatar
+              userId={p.userId}
+              avatarHash={theme.avatar || p.avatar}
+              decorationAsset={theme.avatarDecoration}
+              size={184}
+            />
           </div>
 
           <div className="portfolio-name-bio">

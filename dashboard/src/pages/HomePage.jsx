@@ -92,6 +92,28 @@ export default function HomePage() {
   const [activeFeature, setActiveFeature] = useState('combat');
   const [copied, setCopied] = useState(false);
   const [ownerProfile, setOwnerProfile] = useState(null);
+  const [journeyTimeline, setJourneyTimeline] = useState([
+    {
+      date: 'Jan 2025',
+      title: 'The Spark — KSAEKVAT 1.0 Alpha',
+      desc: 'First codebase release. Initializing core Discord handlers, simple database schemas, and text-based specimen hunting commands.',
+    },
+    {
+      date: 'Mar 2025',
+      title: 'Combat & Economy Integration',
+      desc: 'Added fully functional RPG PVE combat systems, boss levels, dynamic stat calculations, and the daily claims claim engine.',
+    },
+    {
+      date: 'May 2025',
+      title: 'The UI Dimension',
+      desc: 'Shipped a comprehensive Vite + React 19 dashboard featuring real-time live database search and interactive user profile bios.',
+    },
+    {
+      date: 'June 2025',
+      title: 'Version 2.0 — Cozy Matte Revamp',
+      desc: 'A complete aesthetic redesign. Replacing neon cyberpunk glows with a clean, matte, flat-studio layout optimized for clarity.',
+    },
+  ]);
 
   useEffect(() => {
     // Fetch stats
@@ -107,6 +129,16 @@ export default function HomePage() {
       .then((r) => r.json())
       .then((res) => {
         if (res.success) setOwnerProfile(res.data);
+      })
+      .catch(() => {});
+
+    // Fetch real project timeline history
+    fetch('/api/history')
+      .then((r) => r.json())
+      .then((res) => {
+        if (res.success && Array.isArray(res.data)) {
+          setJourneyTimeline(res.data);
+        }
       })
       .catch(() => {});
   }, []);
@@ -161,28 +193,6 @@ export default function HomePage() {
     },
   };
 
-  const journeyTimeline = [
-    {
-      date: 'Jan 2025',
-      title: 'The Spark — KSAEKVAT 1.0 Alpha',
-      desc: 'First codebase release. Initializing core Discord handlers, simple database schemas, and text-based specimen hunting commands.',
-    },
-    {
-      date: 'Mar 2025',
-      title: 'Combat & Economy Integration',
-      desc: 'Added fully functional RPG PVE combat systems, boss levels, dynamic stat calculations, and the daily claims claim engine.',
-    },
-    {
-      date: 'May 2025',
-      title: 'The UI Dimension',
-      desc: 'Shipped a comprehensive Vite + React 19 dashboard featuring real-time live database search and interactive user profile bios.',
-    },
-    {
-      date: 'June 2025',
-      title: 'Version 2.0 — Cozy Matte Revamp',
-      desc: 'A complete aesthetic redesign. Replacing neon cyberpunk glows with a clean, matte, flat-studio layout optimized for clarity.',
-    },
-  ];
 
   return (
     <div className="home-container" style={{ minHeight: '100vh', paddingBottom: '100px' }}>
@@ -419,8 +429,35 @@ export default function HomePage() {
                 <div className="timeline-dot" />
                 <div className="timeline-date">{item.date}</div>
                 <div className="timeline-content">
-                  <h4 className="timeline-title">{item.title}</h4>
+                  <h4 className="timeline-title" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+                    <span>{item.title}</span>
+                    {item.hash && (
+                      <a 
+                        href={item.url} 
+                        target="_blank" 
+                        rel="noreferrer"
+                        style={{
+                          fontSize: '0.7rem',
+                          color: '#00a8fc',
+                          textDecoration: 'none',
+                          background: 'rgba(0, 168, 252, 0.08)',
+                          border: '1px solid rgba(0, 168, 252, 0.15)',
+                          padding: '2px 6px',
+                          borderRadius: '6px',
+                          fontFamily: 'monospace',
+                          fontWeight: 600
+                        }}
+                      >
+                        {item.hash}
+                      </a>
+                    )}
+                  </h4>
                   <p className="timeline-desc">{item.desc}</p>
+                  {item.author && item.author !== 'Mo' && item.author !== 'Developer' && (
+                    <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginTop: '8px', textAlign: 'right' }}>
+                      by {item.author}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}
