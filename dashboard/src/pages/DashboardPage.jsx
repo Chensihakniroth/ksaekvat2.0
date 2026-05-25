@@ -202,7 +202,7 @@ export default function DashboardPage() {
     return (
       <div
         className="p-8 text-center opacity-50"
-        style={{ letterSpacing: '0.2em', fontSize: '0.8rem', marginTop: '100px' }}
+        style={{ letterSpacing: '0.2em', fontSize: '0.8rem', marginTop: '100px', color: 'var(--text-muted)' }}
       >
         SYNCHRONIZING...
       </div>
@@ -226,7 +226,7 @@ export default function DashboardPage() {
         >
           YOUR ARCHIVE
         </motion.h1>
-        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', fontWeight: 300 }}>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 300 }}>
           Shape your digital presence and manage your synced assets.
         </p>
       </header>
@@ -252,12 +252,12 @@ export default function DashboardPage() {
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            className="glass-panel"
+            className="matte-card"
             style={{
               padding: 0,
               overflow: 'hidden',
               borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.03)',
+              border: '1px solid var(--border-matte)',
             }}
           >
             <div
@@ -278,10 +278,9 @@ export default function DashboardPage() {
                   width: '60px',
                   height: '60px',
                   borderRadius: '50%',
-                  border: '3px solid var(--bg-deep)',
+                  border: '3px solid #0b0b0c',
                   overflow: 'hidden',
-                  background: 'var(--bg-deep)',
-                  boxShadow: '0 5px 15px rgba(0,0,0,0.5)',
+                  background: '#0b0b0c',
                 }}
               >
                 {formData.avatar ? (
@@ -328,7 +327,7 @@ export default function DashboardPage() {
               <p
                 style={{
                   fontSize: '0.8rem',
-                  color: 'var(--text-dim)',
+                  color: 'var(--text-muted)',
                   lineHeight: 1.5,
                   marginBottom: '15px',
                 }}
@@ -354,7 +353,6 @@ export default function DashboardPage() {
                     height: '6px',
                     borderRadius: '50%',
                     background: formData.accentColor,
-                    boxShadow: `0 0 10px ${formData.accentColor}`,
                   }}
                 />
                 {formData.accentColor}
@@ -363,11 +361,11 @@ export default function DashboardPage() {
           </motion.div>
 
           <div
-            className="glass-panel"
+            className="matte-card"
             style={{
               padding: '15px 20px',
               borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.03)',
+              border: '1px solid var(--border-matte)',
               display: 'flex',
               flexDirection: 'column',
               gap: '10px',
@@ -382,9 +380,9 @@ export default function DashboardPage() {
                 fontWeight: 600,
               }}
             >
-              <Globe size={14} color="var(--cyber-cyan)" />
+              <Globe size={14} color="rgba(255,255,255,0.5)" />
               <span>
-                Network Status: <span style={{ color: 'var(--cyber-green)' }}>ONLINE</span>
+                Network Status: <span style={{ color: '#4ade80' }}>ONLINE</span>
               </span>
             </div>
             <div
@@ -396,7 +394,7 @@ export default function DashboardPage() {
                 fontWeight: 600,
               }}
             >
-              <CheckCircle2 size={14} color="var(--cyber-purple)" />
+              <CheckCircle2 size={14} color="rgba(255,255,255,0.5)" />
               <span>Identity Verified</span>
             </div>
           </div>
@@ -412,9 +410,9 @@ export default function DashboardPage() {
                 padding: '12px 20px',
                 borderRadius: '12px',
                 background:
-                  message.type === 'success' ? 'rgba(5, 255, 161, 0.1)' : 'rgba(255, 0, 60, 0.1)',
-                border: `1px solid ${message.type === 'success' ? 'var(--cyber-green)' : 'var(--cyber-pink)'}`,
-                color: message.type === 'success' ? 'var(--cyber-green)' : 'var(--cyber-pink)',
+                  message.type === 'success' ? 'rgba(74, 222, 128, 0.08)' : 'rgba(255, 59, 92, 0.08)',
+                border: `1px solid ${message.type === 'success' ? 'rgba(74, 222, 128, 0.3)' : 'rgba(255, 59, 92, 0.3)'}`,
+                color: message.type === 'success' ? '#4ade80' : '#ff3b5c',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '10px',
@@ -428,11 +426,11 @@ export default function DashboardPage() {
           )}
 
           <section
-            className="glass-panel"
+            className="matte-card"
             style={{
               padding: '20px',
               borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.03)',
+              border: '1px solid var(--border-matte)',
             }}
           >
             <div
@@ -475,7 +473,7 @@ export default function DashboardPage() {
                       slug: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, ''),
                     })
                   }
-                  className="dash-input"
+                  className="matte-input"
                   style={{ paddingLeft: '75px', fontSize: '0.75rem' }}
                 />
               </div>
@@ -490,7 +488,7 @@ export default function DashboardPage() {
                 placeholder="Tell the world about yourself..."
                 value={formData.bio}
                 onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                className="dash-input"
+                className="matte-input"
                 style={{
                   minHeight: '80px',
                   resize: 'vertical',
@@ -504,11 +502,11 @@ export default function DashboardPage() {
           </section>
 
           <section
-            className="glass-panel"
+            className="matte-card"
             style={{
               padding: '20px',
               borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.03)',
+              border: '1px solid var(--border-matte)',
             }}
           >
             <div
@@ -520,7 +518,7 @@ export default function DashboardPage() {
                 opacity: 0.8,
               }}
             >
-              <Palette size={16} className="text-purple" />
+              <Palette size={16} />
               <h3
                 style={{
                   fontSize: '0.75rem',
@@ -546,7 +544,7 @@ export default function DashboardPage() {
                     type="text"
                     value={formData.accentColor}
                     onChange={(e) => setFormData({ ...formData, accentColor: e.target.value })}
-                    className="dash-input"
+                    className="matte-input"
                     style={{ padding: '6px 12px', fontSize: '0.75rem' }}
                   />
                 </div>
@@ -560,7 +558,7 @@ export default function DashboardPage() {
                     placeholder="https://..."
                     value={formData.avatar}
                     onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
-                    className="dash-input"
+                    className="matte-input"
                     style={{ padding: '6px 12px 6px 35px', fontSize: '0.75rem' }}
                   />
                 </div>
@@ -576,7 +574,7 @@ export default function DashboardPage() {
                     placeholder="https://..."
                     value={formData.background}
                     onChange={(e) => setFormData({ ...formData, background: e.target.value })}
-                    className="dash-input"
+                    className="matte-input"
                     style={{ padding: '6px 12px 6px 35px', fontSize: '0.75rem' }}
                   />
                 </div>
@@ -590,7 +588,7 @@ export default function DashboardPage() {
                     placeholder="https://..."
                     value={formData.banner}
                     onChange={(e) => setFormData({ ...formData, banner: e.target.value })}
-                    className="dash-input"
+                    className="matte-input"
                     style={{ padding: '6px 12px 6px 35px', fontSize: '0.75rem' }}
                   />
                 </div>
@@ -608,17 +606,17 @@ export default function DashboardPage() {
                 step="1"
                 value={formData.bannerPosition.replace('%', '')}
                 onChange={(e) => setFormData({ ...formData, bannerPosition: e.target.value + '%' })}
-                style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--cyber-cyan)' }}
+                style={{ width: '100%', cursor: 'pointer', accentColor: '#fff' }}
               />
             </div>
           </section>
 
           <section
-            className="glass-panel"
+            className="matte-card"
             style={{
               padding: '20px',
               borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.03)',
+              border: '1px solid var(--border-matte)',
             }}
           >
             <div
@@ -630,7 +628,7 @@ export default function DashboardPage() {
                 opacity: 0.8,
               }}
             >
-              <Music size={16} className="text-pink" />
+              <Music size={16} />
               <h3
                 style={{
                   fontSize: '0.75rem',
@@ -650,14 +648,14 @@ export default function DashboardPage() {
                   placeholder="Spotify Track URL or Direct MP3 Link"
                   value={formData.music}
                   onChange={(e) => setFormData({ ...formData, music: e.target.value })}
-                  className="dash-input"
+                  className="matte-input"
                   style={{ padding: '6px 12px 6px 35px', fontSize: '0.75rem' }}
                 />
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
                 <label
-                  className={`btn-v3 btn-v3-ghost ${uploading ? 'opacity-50 pointer-events-none' : ''}`}
+                  className={`matte-btn ${uploading ? 'opacity-50 pointer-events-none' : ''}`}
                   style={{
                     flex: '1 1 auto',
                     cursor: 'pointer',
@@ -692,11 +690,11 @@ export default function DashboardPage() {
           </section>
 
           <section
-            className="glass-panel"
+            className="matte-card"
             style={{
               padding: '20px',
               borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.03)',
+              border: '1px solid var(--border-matte)',
             }}
           >
             <div
@@ -708,7 +706,7 @@ export default function DashboardPage() {
                 opacity: 0.8,
               }}
             >
-              <LinkIcon size={16} className="text-gold" />
+              <LinkIcon size={16} />
               <h3
                 style={{
                   fontSize: '0.75rem',
@@ -744,7 +742,7 @@ export default function DashboardPage() {
                     placeholder={`${s} handle/link`}
                     value={formData.socials[s] || ''}
                     onChange={(e) => updateSocial(s, e.target.value)}
-                    className="dash-input"
+                    className="matte-input"
                     style={{ padding: '6px 12px', fontSize: '0.75rem' }}
                   />
                 </div>
@@ -753,11 +751,11 @@ export default function DashboardPage() {
           </section>
 
           <section
-            className="glass-panel"
+            className="matte-card"
             style={{
               padding: '20px',
               borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.03)',
+              border: '1px solid var(--border-matte)',
             }}
           >
             <div
@@ -769,7 +767,7 @@ export default function DashboardPage() {
                 opacity: 0.8,
               }}
             >
-              <Heart size={16} className="text-red" />
+              <Heart size={16} />
               <h3
                 style={{
                   fontSize: '0.75rem',
@@ -785,14 +783,14 @@ export default function DashboardPage() {
                 style={{
                   marginLeft: 'auto',
                   fontSize: '0.65rem',
-                  background: 'rgba(255, 0, 60, 0.1)',
-                  color: 'var(--cyber-pink)',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  color: 'rgba(255,255,255,0.5)',
                   padding: '4px 10px',
                   borderRadius: '6px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
-                  border: '1px solid rgba(255, 0, 60, 0.2)',
+                  border: '1px solid var(--border-matte)',
                   cursor: 'pointer',
                   transition: '0.3s',
                 }}
@@ -807,11 +805,11 @@ export default function DashboardPage() {
               {formData.favorites.map((item, idx) => (
                 <div
                   key={idx}
-                  className="glass-panel"
+                  className="matte-card"
                   style={{
                     padding: '12px',
                     borderRadius: '12px',
-                    border: '1px solid rgba(255,255,255,0.03)',
+                    border: '1px solid var(--border-matte)',
                     position: 'relative',
                   }}
                 >
@@ -821,7 +819,7 @@ export default function DashboardPage() {
                       position: 'absolute',
                       top: '12px',
                       right: '12px',
-                      color: 'var(--cyber-pink)',
+                      color: '#ff3b5c',
                       opacity: 0.5,
                       background: 'none',
                       border: 'none',
@@ -846,7 +844,7 @@ export default function DashboardPage() {
                       <select
                         value={item.type}
                         onChange={(e) => updateFavorite(idx, 'type', e.target.value)}
-                        className="dash-input select-v3"
+                        className="matte-input"
                         style={{ padding: '4px 8px', fontSize: '0.7rem' }}
                       >
                         <option value="character">Resonator</option>
@@ -860,7 +858,7 @@ export default function DashboardPage() {
                         placeholder="Name"
                         value={item.name}
                         onChange={(e) => updateFavorite(idx, 'name', e.target.value)}
-                        className="dash-input"
+                        className="matte-input"
                         style={{ padding: '4px 8px', fontSize: '0.7rem' }}
                       />
                     </div>
@@ -884,11 +882,11 @@ export default function DashboardPage() {
           </section>
 
           <section
-            className="glass-panel"
+            className="matte-card"
             style={{
               padding: '20px',
               borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.03)',
+              border: '1px solid var(--border-matte)',
             }}
           >
             <div
@@ -900,7 +898,7 @@ export default function DashboardPage() {
                 opacity: 0.8,
               }}
             >
-              <LinkIcon size={16} className="text-cyan" />
+              <LinkIcon size={16} />
               <h3
                 style={{
                   fontSize: '0.75rem',
@@ -916,14 +914,14 @@ export default function DashboardPage() {
                 style={{
                   marginLeft: 'auto',
                   fontSize: '0.65rem',
-                  background: 'rgba(0, 243, 255, 0.1)',
-                  color: 'var(--cyber-cyan)',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  color: 'rgba(255,255,255,0.5)',
                   padding: '4px 10px',
                   borderRadius: '6px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
-                  border: '1px solid rgba(0, 243, 255, 0.2)',
+                  border: '1px solid var(--border-matte)',
                   cursor: 'pointer',
                   transition: '0.3s',
                 }}
@@ -938,11 +936,11 @@ export default function DashboardPage() {
               {formData.portfolio.map((item, idx) => (
                 <div
                   key={idx}
-                  className="glass-panel"
+                  className="matte-card"
                   style={{
                     padding: '12px',
                     borderRadius: '12px',
-                    border: '1px solid rgba(255,255,255,0.03)',
+                    border: '1px solid var(--border-matte)',
                     position: 'relative',
                   }}
                 >
@@ -952,7 +950,7 @@ export default function DashboardPage() {
                       position: 'absolute',
                       top: '12px',
                       right: '12px',
-                      color: 'var(--cyber-pink)',
+                      color: '#ff3b5c',
                       opacity: 0.5,
                       background: 'none',
                       border: 'none',
@@ -977,7 +975,7 @@ export default function DashboardPage() {
                       <select
                         value={item.type}
                         onChange={(e) => updatePortfolioItem(idx, 'type', e.target.value)}
-                        className="dash-input select-v3"
+                        className="matte-input"
                         style={{ padding: '4px 8px', fontSize: '0.7rem' }}
                       >
                         <option value="github">GitHub</option>
@@ -991,7 +989,7 @@ export default function DashboardPage() {
                         placeholder="Title"
                         value={item.title}
                         onChange={(e) => updatePortfolioItem(idx, 'title', e.target.value)}
-                        className="dash-input"
+                        className="matte-input"
                         style={{ padding: '4px 8px', fontSize: '0.7rem' }}
                       />
                     </div>
@@ -1006,7 +1004,7 @@ export default function DashboardPage() {
                       placeholder="https://..."
                       value={item.url}
                       onChange={(e) => updatePortfolioItem(idx, 'url', e.target.value)}
-                      className="dash-input"
+                      className="matte-input"
                       style={{ padding: '4px 8px', fontSize: '0.7rem' }}
                     />
                   </div>
@@ -1029,11 +1027,11 @@ export default function DashboardPage() {
           </section>
 
           <section
-            className="glass-panel"
+            className="matte-card"
             style={{
               padding: '20px',
               borderRadius: '16px',
-              border: '1px solid rgba(255,255,255,0.03)',
+              border: '1px solid var(--border-matte)',
             }}
           >
             <div
@@ -1045,7 +1043,7 @@ export default function DashboardPage() {
                 opacity: 0.8,
               }}
             >
-              <Eye size={16} className="text-cyan" />
+              <Eye size={16} />
               <h3
                 style={{
                   fontSize: '0.75rem',
@@ -1073,9 +1071,9 @@ export default function DashboardPage() {
               >
                 <span>Display Statistics</span>
                 {formData.showStats ? (
-                  <Eye color="var(--cyber-green)" size={16} />
+                  <Eye color="#4ade80" size={16} />
                 ) : (
-                  <EyeOff color="var(--cyber-pink)" size={16} />
+                  <EyeOff color="#ff3b5c" size={16} />
                 )}
               </div>
               <div
@@ -1093,9 +1091,9 @@ export default function DashboardPage() {
               >
                 <span>Show Arsenal/Inventory</span>
                 {formData.showInventory ? (
-                  <Eye color="var(--cyber-green)" size={16} />
+                  <Eye color="#4ade80" size={16} />
                 ) : (
-                  <EyeOff color="var(--cyber-pink)" size={16} />
+                  <EyeOff color="#ff3b5c" size={16} />
                 )}
               </div>
             </div>
@@ -1103,14 +1101,14 @@ export default function DashboardPage() {
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
             <button
-              className={`btn-v3 ${saving ? 'loading' : ''}`}
+              className={`matte-btn ${saving ? 'loading' : ''}`}
               onClick={handleSave}
               disabled={saving}
               style={{
                 padding: '12px 30px',
                 fontSize: '0.75rem',
-                background: 'var(--cyber-cyan)',
-                color: '#000',
+                background: '#fff',
+                color: '#0b0b0c',
                 border: 'none',
                 display: 'flex',
                 alignItems: 'center',
@@ -1119,7 +1117,6 @@ export default function DashboardPage() {
                 fontWeight: 900,
                 letterSpacing: '0.1em',
                 cursor: 'pointer',
-                boxShadow: '0 0 15px rgba(0,243,255,0.3)',
               }}
             >
               <Save size={14} />

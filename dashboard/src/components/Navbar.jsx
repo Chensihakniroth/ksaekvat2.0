@@ -157,14 +157,14 @@ export default function Navbar() {
                       <Link
                         to={`/profile/${user.username}`}
                         onClick={() => setMobileMenuOpen(false)}
-                        style={{ color: 'var(--cyber-cyan)' }}
+                        style={{ color: 'rgba(255,255,255,0.7)' }}
                       >
                         PROFILE
                       </Link>
                       <Link
                         to="/dashboard"
                         onClick={() => setMobileMenuOpen(false)}
-                        style={{ color: 'var(--cyber-yellow)' }}
+                        style={{ color: 'rgba(255,255,255,0.6)' }}
                       >
                         EDIT PROFILE
                       </Link>
@@ -211,33 +211,32 @@ export default function Navbar() {
           width: 100%;
         }
         .zen-nav-wrap.scrolled .zen-nav-inner {
-          background: rgba(10, 10, 10, 0.6);
+          background: rgba(20, 20, 22, 0.9);
           backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.06);
           border-radius: 50px;
           margin-top: 15px;
           height: 60px;
           width: calc(100% - 40px);
           max-width: 1200px;
-          box-shadow: 0 20px 40px rgba(0,0,0,0.2);
           padding: 0 25px;
         }
 
         .zen-logo-mark {
-          width: 32px; height: 32px; background: var(--cyber-yellow); color: #000;
-          border-radius: 50%; display: flex; align-items: center; justify-content: center;
-          font-weight: 900; font-size: 1.2rem; box-shadow: 0 0 15px rgba(252, 238, 10, 0.3);
+          width: 32px; height: 32px; background: #fff; color: #000;
+          border-radius: 8px; display: flex; align-items: center; justify-content: center;
+          font-weight: 900; font-size: 1.2rem;
           flex-shrink: 0;
         }
         .zen-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-        .zen-brand-name { font-weight: 900; font-size: 1.1rem; letter-spacing: -0.04em; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .zen-brand-name { font-weight: 900; font-size: 1.1rem; letter-spacing: -0.04em; color: #fff; }
 
         .zen-desktop-nav { display: flex; gap: 40px; position: absolute; left: 50%; transform: translateX(-50%); }
         .zen-nav-item { 
           font-size: 0.75rem; font-weight: 900; color: rgba(255,255,255,0.4); 
           letter-spacing: 0.2em; position: relative; transition: color 0.4s; text-decoration: none;
         }
-        .zen-nav-item:hover, .zen-nav-item.active { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .zen-nav-item:hover, .zen-nav-item.active { color: #fff; }
 
         .zen-search { position: relative; }
         .zen-search-box {
@@ -245,7 +244,7 @@ export default function Navbar() {
           border-radius: 50px; padding: 8px 15px 8px 40px; position: relative; width: 160px;
           transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .zen-search-box:focus-within { width: 220px; border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+        .zen-search-box:focus-within { width: 220px; border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.04); }
         .zen-search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); opacity: 0.3; transition: opacity 0.4s; }
         .zen-search-box:focus-within .zen-search-icon { opacity: 0.8; }
         .zen-search-box input { 
@@ -256,9 +255,9 @@ export default function Navbar() {
 
         .zen-search-results {
           position: absolute; top: 55px; right: 0; width: 280px;
-          background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(25px);
-          border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px;
-          padding: 8px; z-index: 100; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+          background: rgba(20, 20, 22, 0.95); backdrop-filter: blur(25px);
+          border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 20px;
+          padding: 8px; z-index: 100;
         }
         .zen-res-item {
           display: flex; align-items: center; gap: 12px; padding: 10px;
@@ -284,18 +283,18 @@ export default function Navbar() {
           font-size: 0.65rem; font-weight: 900; letter-spacing: 0.15em;
           cursor: pointer; transition: color 0.3s; padding: 4px 8px;
         }
-        .zen-action-btn:hover { color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .zen-action-btn:hover { color: #fff; }
         
         .zen-avatar-wrap { 
           width: 34px; height: 34px; border-radius: 50%; overflow: hidden; 
           border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.4s;
           flex-shrink: 0;
         }
-        .zen-avatar-wrap:hover { transform: scale(1.1); border-color: var(--cyber-cyan); box-shadow: 0 0 15px rgba(0,243,255,0.2); }
+        .zen-avatar-wrap:hover { transform: scale(1.1); border-color: rgba(255,255,255,0.3); }
         .zen-avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
         
         .zen-logout-btn { 
-          opacity: 0.3; color: var(--cyber-pink); transition: 0.3s; background: none; border: none; padding: 5px; cursor: pointer; 
+          opacity: 0.3; color: rgba(255,255,255,0.4); transition: 0.3s; background: none; border: none; padding: 5px; cursor: pointer; 
         }
         .zen-logout-btn:hover { opacity: 1; transform: scale(1.1); }
 
@@ -304,7 +303,7 @@ export default function Navbar() {
           font-size: 0.7rem; font-weight: 900; letter-spacing: 0.15em; border: none;
           transition: 0.4s; cursor: pointer;
         }
-        .zen-login-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(255,255,255,0.15); }
+        .zen-login-btn:hover { transform: translateY(-2px); }
 
         .zen-mobile-toggle { 
           display: none; background: none; border: none; color: #fff; padding: 5px; cursor: pointer;
@@ -313,18 +312,18 @@ export default function Navbar() {
         .zen-mobile-toggle:hover { opacity: 1; }
 
         .zen-mobile-overlay {
-          position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(20px);
+          position: fixed; inset: 0; background: rgba(11,11,12,0.92); backdrop-filter: blur(20px);
           z-index: 999; display: flex; align-items: center; justify-content: center;
         }
         .zen-mobile-menu { text-align: center; width: 100%; }
         .zen-mobile-links { display: flex; flex-direction: column; gap: 30px; align-items: center; }
-        .zen-mobile-links a { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.15em; color: #fff; opacity: 0.4; transition: 0.4s; text-decoration: none; }
-        .zen-mobile-links a:hover { opacity: 1; letter-spacing: 0.25em; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        .zen-mobile-links a { font-size: 1.8rem; font-weight: 900; letter-spacing: 0.15em; color: #fff; opacity: 0.4; transition: opacity 0.4s, color 0.4s; text-decoration: none; }
+        .zen-mobile-links a:hover { opacity: 1; }
         .zen-mobile-logout {
           background: none; border: none; font-size: 1.5rem; font-weight: 900; letter-spacing: 0.15em; 
-          opacity: 0.5; color: var(--cyber-pink); cursor: pointer; margin-top: 20px; transition: 0.4s;
+          opacity: 0.5; color: #ff3b5c; cursor: pointer; margin-top: 20px; transition: 0.4s;
         }
-        .zen-mobile-logout:hover { opacity: 1; letter-spacing: 0.2em; text-shadow: 0 0 20px rgba(255,0,60,0.3); }
+        .zen-mobile-logout:hover { opacity: 1; }
         .zen-mobile-login {
           background: #fff; color: #000; border: none; padding: 15px 40px; border-radius: 50px;
           font-size: 1.2rem; font-weight: 900; letter-spacing: 0.15em; cursor: pointer; margin-top: 20px; transition: 0.4s;
@@ -375,7 +374,6 @@ function NavBtn({ to, label }) {
                 height: '4px',
                 background: '#fff',
                 borderRadius: '50%',
-                boxShadow: '0 0 10px #fff',
               }}
             />
           )}

@@ -6,26 +6,29 @@ import {
   PawPrint,
   Star,
   Coins,
-  Trophy,
   ArrowRight,
-  Github,
-  MessageSquare,
   Terminal,
   Users,
   Layers,
   Award,
-  Sparkles,
-  ExternalLink,
-  Calendar,
-  History
+  History,
+  Pencil,
+  Copy,
+  Check,
+  ChevronRight,
+  MinusCircle,
+  ExternalLink
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const INVITE_LINK = 'https://discord.com/oauth2/authorize?client_id=1399459454889754805';
+const MO_DISCORD_ID = '886';
+const MO_PROFILE_LINK = 'https://ksaekvat.up.railway.app/profile/mo';
 
 export default function HomePage() {
   const [stats, setStats] = useState(null);
   const [activeFeature, setActiveFeature] = useState('combat');
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     fetch('/api/stats')
@@ -35,6 +38,12 @@ export default function HomePage() {
       })
       .catch(() => {});
   }, []);
+
+  const handleCopyId = () => {
+    navigator.clipboard.writeText(MO_DISCORD_ID);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const features = {
     combat: {
@@ -110,89 +119,330 @@ export default function HomePage() {
         {/* HERO SECTION - SPLIT PANE */}
         <section className="hero-split">
           
-          {/* LEFT PANE: CREATOR INTRO CARD */}
+          {/* LEFT PANE: DISCORD PROFILE POPOUT */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}
           >
-            <div className="matte-card" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* Discord-style profile card */}
+            <div style={{
+              background: '#111214',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              border: '1px solid rgba(255,255,255,0.06)',
+              maxWidth: '380px',
+              width: '100%'
+            }}>
               
-              {/* Creator Header */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                <div 
-                  style={{ 
-                    width: '64px', 
-                    height: '64px', 
-                    borderRadius: '16px', 
-                    background: '#1a1a1e',
-                    border: '1px solid var(--border-matte)',
+              {/* Banner */}
+              <div style={{
+                height: '120px',
+                background: 'linear-gradient(135deg, #1a0508 0%, #3d0a15 40%, #2a0810 100%)',
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                {/* Decorative skulls/pattern overlay */}
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'radial-gradient(circle at 30% 50%, rgba(120,20,30,0.4) 0%, transparent 60%), radial-gradient(circle at 70% 40%, rgba(80,10,20,0.5) 0%, transparent 50%)',
+                }} />
+                {/* Subtle noise texture */}
+                <div style={{
+                  position: 'absolute',
+                  inset: 0,
+                  opacity: 0.15,
+                  backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)',
+                }} />
+              </div>
+
+              {/* Avatar overlapping banner */}
+              <div style={{ position: 'relative', padding: '0 20px' }}>
+                <div style={{
+                  position: 'absolute',
+                  top: '-40px',
+                  left: '20px',
+                  width: '80px',
+                  height: '80px',
+                  borderRadius: '50%',
+                  border: '5px solid #111214',
+                  background: '#2b2d31',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  {/* Avatar placeholder - manga style dark silhouette */}
+                  <div style={{
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(180deg, #1a1a1e 0%, #2a2a30 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '1.8rem',
-                    fontWeight: 800
+                    fontSize: '2rem',
+                    color: 'rgba(255,255,255,0.2)',
+                    fontWeight: 300
+                  }}>
+                    M
+                  </div>
+                  
+                  {/* DND status indicator */}
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '2px',
+                    right: '2px',
+                    width: '16px',
+                    height: '16px',
+                    borderRadius: '50%',
+                    background: '#111214',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <div style={{
+                      width: '10px',
+                      height: '10px',
+                      borderRadius: '50%',
+                      background: '#f23f43',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <div style={{
+                        width: '6px',
+                        height: '2px',
+                        background: '#111214',
+                        borderRadius: '1px'
+                      }} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Discord badges row - top right */}
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  gap: '4px',
+                  paddingTop: '10px'
+                }}>
+                  {/* Active Developer badge */}
+                  <div style={{
+                    width: '22px',
+                    height: '22px',
+                    borderRadius: '50%',
+                    background: 'rgba(88, 101, 242, 0.15)',
+                    border: '1px solid rgba(88, 101, 242, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.55rem',
+                    color: '#5865f2'
+                  }}>
+                    {'</>'}
+                  </div>
+                  {/* Nitro badge */}
+                  <div style={{
+                    width: '22px',
+                    height: '22px',
+                    borderRadius: '50%',
+                    background: 'rgba(235, 69, 158, 0.15)',
+                    border: '1px solid rgba(235, 69, 158, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.65rem',
+                    color: '#eb459e'
+                  }}>
+                    ✦
+                  </div>
+                  {/* Boost badge */}
+                  <div style={{
+                    width: '22px',
+                    height: '22px',
+                    borderRadius: '50%',
+                    background: 'rgba(244, 127, 255, 0.15)',
+                    border: '1px solid rgba(244, 127, 255, 0.3)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.6rem',
+                    color: '#f47fff'
+                  }}>
+                    ⚡
+                  </div>
+                </div>
+              </div>
+
+              {/* Name & username section */}
+              <div style={{ padding: '12px 20px 0' }}>
+                <div style={{
+                  fontSize: '1.3rem',
+                  fontWeight: 800,
+                  color: '#ed4245',
+                  fontStyle: 'italic',
+                  letterSpacing: '-0.01em',
+                  lineHeight: 1.2
+                }}>
+                  bawlsag
+                </div>
+                <div style={{
+                  fontSize: '0.8rem',
+                  color: 'rgba(255,255,255,0.6)',
+                  fontWeight: 500,
+                  marginTop: '2px'
+                }}>
+                  bombaclat_._.
+                </div>
+              </div>
+
+              {/* Separator */}
+              <div style={{ margin: '14px 20px', height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+
+              {/* Profile link */}
+              <div style={{ padding: '0 20px' }}>
+                <a 
+                  href={MO_PROFILE_LINK}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    fontSize: '0.8rem',
+                    color: '#00a8fc',
+                    fontWeight: 500,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    textDecoration: 'none'
                   }}
                 >
-                  M
+                  ksaekvat.up.railway.app/profile/mo
+                  <ExternalLink size={10} style={{ opacity: 0.6 }} />
+                </a>
+              </div>
+
+              {/* Separator */}
+              <div style={{ margin: '14px 20px', height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+
+              {/* User Reviews */}
+              <div style={{ padding: '0 20px' }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: '0.8rem'
+                }}>
+                  <span style={{ fontWeight: 700, color: '#fff' }}>User Reviews</span>
+                  <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 500, fontSize: '0.75rem' }}>No reviews yet</span>
+                </div>
+              </div>
+
+              {/* Separator */}
+              <div style={{ margin: '14px 20px', height: '1px', background: 'rgba(255,255,255,0.06)' }} />
+
+              {/* Menu items */}
+              <div style={{ padding: '0 12px 12px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                
+                {/* Edit Profile */}
+                <Link 
+                  to="/dashboard"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '10px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.85rem',
+                    fontWeight: 500,
+                    color: 'rgba(255,255,255,0.8)',
+                    transition: 'background 0.15s',
+                    textDecoration: 'none'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  <Pencil size={16} style={{ opacity: 0.5 }} />
+                  <span>Edit Profile</span>
+                </Link>
+
+                {/* Do Not Disturb */}
+                <div 
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '10px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.85rem',
+                    fontWeight: 500,
+                    color: 'rgba(255,255,255,0.8)',
+                    cursor: 'default'
+                  }}
+                >
+                  <div style={{
+                    width: '16px',
+                    height: '16px',
+                    borderRadius: '4px',
+                    background: '#f23f43',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <MinusCircle size={10} color="#111214" />
+                  </div>
+                  <span>Do Not Disturb</span>
+                  <ChevronRight size={14} style={{ marginLeft: 'auto', opacity: 0.3 }} />
+                </div>
+
+                {/* Copy User ID */}
+                <div 
+                  onClick={handleCopyId}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '10px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.85rem',
+                    fontWeight: 500,
+                    color: 'rgba(255,255,255,0.8)',
+                    cursor: 'pointer',
+                    transition: 'background 0.15s'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                >
+                  {copied ? <Check size={16} style={{ color: '#4ade80' }} /> : <Copy size={16} style={{ opacity: 0.5 }} />}
+                  <span>{copied ? 'Copied!' : 'Copy User ID'}</span>
+                </div>
+
+              </div>
+
+              {/* Discord Profile Info footer */}
+              <div style={{
+                padding: '12px 20px',
+                borderTop: '1px solid rgba(255,255,255,0.06)',
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '8px'
+              }}>
+                <div>
+                  <div style={{ fontSize: '0.6rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>
+                    Username
+                  </div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#fff' }}>
+                    bombaclat_._.
+                  </div>
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>@_callme_.mo</h3>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-                    Lead Architect & Bot Creator
-                  </p>
+                  <div style={{ fontSize: '0.6rem', fontWeight: 700, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>
+                    User ID
+                  </div>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#fff', fontFamily: 'monospace' }}>
+                    {MO_DISCORD_ID}
+                  </div>
                 </div>
-              </div>
-
-              {/* Biography */}
-              <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>
-                Building immersive digital worlds, one line of TypeScript at a time. Mo designed KSAEKVAT 
-                to connect RPG systems, live Gacha, and collectible hunting directly inside Discord.
-              </p>
-
-              {/* Tech Badges */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {['TypeScript', 'Discord.js', 'React 19', 'MongoDB'].map((tech) => (
-                  <span 
-                    key={tech}
-                    style={{ 
-                      fontSize: '0.75rem', 
-                      fontWeight: 600, 
-                      padding: '4px 10px', 
-                      background: 'rgba(255,255,255,0.03)', 
-                      border: '1px solid var(--border-matte)',
-                      borderRadius: '6px',
-                      color: 'rgba(255,255,255,0.6)'
-                    }}
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-
-              {/* Creator Social Links */}
-              <div style={{ display: 'flex', gap: '12px', borderTop: '1px solid var(--border-matte)', paddingTop: '20px' }}>
-                <a 
-                  href="https://github.com" 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="matte-btn"
-                  style={{ padding: '8px 16px', fontSize: '0.75rem', flex: 1 }}
-                >
-                  <Github size={14} />
-                  <span>GitHub</span>
-                </a>
-                <a 
-                  href="https://discord.com" 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="matte-btn"
-                  style={{ padding: '8px 16px', fontSize: '0.75rem', flex: 1 }}
-                >
-                  <MessageSquare size={14} />
-                  <span>Discord</span>
-                </a>
               </div>
 
             </div>

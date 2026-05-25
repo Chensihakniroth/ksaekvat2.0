@@ -7,7 +7,7 @@ import { ReactLenis } from '@studio-freight/react-lenis';
 // Layout Components (Loaded Immediately)
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import GlobalTicker from './components/GlobalTicker';
+// GlobalTicker removed - gacha live feed disabled
 import { AuthProvider } from './context/AuthContext';
 
 // Page Components (Lazy Loaded for Performance)
@@ -87,7 +87,7 @@ function LoadingGateway() {
 function AppContent() {
   const location = useLocation();
   const isProfile = location.pathname.startsWith('/profile/');
-  const isMattePage = ['/', '/shop', '/leaderboard', '/characters', '/zoo'].includes(location.pathname);
+  const isMattePage = ['/', '/shop', '/leaderboard', '/characters', '/zoo', '/dashboard'].includes(location.pathname);
 
   // Setup Parallax Background
   const { scrollYProgress } = useScroll();
@@ -149,12 +149,7 @@ function AppContent() {
         </Suspense>
       </main>
 
-      {!isProfile && (
-        <>
-          <Footer />
-          <GlobalTicker />
-        </>
-      )}
+      {!isProfile && <Footer />}
     </div>
   );
 }
