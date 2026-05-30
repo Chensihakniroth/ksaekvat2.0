@@ -2,7 +2,7 @@ const config = require('../config/config.js');
 const logger = require('../utils/logger.js');
 const cooldowns = require('../utils/cooldowns.js');
 const database = require('../services/DatabaseService');
-const { EmbedBuilder, MessageFlags } = require('discord.js');
+const { EmbedBuilder, MessageFlags, PermissionsBitField } = require('discord.js');
 const axios = require('axios');
 
 // Memory storage for conversation history (Channel-based)
@@ -240,22 +240,27 @@ module.exports = {
         }
 
         // Check if user is admin for admin-only commands
-        if (command.adminOnly && !config.adminIds.includes(message.author.id)) {
-          activeRequests.delete(userId);
-          message
-            .reply({
-              embeds: [
-                {
-                  color: parseInt(config.colors.error.slice(1), 16),
-                  title: 'Access Denied',
-                  description: 'This command is restricted to authorized personnel only.',
-                  timestamp: new Date(),
-                },
-              ],
-              flags: [MessageFlags.Ephemeral],
-            })
-            .catch(() => {});
-          return;
+        if (command.adminOnly) {
+          const isBotAdmin = config.adminIds.includes(message.author.id);
+          const isServerAdmin = message.guild && message.member && message.member.permissions.has(PermissionsBitField.Flags.Administrator);
+
+          if (!isBotAdmin && !(command.name === 'clear' && isServerAdmin)) {
+            activeRequests.delete(userId);
+            message
+              .reply({
+                embeds: [
+                  {
+                    color: parseInt(config.colors.error.slice(1), 16),
+                    title: 'Access Denied',
+                    description: 'This command is restricted to authorized personnel only.',
+                    timestamp: new Date(),
+                  },
+                ],
+                flags: [MessageFlags.Ephemeral],
+              })
+              .catch(() => {});
+            return;
+          }
         }
 
         // Check cooldowns
