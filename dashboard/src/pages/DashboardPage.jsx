@@ -89,6 +89,8 @@ export default function DashboardPage() {
   ]);
   const [consoleInput, setConsoleInput] = useState('');
   const [adminStats, setAdminStats] = useState(null);
+  const [guildInvites, setGuildInvites] = useState({});
+  const [loadingInviteId, setLoadingInviteId] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -350,6 +352,26 @@ export default function DashboardPage() {
       }
     } catch (err) {
       setConsoleLogs((prev) => [...prev, '[ERROR] Network connection failure to host system.']);
+    }
+  };
+
+  const handleFetchInvite = async (guildId) => {
+    try {
+      setLoadingInviteId(guildId);
+      const res = await fetch(`/api/admin/guild/${guildId}/invite`, {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (data.success) {
+        setGuildInvites((prev) => ({ ...prev, [guildId]: data.inviteUrl }));
+      } else {
+        alert(`Failed to retrieve invite: ${data.error}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Failed to connect to administrative kernel.');
+    } finally {
+      setLoadingInviteId(null);
     }
   };
 
@@ -1939,7 +1961,7 @@ export default function DashboardPage() {
                             ID: {guild.id}
                           </span>
                         </div>
-                        <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '5px', whiteSpace: 'nowrap' }}>
                           <span
                             style={{
                               fontSize: '0.7rem',
@@ -1953,6 +1975,40 @@ export default function DashboardPage() {
                           >
                             {guild.memberCount.toLocaleString()} MEM
                           </span>
+                          {guildInvites[guild.id] ? (
+                            <a
+                              href={guildInvites[guild.id]}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                fontSize: '0.65rem',
+                                color: '#4ade80',
+                                textDecoration: 'underline',
+                                fontWeight: 700,
+                                cursor: 'pointer'
+                              }}
+                            >
+                              INVITE LINK
+                            </a>
+                          ) : (
+                            <button
+                              onClick={() => handleFetchInvite(guild.id)}
+                              disabled={loadingInviteId !== null}
+                              style={{
+                                fontSize: '0.6rem',
+                                background: 'none',
+                                border: 'none',
+                                color: 'rgba(255, 255, 255, 0.4)',
+                                textDecoration: 'underline',
+                                cursor: 'pointer',
+                                padding: 0,
+                                margin: 0,
+                                fontWeight: 700
+                              }}
+                            >
+                              {loadingInviteId === guild.id ? 'GETTING...' : 'GET INVITE'}
+                            </button>
+                          )}
                         </div>
                       </div>
                     ))}
