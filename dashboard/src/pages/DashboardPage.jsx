@@ -1849,6 +1849,129 @@ export default function DashboardPage() {
                     </button>
                   </form>
                 </section>
+
+                <section
+                  className="matte-card"
+                  style={{
+                    padding: '20px',
+                    borderRadius: '16px',
+                    border: '1px solid var(--border-matte)',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      marginBottom: '15px',
+                      opacity: 0.8,
+                    }}
+                  >
+                    <Bot size={16} color="rgba(255,255,255,0.6)" />
+                    <h3 style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                      Active Connected Sectors (Servers)
+                    </h3>
+                  </div>
+
+                  <p style={{ fontSize: '0.75rem', opacity: 0.6, lineHeight: 1.4, marginBottom: '20px' }}>
+                    Currently monitoring {adminStats?.guilds?.length || adminStats?.guildCount || 0} active server sectors. Only accessible via authorization protocols.
+                  </p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '15px' }}>
+                    {adminStats?.guilds?.map((guild) => (
+                      <div
+                        key={guild.id}
+                        className="matte-card"
+                        style={{
+                          padding: '12px 15px',
+                          borderRadius: '12px',
+                          border: '1px solid var(--border-matte)',
+                          background: 'rgba(255,255,255,0.01)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                        }}
+                      >
+                        {guild.iconUrl ? (
+                          <img
+                            src={guild.iconUrl}
+                            alt="Sector Icon"
+                            style={{
+                              width: '40px',
+                              height: '40px',
+                              borderRadius: '8px',
+                              border: '1px solid var(--border-matte)',
+                            }}
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              width: '40px',
+                              height: '40px',
+                              borderRadius: '8px',
+                              border: '1px solid var(--border-matte)',
+                              background: 'rgba(255,255,255,0.04)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              color: 'rgba(255,255,255,0.6)',
+                            }}
+                          >
+                            {guild.name.slice(0, 2).toUpperCase()}
+                          </div>
+                        )}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <h4
+                            style={{
+                              fontSize: '0.8rem',
+                              fontWeight: 700,
+                              margin: 0,
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {guild.name}
+                          </h4>
+                          <span style={{ fontSize: '0.65rem', opacity: 0.4, display: 'block', marginTop: '2px' }}>
+                            ID: {guild.id}
+                          </span>
+                        </div>
+                        <div style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
+                          <span
+                            style={{
+                              fontSize: '0.7rem',
+                              fontWeight: 900,
+                              color: 'rgba(255, 255, 255, 0.8)',
+                              background: 'rgba(255, 255, 255, 0.04)',
+                              padding: '2px 8px',
+                              borderRadius: '4px',
+                              border: '1px solid var(--border-matte)',
+                            }}
+                          >
+                            {guild.memberCount.toLocaleString()} MEM
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                    {(!adminStats?.guilds || adminStats.guilds.length === 0) && (
+                      <div
+                        style={{
+                          gridColumn: '1 / -1',
+                          padding: '30px',
+                          textAlign: 'center',
+                          opacity: 0.4,
+                          fontSize: '0.75rem',
+                          fontStyle: 'italic',
+                        }}
+                      >
+                        No active sectors scanned.
+                      </div>
+                    )}
+                  </div>
+                </section>
               </motion.div>
             )}
           </AnimatePresence>

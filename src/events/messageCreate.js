@@ -21,6 +21,22 @@ module.exports = {
     // Ignore messages from bots
     if (message.author.bot) return;
 
+    // Safeguard reply method globally to avoid crashes if message is deleted mid-execution
+    if (typeof message.reply === 'function') {
+      const originalReply = message.reply.bind(message);
+      message.reply = function (options, ...extra) {
+        if (typeof options === 'string') {
+          options = { content: options };
+        }
+        if (options && typeof options === 'object') {
+          if (options.failIfNotExists === undefined) {
+            options.failIfNotExists = false;
+          }
+        }
+        return originalReply(options, ...extra);
+      };
+    }
+
     // === 1. FAST COMMAND DETECTION (PRIORITY) ===
     let prefix = null;
     let commandName = null;

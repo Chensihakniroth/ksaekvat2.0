@@ -54,6 +54,12 @@ router.get('/stats', verifyOwner, (req: Request, res: Response) => {
       cachedUsers: client.users.cache.size,
       ping: client.ws.ping || 0,
       cpuUsage: process.cpuUsage(),
+      guilds: client.guilds.cache.map((g: any) => ({
+        id: g.id,
+        name: g.name,
+        memberCount: g.memberCount,
+        iconUrl: g.iconURL() || null,
+      })),
     },
   });
 });
