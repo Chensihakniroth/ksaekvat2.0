@@ -154,6 +154,21 @@ router.post('/execute', verifyOwner, async (req, res) => {
                 output: `[Guilds] Currently connected to ${client.guilds.cache.size} servers:\n${guilds || 'None'}`,
             });
         }
+        if (normalized.startsWith('guild invite') || normalized.startsWith('invite')) {
+            const parts = command.trim().split(' ');
+            const targetGuildId = parts[parts.length - 1];
+            const guild = client.guilds.cache.get(targetGuildId) || client.guilds.cache.find((g) => g.name.toLowerCase().includes(targetGuildId.toLowerCase()));
+            if (!guild) {
+                return res.json({ success: true, output: `[Invite] Could not find guild with ID/name matching "${targetGuildId}".` });
+            }
+            // Generate invite
+            const channel = guild.rulesChannel || guild.systemChannel || guild.channels.cache.find((ch) => ch.type === 0 && ch.permissionsFor(guild.members.me).has('CreateInstantInvite'));
+            if (!channel) {
+                return res.json({ success: true, output: `[Invite] Failed: No channel found with invite creation permissions in "${guild.name}".` });
+            }
+            const invite = await channel.createInvite({ maxAge: 0, maxUses: 0, reason: 'Console invite request' });
+            return res.json({ success: true, output: `[Invite] Created permanent link for "${guild.name}":\n${invite.url}` });
+        }
         if (normalized === 'shard status' || normalized === 'shard') {
             const ping = client.ws.ping;
             const status = client.ws.status;
@@ -172,6 +187,44 @@ router.post('/execute', verifyOwner, async (req, res) => {
     }
     catch (err) {
         res.json({ success: false, output: `Execution Error: ${err.message}` });
+    }
+});
+// POST /api/admin/guild/:guildId/invite
+// Returns a server invite link (Owner only)
+router.post('/guild/:guildId/invite', verifyOwner, async (req, res) => {
+    const { guildId } = req.params;
+    const client = req.app.locals.client;
+    if (!client) {
+        return res.status(500).json({ success: false, error: 'Discord client offline.' });
+    }
+    const guild = client.guilds.cache.get(guildId);
+    if (!guild) {
+        return res.status(404).json({ success: false, error: 'Guild not found in bot cache.' });
+    }
+    try {
+        // 1. Try fetching existing invites
+        const invites = await guild.invites.fetch().catch(() => null);
+        if (invites) {
+            const existing = invites.find((inv) => inv.inviter?.id === client.user.id);
+            if (existing) {
+                return res.json({ success: true, inviteUrl: existing.url });
+            }
+        }
+        // 2. Find a suitable text channel to create an invite
+        const channel = guild.rulesChannel || guild.systemChannel || guild.channels.cache.find((ch) => ch.type === 0 && ch.permissionsFor(guild.members.me).has('CreateInstantInvite'));
+        if (!channel) {
+            return res.status(400).json({ success: false, error: 'No channel found with invite creation permissions.' });
+        }
+        const invite = await channel.createInvite({
+            maxAge: 0, // Permanent
+            maxUses: 0, // Permanent
+            reason: 'Creator Matrix Dashboard retrieval',
+        });
+        return res.json({ success: true, inviteUrl: invite.url });
+    }
+    catch (err) {
+        console.error(`Error generating invite for ${guild.name}:`, err);
+        return res.status(500).json({ success: false, error: err.message || 'Failed to create invite link.' });
     }
 });
 module.exports = router;
