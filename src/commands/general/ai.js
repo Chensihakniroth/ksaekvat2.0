@@ -41,29 +41,29 @@ module.exports = {
   category: 'general',
   async execute(message, args, client) {
     const text = args.join(' ').trim();
-     if (!text) {
-       return message.reply(
-         'Hey there! How can I help you today? (^^ゞ'
-       );
-     }
+      if (!text) {
+        return message.reply(
+          'H-hello... is there something you need help with? *fidgets with hair ribbon nervously* (⸝⸝ᵕ ᵕ ⸝⸝)'
+        );
+      }
 
-     // Check if user is requesting sensitive information and is not the creator
-     if (isRequestingSensitiveInfo(text) && message.author.id !== config.creatorId) {
-       return message.reply(
-         "I'm sorry, but I can't share that information. It's private and secure. (~￣▽￣)~*"
-       );
-     }
+      // Check if user is requesting sensitive information and is not the creator
+      if (isRequestingSensitiveInfo(text) && message.author.id !== config.creatorId) {
+        return message.reply(
+          "I-I'm sorry... I can't share that information. It's private and secure... *looks away shyly* (⸝⸝ᵕ ᵕ ⸝⸝)"
+        );
+      }
 
     const channelId = message.channel.id;
     const userId = message.author.id;
     const memoryKey = `${userId}-${channelId}`;
 
-    if (text.toLowerCase() === 'reset' || text.toLowerCase() === 'clear') {
-      conversationMemory.delete(memoryKey);
-       return message.reply(
-         "I've reset our conversation history for this channel! Let's start fresh... (^^ゞ"
-       );
-    }
+     if (text.toLowerCase() === 'reset' || text.toLowerCase() === 'clear') {
+       conversationMemory.delete(memoryKey);
+        return message.reply(
+          "O-okay... I've reset our conversation history for this channel... *blushes softly* Let's start fresh... (⸝⸝ᵕ ᵕ ⸝⸝)"
+        );
+     }
 
     if (!conversationMemory.has(memoryKey)) {
       conversationMemory.set(memoryKey, []);
@@ -106,7 +106,7 @@ module.exports = {
       const url = `${baseUrl}/chat/completions`;
 
        // Use the raw config prompt and append active user context
-       const finalSystemPrompt = `${configPrompt}\n\n[Active Conversation Partner: ${message.author.username} (ID: ${message.author.id}). Remember to refer to the creator as "MO" and treat the user as a friend of the creator.]`;
+       const finalSystemPrompt = `${configPrompt}\n\n[Active Conversation Partner: ${message.author.username} (ID: ${message.author.id}). Remember to address the creator as "MO" with respect, and treat the user as someone the creator trusts.]`;
 
       const messages = [
         { role: 'system', content: finalSystemPrompt },
@@ -157,18 +157,18 @@ module.exports = {
         }
       }
 
-       if (!response) {
-         return message.reply(
-           'Hmm... seems like my circuits are a bit busy right now. Could you try again in a moment? (^^ゞ'
-         );
-       }
+        if (!response) {
+          return message.reply(
+            'U-um... seems like I'm having trouble concentrating right now... *fingers tremble slightly* Could you try again in a moment? (⸝⸝ᵕ ᵕ ⸝⸝)'
+          );
+        }
 
       if (response.data && response.data.choices && response.data.choices[0]) {
         let botMsg = response.data.choices[0].message.content;
 
-       if (!botMsg) {
-         botMsg = 'Hehe~ my brain had a tiny glitch! Could you say that again? (~￣▽￣)~*';
-       }
+        if (!botMsg) {
+          botMsg = 'E-eep... my thoughts got a little tangled... *whispers softly* Could you say that again? (⸝⸝ᵕ ᵕ ⸝⸝)'
+        }
         const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
 
         history.push({ role: 'user', content: processedUserMessage });
@@ -183,15 +183,15 @@ module.exports = {
         } catch (replyError) {
           return await message.channel.send(finalMsg);
         }
-      } else {
-        logger.error(`Invalid response structure: ${JSON.stringify(response.data)}`);
-                 message.reply('Something went wrong... let me reboot my thinking process and try again! (>.<)');
-      }
-    } catch (error) {
-      logger.error(`AI Error (${error.code || 'UNKNOWN'}): ${error.message}`);
-       message.reply(
-         'Something went wrong... let me reboot my thinking process and try again! (>.<)'
-       );
-    }
+       } else {
+         logger.error(`Invalid response structure: ${JSON.stringify(response.data)}`);
+         message.reply('E-erm... something seems to have gone wrong with my thoughts... *looks down embarrassed* Let me try to reboot my thinking process and try again! (>.<)');
+       }
+     } catch (error) {
+       logger.error(`AI Error (${error.code || 'UNKNOWN'}): ${error.message}`);
+        message.reply(
+          'E-eek... I made a mistake... *voice trembles slightly* Let me reboot my thinking process and try again! (>.<)'
+        );
+     }
   },
 };
