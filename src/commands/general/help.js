@@ -167,9 +167,6 @@ module.exports = {
       });
     }
 
-    if (command.cooldown) {
-      embed.addFields({ name: 'Cooldown', value: `${command.cooldown / 1000}s`, inline: true });
-    }
 
     if (command.adminOnly) {
       embed.addFields({ name: 'Permissions', value: '🛡️ Admin Only', inline: true });

@@ -16,7 +16,6 @@ module.exports = {
   aliases: ['bj', '21'],
   description: 'Play a game of Blackjack with Mommy! (◕‿◕✿)',
   usage: 'blackjack <amount/all>',
-  cooldown: 5000,
   async execute(message, args, client) {
     if (args.length < 1) {
       return message.reply({

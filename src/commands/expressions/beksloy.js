@@ -8,7 +8,6 @@ module.exports = {
   aliases: ['kk', 'kkk', 'beksloy'],
   description: 'Send beksloy vibes with an action GIF',
   usage: 'kkk <@user> [message]',
-  cooldown: 3000,
   async execute(message, args, client) {
     if (args.length < 1 || message.mentions.users.size === 0) {
       return message.reply({

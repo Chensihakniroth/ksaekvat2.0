@@ -11,7 +11,6 @@ module.exports = {
   aliases: ['poketeam', 'pt'],
   description: 'Manage your Pokémon Battle Team! (3 Slots) ⚔️',
   usage: 'pteam [add <pokemon> | remove <slot> | list]',
-  cooldown: 3000,
   async execute(message, args, client) {
     const sub = args[0]?.toLowerCase();
 

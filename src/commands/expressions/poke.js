@@ -8,7 +8,6 @@ module.exports = {
   name: 'poke',
   description: 'Poke someone!',
   usage: 'poke [message]',
-  cooldown: 3000,
   async execute(message, args) {
     const customMessage = args.join(' ');
     const sent = await message.reply({

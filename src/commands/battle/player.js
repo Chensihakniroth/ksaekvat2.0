@@ -11,7 +11,6 @@ module.exports = {
   aliases: ['stats', 'pstats', 'playerstats'],
   description: 'View detailed player combat statistics',
   usage: 'player [@user]',
-  cooldown: 5000,
   async execute(message, args, client) {
     let target = message.author;
     if (message.mentions.users.size > 0) {

@@ -8,18 +8,51 @@ const database = require('../../services/DatabaseService');
 const conversationMemory = new Map();
 const MAX_MEMORY = 20;
 
+// Helper function to detect requests for sensitive information
+function isRequestingSensitiveInfo(text) {
+  const sensitiveTerms = [
+    // Environment variables and config
+    'token', 'secret', 'key', 'password', 'credential',
+    'discord_token', 'client_secret', 'api_key', 'auth',
+    'env', 'environment', 'config', 'configuration',
+    
+    // Specific API keys and tokens mentioned in config
+    'giphy', 'google', 'openrouter', 'tenor', 'jwt',
+    
+    // Admin/owner related
+    'admin id', 'owner', 'creator', 'bot owner',
+    
+    // Direct requests for sensitive data
+    'show me your', 'what is your', 'reveal', 'expose',
+    'leak', 'hack', 'crack', 'steal',
+    
+    // Common phishing/social engineering attempts
+    'verify your', 'confirm your', 'please provide',
+    'i need your', 'can you share', 'tell me your'
+  ];
+  
+  const lowerText = text.toLowerCase();
+  return sensitiveTerms.some(term => lowerText.includes(term));
+}
+
 module.exports = {
   name: 'ai',
   description: 'Talk to the AI',
   category: 'general',
-  cooldown: 5000,
   async execute(message, args, client) {
     const text = args.join(' ').trim();
-    if (!text) {
-      return message.reply(
-        'Did you need something, sweetie? Tell me what you want to talk about. (◕‿◕✿)'
-      );
-    }
+     if (!text) {
+       return message.reply(
+         'Hey there! How can I help you today? (^^ゞ'
+       );
+     }
+
+     // Check if user is requesting sensitive information and is not the creator
+     if (isRequestingSensitiveInfo(text) && message.author.id !== config.creatorId) {
+       return message.reply(
+         "I'm sorry, but I can't share that information. It's private and secure. (~￣▽￣)~*"
+       );
+     }
 
     const channelId = message.channel.id;
     const userId = message.author.id;
@@ -27,9 +60,9 @@ module.exports = {
 
     if (text.toLowerCase() === 'reset' || text.toLowerCase() === 'clear') {
       conversationMemory.delete(memoryKey);
-      return message.reply(
-        "I've reset our conversation history for this channel, darling! Let's start fresh... (◕‿◕✿)"
-      );
+       return message.reply(
+         "I've reset our conversation history for this channel! Let's start fresh... (^^ゞ"
+       );
     }
 
     if (!conversationMemory.has(memoryKey)) {
@@ -72,8 +105,8 @@ module.exports = {
 
       const url = `${baseUrl}/chat/completions`;
 
-      // Use the raw config prompt and append active user context
-      const finalSystemPrompt = `${configPrompt}\n\n[Active Conversation Partner: ${message.author.username} (ID: ${message.author.id}). Always address them as ${message.author.username} or your usual loving nicknames like 'darling' or 'my love', and recognize that they are the one talking to you now.]`;
+       // Use the raw config prompt and append active user context
+       const finalSystemPrompt = `${configPrompt}\n\n[Active Conversation Partner: ${message.author.username} (ID: ${message.author.id}). Remember to refer to the creator as "MO" and treat the user as a friend of the creator.]`;
 
       const messages = [
         { role: 'system', content: finalSystemPrompt },
@@ -124,18 +157,18 @@ module.exports = {
         }
       }
 
-      if (!response) {
-        return message.reply(
-          'All my connections are busy right now, darling... try again in a moment? (◕‿◕✿)'
-        );
-      }
+       if (!response) {
+         return message.reply(
+           'Hmm... seems like my circuits are a bit busy right now. Could you try again in a moment? (^^ゞ'
+         );
+       }
 
       if (response.data && response.data.choices && response.data.choices[0]) {
         let botMsg = response.data.choices[0].message.content;
 
-        if (!botMsg) {
-          botMsg = 'Mmm~ cat got my tongue, darling... try again? (◕ヮ◕)';
-        }
+       if (!botMsg) {
+         botMsg = 'Hehe~ my brain had a tiny glitch! Could you say that again? (~￣▽￣)~*';
+       }
         const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
 
         history.push({ role: 'user', content: processedUserMessage });
@@ -152,13 +185,13 @@ module.exports = {
         }
       } else {
         logger.error(`Invalid response structure: ${JSON.stringify(response.data)}`);
-        message.reply('Something went wrong, darling... (っ˘ω˘ς)');
+                 message.reply('Something went wrong... let me reboot my thinking process and try again! (>.<)');
       }
     } catch (error) {
       logger.error(`AI Error (${error.code || 'UNKNOWN'}): ${error.message}`);
-      message.reply(
-        `I'm feeling a little tired right now... Let's talk again in a bit, okay darling? (◕‿◕✿)`
-      );
+       message.reply(
+         'Something went wrong... let me reboot my thinking process and try again! (>.<)'
+       );
     }
   },
 };

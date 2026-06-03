@@ -1,6 +1,5 @@
 const config = require('../config/config.js');
 const logger = require('../utils/logger.js');
-const cooldowns = require('../utils/cooldowns.js');
 const database = require('../services/DatabaseService');
 const { EmbedBuilder, MessageFlags, PermissionsBitField } = require('discord.js');
 const axios = require('axios');
@@ -8,12 +7,6 @@ const axios = require('axios');
 // Memory storage for conversation history (Channel-based)
 const conversationMemory = new Map();
 const MAX_MEMORY = 20;
-
-// Track active command requests to prevent spam/overlap
-const activeRequests = new Set();
-
-// Track spam strikes per user
-const spamStrikes = new Map();
 
 module.exports = {
   name: 'messageCreate',
@@ -126,100 +119,6 @@ module.exports = {
     if (commandName) {
       const command = client.commands.get(commandName);
       if (command) {
-        const userId = message.author.id;
-        const now = Date.now();
-
-        // --- 2.3 SPAM PENALTY ENGINE ---
-        let strikeData = spamStrikes.get(userId) || { count: 0, lastSpam: 0 };
-
-        // Reset strikes if they've been good for 30 seconds
-        if (now - strikeData.lastSpam > 30000) {
-          strikeData = { count: 0, lastSpam: now };
-        }
-
-        const handleSpam = (penaltyTime, desc) => {
-          const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, penaltyTime);
-          const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
-
-          if (strikeData.count < 4) {
-            message
-              .reply({
-                embeds: [
-                  {
-                    color: parseInt(config.colors.warning.slice(1), 16),
-                    title: 'Cooldown Active',
-                    description: `${desc}\n\n**Time remaining: <t:${unixTime}:R>**`,
-                    timestamp: new Date(),
-                  },
-                ],
-                flags: [MessageFlags.Ephemeral],
-              })
-              .catch(() => {});
-          }
-
-          strikeData.count++;
-          strikeData.lastSpam = now;
-          spamStrikes.set(userId, strikeData);
-          cooldowns.setCooldown(`GLOBAL-${userId}`);
-          return true;
-        };
-
-        // 1. Check Concurrency Lock
-        if (activeRequests.has(userId)) {
-          cooldowns.setCooldown(`GLOBAL-${userId}`);
-          return;
-        }
-
-        // 2. Check Strikes
-        const GLOBAL_3S = 3000;
-        const GLOBAL_8S = 8000;
-        const GLOBAL_20S = 20000;
-        const GLOBAL_60S = 60000;
-
-        if (strikeData.count >= 3 && cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_60S)) {
-          return handleSpam(GLOBAL_60S, 'Spam detected. Access restricted for 60 seconds.');
-        } else if (
-          strikeData.count === 2 &&
-          cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_20S)
-        ) {
-          return handleSpam(
-            GLOBAL_20S,
-            "You're sending commands too quickly. Please wait 20 seconds."
-          );
-        } else if (
-          strikeData.count === 1 &&
-          cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_8S)
-        ) {
-          return handleSpam(
-            GLOBAL_8S,
-            'Rate limit exceeded. Please wait 8 seconds before your next request.'
-          );
-        } else if (cooldowns.isOnCooldown(`GLOBAL-${userId}`, GLOBAL_3S)) {
-          strikeData.count = 1;
-          strikeData.lastSpam = now;
-          spamStrikes.set(userId, strikeData);
-          const timeLeft = cooldowns.getTimeLeft(`GLOBAL-${userId}`, GLOBAL_3S);
-          const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
-          message
-            .reply({
-              embeds: [
-                {
-                  color: parseInt(config.colors.warning.slice(1), 16),
-                  title: 'Cooldown Active',
-                  description: `Please wait until <t:${unixTime}:R> before your next command.`,
-                  timestamp: new Date(),
-                },
-              ],
-              flags: [MessageFlags.Ephemeral],
-            })
-            .catch(() => {});
-          return;
-        }
-
-        // 3. Clear to go!
-        cooldowns.setCooldown(`GLOBAL-${userId}`);
-        activeRequests.add(userId);
-
         // Check Guild Module status
         if (message.guild) {
           try {
@@ -236,7 +135,6 @@ module.exports = {
               else if (category === 'ai' || commandName === 'ai') isEnabled = guildConf.modules.aiChat;
 
               if (!isEnabled) {
-                activeRequests.delete(userId);
                 message.reply({
                   embeds: [
                     {
@@ -261,7 +159,6 @@ module.exports = {
           const isServerAdmin = message.guild && message.member && message.member.permissions.has(PermissionsBitField.Flags.Administrator);
 
           if (!isBotAdmin && !(command.name === 'clear' && isServerAdmin)) {
-            activeRequests.delete(userId);
             message
               .reply({
                 embeds: [
@@ -277,32 +174,6 @@ module.exports = {
               .catch(() => {});
             return;
           }
-        }
-
-        // Check cooldowns
-        if (command.cooldown) {
-          const cooldownKey = `${message.author.id}-${commandName}`;
-          if (cooldowns.isOnCooldown(cooldownKey, command.cooldown)) {
-            activeRequests.delete(userId);
-            const timeLeft = cooldowns.getTimeLeft(cooldownKey, command.cooldown);
-            const unixTime = Math.floor((Date.now() + timeLeft) / 1000);
-
-            message
-              .reply({
-                embeds: [
-                  {
-                    color: parseInt(config.colors.warning.slice(1), 16),
-                    title: 'Cooldown Active',
-                    description: `Command is on cooldown. You can use it again <t:${unixTime}:R>.`,
-                    timestamp: new Date(),
-                  },
-                ],
-                flags: [MessageFlags.Ephemeral],
-              })
-              .catch(() => {});
-            return;
-          }
-          cooldowns.setCooldown(cooldownKey);
         }
 
         // Execute the command
@@ -341,8 +212,6 @@ module.exports = {
               flags: [MessageFlags.Ephemeral],
             })
             .catch(() => {});
-        } finally {
-          activeRequests.delete(userId);
         }
         return;
       }

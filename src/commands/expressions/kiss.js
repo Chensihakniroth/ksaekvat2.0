@@ -8,7 +8,6 @@ module.exports = {
   name: 'kiss',
   description: 'Send a kiss!',
   usage: 'kiss [message]',
-  cooldown: 3000,
   async execute(message, args) {
     const customMessage = args.join(' ');
     const sent = await message.reply({

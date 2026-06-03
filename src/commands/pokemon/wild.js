@@ -47,7 +47,6 @@ module.exports = {
   aliases: ['wildbattle', 'pokebattle'],
   description: 'Battle a wild Pokémon team! 3v3 real-time turn-by-turn. (✧ω✧)',
   usage: 'wild',
-  cooldown: config.pokemonBattle.wildCooldown,
 
   async execute(message, args, client) {
     if (activeBattles.has(message.author.id)) {

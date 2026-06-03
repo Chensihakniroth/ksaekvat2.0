@@ -10,7 +10,6 @@ module.exports = {
   aliases: ['s', 'slot', 'slotmachine'],
   description: 'Play the slot machine.',
   usage: 'slots <amount>',
-  cooldown: 5000,
   async execute(message, args, client) {
     if (args.length < 1) {
       return message.reply({

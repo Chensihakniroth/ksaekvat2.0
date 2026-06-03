@@ -16,7 +16,6 @@ module.exports = {
   aliases: ['rockpaperscissors'],
   description: 'Play Rock Paper Scissors with Mommy! (◕‿◕✿)',
   usage: 'rps <amount/all>',
-  cooldown: 5000,
   async execute(message, args, client) {
     if (args.length < 1) {
       return message.reply({

@@ -21,7 +21,6 @@ module.exports = {
   aliases: ['battle', 'combat', 'kfight'],
   description: 'Start a turn-based team battle! Fully automatic tactical simulation. (¬‿¬)',
   usage: 'fight [bet/upgrade]',
-  cooldown: 5,
   async execute(message, args, client) {
     if (activeBattles.has(message.author.id)) {
       return message.reply(

@@ -1,8 +1,6 @@
 const axios = require('axios');
 const { EmbedBuilder } = require('discord.js');
 
-const cooldown = new Set();
-const COOLDOWN_TIME = 2 * 1000;
 
 module.exports = {
   name: 'blowjob',
@@ -14,9 +12,6 @@ module.exports = {
       return message.reply('🚫 This command can only be used in NSFW-marked channels.');
     }
 
-    if (cooldown.has(message.author.id)) {
-      return message.reply('⏳ Wait a moment before using this command again.');
-    }
 
     const user = message.mentions.users.first();
     if (!user) {
@@ -35,8 +30,6 @@ module.exports = {
 
       message.channel.send({ embeds: [embed] });
 
-      cooldown.add(message.author.id);
-      setTimeout(() => cooldown.delete(message.author.id), COOLDOWN_TIME);
     } catch (err) {
       console.error(err);
       message.reply("❌ Couldn't get the GIF.");
