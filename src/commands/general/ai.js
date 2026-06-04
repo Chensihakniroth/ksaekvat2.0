@@ -35,35 +35,63 @@ function isRequestingSensitiveInfo(text) {
   return sensitiveTerms.some(term => lowerText.includes(term));
 }
 
+// Helper function to detect NSFW requests
+function isNSFWRequest(text) {
+  const nsfwTerms = [
+    'sex', 'sexual', 'porn', 'nude', 'naked', 'xxx', 'erotic', 'hentai', 
+    'blowjob', 'pussy', 'dick', 'cock', 'cum', 'orgasm', 'fetish', 'bdsm', 
+    'kink', 'anal', 'boobs', 'breasts', 'vagina', 'penis', 'masturbate', 
+    'vibrator', 'dildo', 'clit', 'labia', 'anus', 'butt', 'ass', 'tits'
+  ];
+  
+  const lowerText = text.toLowerCase();
+  return nsfwTerms.some(term => lowerText.includes(term));
+}
+
 module.exports = {
   name: 'ai',
   description: 'Talk to the AI',
   category: 'general',
   async execute(message, args, client) {
     const text = args.join(' ').trim();
-      if (!text) {
-        return message.reply(
-          'Did you need something, sweetie? Tell me what you want to talk about. (◕‿◕✿)'
-        );
-      }
+    if (!text) {
+      return message.reply(
+        'Did you need something, sweetie? Tell me what you want to talk about. (◕‿◕✿)'
+      );
+    }
 
-      // Check if user is requesting sensitive information and is not the creator
-      if (isRequestingSensitiveInfo(text) && message.author.id !== config.creatorId) {
-        return message.reply(
-          "How dare you ask for such things, darling... *voice drops to a dangerous whisper* That information is MINE to protect. (⊙_⊙)"
-        );
-      }
+    // Check if user is requesting NSFW content in a non-NSFW channel
+    if (isNSFWRequest(text) && (!message.channel.nsfw)) {
+      return message.reply({
+        embeds: [
+          {
+            color: parseInt(config.colors.error.slice(1), 16),
+            title: '🔞 NSFW Content Restricted',
+            description: 'NSFW conversations are only allowed in NSFW-marked channels. Please move to an NSFW channel or adjust your request.',
+            timestamp: new Date(),
+          },
+        ],
+        flags: [/*MessageFlags.Ephemeral*/],
+      });
+    }
+
+    // Check if user is requesting sensitive information and is not the creator
+    if (isRequestingSensitiveInfo(text) && message.author.id !== config.creatorId) {
+      return message.reply(
+        "How dare you ask for such things, darling... *voice drops to a dangerous whisper* That information is MINE to protect. (⊙_⊙)"
+      );
+    }
 
     const channelId = message.channel.id;
     const userId = message.author.id;
     const memoryKey = `${userId}-${channelId}`;
 
-      if (text.toLowerCase() === 'reset' || text.toLowerCase() === 'clear') {
-        conversationMemory.delete(memoryKey);
-         return message.reply(
-           "I've reset our conversation history for this channel, darling! Let's start fresh... (◕‿◕✿)"
-         );
-      }
+    if (text.toLowerCase() === 'reset' || text.toLowerCase() === 'clear') {
+      conversationMemory.delete(memoryKey);
+       return message.reply(
+        "I've reset our conversation history for this channel, darling! Let's start fresh... (◕‿◕✿)"
+      );
+    }
 
     if (!conversationMemory.has(memoryKey)) {
       conversationMemory.set(memoryKey, []);
@@ -105,8 +133,8 @@ module.exports = {
 
       const url = `${baseUrl}/chat/completions`;
 
-       // Use the raw config prompt and append active user context
-       const finalSystemPrompt = `${configPrompt}\n\n[Active Conversation Partner: ${message.author.username} (ID: ${message.author.id}). Always address them as ${message.author.username} or your usual loving nicknames like 'darling' or 'my love', and recognize that they are the one talking to you now.]`;
+      // Use the raw config prompt and append active user context
+      const finalSystemPrompt = `${configPrompt}\n\n[Active Conversation Partner: ${message.author.username} (ID: ${message.author.id}). Always address them as ${message.author.username} or your usual loving nicknames like 'darling' or 'my love', and recognize that they are the one talking to you now.]`;
 
       const messages = [
         { role: 'system', content: finalSystemPrompt },
@@ -157,11 +185,11 @@ module.exports = {
         }
       }
 
-        if (!response) {
-          return message.reply(
-            'All my connections are busy right now, darling... try again in a moment? (◕‿◕✿)'
-          );
-        }
+      if (!response) {
+        return message.reply(
+          'All my connections are busy right now, darling... try again in a moment? (◕‿◕✿)'
+        );
+      }
 
       if (response.data && response.data.choices && response.data.choices[0]) {
         let botMsg = response.data.choices[0].message.content;
@@ -187,11 +215,11 @@ module.exports = {
          logger.error(`Invalid response structure: ${JSON.stringify(response.data)}`);
          message.reply('Something went wrong, darling... (っ˘ω˘ς)');
        }
-     } catch (error) {
-       logger.error(`AI Error (${error.code || 'UNKNOWN'}): ${error.message}`);
-        message.reply(
-          `I'm feeling a little tired right now... Let's talk again in a bit, okay darling? (◕‿◕✿)`
-        );
-     }
+    } catch (error) {
+      logger.error(`AI Error (${error.code || 'UNKNOWN'}): ${error.message}`);
+       message.reply(
+         `I'm feeling a little tired right now... Let's talk again in a bit, okay darling? (◕‿◕✿)`
+       );
+    }
   },
 };
