@@ -8,7 +8,6 @@ module.exports = {
     name: 'thank',
     description: 'Express your gratitude!',
     usage: 'thank [message]',
-    cooldown: 3000,
     async execute(message, args) {
         const customMessage = args.join(' ');
         const sent = await message.reply({

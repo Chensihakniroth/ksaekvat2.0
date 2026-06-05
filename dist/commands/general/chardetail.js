@@ -8,7 +8,6 @@ module.exports = {
     aliases: ['kcd', 'cd', 'charinfo'],
     description: 'View detailed info for a character — art, role, element, and more! ✨',
     usage: 'kcd <character name>',
-    cooldown: 3000,
     async execute(message, args, client) {
         const charName = args.join(' ').trim();
         if (!charName) {

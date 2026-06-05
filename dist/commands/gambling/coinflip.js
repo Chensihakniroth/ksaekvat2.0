@@ -9,7 +9,6 @@ module.exports = {
     aliases: ['cf', 'flip'],
     description: 'Bet your balance on a coin flip.',
     usage: 'coinflip <amount/all> [heads/tails]',
-    cooldown: 3000, // 3 seconds
     async execute(message, args, client) {
         // Check arguments
         if (args.length < 1) {
@@ -25,7 +24,7 @@ module.exports = {
         }
         const userData = await database.getUser(message.author.id, message.author.username);
         const { minBet, maxBet } = config.gambling.coinflip;
-        const betAmount = EconomyService.parseBet(args[0], userData.balance, minBet, maxBet);
+        let betAmount = EconomyService.parseBet(args[0], userData.balance, minBet, maxBet);
         let isAllBet = args[0]?.toLowerCase() === 'all';
         if (betAmount <= 0) {
             if (args[0]?.toLowerCase() === 'all' && userData.balance <= 0) {

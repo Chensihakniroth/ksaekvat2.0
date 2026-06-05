@@ -149,7 +149,6 @@ module.exports = {
     aliases: ['pull', 'wish', 'roll', 'kw'],
     description: 'Daily free 10-pull, or buy more for 10k <:coin:1480551418464305163>! ✨',
     usage: 'gacha <gs/hsr/wuwa/zzz>',
-    cooldown: 5000,
     async execute(message, args, client) {
         const gameArg = args.join(' ').toLowerCase();
         let gameKey = '';

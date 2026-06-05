@@ -8,7 +8,6 @@ module.exports = {
     name: 'bite',
     description: 'Bite someone or something!',
     usage: 'bite [message]',
-    cooldown: 3000,
     async execute(message, args) {
         const customMessage = args.join(' ');
         const sent = await message.reply({

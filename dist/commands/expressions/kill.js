@@ -9,7 +9,6 @@ module.exports = {
     name: 'kill',
     description: 'Express a dramatic action!',
     usage: 'kill [message]',
-    cooldown: 3000,
     async execute(message, args) {
         const customMessage = args.join(' ');
         const sent = await message.reply({

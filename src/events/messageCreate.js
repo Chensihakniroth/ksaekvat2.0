@@ -8,6 +8,10 @@ const axios = require('axios');
 const conversationMemory = new Map();
 const MAX_MEMORY = 20;
 
+// Memory storage for command cooldowns (User-based)
+const commandCooldowns = new Map();
+const COOLDOWN_TIME = 2000; // 2 seconds
+
 module.exports = {
   name: 'messageCreate',
   async execute(message, client) {
@@ -41,7 +45,8 @@ module.exports = {
 
     try {
       if (message.guild) {
-        const GuildConfig = require('../models/GuildConfig').default || require('../models/GuildConfig');
+        const GuildConfig =
+          require('../models/GuildConfig').default || require('../models/GuildConfig');
         const guildConf = await GuildConfig.findOne({ guildId: message.guild.id }).lean();
         if (guildConf && guildConf.prefix) {
           userMainPrefixes = [
@@ -122,29 +127,35 @@ module.exports = {
         // Check Guild Module status
         if (message.guild) {
           try {
-            const GuildConfig = require('../models/GuildConfig').default || require('../models/GuildConfig');
+            const GuildConfig =
+              require('../models/GuildConfig').default || require('../models/GuildConfig');
             const guildConf = await GuildConfig.findOne({ guildId: message.guild.id }).lean();
             if (guildConf && guildConf.modules) {
               const category = command.category;
               let isEnabled = true;
 
               if (category === 'battle') isEnabled = guildConf.modules.rpg;
-              else if (category === 'economy' || category === 'gambling') isEnabled = guildConf.modules.economy;
+              else if (category === 'economy' || category === 'gambling')
+                isEnabled = guildConf.modules.economy;
               else if (category === 'pokemon') isEnabled = guildConf.modules.hunting;
-              else if (category === 'gacha' || commandName === 'gacha') isEnabled = guildConf.modules.gacha;
-              else if (category === 'ai' || commandName === 'ai') isEnabled = guildConf.modules.aiChat;
+              else if (category === 'gacha' || commandName === 'gacha')
+                isEnabled = guildConf.modules.gacha;
+              else if (category === 'ai' || commandName === 'ai')
+                isEnabled = guildConf.modules.aiChat;
 
               if (!isEnabled) {
-                message.reply({
-                  embeds: [
-                    {
-                      color: parseInt(config.colors.error.slice(1), 16),
-                      title: '⚔️ Module Disabled',
-                      description: `The **${category || commandName}** module is currently disabled on this server. An administrator can enable it via the web dashboard! (｡•́︿•̀｡)`,
-                      timestamp: new Date(),
-                    },
-                  ],
-                }).catch(() => {});
+                message
+                  .reply({
+                    embeds: [
+                      {
+                        color: parseInt(config.colors.error.slice(1), 16),
+                        title: '⚔️ Module Disabled',
+                        description: `The **${category || commandName}** module is currently disabled on this server. An administrator can enable it via the web dashboard! (｡•́︿•̀｡)`,
+                        timestamp: new Date(),
+                      },
+                    ],
+                  })
+                  .catch(() => {});
                 return;
               }
             }
@@ -156,7 +167,10 @@ module.exports = {
         // Check if user is admin for admin-only commands
         if (command.adminOnly) {
           const isBotAdmin = config.adminIds.includes(message.author.id);
-          const isServerAdmin = message.guild && message.member && message.member.permissions.has(PermissionsBitField.Flags.Administrator);
+          const isServerAdmin =
+            message.guild &&
+            message.member &&
+            message.member.permissions.has(PermissionsBitField.Flags.Administrator);
 
           if (!isBotAdmin && !(command.name === 'clear' && isServerAdmin)) {
             message
@@ -174,6 +188,41 @@ module.exports = {
               .catch(() => {});
             return;
           }
+        }
+
+        // Cooldown check (2 seconds, ephemeral response, bypass admins)
+        const userId = message.author.id;
+        const isBotAdmin = config.adminIds.includes(userId);
+        if (!isBotAdmin) {
+          const now = Date.now();
+          const expirationTime = commandCooldowns.get(userId) || 0;
+
+          if (now < expirationTime) {
+            const timeLeft = ((expirationTime - now) / 1000).toFixed(1);
+            message
+              .reply({
+                embeds: [
+                  {
+                    color: parseInt(config.colors.warning.slice(1), 16),
+                    title: '⏳ Cooldown Active',
+                    description: `Whoa, slow down! You can use another command in **${timeLeft}s**. (｡•́︿•̀｡)`,
+                    timestamp: new Date(),
+                  },
+                ],
+                flags: [MessageFlags.Ephemeral],
+              })
+              .then((msg) => {
+                // Auto-delete after 3 seconds to ensure it stays hidden/ephemeral for prefix commands
+                setTimeout(() => {
+                  msg.delete().catch(() => {});
+                }, 3000);
+              })
+              .catch(() => {});
+            return;
+          }
+
+          // Set cooldown expiration timestamp
+          commandCooldowns.set(userId, now + COOLDOWN_TIME);
         }
 
         // Execute the command

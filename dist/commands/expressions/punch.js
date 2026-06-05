@@ -8,7 +8,6 @@ module.exports = {
     name: 'punch',
     description: 'Throw a punch!',
     usage: 'punch [message]',
-    cooldown: 3000,
     async execute(message, args) {
         const customMessage = args.join(' ');
         const sent = await message.reply({

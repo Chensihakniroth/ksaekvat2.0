@@ -40,7 +40,6 @@ module.exports = {
     name: 'jail',
     description: 'Send someone to jail. (¬‿¬)',
     usage: 'jail [@user] [message]',
-    cooldown: 3000,
     async execute(message, args) {
         const mentionedUser = message.mentions.users.first();
         const customMessage = args.slice(1).join(' ');

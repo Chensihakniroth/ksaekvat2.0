@@ -8,7 +8,6 @@ module.exports = {
     name: 'pat',
     description: 'Give someone a pat!',
     usage: 'pat [message]',
-    cooldown: 3000,
     async execute(message, args) {
         const customMessage = args.join(' ');
         const sent = await message.reply({

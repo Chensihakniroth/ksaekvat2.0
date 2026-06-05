@@ -9,7 +9,6 @@ module.exports = {
     aliases: ['hunting', 'catch'],
     description: 'Hunt for Pokémon. Chance for Loot Boxes!',
     usage: 'hunt',
-    cooldown: 10000,
     async execute(message, args, client) {
         try {
             await message.channel.sendTyping();

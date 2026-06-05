@@ -8,7 +8,6 @@ module.exports = {
     name: 'laugh',
     description: 'Laugh out loud!',
     usage: 'laugh [message]',
-    cooldown: 3000,
     async execute(message, args) {
         const customMessage = args.join(' ');
         const sent = await message.reply({

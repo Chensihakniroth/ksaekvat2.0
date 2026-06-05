@@ -13,7 +13,6 @@ module.exports = {
     aliases: ['challenge', 'pvp'],
     description: 'Challenge another trainer to a 3v3 Pokémon battle! ⚔️',
     usage: 'duel <@user> [bet_amount]',
-    cooldown: config.pokemonBattle.duelCooldown,
     async execute(message, args, client) {
         // ─── VALIDATION ──────────────────────────────────────────────────
         if (args.length < 1) {

@@ -8,7 +8,6 @@ module.exports = {
     name: 'slap',
     description: 'Slap someone!',
     usage: 'slap [message]',
-    cooldown: 3000,
     async execute(message, args) {
         const customMessage = args.join(' ');
         const sent = await message.reply({

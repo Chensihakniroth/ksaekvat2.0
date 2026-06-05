@@ -6,7 +6,6 @@ module.exports = {
     category: 'fun',
     description: 'Sends the Among Us twerking GIF',
     usage: 'amongustwerk [@user]',
-    cooldown: 5000,
     async execute(message, args) {
         // The specific GIF URL you provided
         const gifUrl = 'https://i.pinimg.com/originals/8a/8b/27/8a8b2781551437b052d0ce67c355188e.gif';

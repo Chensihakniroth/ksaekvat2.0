@@ -63,7 +63,6 @@ module.exports = {
     description: "Attempt to rob another user's wallet! 50/50 odds... but you might end up in jail. (¬‿¬)",
     usage: 'rob <@user>',
     category: 'economy',
-    cooldown: 60000, // 1 minute (60,000 ms)
     async execute(message, args, client) {
         const robber = message.author;
         // ── Jail check ──────────────────────────────────────────────────────

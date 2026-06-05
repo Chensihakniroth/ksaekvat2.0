@@ -1,8 +1,6 @@
 "use strict";
 const axios = require('axios');
 const { EmbedBuilder } = require('discord.js');
-const cooldown = new Set();
-const COOLDOWN_TIME = 2000; // 2 seconds
 module.exports = {
     name: 'pussylick',
     aliases: ['lickpussy', 'pl'],
@@ -11,9 +9,6 @@ module.exports = {
     async execute(message, args) {
         if (!message.channel.nsfw) {
             return message.reply('🚫 This command can only be used in NSFW channels.');
-        }
-        if (cooldown.has(message.author.id)) {
-            return message.reply('⏳ Please wait before using this command again.');
         }
         const user = message.mentions.users.first();
         if (!user) {
@@ -29,8 +24,6 @@ module.exports = {
                 .setImage(imageUrl)
                 .setColor('DarkVividPink');
             message.channel.send({ embeds: [embed] });
-            cooldown.add(message.author.id);
-            setTimeout(() => cooldown.delete(message.author.id), COOLDOWN_TIME);
         }
         catch (err) {
             console.error('API Error:', err.message);

@@ -9,7 +9,6 @@ module.exports = {
     aliases: ['love', 'interact', 'kaffinity'],
     description: 'Spend time with your spouse to increase your Love Level! (｡♥‿♥｡)',
     usage: 'affinity',
-    cooldown: 3600000, // 1 hour cooldown between interactions
     async execute(message, args, client) {
         const userId = message.author.id;
         const userData = await database.getUser(userId, message.author.username);
