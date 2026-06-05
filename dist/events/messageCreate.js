@@ -134,7 +134,8 @@ module.exports = {
                             else if (category === 'ai' || commandName === 'ai')
                                 isEnabled = guildConf.modules.aiChat;
                             if (!isEnabled) {
-                                message.reply({
+                                message
+                                    .reply({
                                     embeds: [
                                         {
                                             color: parseInt(config.colors.error.slice(1), 16),
@@ -143,7 +144,8 @@ module.exports = {
                                             timestamp: new Date(),
                                         },
                                     ],
-                                }).catch(() => { });
+                                })
+                                    .catch(() => { });
                                 return;
                             }
                         }
@@ -155,7 +157,9 @@ module.exports = {
                 // Check if user is admin for admin-only commands
                 if (command.adminOnly) {
                     const isBotAdmin = config.adminIds.includes(message.author.id);
-                    const isServerAdmin = message.guild && message.member && message.member.permissions.has(PermissionsBitField.Flags.Administrator);
+                    const isServerAdmin = message.guild &&
+                        message.member &&
+                        message.member.permissions.has(PermissionsBitField.Flags.Administrator);
                     if (!isBotAdmin && !(command.name === 'clear' && isServerAdmin)) {
                         message
                             .reply({

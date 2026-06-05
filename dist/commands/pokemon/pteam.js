@@ -1,10 +1,11 @@
 "use strict";
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, AttachmentBuilder } = require('discord.js');
 const database = require('../../services/DatabaseService');
 const colors = require('../../utils/colors.js');
 const config = require('../../config/config.js');
 const PokemonBattleService = require('../../services/PokemonBattleService').default ||
     require('../../services/PokemonBattleService');
+const TeamRenderer = require('../../services/TeamRenderer').default || require('../../services/TeamRenderer');
 module.exports = {
     name: 'pteam',
     aliases: ['poketeam', 'pt'],
@@ -150,7 +151,7 @@ module.exports = {
             const currentTeam = await database.getPokemonTeam(message.author.id);
             const teamIds = new Set(currentTeam.map((p) => p._id.toString()));
             const BenchRenderer = require('../../services/BenchRenderer').default || require('../../services/BenchRenderer');
-            const { AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } = require('discord.js');
+            const { AttachmentBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, } = require('discord.js');
             let currentPage = 0;
             const ITEMS_PER_PAGE = 6;
             const totalPages = Math.ceil(trained.length / ITEMS_PER_PAGE);
@@ -240,32 +241,67 @@ module.exports = {
                 ],
             });
         }
-        const teamLines = [];
-        for (let i = 0; i < currentTeam.length; i++) {
-            const p = currentTeam[i];
-            const baseStats = await PokemonBattleService.getBaseStats(p.speciesKey);
-            const typeDisplay = baseStats
-                ? baseStats.types
-                    .map((t) => `${PokemonBattleService.getTypeEmoji(t)} ${t.charAt(0).toUpperCase() + t.slice(1)}`)
-                    .join(' / ')
-                : 'Unknown';
-            const bp = baseStats ? await PokemonBattleService.buildBattlePokemon(p, 'A') : null;
-            teamLines.push([
-                `**Slot ${i + 1}:** ${p.speciesKey.charAt(0).toUpperCase() + p.speciesKey.slice(1)}`,
-                `  Type: ${typeDisplay}`,
-                `  Level: **${p.level}** | HP: **${bp?.maxHp || '?'}** | ATK: **${bp?.atk || '?'}** | DEF: **${bp?.def || '?'}** | SPD: **${bp?.speed || '?'}**`,
-            ].join('\n'));
+        await message.channel.sendTyping();
+        try {
+            const statsMap = new Map();
+            const typesMap = new Map();
+            for (const p of currentTeam) {
+                const baseStats = await PokemonBattleService.getBaseStats(p.speciesKey);
+                if (baseStats) {
+                    typesMap.set(p._id.toString(), baseStats.types);
+                    const bp = await PokemonBattleService.buildBattlePokemon(p, 'A');
+                    statsMap.set(p._id.toString(), {
+                        hp: bp?.maxHp || 0,
+                        atk: bp?.atk || 0,
+                        def: bp?.def || 0,
+                        speed: bp?.speed || 0,
+                    });
+                }
+            }
+            const buffer = await TeamRenderer.renderTeam(currentTeam, statsMap, typesMap);
+            const attachment = new AttachmentBuilder(buffer, { name: 'team.png' });
+            const embed = new EmbedBuilder()
+                .setColor(colors.primary)
+                .setTitle(`⚔️ ${message.author.username}'s Battle Squad`)
+                .setImage('attachment://team.png')
+                .setFooter({
+                text: `${currentTeam.length}/${config.pokemonBattle.maxTeamSize} slots | Kpteam add/remove/list`,
+            });
+            return message.reply({
+                embeds: [embed],
+                files: [attachment],
+            });
         }
-        return message.reply({
-            embeds: [
-                new EmbedBuilder()
-                    .setColor(colors.primary)
-                    .setTitle(`⚔️ ${message.author.username}'s Battle Team`)
-                    .setDescription(teamLines.join('\n\n'))
-                    .setFooter({
-                    text: `${currentTeam.length}/${config.pokemonBattle.maxTeamSize} slots | Kpteam add/remove/list`,
-                }),
-            ],
-        });
+        catch (err) {
+            console.error('Failed to generate visual team image:', err);
+            // Fallback to text-based embed
+            const teamLines = [];
+            for (let i = 0; i < currentTeam.length; i++) {
+                const p = currentTeam[i];
+                const baseStats = await PokemonBattleService.getBaseStats(p.speciesKey);
+                const typeDisplay = baseStats
+                    ? baseStats.types
+                        .map((t) => `${PokemonBattleService.getTypeEmoji(t)} ${t.charAt(0).toUpperCase() + t.slice(1)}`)
+                        .join(' / ')
+                    : 'Unknown';
+                const bp = baseStats ? await PokemonBattleService.buildBattlePokemon(p, 'A') : null;
+                teamLines.push([
+                    `**Slot ${i + 1}:** ${p.speciesKey.charAt(0).toUpperCase() + p.speciesKey.slice(1)}`,
+                    `  Type: ${typeDisplay}`,
+                    `  Level: **${p.level}** | HP: **${bp?.maxHp || '?'}** | ATK: **${bp?.atk || '?'}** | DEF: **${bp?.def || '?'}** | SPD: **${bp?.speed || '?'}**`,
+                ].join('\n'));
+            }
+            return message.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor(colors.primary)
+                        .setTitle(`⚔️ ${message.author.username}'s Battle Team`)
+                        .setDescription(teamLines.join('\n\n'))
+                        .setFooter({
+                        text: `${currentTeam.length}/${config.pokemonBattle.maxTeamSize} slots | Kpteam add/remove/list`,
+                    }),
+                ],
+            });
+        }
     },
 };
