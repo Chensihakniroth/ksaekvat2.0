@@ -107,19 +107,19 @@ module.exports = {
                 ? repliedMsg.content.substring(0, 100) + '...'
                 : repliedMsg.content
               : '[No text content]';
-            replyContext = ` (replying to ${author.bot ? 'Bot' : 'User'} ${author.username} [ID: ${author.id}]: "${cleanContent}")`;
+            replyContext = ` (replying to ${author.bot ? 'Bot' : 'User'} ${author.username}: "${cleanContent}")`;
           }
         } catch (e) {
           logger.warn(`Failed to fetch replied-to message for AI context: ${e.message}`);
         }
       }
 
-      const processedUserMessage = `[User: ${message.author.username} (ID: ${message.author.id})${replyContext}]: ${text}`;
+      const processedUserMessage = `[User: ${message.author.username}${replyContext}]: ${text}`;
 
       const url = `${baseUrl}/chat/completions`;
 
       // Use the raw config prompt and append active user context
-      const finalSystemPrompt = `${configPrompt}\n\n[Active Conversation Partner: ${message.author.username} (ID: ${message.author.id}). Always address them as ${message.author.username} or your usual loving nicknames like 'darling' or 'my love', and recognize that they are the one talking to you now.]`;
+      const finalSystemPrompt = `${configPrompt}\n\n[Active Conversation Partner: ${message.author.username}. Always address them as ${message.author.username} or your usual loving nicknames like 'darling' or 'my love', and recognize that they are the one talking to you now.]`;
 
       const messages = [
         { role: 'system', content: finalSystemPrompt },
@@ -185,6 +185,16 @@ module.exports = {
 
         // Strip any Unicode emoji the AI snuck in — kaomojis only
         botMsg = stripEmojis(botMsg);
+
+        // Strip any ID numbers, internal thoughts, or meta-references that leaked through
+        botMsg = botMsg
+          .replace(/\(ID:\s*\d+\)/gi, '')           // (ID: 123456789)
+          .replace(/\[ID:\s*[\d]+\]/gi, '')          // [ID: 123456789]
+          .replace(/\bID:\s*\d+\b/gi, '')            // ID: 123456789
+          .replace(/\[(?:system|developer|assistant|note|internal|thought|thinking)\s*:.*?\]/gi, '')  // [System: ...] etc
+          .replace(/\{(?:system|developer|assistant|note|internal|thought|thinking)\s*:.*?\}/gi, '')  // {System: ...} etc
+          .replace(/\s{2,}/g, ' ')
+          .trim();
 
         const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
 
