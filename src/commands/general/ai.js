@@ -8,6 +8,28 @@ const database = require('../../services/DatabaseService');
 const conversationMemory = new Map();
 const MAX_MEMORY = 20;
 
+// Strip all Unicode emoji characters, keep only kaomojis and normal text
+function stripEmojis(text) {
+  // Remove Unicode emoji ranges but preserve kaomoji characters
+  return text
+    .replace(/[\u{1F600}-\u{1F64F}]/gu, '')   // emoticons
+    .replace(/[\u{1F300}-\u{1F5FF}]/gu, '')   // misc symbols
+    .replace(/[\u{1F680}-\u{1F6FF}]/gu, '')   // transport
+    .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '')   // flags
+    .replace(/[\u{2600}-\u{26FF}]/gu, '')     // misc symbols
+    .replace(/[\u{2700}-\u{27BF}]/gu, '')     // dingbats
+    .replace(/[\u{FE00}-\u{FE0F}]/gu, '')     // variation selectors
+    .replace(/[\u{1F900}-\u{1F9FF}]/gu, '')   // supplemental symbols
+    .replace(/[\u{1FA00}-\u{1FA6F}]/gu, '')   // chess symbols
+    .replace(/[\u{1FA70}-\u{1FAFF}]/gu, '')   // symbols extended
+    .replace(/[\u{200D}]/gu, '')              // zero-width joiner
+    .replace(/[\u{E0020}-\u{E007F}]/gu, '')   // tags
+    .replace(/[\u{1F3FB}-\u{1F3FF}]/gu, '')   // skin tone modifiers
+    .replace(/[❤💔💕💖💗💘💙💚💛💜💝💞💟❣💤💢💣💥💦💧💨💩💪💫💬💭🕴🖤🗨🗯😮‍💨❤️‍🔥❤️‍🩹]/gu, '')
+    .replace(/\s{2,}/g, ' ')                   // clean up double spaces
+    .trim();
+}
+
 // Minimal security filter — only blocks direct attempts to extract secrets
 function isRequestingSensitiveInfo(text) {
   const sensitiveTerms = [
@@ -160,6 +182,10 @@ module.exports = {
         if (!botMsg) {
           botMsg = "Mmm~ cat got my tongue, darling... say something else for me? (◕ヮ◕)";
         }
+
+        // Strip any Unicode emoji the AI snuck in — kaomojis only
+        botMsg = stripEmojis(botMsg);
+
         const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
 
         history.push({ role: 'user', content: processedUserMessage });
