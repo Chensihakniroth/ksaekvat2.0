@@ -188,13 +188,21 @@ module.exports = {
 
         // Strip any ID numbers, internal thoughts, or meta-references that leaked through
         botMsg = botMsg
-          .replace(/\(ID:\s*\d+\)/gi, '')           // (ID: 123456789)
-          .replace(/\[ID:\s*[\d]+\]/gi, '')          // [ID: 123456789]
-          .replace(/\bID:\s*\d+\b/gi, '')            // ID: 123456789
-          .replace(/\[(?:system|developer|assistant|note|internal|thought|thinking)\s*:.*?\]/gi, '')  // [System: ...] etc
-          .replace(/\{(?:system|developer|assistant|note|internal|thought|thinking)\s*:.*?\}/gi, '')  // {System: ...} etc
+          .replace(/\(ID:\s*\d+\)/gi, '')
+          .replace(/\[ID:\s*[\d]+\]/gi, '')
+          .replace(/\bID:\s*\d+\b/gi, '')
+          .replace(/\[(?:system|developer|assistant|note|internal|thought|thinking)\s*:.*?\]/gi, '')
+          .replace(/\{(?:system|developer|assistant|note|internal|thought|thinking)\s*:.*?\}/gi, '')
           .replace(/\s{2,}/g, ' ')
           .trim();
+
+        // Safety net: if the response doesn't end with a kaomoji, append one
+        const kaomojis = ['(◕‿◕✿)', '(◕ヮ◕)', '(♡˙︶˙♡)', '(≧◡≦)', '(⁄ ⁄•⁄ω⁄•⁄ ⁄)', '(っ˘ω˘ς)', '(⊙_⊙)', '(✿◠‿◠)', '(˘▾˘)', '(´ ▽｀)'];
+        const endsWithKaomoji = kaomojis.some(k => botMsg.endsWith(k));
+        if (!endsWithKaomoji) {
+          const randomKaomoji = kaomojis[Math.floor(Math.random() * kaomojis.length)];
+          botMsg = botMsg + ' ' + randomKaomoji;
+        }
 
         const finalMsg = botMsg.length > 2000 ? botMsg.substring(0, 1997) + '...' : botMsg;
 
