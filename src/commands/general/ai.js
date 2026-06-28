@@ -10,18 +10,22 @@ const MAX_MEMORY = 20;
 
 // Strip all Unicode emoji characters, keep only kaomojis and normal text
 function stripEmojis(text) {
-  // Remove Unicode emoji ranges but preserve kaomoji characters
+  // Remove Unicode emoji ranges but preserve kaomojis characters
+  // IMPORTANT: We do NOT strip U+2600-U+26FF or U+2700-U+27BF because kaomojis use:
+  //   ◕ (U+25D5) and ◔ (U+25D4) — in the U+2600-U+26FF range
+  //   ✿ (U+273F) and ❀ (U+2740) — in the U+2700-U+27BF range
+  // These MUST be preserved for kaomojis like (◕‿◕✿) to survive.
   return text
     .replace(/[\u{1F600}-\u{1F64F}]/gu, '')   // emoticons
-    .replace(/[\u{1F300}-\u{1F5FF}]/gu, '')   // misc symbols
-    .replace(/[\u{1F680}-\u{1F6FF}]/gu, '')   // transport
+    .replace(/[\u{1F300}-\u{1F5FF}]/gu, '')   // misc symbols & pictographs
+    .replace(/[\u{1F680}-\u{1F6FF}]/gu, '')   // transport & map
     .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '')   // flags
-    .replace(/[\u{2600}-\u{26FF}]/gu, '')     // misc symbols
-    .replace(/[\u{2700}-\u{27BF}]/gu, '')     // dingbats
+    // PRESERVED: .replace(/[\u{2600}-\u{26FF}]/gu, '') — contains ◕ ◔ ● used in kaomojis
+    // PRESERVED: .replace(/[\u{2700}-\u{27BF}]/gu, '') — contains ✿ ❀ used in kaomojis
     .replace(/[\u{FE00}-\u{FE0F}]/gu, '')     // variation selectors
     .replace(/[\u{1F900}-\u{1F9FF}]/gu, '')   // supplemental symbols
     .replace(/[\u{1FA00}-\u{1FA6F}]/gu, '')   // chess symbols
-    .replace(/[\u{1FA70}-\u{1FAFF}]/gu, '')   // symbols extended
+    .replace(/[\u{1FA70}-\u{1FAFF}]/gu, '')   // symbols extended-A
     .replace(/[\u{200D}]/gu, '')              // zero-width joiner
     .replace(/[\u{E0020}-\u{E007F}]/gu, '')   // tags
     .replace(/[\u{1F3FB}-\u{1F3FF}]/gu, '')   // skin tone modifiers
@@ -196,11 +200,49 @@ module.exports = {
           .replace(/\s{2,}/g, ' ')
           .trim();
 
-        // Safety net: if the response doesn't end with a kaomoji, append one
+        // Kaomoji injection: ensure kaomojis appear in the body, not just at the end
         const kaomojis = ['(◕‿◕✿)', '(◕ヮ◕)', '(♡˙︶˙♡)', '(≧◡≦)', '(⁄ ⁄•⁄ω⁄•⁄ ⁄)', '(っ˘ω˘ς)', '(⊙_⊙)', '(✿◠‿◠)', '(˘▾˘)', '(´ ▽｀)'];
-        const endsWithKaomoji = kaomojis.some(k => botMsg.endsWith(k));
+        const moodKaomojiMap = {
+          happy: ['(◕‿◕✿)', '(≧◡≦)', '(✿◠‿◠)', '(♡˙︶˙♡)'],
+          sad: ['(´ ▽｀)', '(⊙_⊙)', '(っ˘ω˘ς)'],
+          love: ['(♡˙︶˙♡)', '(⁄ ⁄•⁄ω⁄•⁄ ⁄)', '(◕‿◕✿)'],
+          surprised: ['(⊙_⊙)', '(◕ヮ◕)'],
+          playful: ['(◕ヮ◕)', '(≧◡≦)', '(˘▾˘)'],
+        };
+
+        // Check if response has ANY kaomoji in the body (not counting the last 20 chars which is the ending kaomoji)
+        const bodyText = botMsg.length > 30 ? botMsg.substring(0, botMsg.length - 20) : '';
+        const hasBodyKaomoji = kaomojis.some(k => bodyText.includes(k));
+
+        // If no kaomoji in body, inject 1-2 at natural break points
+        if (!hasBodyKaomoji && botMsg.length > 40) {
+          const sentences = botMsg.split(/(?<=[.!?~])\s+/);
+          if (sentences.length >= 2) {
+            // Insert a kaomoji after the first sentence
+            const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+            const mood = /love|heart|miss|kiss|darling|baby/i.test(botMsg) ? 'love'
+              : /happy|great|awesome|nice|fun|excited/i.test(botMsg) ? 'happy'
+              : /sad|sorry|cry|miss|hurt/i.test(botMsg) ? 'sad'
+              : /wow|omg|really|surprise/i.test(botMsg) ? 'surprised'
+              : 'playful';
+            sentences.splice(1, 0, pick(moodKaomojiMap[mood]));
+            botMsg = sentences.join(' ');
+          } else {
+            // Short response — prepend a kaomoji
+            const randomKaomoji = kaomojis[Math.floor(Math.random() * kaomojis.length)];
+            botMsg = randomKaomoji + ' ' + botMsg;
+          }
+        }
+
+        // Safety net: if the response doesn't end with a kaomoji, append one
+        const endsWithKaomoji = kaomojis.some(k => botMsg.trimEnd().endsWith(k));
         if (!endsWithKaomoji) {
-          const randomKaomoji = kaomojis[Math.floor(Math.random() * kaomojis.length)];
+          const mood = /love|heart|miss|kiss|darling|baby/i.test(botMsg) ? 'love'
+            : /happy|great|awesome|nice|fun|excited/i.test(botMsg) ? 'happy'
+            : /sad|sorry|cry|miss|hurt/i.test(botMsg) ? 'sad'
+            : /wow|omg|really|surprise/i.test(botMsg) ? 'surprised'
+            : 'playful';
+          const randomKaomoji = moodKaomojiMap[mood][Math.floor(Math.random() * moodKaomojiMap[mood].length)];
           botMsg = botMsg + ' ' + randomKaomoji;
         }
 
